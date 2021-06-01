@@ -1,3 +1,8 @@
+samples:
+    config/samples.txt
+units:
+    config/units.txt
+
 ref:
     # ensembl species name
     species: oryzias_latipes
@@ -5,8 +10,6 @@ ref:
     release: 104
     # genome build
     build: ASM223467v1
-samples:
-    config/samples.tsv
 ref_path:
     "/hps/nobackup/birney/users/ian/somites/refs/hdrr.fasta"
 raw_data_dir:
@@ -15,3 +18,20 @@ working_dir:
     "/hps/nobackup/birney/users/ian/somites"
 log_dir:
     "/hps/nobackup/birney/users/ian/somites/log"
+
+params:
+    gatk:
+        HaplotypeCaller: ""
+        BaseRecalibrator: ""
+        GenotypeGVCFs: ""
+        VariantRecalibrator: ""
+    picard:
+        MarkDuplicates: "REMOVE_DUPLICATES=true"
+    trimmomatic:
+        pe:
+        trimmer:
+            # See trimmomatic manual for adding additional options, e.g. for adapter trimming.
+            - "LEADING:3"
+            - "TRAILING:3"
+            - "SLIDINGWINDOW:4:15"
+            - "MINLEN:36"

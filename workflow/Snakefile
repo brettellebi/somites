@@ -5,7 +5,8 @@ include: "rules/common.smk"
 
 rule all:
     input:
-        config["ref_path"] + ".fai"
+        config["ref_path"] + ".fai",
+#        os.path.join(config["working_dir"], "sams/mapped/{sample}-{unit}.sam")
 #        "results/annotated/all.vcf.gz",
 #        "results/qc/multiqc.html",
 #        "results/plots/depths.svg",
