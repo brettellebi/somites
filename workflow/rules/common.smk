@@ -6,7 +6,7 @@ import pandas as pd
 import os
 #from snakemake.utils import validate
 
-container: "continuumio/miniconda3:4.8.2"
+containerized: "docker://brettellebi/somite_f2:latest"
 
 ######################
 # Config file and sample sheets
@@ -14,10 +14,11 @@ container: "continuumio/miniconda3:4.8.2"
 
 configfile: "config/config.yaml"
 
-
 #validate(config, schema="../schemas/config.schema.yaml")
 
-samples = pd.read_table(config["samples"]).set_index("sample", drop=False)
+samples = pd.read_table(config["samples"], comment = '#', dtype = str).set_index(
+    ["sample", "unit"], drop=False
+)
 
 #units = pd.read_table(config["units"], dtype=str).set_index(
 #    ["sample", "unit"], drop=False
@@ -39,9 +40,9 @@ samples = pd.read_table(config["samples"]).set_index("sample", drop=False)
 ## Helper functions
 #######################
 #
-#def get_fastq(wildcards):
-#    """Get fastq files of given sample-unit."""
-#    fastqs = units.loc[(wildcards.sample, wildcards.unit), ["fq1", "fq2"]].dropna()
+def get_fastq(wildcards):
+    """Get fastq files of given sample-unit."""
+    return samples.loc[(wildcards.sample, wildcards.unit), ["fq1", "fq2"]].dropna().tolist()
 #    if len(fastqs) == 2:
 #        return {"r1": fastqs.fq1, "r2": fastqs.fq2}
 #    return {"r1": fastqs.fq1}

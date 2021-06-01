@@ -1,7 +1,10 @@
 samples:
     config/samples.txt
-units:
-    config/units.txt
+groups:
+    - "1"
+    - "2"
+#units:
+#    config/units.txt
 
 ref:
     # ensembl species name
@@ -20,6 +23,8 @@ log_dir:
     "/hps/nobackup/birney/users/ian/somites/log"
 
 params:
+    minimap2:
+        threads: "4"
     gatk:
         HaplotypeCaller: ""
         BaseRecalibrator: ""
