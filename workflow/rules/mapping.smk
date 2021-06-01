@@ -19,8 +19,8 @@ rule map_reads:
         query = get_fastq,
     output:
         os.path.join(config["working_dir"], "sams/mapped/{sample}-{unit}.sam")
-    params:
-        extra="-ax sr"
+#    params:
+#        extra="-ax sr"
     threads: config["params"]["minimap2"]["threads"]
 #    wrapper:
 #        "0.74.0/bio/minimap2/aligner"

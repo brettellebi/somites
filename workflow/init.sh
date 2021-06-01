@@ -1,7 +1,7 @@
 #!/bin/bash
 
 cd /hps/software/users/birney/ian/repos/somites
-conda activate snakemake
+conda activate snakemake_6.4.1
 snakemake \
   --jobs 5000 \
   --latency-wait 100 \
