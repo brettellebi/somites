@@ -16,11 +16,17 @@
 rule map_reads:
     input:
         target = config["ref_path"],
-        query = get_fastq
+        query = get_fastq,
     output:
         os.path.join(config["working_dir"], "sams/mapped/{sample}-{unit}.sam")
     params:
         extra="-ax sr"
-    threads: 4
-    wrapper:
-        "0.74.0/bio/minimap2/aligner"
+    threads: config["params"]["minimap2"]["threads"]
+#    wrapper:
+#        "0.74.0/bio/minimap2/aligner"
+    conda:
+        "../envs/minimap2_2.19.yaml"
+    shell:
+        """
+        minimap2 -ax sr {input.target} {input.query} > {output}
+        """

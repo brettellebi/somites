@@ -24,7 +24,7 @@ log_dir:
 
 params:
     minimap2:
-        threads: "4"
+        threads: 4
     gatk:
         HaplotypeCaller: ""
         BaseRecalibrator: ""
