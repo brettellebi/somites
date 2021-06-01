@@ -1,0 +1,17 @@
+ref:
+    # ensembl species name
+    species: oryzias_latipes
+    # ensembl release
+    release: 104
+    # genome build
+    build: ASM223467v1
+samples:
+    config/samples.tsv
+ref_path:
+    "/hps/nobackup/birney/users/ian/somites/refs/hdrr.fasta"
+raw_data_dir:
+    "/hps/nobackup/birney/projects/indigene/raw_data"
+working_dir:
+    "/hps/nobackup/birney/users/ian/somites"
+log_dir:
+    "/hps/nobackup/birney/users/ian/somites/log"
