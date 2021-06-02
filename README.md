@@ -14,4 +14,11 @@ cd path/to/working/directory
 git clone https://github.com/brettellebi/somites.git
 ```
 
-3. 
+3. Install miniconda3:
+    - Download appropriate by installer by copying the link from here: https://docs.conda.io/en/latest/miniconda.html, then `wget` it, e.g.:
+```bash
+wget {link}
+```
+    - Then follow instructions here: https://conda.io/projects/conda/en/latest/user-guide/install/index.html
+
+4. Install Snakemake
