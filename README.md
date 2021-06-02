@@ -1,5 +1,7 @@
 # Containerized workflow for calling medaka F2 haplotypes
 
+**NOTE**: Caution re: this issue: https://github.com/snakemake/snakemake/issues/304
+
 ## Steps
 
 1. Change directory to your preferred working directory on the cluster, e.g.:
