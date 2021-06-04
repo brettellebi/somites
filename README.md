@@ -15,10 +15,14 @@ git clone https://github.com/brettellebi/somites.git
 ```
 
 3. Install miniconda3:
-    - Download appropriate by installer by copying the link from here: https://docs.conda.io/en/latest/miniconda.html, then `wget` it, e.g.:
-```bash
-wget {link}
-```
+    - Download appropriate by installer by copying the link from here: https://docs.conda.io/en/latest/miniconda.html, then `wget` it, e.g.: `wget {link}`
     - Then follow instructions here: https://conda.io/projects/conda/en/latest/user-guide/install/index.html
 
-4. Install Snakemake
+4. Create global Snakemake environment:
+```bash
+conda create -f snakemake_6.4.1
+```
+
+5. Edit `somites/config/config.yaml` and `somites/init.sh` to adapt to Heidelberg cluster.
+
+6. Run configured bash script `somites/init.sh` to run snakemake.
