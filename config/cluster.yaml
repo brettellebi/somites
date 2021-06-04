@@ -2,8 +2,15 @@ __default__:
   memory: 5000
   n: 1
   name: "{rule}.{wildcards}"
-  output: "/hps/nobackup/birney/users/ian/somites/log/{rule}_{wildcards}.out"
-  error: "/hps/nobackup/birney/users/ian/somites/log/{rule}_{wildcards}.err"
+  outdir: "/hps/nobackup/birney/users/ian/somites/logs/{rule}"
+  outfile: "/hps/nobackup/birney/users/ian/somites/logs/{rule}/%J_{wildcards}.out"
+  error: "/hps/nobackup/birney/users/ian/somites/logs/{rule}/%J_{wildcards}.err"
 map_reads:
-  memory: 20000
+  memory: 10000
   n: 4
+replace_rg:
+  memory: 20000
+sort_sam:
+  memory: 20000
+haplotype_caller:
+  memory: 10000

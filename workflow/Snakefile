@@ -1,28 +1,56 @@
-include: "rules/common.smk"
+include: "rules/00_common.smk"
 
 ##### Target rules #####
 
 
 rule all:
     input:
-#        config["ref_path"] + ".fai",
-        expand(os.path.join(config["working_dir"], "sams/mapped/{sample}-{unit}.sam"),
+        # Reference, index and dictionary
+        config["ref_prefix"] + ".fasta",
+        config["ref_prefix"] + ".fasta.fai",
+        config["ref_prefix"] + ".dict",
+        # F0
+        expand(os.path.join(config["working_dir"], "sams/F0/mapped/{sample}-{unit}.sam"),
                 zip,
                 sample = samples['sample'],
                 unit = samples['unit']
-        )
-#        "results/annotated/all.vcf.gz",
-#        "results/qc/multiqc.html",
-#        "results/plots/depths.svg",
-#        "results/plots/allele-freqs.svg",
+        ),
+        expand(os.path.join(config["working_dir"], "sams/F0/grouped/{sample}-{unit}.sam"),
+                zip,
+                sample = samples['sample'],
+                unit = samples['unit']
+        ),
+        expand(os.path.join(config["working_dir"], "bams/F0/sorted/{sample}-{unit}.bam"),
+                zip,
+                sample = samples['sample'],
+                unit = samples['unit']
+        ),
+        expand(os.path.join(config["working_dir"], "bams/F0/marked/{sample}-{unit}.bam"),
+                zip,
+                sample = samples['sample'],
+                unit = samples['unit']                
+        ),
+        expand(os.path.join(config["working_dir"], "bams/F0/merged/{sample}.bam"),
+                sample = list(set(samples['sample']))
+        ),
+        expand(os.path.join(config["working_dir"], "vcfs/F0/gvcfs/{sample}/{contig}.g.vcf"),
+                sample = list(set(samples['sample'])),
+                contig = get_contigs(),
+        ),
+        expand(os.path.join(config["working_dir"], "vcfs/F0/combined/all.{contig}.g.vcf.gz"),
+                contig = get_contigs(),
+        ),
+        expand(os.path.join(config["working_dir"], "vcfs/F0/genotyped/all.{contig}.vcf.gz"),
+                contig = get_contigs(),
+        ),
+        expand(os.path.join(config["working_dir"], "vcfs/F0/final/all.vcf.gz"))
 
 
 ##### Modules #####
 
-
-include: "rules/ref.smk"
-include: "rules/mapping.smk"
-#include: "rules/calling.smk"
+include: "rules/01_ref.smk"
+include: "rules/02_F0_mapping.smk"
+include: "rules/03_F0_calling.smk"
 #include: "rules/filtering.smk"
 #include: "rules/stats.smk"
 #include: "rules/qc.smk"

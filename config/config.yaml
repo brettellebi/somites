@@ -3,8 +3,9 @@ samples:
 groups:
     - "1"
     - "2"
-#units:
-#    config/units.txt
+contigs:
+    - 1
+    - 24
 
 ref:
     # ensembl species name
@@ -13,30 +14,14 @@ ref:
     release: 104
     # genome build
     build: ASM223467v1
-ref_path:
-    "/hps/nobackup/birney/users/ian/somites/refs/hdrr.fasta"
+ref_prefix:
+    "/hps/nobackup/birney/users/ian/somites/refs/hdrr"
 raw_data_dir:
     "/hps/nobackup/birney/projects/indigene/raw_data"
 working_dir:
     "/hps/nobackup/birney/users/ian/somites"
-log_dir:
-    "/hps/nobackup/birney/users/ian/somites/log"
+tmp_dir:
+    "/hps/nobackup/birney/users/ian/somites/tmp"
 
-params:
-    minimap2:
-        threads: 4
-    gatk:
-        HaplotypeCaller: ""
-        BaseRecalibrator: ""
-        GenotypeGVCFs: ""
-        VariantRecalibrator: ""
-    picard:
-        MarkDuplicates: "REMOVE_DUPLICATES=true"
-    trimmomatic:
-        pe:
-        trimmer:
-            # See trimmomatic manual for adding additional options, e.g. for adapter trimming.
-            - "LEADING:3"
-            - "TRAILING:3"
-            - "SLIDINGWINDOW:4:15"
-            - "MINLEN:36"
+
+

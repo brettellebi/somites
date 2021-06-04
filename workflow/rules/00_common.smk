@@ -6,7 +6,9 @@ import pandas as pd
 import os
 #from snakemake.utils import validate
 
-containerized: "docker://brettellebi/somite_f2:latest"
+#container: "docker://mambaorg/micromamba:0.13.1"
+#container: "../../containers/global.sif"
+#container: "docker://condaforge/mambaforge:4.9.2-7"
 
 ######################
 # Config file and sample sheets
@@ -47,6 +49,11 @@ def get_fastq(wildcards):
 #        return {"r1": fastqs.fq1, "r2": fastqs.fq2}
 #    return {"r1": fastqs.fq1}
 #
+
+def get_contigs(start = config["contigs"][0], end = config["contigs"][1]):
+    """Get list of chromosomes."""
+    end = end + 1
+    return list(range(start, end))
 #def is_single_end(sample, unit):
 #    """Return True if sample-unit is single end."""
 #    return pd.isnull(units.loc[(sample, unit), "fq2"])

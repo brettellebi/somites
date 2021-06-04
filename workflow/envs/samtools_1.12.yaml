@@ -1,0 +1,22 @@
+name: samtools_1.12
+channels:
+  - bioconda
+  - defaults
+dependencies:
+  - _libgcc_mutex=0.1=main
+  - bzip2=1.0.8=h7b6447c_0
+  - ca-certificates=2021.5.25=h06a4308_1
+  - htslib=1.11=hd3b49d5_2
+  - krb5=1.18.2=h173b8e3_0
+  - libcurl=7.71.1=h20c2e04_1
+  - libdeflate=1.7=h27cfd23_5
+  - libedit=3.1.20210216=h27cfd23_1
+  - libgcc-ng=9.1.0=hdf63c60_0
+  - libssh2=1.9.0=h1ba5d50_1
+  - libstdcxx-ng=9.1.0=hdf63c60_0
+  - ncurses=6.2=he6710b0_1
+  - openssl=1.1.1k=h27cfd23_0
+  - samtools=1.11=h6270b1f_0
+  - xz=5.2.5=h7b6447c_0
+  - zlib=1.2.11=h7b6447c_3
+prefix: /hps/software/users/birney/ian/miniconda3/envs/samtools_1.12
