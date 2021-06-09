@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# NOTE: raw data here:
+# /hps/nobackup/birney/projects/indigene/raw_data/Ali/
+
 ####################
 # EBI codon cluster
 ####################
