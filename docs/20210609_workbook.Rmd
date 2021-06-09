@@ -1,0 +1,51 @@
+---
+title: "R Notebook"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+
+
+# Create list of F2 samples
+
+```{r}
+library(here)
+library(tidyverse)
+```
+
+
+Get list of samples
+
+```{bash, eval = F}
+find /hps/nobackup/birney/projects/indigene/raw_data/Ali/Kaga-Cab_F2_First200WGS/*sequence.txt.gz > config/20210609_f2_list.txt
+```
+
+
+```{r}
+out_file = here::here("config/F2_samples.txt")
+# Read in file
+df = readr::read_csv(here::here("config/20210609_f2_list.txt"), col_names = "PATH") %>% 
+  # Get basenames
+  dplyr::mutate(BASENAME = basename(PATH)) %>% 
+  # Get pool numbers
+  dplyr::mutate(POOL = stringr::str_split(BASENAME, "_", simplify = T) %>% 
+                  subset(select = 3),
+                LANE = stringr::str_split(BASENAME, "_", simplify = T) %>% 
+                  subset(select = 6),
+                LANE = stringr::str_remove(LANE, "lane") %>% 
+                  as.integer(.),
+                PAIR = stringr::str_split(BASENAME, "_", simplify = T) %>% 
+                  subset(select = 7)) %>% 
+  dplyr::arrange(LANE) %>% 
+  # pivot wider to put fq paths into same row
+  tidyr::pivot_wider(id_cols = c(LANE, POOL),
+                     names_from = PAIR,
+                     names_prefix = "fq",
+                     values_from = PATH) %>% 
+  # write to file
+  readr::write_tsv(out_file)
+  
+
+# 
+```
+
