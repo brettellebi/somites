@@ -53,7 +53,13 @@ rule all:
 #        expand(os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/divergent/{contig}.txt"),
 #                contig = get_contigs()
 #        ),
-        os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/final/all.txt")
+#        os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/final/all.txt"),
+#        expand(os.path.join(config["working_dir"], "sams/F2/mapped/{sample}.sam"),
+#                sample = F2_samples['LANE']
+#        ),
+        expand(os.path.join(config["working_dir"], "bams/F2/bwamem/sorted/{sample}.bam"),
+                sample = F2_samples['LANE']
+        )
 
 ##### Modules #####
 

@@ -5,6 +5,8 @@ __default__:
   outdir: "/hps/nobackup/birney/users/ian/somites/logs/{rule}"
   outfile: "/hps/nobackup/birney/users/ian/somites/logs/{rule}/%J_{wildcards}.out"
   error: "/hps/nobackup/birney/users/ian/somites/logs/{rule}/%J_{wildcards}.err"
+bwa_index:
+  memory: 50000
 map_reads:
   memory: 10000
   n: 4
@@ -14,3 +16,13 @@ sort_sam:
   memory: 20000
 haplotype_caller:
   memory: 10000
+bwa_mem2_mem:
+  memory: 10000
+  n: 8
+map_F2:
+  memory: 10000
+  n: 4
+replace_rg_f2:
+  memory: 20000
+sort_sam_f2:
+  memory: 20000

@@ -22,6 +22,10 @@ samples = pd.read_table(config["samples"], comment = '#', dtype = str).set_index
     ["sample", "unit"], drop=False
 )
 
+F2_samples = pd.read_table(config["F2_samples"], comment = '#', dtype = str).set_index(
+    ["LANE"], drop=False
+)
+
 #units = pd.read_table(config["units"], dtype=str).set_index(
 #    ["sample", "unit"], drop=False
 #)
@@ -41,31 +45,16 @@ samples = pd.read_table(config["samples"], comment = '#', dtype = str).set_index
 #######################
 ## Helper functions
 #######################
-#
+
 def get_fastq(wildcards):
     """Get fastq files of given sample-unit."""
     return samples.loc[(wildcards.sample, wildcards.unit), ["fq1", "fq2"]].dropna().tolist()
-#    if len(fastqs) == 2:
-#        return {"r1": fastqs.fq1, "r2": fastqs.fq2}
-#    return {"r1": fastqs.fq1}
-#
+
+def get_fastq_F2(wildcards):
+    """Get fastq files of given sample-unit."""
+    return F2_samples.loc[(wildcards.sample), ["fq1", "fq2"]].dropna().tolist()
 
 def get_contigs(start = config["contigs"][0], end = config["contigs"][1]):
     """Get list of chromosomes."""
     end = end + 1
     return list(range(start, end))
-#def is_single_end(sample, unit):
-#    """Return True if sample-unit is single end."""
-#    return pd.isnull(units.loc[(sample, unit), "fq2"])
-#
-#def get_trimmed_reads(wildcards):
-#    """Get trimmed reads of given sample-unit."""
-#    if not is_single_end(**wildcards):
-#        # paired-end sample
-#        return expand(
-#            os.path.join(config["working_dir"], "fastqs/trimmed/{sample}-{unit}.{group}.fastq.gz"),
-#            group=[1, 2],
-#            **wildcards
-#        )
-#    # single end sample
-#    return os.path.join(config["working_dir"], "fastqs/trimmed/{sample}-{unit}.{group}.fastq.gz").format(**wildcards)
