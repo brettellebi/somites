@@ -1,0 +1,21 @@
+[bwa_index] Pack FASTA... 5.49 sec
+[bwa_index] Construct BWT for the packed sequence...
+[BWTIncCreate] textLength=1468114172, availableWord=115301532
+[BWTIncConstructFromPacked] 10 iterations done. 99999996 characters processed.
+[BWTIncConstructFromPacked] 20 iterations done. 199999996 characters processed.
+[BWTIncConstructFromPacked] 30 iterations done. 299999996 characters processed.
+[BWTIncConstructFromPacked] 40 iterations done. 399999996 characters processed.
+[BWTIncConstructFromPacked] 50 iterations done. 499999996 characters processed.
+[BWTIncConstructFromPacked] 60 iterations done. 599999996 characters processed.
+[BWTIncConstructFromPacked] 70 iterations done. 699999996 characters processed.
+[BWTIncConstructFromPacked] 80 iterations done. 799955772 characters processed.
+[BWTIncConstructFromPacked] 90 iterations done. 893314812 characters processed.
+[BWTIncConstructFromPacked] 100 iterations done. 976288556 characters processed.
+[BWTIncConstructFromPacked] 110 iterations done. 1050031852 characters processed.
+[BWTIncConstructFromPacked] 120 iterations done. 1115571036 characters processed.
+[BWTIncConstructFromPacked] 130 iterations done. 1173818444 characters processed.
+[BWTIncConstructFromPacked] 140 iterations done. 1225584844 characters processed.
+[BWTIncConstructFromPacked] 150 iterations done. 1271590940 characters processed.
+[BWTIncConstructFromPacked] 160 iterations done. 1312477276 characters processed.
+[BWTIncConstructFromPacked] 170 iterations done. 1348813132 characters processed.
+[BWTIncConstructFromPacked] 180 iterations done. 1381104476 characters processed.

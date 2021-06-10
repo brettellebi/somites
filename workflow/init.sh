@@ -1,7 +1,8 @@
 #!/bin/bash
 
-# NOTE: raw data here:
-# /hps/nobackup/birney/projects/indigene/raw_data/Ali/
+# NOTE: raw data locations:
+# FTP: /nfs/ftp/private/indigene_ftp/upload/Ali
+# Codon: /hps/nobackup/birney/projects/indigene/raw_data/Ali/
 
 ####################
 # EBI codon cluster

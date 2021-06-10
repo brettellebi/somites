@@ -1,5 +1,7 @@
 samples:
     config/samples.txt
+F2_samples:
+    config/F2_samples.txt
 groups:
     - "1"
     - "2"
