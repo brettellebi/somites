@@ -27,14 +27,26 @@ rule genome_dict:
     shell:
         "samtools dict {input} > {output}"
 
-rule bwa_index:
+#rule bwa_index:
+#    input:
+#        config["ref_prefix"] + ".fasta",
+#    output:
+#        multiext(config["ref_prefix"] + ".fasta", ".amb", ".ann", ".bwt", ".pac", ".sa"),
+#    log:
+#        "logs/bwa_index.log",
+#    resources:
+#        mem_mb=369000,
+#    wrapper:
+#        "0.74.0/bio/bwa/index"
+
+rule bwa_mem2_index:
     input:
         config["ref_prefix"] + ".fasta",
     output:
-        multiext("resources/genome.fasta", ".amb", ".ann", ".bwt", ".pac", ".sa"),
-    log:
-        "logs/bwa_index.log",
+        multiext(config["ref_prefix"] + ".fasta", ".0123", ".amb", ".ann", ".bwt.2bit.64", ".pac"),
+    params:
+        prefix=lambda w, input: input[0]
     resources:
         mem_mb=369000,
     wrapper:
-        "0.74.0/bio/bwa/index"
+        "v0.75.0/bio/bwa-mem2/index"
