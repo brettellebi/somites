@@ -2,6 +2,8 @@ samples:
     config/samples.txt
 F2_samples:
     config/F2_samples.txt
+F2_valid_lanes:
+    config/F2_valid_lanes.txt
 groups:
     - "1"
     - "2"

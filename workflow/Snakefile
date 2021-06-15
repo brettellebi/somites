@@ -5,7 +5,9 @@ include: "rules/00_common.smk"
 
 rule all:
     input:
-#        # Reference, index and dictionary
+################
+# 01_ref.smk
+################
 #        config["ref_prefix"] + ".fasta",
 #        config["ref_prefix"] + ".fasta.fai",
 #        config["ref_prefix"] + ".dict",
@@ -57,9 +59,15 @@ rule all:
 #        expand(os.path.join(config["working_dir"], "sams/F2/mapped/{sample}.sam"),
 #                sample = F2_samples['LANE']
 #        ),
-        expand(os.path.join(config["working_dir"], "bams/F2/bwamem/sorted/{sample}.bam"),
-                sample = F2_samples['LANE']
-        )
+#        expand(os.path.join(config["working_dir"], "bams/F2/bwamem2/sorted/{sample}.bam"),
+#                sample = F2_samples['LANE']
+#        ),
+#        expand(os.path.join(config["working_dir"], "bams/F2/bwamem2/marked/{sample}.bam.bai"),
+#                sample = F2_samples['LANE']
+#        ),
+        expand(os.path.join(config["working_dir"], "dp4s/batch_01/bwamem2/{sample}.dp4.txt"),
+                sample = VALID_LANES
+        ),
 
 ##### Modules #####
 

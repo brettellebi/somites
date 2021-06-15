@@ -26,6 +26,11 @@ F2_samples = pd.read_table(config["F2_samples"], comment = '#', dtype = str).set
     ["LANE"], drop=False
 )
 
+with open(config["F2_valid_lanes"]) as file:
+    VALID_LANES = [line.strip() for line in file]
+
+
+
 #units = pd.read_table(config["units"], dtype=str).set_index(
 #    ["sample", "unit"], drop=False
 #)
