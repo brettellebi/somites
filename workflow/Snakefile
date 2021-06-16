@@ -47,15 +47,8 @@ rule all:
 #        ),
 #        expand(os.path.join(config["working_dir"], "vcfs/F0/final/all.vcf.gz")),
 ################
-# 04_F2_calling_blocks.smk
+# 04_F2_calling.smk
 ################
-#        expand(os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/all_sites/{contig}.csv"),
-#                contig = get_contigs()
-#        ),
-#        expand(os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/divergent/{contig}.txt"),
-#                contig = get_contigs()
-#        ),
-#        os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/final/all.txt"),
 #        expand(os.path.join(config["working_dir"], "sams/F2/mapped/{sample}.sam"),
 #                sample = F2_samples['LANE']
 #        ),
@@ -65,13 +58,27 @@ rule all:
 #        expand(os.path.join(config["working_dir"], "bams/F2/bwamem2/marked/{sample}.bam.bai"),
 #                sample = F2_samples['LANE']
 #        ),
-        expand(os.path.join(config["working_dir"], "dp4s/batch_01/bwamem2/{sample}.dp4.txt"),
+################
+# 05_F2_recomb_blocks.smk
+################
+#        expand(os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/all_sites/{contig}.csv"),
+#                contig = get_contigs()
+#        ),
+#        expand(os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/divergent/{contig}.txt"),
+#                contig = get_contigs()
+#        ),
+#        os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/final/all.txt"),
+#        expand(os.path.join(config["working_dir"], "dp4s/batch_01/bwamem2/{sample}.dp4.txt"),
+#                sample = VALID_LANES
+#        ),
+        expand(os.path.join(config["working_dir"], "dpABs/batch_01/bwamem2/{sample}.txt"),
                 sample = VALID_LANES
-        ),
+        )
 
 ##### Modules #####
 
 include: "rules/01_ref.smk"
 include: "rules/02_F0_mapping.smk"
 include: "rules/03_F0_calling.smk"
-include: "rules/04_F2_calling_blocks.smk"
+include: "rules/04_F2_mapping.smk"
+include: "rules/05_F2_recomb_blocks.smk"
