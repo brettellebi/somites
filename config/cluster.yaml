@@ -28,3 +28,5 @@ sort_sam_f2:
   memory: 20000
 bam_readcount:
   memory: 10000
+make_dp_AB:
+  memory: 10000
