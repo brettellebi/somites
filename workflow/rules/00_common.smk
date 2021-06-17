@@ -5,11 +5,6 @@
 import pandas as pd
 import numpy as np
 import os
-#from snakemake.utils import validate
-
-#container: "docker://mambaorg/micromamba:0.13.1"
-#container: "../../containers/global.sif"
-#container: "docker://condaforge/mambaforge:4.9.2-7"
 
 ######################
 # Config file and sample sheets
@@ -17,11 +12,24 @@ import os
 
 configfile: "config/config.yaml"
 
-#validate(config, schema="../schemas/config.schema.yaml")
-
 samples = pd.read_table(config["samples"], comment = '#', dtype = str).set_index(
     ["sample", "unit"], drop=False
 )
+
+## Note: THIS RULE WAS RUN BEFORE ANYTHING ELSE,
+## WHILE HASHING OUT THE TWO `F2_samples = pd....` lines below
+## Run again when the location of the raw sequencing data changes,
+## e.g. when this pipeline is run on a new HPC.
+rule create_f2_samples_file:
+    input:
+        input_dir = os.path.join(config["raw_data_dir"], "Kaga-Cab_F2_First200WGS")
+    output:
+        config["F2_samples"]
+    container:
+        "docker://brettellebi/somite_f2:latest"
+    script:
+        "../scripts/create_f2_samples_file.R"
+
 
 F2_samples = pd.read_table(config["F2_samples"], comment = '#', dtype = str).set_index(
     ["LANE"], drop=False
@@ -29,7 +37,6 @@ F2_samples = pd.read_table(config["F2_samples"], comment = '#', dtype = str).set
 
 with open(config["F2_valid_lanes"]) as file:
     VALID_LANES = [line.strip() for line in file]
-
 
 
 #units = pd.read_table(config["units"], dtype=str).set_index(

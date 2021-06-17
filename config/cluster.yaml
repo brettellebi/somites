@@ -30,3 +30,5 @@ bam_readcount:
   memory: 10000
 make_dp_AB:
   memory: 10000
+run_rc_block:
+    memory: 50000

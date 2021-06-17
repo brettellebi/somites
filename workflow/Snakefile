@@ -6,6 +6,10 @@ include: "rules/00_common.smk"
 rule all:
     input:
 ################
+# 00_common.smk
+################    
+#        config["F2_samples"]
+################
 # 01_ref.smk
 ################
 #        config["ref_prefix"] + ".fasta",
@@ -47,7 +51,7 @@ rule all:
 #        ),
 #        expand(os.path.join(config["working_dir"], "vcfs/F0/final/all.vcf.gz")),
 ################
-# 04_F2_calling.smk
+# 04_F2_mapping.smk
 ################
 #        expand(os.path.join(config["working_dir"], "sams/F2/mapped/{sample}.sam"),
 #                sample = F2_samples['LANE']
@@ -69,11 +73,12 @@ rule all:
 #        ),
 #        os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/final/all.txt"),
 #        expand(os.path.join(config["working_dir"], "dp4s/batch_01/bwamem2/{sample}.dp4.txt"),
-#                sample = VALID_LANES
+#                sample = F2_samples['LANE']
 #        ),
-        expand(os.path.join(config["working_dir"], "dpABs/batch_01/bwamem2/{sample}.txt"),
-                sample = VALID_LANES
-        )
+#        expand(os.path.join(config["working_dir"], "dpABs/batch_01/bwamem2/{sample}.txt"),
+#                sample = F2_samples['LANE']
+#        ),
+        os.path.join(config["data_store_dir"], "hmm_output_batch_01.txt"),
 
 ##### Modules #####
 

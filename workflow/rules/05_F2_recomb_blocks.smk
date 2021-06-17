@@ -22,6 +22,7 @@ rule get_homozygous_sites:
             --output {output}
         """
 
+
 rule get_divergent_sites:
     input:
         os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/all_sites/{contig}.csv")
@@ -45,6 +46,7 @@ rule get_divergent_sites:
         # write to file
         out.to_csv(output[0], sep = '\t', header = False, index = False)
 
+
 rule bind_divergent_sites:
     input:
         expand(os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/divergent/{contig}.txt"),
@@ -65,6 +67,7 @@ rule bind_divergent_sites:
 rule bam_readcount:
     input:
         bam = os.path.join(config["working_dir"], "bams/F2/bwamem2/marked/{sample}.bam"),
+        index = os.path.join(config["working_dir"], "bams/F2/bwamem2/marked/{sample}.bam.bai"),
         sites_file = os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/final/all.txt"),
         ref = config["ref_prefix"] + ".fasta",
     output:
@@ -81,48 +84,26 @@ rule bam_readcount:
                 > {output}
         """
 
+
 rule make_dp_AB:
     input:
         dp4 = os.path.join(config["working_dir"], "dp4s/batch_01/bwamem2/{sample}.dp4.txt"),
         sites_file = os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/final/all.txt"),
     output:
         os.path.join(config["working_dir"], "dpABs/batch_01/bwamem2/{sample}.txt"),
-    run:
-        # Read in dp4
-        dp4_cols = ["CHR", "POS", "REF", "TOTAL", "A", "C", "G", "T", "N"]
-#        dp4 = pd.read_csv("/hps/nobackup/birney/users/ian/somites/dp4s/batch_01/bwamem2/11.dp4.txt", sep = "\t", names = dp4_cols, index_col = ["CHR", "POS"])
-        dp4 = pd.read_csv(input.dp4, sep = "\t", names = dp4_cols, index_col = ["CHR", "POS"])
-        # Read in sites
-        sites_cols = ["CHR", "POS", "POS_2", "REF", "ALT", "F0_1", "F0_2"]
-#        sites = pd.read_csv("/hps/nobackup/birney/users/ian/somites/data/sites_files/F0_Cab_Kaga/final/all.txt", sep = "\t", names = sites_cols, index_col = ["CHR", "POS"])
-        sites = pd.read_csv(input.sites_file, sep = "\t", names = sites_cols, index_col = ["CHR", "POS"])
-        # Add columns with F0 and F1 alleles
-        sites = sites.assign(F0_1_ALLELE =lambda x: np.where(x["F0_1"] == "0/0", x["REF"], x["ALT"]))
-        sites = sites.assign(F0_2_ALLELE =lambda x: np.where(x["F0_2"] == "0/0", x["REF"], x["ALT"]))
-        # Filter dp4 for necessary columns
-        dp4 = dp4[["A", "C", "G", "T"]]
-        # Join dp4 to sites
-        joined = dp4.join(sites)
-        # Create new columns with counts for F0_1 and F0_2 alleles
-        def rules(row, column):
-            if row[column] == "A":
-                return row["A"]
-            elif row[column] == "C":
-                return row["C"]
-            elif row[column] == "G":
-                return row["G"]            
-            elif row[column] == "T":
-                return row["T"]               
-            else:
-                return None
-        joined['F0_1_COUNT'] = joined.apply(lambda x: rules(x, "F0_1_ALLELE"), 1)
-        joined['F0_2_COUNT'] = joined.apply(lambda x: rules(x, "F0_2_ALLELE"), 1)
-        # Write to file
-#        joined[["F0_1_ALLELE", "F0_1_COUNT", "F0_2_ALLELE", "F0_2_COUNT"]].to_csv("tmp.txt", sep = "\t", header = False)
-        joined[["F0_1_ALLELE", "F0_1_COUNT", "F0_2_ALLELE", "F0_2_COUNT"]].to_csv(output[0], sep = "\t", header = False)
+    script:
+        "../scripts/make_dp_AB.py"
+
 
 rule run_rc_block:
     input:
-        os.path.join(config["working_dir"], "dpABs/batch_01/bwamem2/{sample}.txt"),
+        dp_files = expand(os.path.join(config["working_dir"], "dpABs/batch_01/bwamem2/{sample}.txt"),
+            sample = F2_samples['LANE']
+        ),
+        source_code = "workflow/scripts/rc_block_hmm.R"
     output:
-        
+        os.path.join(config["data_store_dir"], "hmm_output_batch_01.txt"),
+    container:
+        "docker://brettellebi/somite_f2:latest"
+    script:
+        "../scripts/run_rc_block.R"

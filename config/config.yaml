@@ -21,11 +21,13 @@ ref:
 ref_prefix:
     "/hps/nobackup/birney/users/ian/somites/refs/hdrr"
 raw_data_dir:
-    "/hps/nobackup/birney/projects/indigene/raw_data"
+    "/nfs/research/birney/projects/indigene/raw_data/Ali"
 working_dir:
     "/hps/nobackup/birney/users/ian/somites"
 tmp_dir:
     "/hps/nobackup/birney/users/ian/somites/tmp"
+data_store_dir:
+    "/nfs/research/birney/users/ian/somites/recombination_blocks"
 
 
 
