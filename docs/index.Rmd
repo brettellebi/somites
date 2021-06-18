@@ -277,7 +277,11 @@ dev.off()
 
 ```
 
+```{r, include = F}
+file.copy(file_out, here::here("docs"), overwrite = T)
+```
+
 ```{r}
-knitr::include_graphics(file_out)
+knitr::include_graphics(here::here("docs/20210618_karyoplot.png"))
 ```
 
