@@ -1,0 +1,10 @@
+name: "Somite period F2 analysis"
+output_dir: "."
+navbar:
+  title: "Somite period F2 analysis"
+  left:
+    - text: "Analysis"
+      href: index.html
+output:
+  html_document:
+    theme: lumen
