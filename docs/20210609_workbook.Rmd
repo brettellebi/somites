@@ -6,46 +6,268 @@ editor_options:
 ---
 
 
-# Create list of F2 samples
+# Plot recombination blocks
 
 ```{r}
 library(here)
-library(tidyverse)
+source(here::here("docs/source.R"))
 ```
 
-
-Get list of samples
-
-```{bash, eval = F}
-find /hps/nobackup/birney/projects/indigene/raw_data/Ali/Kaga-Cab_F2_First200WGS/*sequence.txt.gz > config/20210609_f2_list.txt
-```
-
+## Read in data
 
 ```{r}
-out_file = here::here("config/F2_samples.txt")
-# Read in file
-df = readr::read_csv(here::here("config/20210609_f2_list.txt"), col_names = "PATH") %>% 
-  # Get basenames
-  dplyr::mutate(BASENAME = basename(PATH)) %>% 
-  # Get pool numbers
-  dplyr::mutate(POOL = stringr::str_split(BASENAME, "_", simplify = T) %>% 
-                  subset(select = 3),
-                LANE = stringr::str_split(BASENAME, "_", simplify = T) %>% 
-                  subset(select = 6),
-                LANE = stringr::str_remove(LANE, "lane") %>% 
-                  as.integer(.),
-                PAIR = stringr::str_split(BASENAME, "_", simplify = T) %>% 
-                  subset(select = 7)) %>% 
-  dplyr::arrange(LANE) %>% 
-  # pivot wider to put fq paths into same row
-  tidyr::pivot_wider(id_cols = c(LANE, POOL),
-                     names_from = PAIR,
-                     names_prefix = "fq",
-                     values_from = PATH) %>% 
-  # write to file
-  readr::write_tsv(out_file)
-  
+in_file = "~/Desktop/hmm_output_batch_01.txt"
 
-# 
+data = readr::read_tsv(in_file,
+                       col_types = "c--i-ii")
+
+# Create column with lane
+bin_length = 5000
+
+df = data %>% 
+  dplyr::mutate(LANE = basename(sample) %>% 
+                  stringr::str_remove(".txt"),
+                BIN_START = bin * bin_length - bin_length + 1,
+                BIN_END = bin * bin_length) 
+```
+
+## Plot
+
+### Proportion of genome covered by each site
+
+#### Read in total medaka genome count
+
+```{r}
+# Get chromosome lengths
+med_chr_lens = read.table(here::here("data",
+                                     "Oryzias_latipes.ASM223467v1.dna.toplevel.fa_chr_counts.txt"),
+                          col.names = c("chr", "end"))
+# Add start
+med_chr_lens$start = 1
+# Reorder
+med_chr_lens = med_chr_lens %>% 
+  dplyr::select(chr, start, end) %>% 
+  # remove MT
+  dplyr::filter(chr != "MT")
+
+# Total HdrR sequence length
+total_hdrr_bases = sum(med_chr_lens$end)
+```
+
+#### Get total number of bases covered by each state
+
+```{r}
+# Set states to loop over
+states = 0:2
+names(states) = states
+
+# Run loop over each LANE
+
+base_cov_df = df %>% 
+  split(., f = .$LANE) %>% 
+  purrr::map(., function(LANE){
+    # convert to ranges object
+    lane_ranges = GenomicRanges::makeGRangesFromDataFrame(LANE,
+                                                          keep.extra.columns = T,
+                                                          ignore.strand = T,
+                                                          seqnames.field = "chr", 
+                                                          start.field = "BIN_START",
+                                                          end.field = "BIN_END")
+    # get total bases covered by each state
+    purrr::map_dfr(states, function(STATE){
+      lane_ranges[lane_ranges$state == STATE] %>% 
+        # merge contiguous ranges
+        GenomicRanges::reduce(.) %>% 
+        # get width of ranges
+        width(.) %>% 
+        # get total bases covered
+        sum(.) %>% 
+        # coerce into data frame
+        data.frame("BASES_COVERED" = .)
+      }, .id = "STATE") %>% 
+        # add FREQ column
+        dplyr::mutate(FREQ = BASES_COVERED / total_hdrr_bases) %>% 
+        # add UNCLASSIFIED row
+        tibble::add_row(STATE = "UNCLASSIFIED", 
+                        BASES_COVERED = total_hdrr_bases - sum(.$BASES_COVERED),
+                        FREQ = (total_hdrr_bases - sum(.$BASES_COVERED)) / total_hdrr_bases)
+    }
+  ) %>% 
+  dplyr::bind_rows(.id = "LANE")
+
+```
+
+Plot
+
+```{r}
+# Set palette
+pal_hom_het = c("#947EB0", "#A3A5C3", "#A9D2D5", "#E1E1DF")
+names(pal_hom_het) = c(0:2, "UNCLASSIFIED")
+
+# Plot
+base_cov_df %>% 
+  dplyr::mutate(STATE = factor(STATE, levels = c(0,1,2, "UNCLASSIFIED")),
+                STATE = dplyr::recode(STATE,
+                                      `0` = "Homozygous Cab",
+                                      `1` = "Heterozygous",
+                                      `2` = "Homozygous Kaga",
+                                      "UNCLASSIFIED" = "Unclassified")) %>% 
+  # plot
+  ggplot(aes(STATE, FREQ, colour = STATE, fill = STATE)) +
+    geom_violin() +
+    geom_boxplot(width = .3) +
+    ggbeeswarm::geom_quasirandom(color="black", size=0.4, alpha=0.9) +
+    theme_bw() +
+    scale_colour_manual(values = karyoploteR::darker(pal_hom_het)) +
+    scale_fill_manual(values = pal_hom_het) +
+    guides(colour = F, fill = F) +
+    xlab("Genotype") +
+    ylab("Proportion of reference bases covered")
+```
+
+### Ratio of called sites
+
+```{r}
+df %>% 
+  # get counts of sites per LANE and state
+  dplyr::group_by(LANE, state) %>% 
+  dplyr::count() %>% 
+  # spread to one row per LANE
+  tidyr::pivot_wider(id_cols = LANE, names_from = state, values_from = n) %>% 
+  # calculate frequencies of states per LANE
+  dplyr::mutate(TOTAL = sum(`0`, `1`, `2`),
+                FREQ_0 = `0` / TOTAL,
+                FREQ_1 = `1` / TOTAL,
+                FREQ_2 = `2` / TOTAL) %>% 
+  # gather
+  tidyr::pivot_longer(cols = starts_with("FREQ_"),
+                      names_to = "STATE",
+                      names_prefix = "FREQ_",
+                      values_to = "FREQ") %>% 
+  # order STATE and recode with meaning
+  dplyr::mutate(STATE = factor(STATE, levels = c(0,1,2)),
+                STATE = dplyr::recode(STATE,
+                                      `0` = "Homozygous Cab",
+                                      `1` = "Heterozygous",
+                                      `2` = "Homozygous Kaga")) %>% 
+  # plot
+  ggplot(aes(STATE, FREQ, colour = STATE, fill = STATE)) +
+    geom_violin() +
+    geom_boxplot(width = .5) +
+    ggbeeswarm::geom_quasirandom(color="black", size=0.4, alpha=0.9) +
+    theme_bw() +
+    scale_colour_manual(values = karyoploteR::darker(pal_hom_het)) +
+    scale_fill_manual(values = pal_hom_het) +
+    guides(colour = "none", fill = "none") +
+    xlab("Genotype") +
+    ylab("Frequency")
+```
+
+
+
+### Karyoplot
+
+Make custom chromosome scaffold
+
+```{r}
+# Create custom genome 
+med_genome = regioneR::toGRanges(med_chr_lens)
+```
+
+Convert data to list ranges
+
+```{r}
+test = df %>% 
+  dplyr::filter(LANE == 11) %>% 
+  split(., f = .$chr)
+
+block_bounds = purrr::map(test, function(CHR){
+  # Get lengths of each contiguous state
+  cont_len = rle(CHR$state)
+  
+  # Get cumulative sum of those lengths
+  cum_blocks = cumsum(cont_len$lengths)
+  
+  # Get rows that correspond to block changes
+  block_bounds = CHR[cum_blocks, ] %>% 
+    # Add end of previous black
+    dplyr::mutate(END_PREV = dplyr::lag(BIN_END)) %>% 
+    # Replace the NA in the first row with `1`
+    dplyr::mutate(END_PREV = tidyr::replace_na(END_PREV, 1)) %>% 
+    # Add colour
+    dplyr::mutate(COLOUR = dplyr::recode(state, !!!pal_hom_het[-which(names(pal_hom_het) == "UNCLASSIFIED")])) 
+  
+}) %>% 
+  dplyr::bind_rows()
+# Get lengths of each contiguous state
+cont_len = rle(test$state)
+
+# Get cumulative sum of those lengths
+cum_blocks = cumsum(cont_len$lengths)
+
+# Get rows that correspond to block changes
+block_bounds = test[cum_blocks, ] %>% 
+  # Add end of previous black
+  dplyr::mutate(END_PREV = dplyr::lag(BIN_END)) %>% 
+  # Replace the NA in the first row with `1`
+  dplyr::mutate(END_PREV = tidyr::replace_na(END_PREV, 1)) %>% 
+  # Add colour
+  dplyr::mutate(COLOUR = dplyr::recode(state, !!!pal_hom_het[-which(names(pal_hom_het) == "UNCLASSIFIED")])) 
+
+# Convert to GRanges
+block_ranges = GenomicRanges::makeGRangesFromDataFrame(block_bounds,
+                                                       keep.extra.columns = T,
+                                                       ignore.strand = T,
+                                                       seqnames.field = "chr",
+                                                       start.field = "END_PREV",
+                                                       end.field = "BIN_END")
+
+df_ranges = df %>% 
+  split(., f = .$LANE) %>% 
+  lapply(., function(LANE) {
+    GenomicRanges::makeGRangesFromDataFrame(LANE,
+                                            ignore.strand = T,
+                                            seqnames.field = "chr",
+                                            start.field = "BIN_START",
+                                            end.field = "BIN_END")
+  })
+
+
+test_ranges =     GenomicRanges::makeGRangesFromDataFrame(test,
+                                            ignore.strand = T,
+                                            seqnames.field = "chr",
+                                            start.field = "BIN_START",
+                                            end.field = "BIN_END") %>% 
+  GenomicRanges::reduce(.)
+```
+
+
+Plot karyoplot
+```{r}
+file_out = here::here("plots/20210618_karyoplot.png")
+
+png(file=file_out,
+    width=13000,
+    height=8500,
+    units = "px",
+    res = 400)
+
+# Plot ideogram
+kp = karyoploteR::plotKaryotype(med_genome, plot.type = 5)
+# Add data background
+#karyoploteR::kpDataBackground(kp, r0=0, r1 = 1, color = "white")
+
+# Add rectangles for first sample
+karyoploteR::kpRect(kp,
+                    chr = block_bounds$chr,
+                    x0 = block_bounds$END_PREV,
+                    x1 = block_bounds$BIN_END,
+                    y0 = 0,
+                    y1 = 1,
+                    col = block_bounds$COLOUR,
+                    border = NA)
+
+dev.off()
+
 ```
 
