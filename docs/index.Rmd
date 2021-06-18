@@ -123,7 +123,7 @@ base_cov_df %>%
     geom_boxplot(width = .3) +
     ggbeeswarm::geom_quasirandom(color="#7D8491", size=0.4, alpha=0.9) +
     theme_bw() +
-    scale_colour_manual(values = karyoploteR::lighter(pal_hom_het_2, 50)) +
+    scale_colour_manual(values = karyoploteR::darker(pal_hom_het_2)) +
     scale_fill_manual(values = pal_hom_het_2) +
     guides(colour = "none", fill = "none") +
     xlab("Genotype") +
