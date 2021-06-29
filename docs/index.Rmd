@@ -16,7 +16,7 @@ output:
 
 # Plot recombination blocks
 
-```{r}
+```{r, message = F, warning = F}
 library(here)
 source(here::here("docs/source.R"))
 ```
@@ -130,7 +130,94 @@ base_cov_df %>%
     ylab("Proportion of reference bases covered")
 ```
 
+#### By chromosome
+
+Process.
+
+```{r, eval = F}
+# Set states to loop over
+states = 0:2
+names(states) = states
+
+# Run loop over each LANE
+
+base_cov_df_chr = df %>% 
+  split(., f = .$LANE) %>% 
+    purrr::map(., function(LANE){
+      # convert to ranges object
+      lane_ranges = GenomicRanges::makeGRangesFromDataFrame(LANE,
+                                                            keep.extra.columns = T,
+                                                            ignore.strand = T,
+                                                            seqnames.field = "chr", 
+                                                            start.field = "BIN_START",
+                                                            end.field = "BIN_END")
+      # loop over each chromosome
+      purrr::map(med_chr_lens$chr, function(CHR){
+        # get total length of target chromosome
+        target_chr_len = med_chr_lens$end[med_chr_lens$chr == CHR]
+        # get total bases covered by each state per chromosome
+        purrr::map_dfr(states, function(STATE){
+          lane_ranges[lane_ranges$state == STATE & lane_ranges@seqnames == CHR] %>% 
+            # merge contiguous ranges
+            GenomicRanges::reduce(.) %>% 
+            # get width of ranges
+            width(.) %>% 
+            # get total bases covered
+            sum(.) %>% 
+            # coerce into data frame
+            data.frame("BASES_COVERED" = .)
+          }, .id = "STATE") %>% 
+            # add FREQ column
+            dplyr::mutate(FREQ = BASES_COVERED / target_chr_len ) %>% 
+            # add UNCLASSIFIED row
+            tibble::add_row(STATE = "UNCLASSIFIED", 
+                            BASES_COVERED = target_chr_len - sum(.$BASES_COVERED),
+                            FREQ = (target_chr_len - sum(.$BASES_COVERED)) / target_chr_len)
+      }) %>% 
+        dplyr::bind_rows(.id = "CHR")
+    }
+  ) %>% 
+  dplyr::bind_rows(.id = "LANE")
+```
+
+```{r, eval = F}
+saveRDS(base_cov_df_chr, here::here("data/20210629_base_cov_per_chr.rds"))
+```
+
+```{r, include = F}
+base_cov_df_chr = readRDS(here::here("data/20210629_base_cov_per_chr.rds"))
+```
+
+Plot
+```{r, fig.dim = c(16,13)}
+# Plot
+base_cov_df_chr %>% 
+  dplyr::mutate(STATE = factor(STATE, levels = c(0,1,2, "UNCLASSIFIED")),
+                STATE_RECODE = dplyr::recode(STATE,
+                                             `0` = "Homozygous Cab",
+                                             `1` = "Heterozygous",
+                                             `2` = "Homozygous Kaga",
+                                             "UNCLASSIFIED" = "Unclassified"),
+                CHR = factor(CHR, levels = med_chr_lens$chr)) %>% 
+  # plot
+  ggplot(aes(STATE_RECODE, FREQ, colour = STATE, fill = STATE)) +
+    geom_violin() +
+    geom_boxplot(width = .1) +
+    ggbeeswarm::geom_quasirandom(color="#7D8491", size=0.1, alpha=0.7) +
+    theme_bw() +
+    scale_colour_manual(values = pal_hom_het_2_lines) +
+    scale_fill_manual(values = pal_hom_het_2) +
+    guides(colour = "none", fill = "none") +
+    xlab("Genotype") +
+    ylab("Proportion of reference bases covered") +
+    facet_wrap(~CHR, nrow = 4, ncol = 6) +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+
 ### Ratio of called sites
+
+#### Genome-wide
 
 ```{r, fig.cap = "Frequency based on number of sites"}
 df %>% 
@@ -166,6 +253,61 @@ df %>%
     guides(colour = "none", fill = "none") +
     xlab("Genotype") +
     ylab("Frequency")
+    
+```
+
+```{r}
+ggsave(here::here("plots/20210618_gt_freqs_sites.png"),
+       device = "png",
+       width = 10,
+       height = 5.8,
+       units = "in",
+       dpi = 400)
+```
+
+#### Per chromosome
+
+```{r, fig.dim = c(16,13), fig.cap = "Frequency per-chromosome based on number of sites"}
+df %>% 
+  dplyr::mutate(state = factor(state, levels = 0:2)) %>% 
+  # get counts of sites per LANE and state
+  dplyr::group_by(LANE, chr, state) %>%
+  dplyr::count(.drop = F) %>% 
+  # spread to one row per LANE
+  tidyr::pivot_wider(id_cols = c(LANE, chr), names_from = state, values_from = n) %>% 
+  # replace NAs with 0 manually , because `.drop = F` in `count` above doesn't work 
+  dplyr::mutate(dplyr::across(c(`0`, `1`, `2`),
+                            ~tidyr::replace_na(.x, 0))) %>% 
+  # calculate frequencies of states per LANE
+  dplyr::mutate(TOTAL = sum(`0`, `1`, `2`, na.rm = T),
+                FREQ_0 = `0` / TOTAL,
+                FREQ_1 = `1` / TOTAL,
+                FREQ_2 = `2` / TOTAL) %>% 
+  # gather
+  tidyr::pivot_longer(cols = starts_with("FREQ_"),
+                      names_to = "STATE",
+                      names_prefix = "FREQ_",
+                      values_to = "FREQ") %>% 
+  # order STATE and recode with meaning
+  dplyr::mutate(STATE = factor(STATE, levels = c(0,1,2)),
+                STATE_RECODE = dplyr::recode(STATE,
+                                      `0` = "Homozygous Cab",
+                                      `1` = "Heterozygous",
+                                      `2` = "Homozygous Kaga")) %>% 
+  # plot
+  ggplot(aes(STATE_RECODE, FREQ, colour = STATE, fill = STATE)) +
+    geom_violin() +
+    geom_boxplot(width = .1) +
+    ggbeeswarm::geom_quasirandom(color="#7D8491", size=0.1, alpha=0.7) +
+    theme_bw() +
+    scale_colour_manual(values = pal_hom_het_2_lines) +
+    scale_fill_manual(values = pal_hom_het_2) +
+    guides(colour = "none", fill = "none") +
+    xlab("Genotype") +
+    ylab("Frequency") +
+    facet_wrap(~chr, nrow = 4, ncol = 6) +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+    
 ```
 
 
@@ -278,6 +420,7 @@ dev.off()
 ```
 
 ```{r, include = F}
+file_out = here::here("plots/20210618_karyoplot.png")
 file.copy(file_out, here::here("docs"), overwrite = T)
 ```
 
