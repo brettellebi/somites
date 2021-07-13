@@ -9,7 +9,7 @@ RUN R -e "devtools::install_github('tf2/ViteRbi', upgrade = 'never')"
 RUN apt update
 RUN apt install -y \
   # for Rhtslib
-  libbz2-dev
+  libbz2-dev liblzma-dev
 
 # Install karyoploteR
 
