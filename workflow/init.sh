@@ -26,3 +26,15 @@ snakemake \
   -s workflow/Snakefile \
   -p
 
+####################
+# RStudio Server
+####################
+
+bsub -M 20000 -Is """
+singularity shell --bind /hps/software/users/birney/ian/rstudio_db:/var/lib/rstudio-server \
+                  --bind /hps/software/users/birney/ian/tmp:/tmp \
+                  --bind /hps/software/users/birney/ian/run:/run \
+                  docker://brettellebi/somite_f2:latest
+"""
+# Then run rserver, setting path of config file containing library path
+rserver --rsession-config-file /hps/software/users/birney/ian/repos/somites/workflow/envs/rstudio_server/rsession.conf
