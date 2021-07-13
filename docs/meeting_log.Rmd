@@ -1,0 +1,64 @@
+---
+title: "Meeting log"
+author: "Ian Brettell"
+date: '`r format(Sys.Date())`'
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    dev: 'svg'
+    number_sections: false
+    keep_md: false
+    pandoc_args: --lua-filter=color-text.lua
+    highlight: pygments
+---
+
+# 13 July 2021
+
+## Attendees:
+
+- Ewan Birney
+- Alexander Aulehla
+- Tomas Fitzgerald
+- Ali Seleit
+- Ian Brettell
+
+## Notes:
+
+* Genetics:
+  - Increase block size?
+    - Try site-by-site
+    - HMM would need to work on a *count* system so that it doesn't get skewed
+* [**ACTION**]{color="red"} (Ian): 
+  - Check colours:
+    - Would expect Cab skew, especially as it has the reporter.
+* [**ACTION**]{color="red"} (Ian):
+  - Find number of reads covering each block for each individual.
+  - If they reach < 5, increase the block size.
+  - Also check out chr 16 reporter locus.
+  - Make histogram of counts per block for each individual.
+  - Data frame:
+    - Fish  ID
+    - Block ID
+    - Allele 
+    - Count
+  - Plot a boxplot of counts per allele for all blocks per individual.
+  - Do for 5, 10 and 15 kb windows, then make boxplots to compare.
+  - Expect coverage across the homo-divergent regions is quite uneven.
+  - Also estimate heritability? 
+* [**ACTION**  ]{color="red"} (Ali):
+  - Eyeball high phenotype points
+  - Also look at the plate position. 
+  - Is there a between-day effect? (Note: Can only image 10 individuals per day)
+  - Run a Kruskal-Wallis test for:
+    - day
+    - microscope (if they differ)
+    - any other way you can split it up
+    - look at the within-individual variance too
+* Re: sample size:
+  - Pause imaging while we check the above.
+  - Want to see the parents tight, and the F2 stretching out.
+  
+
+
+

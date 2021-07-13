@@ -5,6 +5,8 @@ navbar:
   left:
     - text: "Analysis"
       href: index.html
+    - text: "Meeting log"
+      href: meeting_log.html
 output:
   html_document:
     theme: lumen
