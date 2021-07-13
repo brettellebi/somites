@@ -123,7 +123,7 @@ base_cov_df %>%
     geom_boxplot(width = .3) +
     ggbeeswarm::geom_quasirandom(color="#7D8491", size=0.4, alpha=0.9) +
     theme_bw() +
-    scale_colour_manual(values = karyoploteR::darker(pal_hom_het_2)) +
+    scale_colour_manual(values = pal_hom_het_2_lines) +
     scale_fill_manual(values = pal_hom_het_2) +
     guides(colour = "none", fill = "none") +
     xlab("Genotype") +
@@ -248,7 +248,7 @@ df %>%
     geom_boxplot(width = .5) +
     ggbeeswarm::geom_quasirandom(color="#7D8491", size=0.4, alpha=0.9) +
     theme_bw() +
-    scale_colour_manual(values = karyoploteR::darker(pal_hom_het_2)) +
+    scale_colour_manual(values = pal_hom_het_2_lines) +
     scale_fill_manual(values = pal_hom_het_2) +
     guides(colour = "none", fill = "none") +
     xlab("Genotype") +
@@ -426,5 +426,61 @@ file.copy(file_out, here::here("docs"), overwrite = T)
 
 ```{r}
 knitr::include_graphics(here::here("docs/20210618_karyoplot.png"))
+```
+
+# Realised relationship matrix
+
+## Process data
+
+```{r, eval = F}
+# Process data
+gt_mat_rc = data %>% 
+  # extract LANE names from sample name, and create site name by binding `chr` and `block`
+  dplyr::mutate(LANE = basename(sample) %>% 
+                  stringr::str_remove(".txt") %>% 
+                  as.numeric(.),
+                SITE = paste(chr, bin, sep = ":")) %>% 
+#  dplyr::filter(SITE %in% unique(SITE)[1:10]) %>% 
+  dplyr::select(LANE, SITE, state) %>% 
+  # recode 0,1,2 to -1,0,1
+  dplyr::mutate(state = dplyr::recode(state,
+                                      `0` = -1,
+                                      `1` = 0,
+                                      `2` = 1)) %>% 
+  # pivot to put sites into columns
+  tidyr::pivot_wider(id_cols = c(LANE, SITE),
+                     names_from = SITE,
+                     values_from = state) %>% 
+  # remove LANE column
+  dplyr::select(-LANE) %>% 
+  # convert to matrix
+  as.matrix(.)
+
+# Compute realised relationship matrix
+rrmat = sommer::A.mat(gt_mat_rc)
+
+# Save object
+saveRDS(rrmat, here::here("data/realised_relationship_matrix.rds"))
+```
+
+## Plot
+
+```{r, eval = F}
+rrmat = readRDS(here::here("data/realised_relationship_matrix.rds"))
+
+png(here::here("docs/plots/20210713_rrm_heatmap.png"),
+    width = 20,
+    height = 20,
+    units = "in",
+    res = 400)
+
+heat_cols = colorRampPalette(c("#9EC5AB", "#0D4045"))
+heatmap(rrmat, symm = T, col = heat_cols(100))
+
+dev.off()
+```
+
+```{r}
+knitr::include_graphics(here::here("docs/plots/20210713_rrm_heatmap.png"))
 ```
 

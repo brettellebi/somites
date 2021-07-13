@@ -7,6 +7,7 @@
 library(tidyverse)
 library(karyoploteR)
 library(ggbeeswarm)
+library(sommer)
 
 ####################
 # Palettes
