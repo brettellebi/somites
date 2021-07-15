@@ -13,16 +13,20 @@ data.frame("PATH" = files) %>%
     dplyr::mutate(BASENAME = basename(PATH)) %>% 
     # Get pool numbers
     dplyr::mutate(POOL = stringr::str_split(BASENAME, "_", simplify = T) %>% 
-                    subset(select = 3),
-                    LANE = stringr::str_split(BASENAME, "_", simplify = T) %>% 
-                    subset(select = 6),
-                    LANE = stringr::str_remove(LANE, "lane") %>% 
-                    as.integer(.),
-                    PAIR = stringr::str_split(BASENAME, "_", simplify = T) %>% 
-                    subset(select = 7)) %>% 
-    dplyr::arrange(LANE) %>% 
+                      subset(select = 3),
+                  SAMPLE = stringr::str_split(BASENAME, "_", simplify = T) %>% 
+                      subset(select = 6) %>% 
+                      # remove "lane" prefix
+                      stringr::str_remove(., "lane") %>% 
+                      # remove first digit, which is the same as POOL
+                      sub(".", "", .) %>% 
+                      # conver to integer
+                      as.integer(.),
+                  PAIR = stringr::str_split(BASENAME, "_", simplify = T) %>% 
+                      subset(select = 7)) %>% 
+    dplyr::arrange(SAMPLE) %>% 
     # pivot wider to put fq paths into same row
-    tidyr::pivot_wider(id_cols = c(LANE, POOL),
+    tidyr::pivot_wider(id_cols = c(SAMPLE, POOL),
                         names_from = PAIR,
                         names_prefix = "fq",
                         values_from = PATH) %>% 

@@ -19,7 +19,7 @@ rule combine_calls:
         ref=config["ref_prefix"] + ".fasta",
         gvcfs=expand(
             os.path.join(config["working_dir"], "vcfs/F0/gvcfs/{sample}/{{contig}}.g.vcf"),
-            sample=list(set(samples["sample"]))
+            sample=list(set(F0_samples["sample"]))
         ),
     output:
         gvcf=os.path.join(config["working_dir"], "vcfs/F0/combined/all.{contig}.g.vcf.gz"),

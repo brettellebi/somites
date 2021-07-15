@@ -18,7 +18,7 @@ snakemake \
   --jobs 5000 \
   --latency-wait 100 \
   --cluster-config config/cluster.yaml \
-  --cluster 'bsub -g /snakemake_bgenie -J {cluster.name} -n {cluster.n} -M {cluster.memory} -outdir {cluster.outdir} -o {cluster.outfile} -e {cluster.error}' \
+  --cluster 'bsub -g /snakemake_bgenie -J {cluster.name} -q {cluster.queue} -n {cluster.n} -M {cluster.memory} -outdir {cluster.outdir} -o {cluster.outfile} -e {cluster.error}' \
   --keep-going \
   --rerun-incomplete \
   --use-conda \
@@ -30,6 +30,7 @@ snakemake \
 # RStudio Server
 ####################
 
+ssh proxy-codon
 bsub -M 20000 -Is """
 singularity shell --bind /hps/software/users/birney/ian/rstudio_db:/var/lib/rstudio-server \
                   --bind /hps/software/users/birney/ian/tmp:/tmp \

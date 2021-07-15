@@ -1,50 +1,3 @@
-#rule map_F2:
-#    input:
-#        target = config["ref_prefix"] + ".fasta",
-#        query = get_fastq_F2,
-#    output:
-#        os.path.join(config["working_dir"], "sams/F2/mapped/{sample}.sam")
-#    params:
-#        extra="-ax sr"
-#    threads: 4
-#    wrapper:
-#        "0.74.0/bio/minimap2/aligner"
-
-## Note
-# sample 121 fails with the following error:
-# from /hps/nobackup/birney/users/ian/somites/logs/map_F2/2432668_sample=121.err
-#minimap2: sketch.c:84: mm_sketch: Assertion `len > 0 && (w > 0 && w < 256) && (k > 0 && k <= 28)' failed.
-#/usr/local/bin/bash: line 1: 2362261 Aborted                 (core dumped) ( minimap2 -t 4 -ax sr -o /hps/nobackup/birney/users/ian/somites/sams/F2/mapped/121.sam /hps/nobackup/birney/users/ian/somites/refs/hdrr.fasta /hps/nobackup/birney/projects/indigene/raw_data/Ali/Kaga-Cab_F2_First200WGS/HKNVLBBXY_Pool_1_21s001372-1-1_Seleit_lane121_1_sequence.txt.gz /hps/nobackup/birney/projects/indigene/raw_data/Ali/Kaga-Cab_F2_First200WGS/HKNVLBBXY_Pool_1_21s001372-1-1_Seleit_lane121_2_sequence.txt.gz )
-
-#rule replace_rg_f2:
-#    input:
-#        os.path.join(config["working_dir"], "sams/F2/mapped/{sample}.sam")
-#    output:
-#        os.path.join(config["working_dir"], "sams/F2/grouped/{sample}.sam")
-#    container:
-#        "docker://quay.io/biocontainers/picard:2.9.2--2"
-#    params:
-#        "RGLB=lib1 RGPL=ILLUMINA RGPU=unit1 RGSM={sample}"
-#    shell:
-#        """
-#        picard AddOrReplaceReadGroups \
-#            -Xmx1024M \
-#            {params} \
-#            I={input} \
-#            O={output}
-#        """
-
-# Many failed jobs with this rule, e.g.
-# 365 fails the above stage:
-# Exception in thread "main" htsjdk.samtools.SAMFormatException: Error parsing text SAM file. Invalid character in read bases; File /hps/nobackup/birney/users/ian/somites/sams/F2/mapped/365.sam; Line 7975375
-# Line: ST-K00119:220:HKNVLBBXY:3:1212:252AJJJJJJ5TTGJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJFJJJJJJJJJJJJJJJFJFJJJJJJJJJJJJJJJFFJJJJJJJFJGGCA+TJJJJJJJFJGGCA+TJJJJJJJFJGCTGT84444JJJJCATCTATTACCATCTGACTTCCACCTCCTCC 4       *       0       0       **0       0       GGJFJ<J7JJAAJ<AJF-F-FJAJJ77FJJFJAJ-GGTGGTCTCTG5TTGJGGCTCGGTGAACATGJJJJ<CTTCCTCAAJJJJJJJJJJJJJ:3:1212:2FJJJJJJ<FJJFTJTFJJFJJFJY:3::::::TCTTACGCAGTCGGGTCAJ *       rl:i:0
-
-# 5119:
-# Exception in thread "main" htsjdk.samtools.SAMFormatException: Error parsing text SAM file. Empty field at position 9 (zero-based); File /hps/nobackup/birney/users/ian/somites/sams/F2/mapped/5119.sam; Line 8872706
-#Line: ST-K00119:220:HKNVLBBXY:5:1JJJJJJJJJJJJJJJA1:1CGTAJJJJJJJJJJJA1:1GCCAATCACAGACATGCGGGAACCGGCCTTCGAACCGJJJJJJCCAGACATGCJ01   4       *       0       0       *       *       0       0               *       rl:i:0
-
-# So try using bwa-mem instead
-
 #rule bwa_mem2_mem:
 #    input:
 #        reads=get_fastq_F2,
@@ -63,9 +16,24 @@
 
 # Wrapper doesn't work with many files, so use container instead
 
+rule copy_f2_seq_data:
+    input:
+        get_fastq_F2,
+    output:
+        expand(os.path.join(config["working_dir"], "fastqs/F2/{{sample}}_{pair}.txt.gz"),
+            pair = PAIRS
+        ),
+    shell:
+        """
+        cp {input[0]} {output[0]} ;
+        cp {input[1]} {output[1]}
+        """
+
 rule bwa_mem2_mem:
     input:
-        reads=get_fastq_F2,
+        reads=expand(os.path.join(config["working_dir"], "fastqs/F2/{{sample}}_{pair}.txt.gz"),
+            pair = PAIRS
+        ),
         idx=rules.bwa_mem2_index.output,
     output:
         os.path.join(config["working_dir"], "sams/F2/bwamem2/mapped/{sample}.sam"),

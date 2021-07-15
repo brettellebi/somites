@@ -12,7 +12,7 @@ import os
 
 configfile: "config/config.yaml"
 
-samples = pd.read_table(config["samples"], comment = '#', dtype = str).set_index(
+F0_samples = pd.read_table(config["F0_samples"], comment = '#', dtype = str).set_index(
     ["sample", "unit"], drop=False
 )
 
@@ -32,29 +32,11 @@ rule create_f2_samples_file:
 
 
 F2_samples = pd.read_table(config["F2_samples"], comment = '#', dtype = str).set_index(
-    ["LANE"], drop=False
+    ["SAMPLE"], drop=False
 )
 
-with open(config["F2_valid_lanes"]) as file:
-    VALID_LANES = [line.strip() for line in file]
+PAIRS = ["1", "2"]
 
-
-#units = pd.read_table(config["units"], dtype=str).set_index(
-#    ["sample", "unit"], drop=False
-#)
-#units.index = units.index.set_levels(
-#    [i.astype(str) for i in units.index.levels]
-#)  # enforce str in index
-#validate(units, schema="../schemas/units.schema.yaml")
-########################
-## Wildcard constraints
-#######################
-#
-#wildcard_constraints:
-#    vartype="snvs|indels",
-#    sample="|".join(samples.index),
-#    unit="|".join(units["unit"]),
-#
 #######################
 ## Helper functions
 #######################

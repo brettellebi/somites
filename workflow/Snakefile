@@ -6,79 +6,114 @@ include: "rules/00_common.smk"
 rule all:
     input:
 ################
-# 00_common.smk
-################    
+## 00_common.smk
+################
+## create_f2_samples_file
 #        config["F2_samples"]
 ################
-# 01_ref.smk
+## 01_ref.smk
 ################
+## get_genome
 #        config["ref_prefix"] + ".fasta",
+## genome_faidx
 #        config["ref_prefix"] + ".fasta.fai",
+## genome_dict
 #        config["ref_prefix"] + ".dict",
-#        # F0
+################
+## 02_F0_mapping.smk
+################
+## map_reads
 #        expand(os.path.join(config["working_dir"], "sams/F0/mapped/{sample}-{unit}.sam"),
 #                zip,
-#                sample = samples['sample'],
-#                unit = samples['unit']
+#                sample = F0_samples['sample'],
+#                unit = F0_samples['unit']
 #        ),
+## replace_rg
 #        expand(os.path.join(config["working_dir"], "sams/F0/grouped/{sample}-{unit}.sam"),
 #                zip,
-#                sample = samples['sample'],
-#                unit = samples['unit']
+#                sample = F0_samples['sample'],
+#                unit = F0_samples['unit']
 #        ),
+## sort_sam
 #        expand(os.path.join(config["working_dir"], "bams/F0/sorted/{sample}-{unit}.bam"),
 #                zip,
-#                sample = samples['sample'],
-#                unit = samples['unit']
+#                sample = F0_samples['sample'],
+#                unit = F0_samples['unit']
 #        ),
+## markd_duplicates
 #        expand(os.path.join(config["working_dir"], "bams/F0/marked/{sample}-{unit}.bam"),
 #                zip,
-#                sample = samples['sample'],
-#                unit = samples['unit']                
+#                sample = F0_samples['sample'],
+#                unit = F0_samples['unit']                
 #        ),
+## merge_bams
 #        expand(os.path.join(config["working_dir"], "bams/F0/merged/{sample}.bam"),
-#                sample = list(set(samples['sample']))
+#                sample = config["F0_lines"]
 #        ),
+## samtools_index
+#       expand(os.path.join(config["working_dir"], "bams/F0/merged/{sample}.bam.bai"),
+#                sample = config["F0_lines"]
+#        ),
+################
+## 03_F0_calling.smk
+################
+## haplotype_caller
 #        expand(os.path.join(config["working_dir"], "vcfs/F0/gvcfs/{sample}/{contig}.g.vcf"),
-#                sample = list(set(samples['sample'])),
+#                sample = config["F0_lines"],
 #                contig = get_contigs(),
 #        ),
+## combine_calls
 #        expand(os.path.join(config["working_dir"], "vcfs/F0/combined/all.{contig}.g.vcf.gz"),
 #                contig = get_contigs(),
 #        ),
+## genotype_variants
 #        expand(os.path.join(config["working_dir"], "vcfs/F0/genotyped/all.{contig}.vcf.gz"),
 #                contig = get_contigs(),
 #        ),
 #        expand(os.path.join(config["working_dir"], "vcfs/F0/final/all.vcf.gz")),
 ################
-# 04_F2_mapping.smk
+## 04_F2_mapping.smk
 ################
-#        expand(os.path.join(config["working_dir"], "sams/F2/mapped/{sample}.sam"),
-#                sample = F2_samples['LANE']
+## copy_f2_seq_data
+#        expand(os.path.join(config["working_dir"], "fastqs/F2/{sample}_{pair}.txt.gz"),
+#                sample = F2_samples['SAMPLE'],
+#                pair = PAIRS
 #        ),
+## bwa_mem2_mem
+#        expand(os.path.join(config["working_dir"], "sams/F2/bwamem2/mapped/{sample}.sam"),
+#                sample = F2_samples['SAMPLE']
+#        ),
+## sort_sam_f2
 #        expand(os.path.join(config["working_dir"], "bams/F2/bwamem2/sorted/{sample}.bam"),
-#                sample = F2_samples['LANE']
+#                sample = F2_samples['SAMPLE']
 #        ),
+## mark_duplicates_f2
+#        expand(os.path.join(config["working_dir"], "bams/F2/bwamem2/marked/{sample}.bam"),
+#                sample = F2_samples['SAMPLE']
+#        ),
+## samtools_index_f2
 #        expand(os.path.join(config["working_dir"], "bams/F2/bwamem2/marked/{sample}.bam.bai"),
-#                sample = F2_samples['LANE']
-#        ),
+#                sample = F2_samples['SAMPLE']
+#        )
 ################
-# 05_F2_recomb_blocks.smk
+## 05_F2_recomb_blocks.smk
 ################
-#        expand(os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/all_sites/{contig}.csv"),
-#                contig = get_contigs()
-#        ),
-#        expand(os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/divergent/{contig}.txt"),
-#                contig = get_contigs()
-#        ),
-#        os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/final/all.txt"),
-#        expand(os.path.join(config["working_dir"], "dp4s/batch_01/bwamem2/{sample}.dp4.txt"),
-#                sample = F2_samples['LANE']
-#        ),
-#        expand(os.path.join(config["working_dir"], "dpABs/batch_01/bwamem2/{sample}.txt"),
-#                sample = F2_samples['LANE']
-#        ),
-        os.path.join(config["data_store_dir"], "hmm_output_batch_01.txt"),
+# get_homozygous_sites
+        expand(os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/homo_all/{sample}.csv"),
+                sample = config["F0_lines"]
+        ),
+# get_divergent_sites
+        os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/homo_divergent/all.txt"),
+# bam_readcount
+        expand(os.path.join(config["working_dir"], "dp4s/batch_01/bwamem2/{sample}.dp4.txt"),
+                sample = F2_samples['SAMPLE']
+        ),
+# make_dp_AB
+        expand(os.path.join(config["working_dir"], "dpABs/batch_01/bwamem2/{sample}.txt"),
+                sample = F2_samples['SAMPLE']
+        ),
+# run_rc_block
+        os.path.join(config["data_store_dir"], "hmm_output_batch_01_corrected.txt"),
 
 ##### Modules #####
 

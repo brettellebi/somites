@@ -1,5 +1,9 @@
-samples:
-    config/samples.txt
+F0_samples:
+    config/F0_samples.txt
+# To ensure that they remain in the right order for certain rules, e.g. `get_divergent_sites`:
+F0_lines: 
+    - "Cab"
+    - "Kaga"
 F2_samples:
     config/F2_samples.txt
 F2_valid_lanes:
@@ -10,7 +14,6 @@ groups:
 contigs:
     - 1
     - 24
-
 ref:
     # ensembl species name
     species: oryzias_latipes

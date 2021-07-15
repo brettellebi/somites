@@ -13,6 +13,26 @@ output:
     highlight: pygments
 ---
 
+# 15 July 2021
+
+Notes for Ali:
+
+* Tried sample 171 again (the one you uploaded again), and it failed again at the alignment stage with the following error:
+
+```{bash, eval = F}
+[mem_sam_pe_batch_post] paired reads have different names: "�0�����O&�����x�7�Z�HĻ�@�%Q�ü��", "ST-K00119:220:HKNVLBBXY:7:1101:1661:1138"
+```
+
+* Fixed the sample names so that they don't include the pool number at the beginning, e.g. sample 171 is no longer called 7171
+
+* Cab has 15M homozygous sites, whereas Kaga only has 5M. Reason: Cab aligns better to HdrR, so there are many more 0/0 calls?
+
+* 3.48M homozygous sites after joining Cab and Kaga homozygous site DFs.
+
+* 2.7M homozygous divergent sites.
+
+* There was an error in the way the homozygous sites were initially extracted, which massively distorted the recombination blocks.
+
 # 13 July 2021
 
 ## Attendees:

@@ -15,14 +15,8 @@ rule replace_rg:
         os.path.join(config["working_dir"], "sams/F0/mapped/{sample}-{unit}.sam")
     output:
         os.path.join(config["working_dir"], "sams/F0/grouped/{sample}-{unit}.sam")
-#    log:
-#        os.path.join(config["working_dir"], "log/replace_rg/{sample}_{unit}.log")
     params:
         "RGLB=lib1 RGPL=ILLUMINA RGPU={unit} RGSM={sample}"
-    # optional specification of memory usage of the JVM that snakemake will respect with global
-    # resource restrictions (https://snakemake.readthedocs.io/en/latest/snakefiles/rules.html#resources)
-    # and which can be used to request RAM during cluster job submission as `{resources.mem_mb}`:
-    # https://snakemake.readthedocs.io/en/latest/executing/cluster.html#job-properties
     resources:
         mem_mb=1024
     wrapper:
@@ -33,15 +27,9 @@ rule sort_sam:
         os.path.join(config["working_dir"], "sams/F0/grouped/{sample}-{unit}.sam")
     output:
         os.path.join(config["working_dir"], "bams/F0/sorted/{sample}-{unit}.bam")
-#    log:
-#        os.path.join(config["working_dir"], "log/sort_sam/{sample}-{unit}.log")
     params:
         sort_order="coordinate",
         extra=lambda wildcards: "VALIDATION_STRINGENCY=LENIENT TMP_DIR=" + config["tmp_dir"] # optional: Extra arguments for picard.
-    # optional specification of memory usage of the JVM that snakemake will respect with global
-    # resource restrictions (https://snakemake.readthedocs.io/en/latest/snakefiles/rules.html#resources)
-    # and which can be used to request RAM during cluster job submission as `{resources.mem_mb}`:
-    # https://snakemake.readthedocs.io/en/latest/executing/cluster.html#job-properties
     resources:
         mem_mb=1024
     wrapper:
@@ -50,20 +38,11 @@ rule sort_sam:
 rule mark_duplicates:
     input:
         os.path.join(config["working_dir"], "bams/F0/sorted/{sample}-{unit}.bam")
-    # optional to specify a list of BAMs; this has the same effect
-    # of marking duplicates on separate read groups for a sample
-    # and then merging
     output:
         bam=os.path.join(config["working_dir"], "bams/F0/marked/{sample}-{unit}.bam"),
         metrics=os.path.join(config["working_dir"], "bams/F0/marked/{sample}-{unit}.metrics.txt")
-#    log:
-#        os.path.join(config["working_dir"], "log/mark_duplicates/{sample}-{unit}.log")
     params:
         lambda wildcards: "REMOVE_DUPLICATES=true TMP_DIR=" + config["tmp_dir"]
-    # optional specification of memory usage of the JVM that snakemake will respect with global
-    # resource restrictions (https://snakemake.readthedocs.io/en/latest/snakefiles/rules.html#resources)
-    # and which can be used to request RAM during cluster job submission as `{resources.mem_mb}`:
-    # https://snakemake.readthedocs.io/en/latest/executing/cluster.html#job-properties
     resources:
         mem_mb=1024
     wrapper:
@@ -72,18 +51,12 @@ rule mark_duplicates:
 rule merge_bams:
     input:
         expand(os.path.join(config["working_dir"], "bams/F0/marked/{{sample}}-{unit}.bam"),
-            unit = list(set(samples['unit']))
+            unit = list(set(F0_samples['unit']))
         )
     output:
         os.path.join(config["working_dir"], "bams/F0/merged/{sample}.bam")
-#    log:
-#        os.path.join(config["working_dir"], "log/picard_mergesamfiles/{sample}.log")
     params:
         lambda wildcards: "VALIDATION_STRINGENCY=LENIENT TMP_DIR=" + config["tmp_dir"]
-    # optional specification of memory usage of the JVM that snakemake will respect with global
-    # resource restrictions (https://snakemake.readthedocs.io/en/latest/snakefiles/rules.html#resources)
-    # and which can be used to request RAM during cluster job submission as `{resources.mem_mb}`:
-    # https://snakemake.readthedocs.io/en/latest/executing/cluster.html#job-properties
     resources:
         mem_mb=1024
     wrapper:
@@ -94,7 +67,5 @@ rule samtools_index:
         os.path.join(config["working_dir"], "bams/F0/merged/{sample}.bam")
     output:
         os.path.join(config["working_dir"], "bams/F0/merged/{sample}.bam.bai")
-#    params:
-#        "" # optional params string
     wrapper:
         "0.74.0/bio/samtools/index"
