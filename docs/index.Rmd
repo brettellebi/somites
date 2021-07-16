@@ -75,14 +75,26 @@ head(df_list$`5000`)
 
 Plot `ratio` against `state`
 
-```{r}
+```{r, eval = F}
 df_list$`5000` %>%
   dplyr::mutate(state = factor(state, levels = 0:2)) %>% 
   ggplot() +
     geom_boxplot(aes(state, ratio)) +
     guides(colour = "none") +
     theme_bw()
+# Save
+ggsave(here::here("docs/plots/20210716_ratio_v_state.png"),
+       device = "png",
+       width = 8,
+       height = 5,
+       units = "in",
+       dpi = 400)
 ```
+
+```{r}
+knitr::include_graphics(here::here("docs/plots/20210716_ratio_v_state.png"))
+```
+
 
 This shows that state `0` is associated with a *low* ratio of Cab to Kaga, and therefore a call of *Kaga*.
 Vice versa for state `2` and *Cab*. 
