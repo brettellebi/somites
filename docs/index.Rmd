@@ -24,20 +24,41 @@ source(here::here("docs/source.R"))
 ## Read in data
 
 ```{r}
-in_file = "/nfs/research/birney/users/ian/somites/recombination_blocks/hmm_output_batch_01_corrected.txt"
+in_dir = "/nfs/research/birney/users/ian/somites/recombination_blocks"
 
-data = readr::read_tsv(in_file,
-                       col_types = "c--i-ii")
+in_files = list.files(in_dir, pattern = "20210716_hmm_output_batch_01", full.names = T)
 
-# Create column with lane
-bin_length = 5000
+# Read into list
+data_list = purrr::map(in_files, function(FILE){
+  out = readr::read_tsv(FILE,
+                        col_types = "ciiidii")
+})
+# Set names as bin length
+names(data_list) = basename(in_files) %>% 
+  stringr::str_split("_", simplify = T) %>% 
+  subset(select = 7) %>% 
+  stringr::str_remove(".txt")
+# Reorder
+data_list = data_list[order(as.numeric(names(data_list)))]
 
-df = data %>% 
-  dplyr::mutate(LANE = basename(sample) %>% 
-                  stringr::str_remove(".txt") %>% 
-                  as.numeric(.),
-                BIN_START = bin * bin_length - bin_length + 1,
-                BIN_END = bin * bin_length) 
+counter = 0
+df_list = purrr::map(data_list, function(data){
+  counter <<- counter + 1
+  # set bin length
+  bin_length = as.numeric(names(data_list)[counter])
+  # add bin start and end coordinates
+  df = data %>% 
+    dplyr::mutate(LANE = basename(sample) %>% 
+                    stringr::str_remove(".txt") %>% 
+                    as.numeric(.),
+                  BIN_LENGTH = bin_length,
+                  BIN_START = bin * bin_length - bin_length + 1,
+                  BIN_END = bin * bin_length,
+                  BIN_LENGTH_KB = BIN_LENGTH / 1e3,
+                  READS_PER_BIN = mat + pat)
+  return(df)
+})
+
 ```
 
 ## Look at relationship between `ratio` and `state`
@@ -47,10 +68,7 @@ To determine which state is associated with which parental strain.
 In the pipeline, we set *Cab* as F0_1 and *Kaga* as F0_2. 
 
 ```{r}
-full_data = readr::read_tsv(in_file,
-                            col_types = "ciiidii")
-
-head(full_data)
+head(df_list$`5000`)
 ```
 
 `ratio = mat / (mat + pat)`, where `mat` = Cab and `pat` = Kaga.
@@ -58,7 +76,7 @@ head(full_data)
 Plot `ratio` against `state`
 
 ```{r}
-full_data %>%
+df_list$`5000` %>%
   dplyr::mutate(state = factor(state, levels = 0:2)) %>% 
   ggplot() +
     geom_boxplot(aes(state, ratio)) +
@@ -66,32 +84,40 @@ full_data %>%
     theme_bw()
 ```
 
-This shows that state `0` is associated with a *low* ratio of Cab to Kaga, and therefore a call of *Kaga*. Vice versa: state `2` and *Cab*. 
+This shows that state `0` is associated with a *low* ratio of Cab to Kaga, and therefore a call of *Kaga*.
+Vice versa for state `2` and *Cab*. 
 
 ## Recode state to put in correct order
 
 ```{r}
-df = df %>% 
-  dplyr::mutate(state = dplyr::recode(state,
-                                      `0` = 2,
-                                      `1` = 1,
-                                      `2` = 0))
+df_list = purrr::map(df_list, function(df){
+  df = df %>% 
+    dplyr::mutate(state = dplyr::recode(state,
+                                        `0` = 2,
+                                        `1` = 1,
+                                        `2` = 0))
+})
 ```
 
 
 # Read counts per bin
 
 ```{r}
-full_data %>% 
-  # Get total read counts per bin
-  dplyr::mutate(total = mat + pat ) %>% 
-  # Plot
-  ggplot(aes()) +
-    geom_violin() +
-    geom_boxplot(width = .3) +
-    ggbeeswarm::geom_quasirandom()
-```
+# How many bins in each data frame? 
+purrr::map_int(df_list, nrow)
 
+# Plot
+df_list %>% 
+  dplyr::bind_rows() %>% 
+  dplyr::slice_sample(n = 1e5) %>% 
+  dplyr::mutate(BIN_LENGTH_KB = factor(BIN_LENGTH_KB, levels = unique(BIN_LENGTH_KB)[order(unique(BIN_LENGTH_KB))])) %>% 
+  # Plot
+  ggplot(aes(BIN_LENGTH_KB, log10(READS_PER_BIN), fill = BIN_LENGTH_KB)) +
+    geom_boxplot() +
+    theme_bw() +
+    scale_fill_manual(values = c("#778DA9", "#415A77", "#1B263B", "#0D1B2A")) +
+    guides(fill = "none")
+```
 
 # Proportion of genome and sites called as a given state
 
@@ -119,6 +145,9 @@ total_hdrr_bases = sum(med_chr_lens$end)
 ### Get total number of bases covered by each state
 
 ```{r}
+# Take 5kb DF
+df = df_list$`5000`
+
 # Set states to loop over
 states = 0:2
 names(states) = states
@@ -268,7 +297,7 @@ base_cov_df_chr %>%
 ```
 
 
-### Ratio of called sites
+### Proportion of *sites* covered by each state
 
 #### Genome-wide
 
@@ -363,8 +392,7 @@ df %>%
     
 ```
 
-
-### Karyoplot
+# Karyoplot
 
 Make custom chromosome scaffold
 
@@ -376,104 +404,133 @@ med_genome = regioneR::toGRanges(med_chr_lens)
 Convert data to list of block boundaries for each LANE
 
 ```{r, eval = F}
-
-block_bounds_list = df %>% 
-  # loop over LANE
-  split(., f = .$LANE) %>% 
-  purrr::map(., function(LANE){
-    # loop over CHR
-    LANE %>% 
-      split(., f = .$chr) %>% 
-      purrr::map(., function(CHR){
-        # Get lengths of each contiguous state
-        cont_len = rle(CHR$state)
-        
-        # Get cumulative sum of those lengths
-        cum_blocks = cumsum(cont_len$lengths)
-        
-        # Get rows that correspond to block changes
-        block_bounds = CHR[cum_blocks, ] %>% 
-          # Add end of previous black
-          dplyr::mutate(END_PREV = dplyr::lag(BIN_END)) %>% 
-          # Replace the NA in the first row with `1`
-          dplyr::mutate(END_PREV = tidyr::replace_na(END_PREV, 1)) %>% 
-          # Add colour
-          dplyr::mutate(COLOUR = dplyr::recode(state,
-                                               !!!pal_hom_het_2[-which(names(pal_hom_het_2) == "UNCLASSIFIED")])) 
-        
-      }) %>% 
-          dplyr::bind_rows()
-    
+bb_list = purrr::map(df_list, function(df){
+  # loop over different bin lengths
+  block_bounds_list = df %>% 
+    # loop over LANE
+    split(., f = .$LANE) %>% 
+    purrr::map(., function(LANE){
+      # loop over CHR
+      LANE %>% 
+        split(., f = .$chr) %>% 
+        purrr::map(., function(CHR){
+          # Get lengths of each contiguous state
+          cont_len = rle(CHR$state)
+          
+          # Get cumulative sum of those lengths
+          cum_blocks = cumsum(cont_len$lengths)
+          
+          # Get rows that correspond to block changes
+          block_bounds = CHR[cum_blocks, ] %>% 
+            # Add end of previous black
+            dplyr::mutate(END_PREV = dplyr::lag(BIN_END)) %>% 
+            # Replace the NA in the first row with `1`
+            dplyr::mutate(END_PREV = tidyr::replace_na(END_PREV, 1)) %>% 
+            # Add colour
+            dplyr::mutate(COLOUR = dplyr::recode(state,
+                                                 !!!pal_hom_het_2[-which(names(pal_hom_het_2) == "UNCLASSIFIED")])) 
+          
+        }) %>% 
+            dplyr::bind_rows()
+      
+  })
 })
+
+
 
 ```
 
 ```{r, eval = F, echo = F}
-saveRDS(block_bounds_list, here::here("data/20210716_block_bounds_list.rds"))
+saveRDS(bb_list, here::here("data/20210716_bb_list.rds"))
 ```
 
 ```{r, include = F}
-block_bounds_list = readRDS(here::here("data/20210716_block_bounds_list.rds"))
+bb_list = readRDS(here::here("data/20210716_bb_list.rds"))
 ```
 
 Extract y cutoff points for each lane
 
 ```{r}
-lane_cutoffs = cut(0:1, breaks = length(block_bounds_list)) %>% 
-  levels(.) %>% 
-  data.frame(lower = as.numeric( sub("\\((.+),.*", "\\1", .) ),
-             upper = as.numeric( sub("[^,]*,([^]]*)\\]", "\\1", .) )) %>% 
-  dplyr::arrange(dplyr::desc(lower))
+lc_list = purrr::map(bb_list, function(block_bounds_list){
+  lane_cutoffs = cut(0:1, breaks = length(block_bounds_list)) %>% 
+    levels(.) %>% 
+    data.frame(lower = as.numeric( sub("\\((.+),.*", "\\1", .) ),
+               upper = as.numeric( sub("[^,]*,([^]]*)\\]", "\\1", .) )) %>% 
+    dplyr::arrange(dplyr::desc(lower))
+  return(lane_cutoffs)
+})
 ```
 
-Plot karyoplot
+Plot karyoplots
 
 ```{r, eval = F}
-file_out = here::here("docs/plots/20210716_karyoplot.png")
-
-png(file=file_out,
-    width=13000,
-    height=13000,
-    units = "px",
-    res = 300)
-
-# Plot ideogram
-kp = karyoploteR::plotKaryotype(med_genome, plot.type = 5)
-# Add data background
-#karyoploteR::kpDataBackground(kp, r0=0, r1 = 1, color = "white")
-
-# Add rectangles in loop
-counter = 0
-purrr::map(block_bounds_list, function(LANE){
-  # Add to counter
-  counter <<- counter + 1
-  # Add rectangles
-  karyoploteR::kpRect(kp,
-                      chr = LANE$chr,
-                      x0 = LANE$END_PREV,
-                      x1 = LANE$BIN_END,
-                      y0 = lane_cutoffs[counter, ] %>% 
-                        dplyr::pull(lower),
-                      y1 = lane_cutoffs[counter, ] %>% 
-                        dplyr::pull(upper),
-                      col = LANE$COLOUR,
-                      border = NA)
-  # Add axis label
-  karyoploteR::kpAddLabels(kp, labels = unique(LANE$LANE),
-                           r0 = lane_cutoffs[counter, ] %>% 
-                             dplyr::pull(lower),
-                           r1 = lane_cutoffs[counter, ] %>% 
-                             dplyr::pull(upper),
-                           cex = 0.5)
+counter_A = 0
+purrr::map(bb_list, function(block_bounds_list){
+  counter_A <<- counter_A + 1
+  # set file name
+  file_name = paste("20210716_karyoplot_", names(bb_list)[counter_A], ".png", sep = "")
+  file_out = here::here("docs/plots", file_name)
+  
+  # Get lane cutoffs
+  lane_cutoffs = lc_list[[counter_A]]
+  
+  png(file=file_out,
+      width=13000,
+      height=13000,
+      units = "px",
+      res = 300)
+  
+  # Plot ideogram
+  kp = karyoploteR::plotKaryotype(med_genome, plot.type = 5)
+  # Add data background
+  #karyoploteR::kpDataBackground(kp, r0=0, r1 = 1, color = "white")
+  
+  # Add rectangles in loop
+  counter_B = 0
+  purrr::map(block_bounds_list, function(LANE){
+    # Add to counter_B
+    counter_B <<- counter_B + 1
+    # Add rectangles
+    karyoploteR::kpRect(kp,
+                        chr = LANE$chr,
+                        x0 = LANE$END_PREV,
+                        x1 = LANE$BIN_END,
+                        y0 = lane_cutoffs[counter_B, ] %>% 
+                          dplyr::pull(lower),
+                        y1 = lane_cutoffs[counter_B, ] %>% 
+                          dplyr::pull(upper),
+                        col = LANE$COLOUR,
+                        border = NA)
+    # Add axis label
+    karyoploteR::kpAddLabels(kp, labels = unique(LANE$LANE),
+                             r0 = lane_cutoffs[counter_B, ] %>% 
+                               dplyr::pull(lower),
+                             r1 = lane_cutoffs[counter_B, ] %>% 
+                               dplyr::pull(upper),
+                             cex = 0.5)
+  })
+  
+  
+  dev.off()  
 })
 
 
-dev.off()
-
 ```
 
-```{r}
-knitr::include_graphics(here::here("docs/plots/20210716_karyoplot.png"))
+```{r, fig.cap = "Bin length: 5 kb"}
+knitr::include_graphics(here::here("docs/plots/20210716_karyoplot_5000.png"))
+```
+
+```{r, fig.cap = "Bin length: 10 kb"}
+knitr::include_graphics(here::here("docs/plots/20210716_karyoplot_10000.png"))
+```
+
+```{r, fig.cap = "Bin length: 15 kb"}
+knitr::include_graphics(here::here("docs/plots/20210716_karyoplot_15000.png"))
+```
+
+```{r, fig.cap = "Bin length: 20 kb"}
+knitr::include_graphics(here::here("docs/plots/20210716_karyoplot_20000.png"))
 ```
 
 # Realised relationship matrix

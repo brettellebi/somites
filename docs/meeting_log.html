@@ -11,7 +11,7 @@
 
 <meta name="author" content="Ian Brettell" />
 
-<meta name="date" content="2021-07-15" />
+<meta name="date" content="2021-07-16" />
 
 <title>Meeting log</title>
 
@@ -422,7 +422,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Meeting log</h1>
 <h4 class="author">Ian Brettell</h4>
-<h4 class="date">2021-07-15</h4>
+<h4 class="date">2021-07-16</h4>
 
 </div>
 
@@ -435,7 +435,11 @@ div.tocify {
 </ul>
 <div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">[mem_sam_pe_batch_post]</span> paired reads have different names: <span class="st">&quot;�0�����O&amp;�����x�7�Z�HĻ�@�%Q�ü��&quot;</span>, <span class="st">&quot;ST-K00119:220:HKNVLBBXY:7:1101:1661:1138&quot;</span></span></code></pre></div>
 <ul>
-<li>Fixed the sample names so that they don’t include the pool number at the beginning, e.g. sample 171 is no longer called 7171</li>
+<li><p>Fixed the sample names so that they don’t include the pool number at the beginning, e.g. sample 171 is no longer called 7171</p></li>
+<li><p>Cab has 15M homozygous sites, whereas Kaga only has 5M. Reason: Cab aligns better to HdrR, so there are many more 0/0 calls?</p></li>
+<li><p>3.48M homozygous sites after joining Cab and Kaga homozygous site DFs.</p></li>
+<li><p>2.7M homozygous divergent sites.</p></li>
+<li><p>There was an error in the way the homozygous sites were initially extracted, which massively distorted the recombination blocks.</p></li>
 </ul>
 </div>
 <div id="july-2021-1" class="section level1">
