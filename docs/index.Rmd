@@ -14,7 +14,7 @@ output:
 ---
 
 
-# Plot recombination blocks
+# Preliminary
 
 ```{r, message = F, warning = F}
 library(here)
@@ -24,7 +24,7 @@ source(here::here("docs/source.R"))
 ## Read in data
 
 ```{r}
-in_file = "~/Desktop/hmm_output_batch_01.txt"
+in_file = "/nfs/research/birney/users/ian/somites/recombination_blocks/hmm_output_batch_01_corrected.txt"
 
 data = readr::read_tsv(in_file,
                        col_types = "c--i-ii")
@@ -40,11 +40,64 @@ df = data %>%
                 BIN_END = bin * bin_length) 
 ```
 
-## Plot
+## Look at relationship between `ratio` and `state`
 
-### Proportion of genome covered by each site
+To determine which state is associated with which parental strain.
 
-#### Read in total medaka genome count
+In the pipeline, we set *Cab* as F0_1 and *Kaga* as F0_2. 
+
+```{r}
+full_data = readr::read_tsv(in_file,
+                            col_types = "ciiidii")
+
+head(full_data)
+```
+
+`ratio = mat / (mat + pat)`, where `mat` = Cab and `pat` = Kaga.
+
+Plot `ratio` against `state`
+
+```{r}
+full_data %>%
+  dplyr::mutate(state = factor(state, levels = 0:2)) %>% 
+  ggplot() +
+    geom_boxplot(aes(state, ratio)) +
+    guides(colour = "none") +
+    theme_bw()
+```
+
+This shows that state `0` is associated with a *low* ratio of Cab to Kaga, and therefore a call of *Kaga*. Vice versa: state `2` and *Cab*. 
+
+## Recode state to put in correct order
+
+```{r}
+df = df %>% 
+  dplyr::mutate(state = dplyr::recode(state,
+                                      `0` = 2,
+                                      `1` = 1,
+                                      `2` = 0))
+```
+
+
+# Read counts per bin
+
+```{r}
+full_data %>% 
+  # Get total read counts per bin
+  dplyr::mutate(total = mat + pat ) %>% 
+  # Plot
+  ggplot(aes()) +
+    geom_violin() +
+    geom_boxplot(width = .3) +
+    ggbeeswarm::geom_quasirandom()
+```
+
+
+# Proportion of genome and sites called as a given state
+
+## Proportion of *genome* covered by each state
+
+### Read in total medaka genome count
 
 ```{r}
 # Get chromosome lengths
@@ -63,7 +116,7 @@ med_chr_lens = med_chr_lens %>%
 total_hdrr_bases = sum(med_chr_lens$end)
 ```
 
-#### Get total number of bases covered by each state
+### Get total number of bases covered by each state
 
 ```{r}
 # Set states to loop over
@@ -181,11 +234,11 @@ base_cov_df_chr = df %>%
 ```
 
 ```{r, eval = F}
-saveRDS(base_cov_df_chr, here::here("data/20210629_base_cov_per_chr.rds"))
+saveRDS(base_cov_df_chr, here::here("data/20210716_base_cov_per_chr.rds"))
 ```
 
 ```{r, include = F}
-base_cov_df_chr = readRDS(here::here("data/20210629_base_cov_per_chr.rds"))
+base_cov_df_chr = readRDS(here::here("data/20210716_base_cov_per_chr.rds"))
 ```
 
 Plot
@@ -257,7 +310,7 @@ df %>%
 ```
 
 ```{r}
-ggsave(here::here("plots/20210618_gt_freqs_sites.png"),
+ggsave(here::here("plots/20210716_gt_freqs_sites.png"),
        device = "png",
        width = 10,
        height = 5.8,
@@ -356,11 +409,11 @@ block_bounds_list = df %>%
 ```
 
 ```{r, eval = F, echo = F}
-saveRDS(block_bounds_list, here::here("data/block_bounds_list.rds"))
+saveRDS(block_bounds_list, here::here("data/20210716_block_bounds_list.rds"))
 ```
 
 ```{r, include = F}
-block_bounds_list = readRDS(here::here("data/block_bounds_list.rds"))
+block_bounds_list = readRDS(here::here("data/20210716_block_bounds_list.rds"))
 ```
 
 Extract y cutoff points for each lane
@@ -376,7 +429,7 @@ lane_cutoffs = cut(0:1, breaks = length(block_bounds_list)) %>%
 Plot karyoplot
 
 ```{r, eval = F}
-file_out = here::here("plots/20210618_karyoplot.png")
+file_out = here::here("docs/plots/20210716_karyoplot.png")
 
 png(file=file_out,
     width=13000,
@@ -419,13 +472,8 @@ dev.off()
 
 ```
 
-```{r, include = F}
-file_out = here::here("plots/20210618_karyoplot.png")
-file.copy(file_out, here::here("docs"), overwrite = T)
-```
-
 ```{r}
-knitr::include_graphics(here::here("docs/20210618_karyoplot.png"))
+knitr::include_graphics(here::here("docs/plots/20210716_karyoplot.png"))
 ```
 
 # Realised relationship matrix
@@ -483,4 +531,7 @@ dev.off()
 ```{r}
 knitr::include_graphics(here::here("docs/plots/20210713_rrm_heatmap.png"))
 ```
+
+
+
 

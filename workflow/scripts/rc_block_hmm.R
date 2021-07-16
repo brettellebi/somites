@@ -137,14 +137,14 @@ run_viterbi_and_plot <- function(all_binned) {
     invisible(lbin)
 }
 
-collect_chunked_data <- function(dp_files, index1, index2) {
+collect_chunked_data <- function(dp_files, index1, index2, bin_len = 5000) {
     l = list()
     for(x in index1:index2) {
         d = read.table(unlist(dp_files)[x])
         d = d[d[,1]!="MT",]
         d[,1] = as.numeric(as.character(d[,1]))
         d = d[order(d[,1], d[,2], d[,3]),]
-        all_binned = bin_all_chrs_and_plot(d, max_count=15, bin_len=5000)
+        all_binned = bin_all_chrs_and_plot(d, max_count=15, bin_len=bin_len)
         d = data.frame(unlist(dp_files)[x], all_binned)
         l[[x]] = d
         print(x)

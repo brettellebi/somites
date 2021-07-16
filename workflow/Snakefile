@@ -113,8 +113,9 @@ rule all:
                 sample = F2_samples['SAMPLE']
         ),
 # run_rc_block
-        os.path.join(config["data_store_dir"], "hmm_output_batch_01_corrected.txt"),
-
+        expand(os.path.join(config["data_store_dir"], "recombination_blocks/20210716_hmm_output_batch_01_binlen_{bin_length}.txt"),
+                bin_length = config["bin_length"]
+        )
 ##### Modules #####
 
 include: "rules/01_ref.smk"

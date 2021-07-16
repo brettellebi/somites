@@ -139,7 +139,9 @@ rule run_rc_block:
         ),
         source_code = "workflow/scripts/rc_block_hmm.R"
     output:
-        os.path.join(config["data_store_dir"], "hmm_output_batch_01_corrected.txt"),
+        os.path.join(config["data_store_dir"], "recombination_blocks/20210716_hmm_output_batch_01_binlen_{bin_length}.txt"),
+    params:
+        bin_length = lambda wildcards: wildcards.bin_length
     container:
         "docker://brettellebi/somite_f2:latest"
     script:
