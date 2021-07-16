@@ -529,8 +529,8 @@ div.tocify {
 <span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
 <span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">&quot;#778DA9&quot;</span>, <span class="st">&quot;#415A77&quot;</span>, <span class="st">&quot;#1B263B&quot;</span>, <span class="st">&quot;#0D1B2A&quot;</span>)) <span class="sc">+</span></span>
 <span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">guides</span>(<span class="at">fill =</span> <span class="st">&quot;none&quot;</span>)</span></code></pre></div>
-<pre><code>## Warning: Removed 60 rows containing non-finite values (stat_boxplot).</code></pre>
-<p><img src="index_files/figure-html/unnamed-chunk-12-1.svg" width="672" /></p>
+<pre><code>## Warning: Removed 70 rows containing non-finite values (stat_boxplot).</code></pre>
+<p><img src="index_files/figure-html/unnamed-chunk-7-1.svg" width="672" /></p>
 </div>
 <div id="proportion-of-genome-and-sites-called-as-a-given-state" class="section level1" number="3">
 <h1 number="3"><span class="header-section-number">3</span> Proportion of genome and sites called as a given state</h1>
@@ -615,7 +615,7 @@ div.tocify {
 <span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">guides</span>(<span class="at">colour =</span> <span class="st">&quot;none&quot;</span>, <span class="at">fill =</span> <span class="st">&quot;none&quot;</span>) <span class="sc">+</span></span>
 <span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">xlab</span>(<span class="st">&quot;Genotype&quot;</span>) <span class="sc">+</span></span>
 <span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ylab</span>(<span class="st">&quot;Proportion of reference bases covered&quot;</span>)</span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-15-1.svg" width="672" /></p>
+<p><img src="index_files/figure-html/unnamed-chunk-10-1.svg" width="672" /></p>
 <div id="by-chromosome" class="section level4" number="3.1.2.1">
 <h4 number="3.1.2.1"><span class="header-section-number">3.1.2.1</span> By chromosome</h4>
 <p>Process.</p>
@@ -686,7 +686,7 @@ div.tocify {
 <span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ylab</span>(<span class="st">&quot;Proportion of reference bases covered&quot;</span>) <span class="sc">+</span></span>
 <span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_wrap</span>(<span class="sc">~</span>CHR, <span class="at">nrow =</span> <span class="dv">4</span>, <span class="at">ncol =</span> <span class="dv">6</span>) <span class="sc">+</span></span>
 <span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-19-1.svg" width="1536" /></p>
+<p><img src="index_files/figure-html/unnamed-chunk-14-1.svg" width="1536" /></p>
 </div>
 </div>
 <div id="proportion-of-sites-covered-by-each-state" class="section level3" number="3.1.3">
@@ -727,7 +727,7 @@ div.tocify {
 <span id="cb18-32"><a href="#cb18-32" aria-hidden="true" tabindex="-1"></a>    <span class="fu">xlab</span>(<span class="st">&quot;Genotype&quot;</span>) <span class="sc">+</span></span>
 <span id="cb18-33"><a href="#cb18-33" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ylab</span>(<span class="st">&quot;Frequency&quot;</span>)</span></code></pre></div>
 <div class="figure">
-<img src="index_files/figure-html/unnamed-chunk-20-1.svg" alt="Frequency based on number of sites" width="672" />
+<img src="index_files/figure-html/unnamed-chunk-15-1.svg" alt="Frequency based on number of sites" width="672" />
 <p class="caption">
 Frequency based on number of sites
 </p>
@@ -781,7 +781,7 @@ Frequency based on number of sites
 <span id="cb20-38"><a href="#cb20-38" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_wrap</span>(<span class="sc">~</span>chr, <span class="at">nrow =</span> <span class="dv">4</span>, <span class="at">ncol =</span> <span class="dv">6</span>) <span class="sc">+</span></span>
 <span id="cb20-39"><a href="#cb20-39" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span></code></pre></div>
 <div class="figure">
-<img src="index_files/figure-html/unnamed-chunk-22-1.svg" alt="Frequency per-chromosome based on number of sites" width="1536" />
+<img src="index_files/figure-html/unnamed-chunk-17-1.svg" alt="Frequency per-chromosome based on number of sites" width="1536" />
 <p class="caption">
 Frequency per-chromosome based on number of sites
 </p>
