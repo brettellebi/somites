@@ -14,18 +14,24 @@ rule genome_faidx:
         config["ref_prefix"] + ".fasta",
     output:
         config["ref_prefix"] + ".fasta.fai",
-    wrapper:
-        "0.74.0/bio/samtools/faidx"
+    container:
+        config["samtools"]
+    shell:
+        """
+        samtools faidx {input[0]}  > {output[0]}
+        """
 
 rule genome_dict:
     input:
         config["ref_prefix"] + ".fasta"
     output:
         config["ref_prefix"] + ".dict",
-    conda:
-        "../envs/samtools_1.12.yaml"
+    container:
+        config["samtools"]
     shell:
-        "samtools dict {input} > {output}"
+        """
+        samtools dict {input} > {output}
+        """
 
 rule bwa_mem2_index:
     input:
@@ -35,6 +41,10 @@ rule bwa_mem2_index:
     params:
         prefix=lambda w, input: input[0]
     resources:
-        mem_mb=369000,
-    wrapper:
-        "v0.75.0/bio/bwa-mem2/index"
+        mem_mb=50000,
+    container:
+        config["bwa-mem2"]
+    shell:
+        """
+        bwa-mem2 index {params.prefix} {input[0]}
+        """

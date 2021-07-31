@@ -3,28 +3,25 @@ __default__:
   n: 1
   name: "{rule}.{wildcards}"
   queue: "standard"
-  outdir: "/hps/nobackup/birney/users/ian/somites/logs/{rule}"
-  outfile: "/hps/nobackup/birney/users/ian/somites/logs/{rule}/%J_{wildcards}.out"
-  error: "/hps/nobackup/birney/users/ian/somites/logs/{rule}/%J_{wildcards}.err"
+  outfile: "{log}"
 copy_f2_seq_data:
   queue: "datamover"
 bwa_mem2_index:
-  memory: 50000
-map_reads:
-  memory: 10000
-  n: 4
-replace_rg:
-  memory: 20000
-sort_sam:
-  memory: 20000
+  memory: {resources.mem_mb}
+map_reads_F0:
+  memory: "{resources.mem_mb}"
+  n: "{threads}"
+replace_rg_F0:
+  memory: "{resources.mem_mb}"
+sort_sam_F0:
+  memory: "{resources.mem_mb}"
+mark_duplicates_F0:
+  memory: "{resources.mem_mb}"
 haplotype_caller:
-  memory: 10000
+  memory: "{resources.mem_mb}"
 bwa_mem2_mem:
   memory: 10000
   n: 8
-map_F2:
-  memory: 10000
-  n: 4
 replace_rg_f2:
   memory: 20000
 sort_sam_f2:
@@ -35,3 +32,5 @@ make_dp_AB:
   memory: 10000
 run_rc_block:
     memory: 50000
+bam_readcount_F0:
+  memory: 10000

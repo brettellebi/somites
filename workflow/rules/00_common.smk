@@ -41,13 +41,13 @@ PAIRS = ["1", "2"]
 ## Helper functions
 #######################
 
-def get_fastq(wildcards):
+def get_fastq_F0(wildcards):
     """Get fastq files of given sample-unit."""
-    return samples.loc[(wildcards.sample, wildcards.unit), ["fq1", "fq2"]].dropna().tolist()
+    return F0_samples.loc[(wildcards.F0_sample, wildcards.unit), ["fq1", "fq2"]].dropna().tolist()
 
 def get_fastq_F2(wildcards):
     """Get fastq files of given sample-unit."""
-    return F2_samples.loc[(wildcards.sample), ["fq1", "fq2"]].dropna().tolist()
+    return F2_samples.loc[(wildcards.F2_sample), ["fq1", "fq2"]].dropna().tolist()
 
 def get_contigs(start = config["contigs"][0], end = config["contigs"][1]):
     """Get list of chromosomes."""

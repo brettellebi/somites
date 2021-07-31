@@ -13,7 +13,6 @@ output:
     highlight: pygments
 ---
 
-
 # Preliminary
 
 ```{r, message = F, warning = F}
@@ -91,7 +90,7 @@ ggsave(here::here("docs/plots/20210716_ratio_v_state.png"),
        dpi = 400)
 ```
 
-```{r}
+```{r, out.width='80%'}
 knitr::include_graphics(here::here("docs/plots/20210716_ratio_v_state.png"))
 ```
 
@@ -130,6 +129,37 @@ df_list %>%
     scale_fill_manual(values = c("#778DA9", "#415A77", "#1B263B", "#0D1B2A")) +
     guides(fill = "none")
 ```
+
+## Read counts by proportion of Kaga
+
+```{r}
+df_list %>% 
+  dplyr::bind_rows() %>% 
+  dplyr::slice_sample(n = 1e5) %>% 
+  dplyr::mutate(PROP_KAGA = pat / READS_PER_BIN ) %>% 
+  # Plot
+  ggplot(aes(READS_PER_BIN, PROP_KAGA)) +
+    geom_point(alpha = 0.2) +
+    theme_bw() +
+    facet_grid(cols = vars(BIN_LENGTH)) +
+#    scale_colour_manual(values = c("#778DA9", "#415A77", "#1B263B", "#0D1B2A")) +
+    guides(fill = "none")
+
+# Limit to bins with 0-100 reads
+df_list %>% 
+  dplyr::bind_rows() %>% 
+  dplyr::slice_sample(n = 1e5) %>% 
+  dplyr::mutate(PROP_KAGA = pat / READS_PER_BIN ) %>% 
+  # Plot
+  ggplot(aes(READS_PER_BIN, PROP_KAGA)) +
+    geom_point(alpha = 0.2) +
+    theme_bw() +
+    facet_grid(cols = vars(BIN_LENGTH)) +
+#    scale_colour_manual(values = c("#778DA9", "#415A77", "#1B263B", "#0D1B2A")) +
+    guides(fill = "none") +
+    xlim(0,100)
+```
+
 
 # Proportion of genome and sites called as a given state
 

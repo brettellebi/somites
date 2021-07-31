@@ -3,10 +3,10 @@
 #        reads=get_fastq_F2,
 #        idx=rules.bwa_mem2_index.output,
 #    output:
-#        os.path.join(config["working_dir"], "bams/F2/bwamem2/sorted/{sample}.bam"),
+#        os.path.join(config["working_dir"], "bams/F2/bwamem2/sorted/{F2_sample}.bam"),
 #    params:
 #        index=lambda wildcards: config["ref_prefix"] + ".fasta",
-#        extra=r"-R '@RG\tID:{sample}\tSM:{sample}'",
+#        extra=r"-R '@RG\tID:{F2_sample}\tSM:{F2_sample}'",
 #        sort="samtools",
 #        sort_order="coordinate",
 #        sort_extra=""
@@ -20,7 +20,7 @@ rule copy_f2_seq_data:
     input:
         get_fastq_F2,
     output:
-        expand(os.path.join(config["working_dir"], "fastqs/F2/{{sample}}_{pair}.txt.gz"),
+        expand(os.path.join(config["working_dir"], "fastqs/F2/{{F2_sample}}_{pair}.txt.gz"),
             pair = PAIRS
         ),
     shell:
@@ -31,17 +31,17 @@ rule copy_f2_seq_data:
 
 rule bwa_mem2_mem:
     input:
-        reads=expand(os.path.join(config["working_dir"], "fastqs/F2/{{sample}}_{pair}.txt.gz"),
+        reads=expand(os.path.join(config["working_dir"], "fastqs/F2/{{F2_sample}}_{pair}.txt.gz"),
             pair = PAIRS
         ),
         idx=rules.bwa_mem2_index.output,
     output:
-        os.path.join(config["working_dir"], "sams/F2/bwamem2/mapped/{sample}.sam"),
+        os.path.join(config["working_dir"], "sams/F2/bwamem2/mapped/{F2_sample}.sam"),
     params:
         index=lambda wildcards: config["ref_prefix"] + ".fasta",
-        extra=r"-R '@RG\tID:{sample}\tSM:{sample}'",
+        extra=r"-R '@RG\tID:{F2_sample}\tSM:{F2_sample}'",
     container:
-        "docker://quay.io/biocontainers/bwa-mem2:2.2.1--he513fc3_0"
+        config["bwa-mem2"]
     threads: 8
     shell:
         """
@@ -59,14 +59,14 @@ rule bwa_mem2_mem:
 
 rule sort_sam_f2:
     input:
-        os.path.join(config["working_dir"], "sams/F2/bwamem2/mapped/{sample}.sam"),
+        os.path.join(config["working_dir"], "sams/F2/bwamem2/mapped/{F2_sample}.sam"),
     output:
-        os.path.join(config["working_dir"], "bams/F2/bwamem2/sorted/{sample}.bam"),
+        os.path.join(config["working_dir"], "bams/F2/bwamem2/sorted/{F2_sample}.bam"),
     params:
         sort_order="coordinate",
         extra=lambda wildcards: "VALIDATION_STRINGENCY=LENIENT TMP_DIR=" + config["tmp_dir"],
     container:
-        "docker://quay.io/biocontainers/picard:2.9.2--2"
+        config["picard"]
     resources:
         mem_mb=1024
     shell:
@@ -81,14 +81,14 @@ rule sort_sam_f2:
 
 rule mark_duplicates_f2:
     input:
-        os.path.join(config["working_dir"], "bams/F2/bwamem2/sorted/{sample}.bam")
+        os.path.join(config["working_dir"], "bams/F2/bwamem2/sorted/{F2_sample}.bam")
     output:
-        bam=os.path.join(config["working_dir"], "bams/F2/bwamem2/marked/{sample}.bam"),
-        metrics=os.path.join(config["working_dir"], "bams/F2/bwamem2/marked/{sample}.metrics.txt")
+        bam=os.path.join(config["working_dir"], "bams/F2/bwamem2/marked/{F2_sample}.bam"),
+        metrics=os.path.join(config["working_dir"], "bams/F2/bwamem2/marked/{F2_sample}.metrics.txt")
     params:
         extra = lambda wildcards: "REMOVE_DUPLICATES=true TMP_DIR=" + config["tmp_dir"]
     container:
-        "docker://quay.io/biocontainers/picard:2.9.2--2"
+        config["picard"]
     resources:
         mem_mb=1024
     shell:
@@ -103,11 +103,11 @@ rule mark_duplicates_f2:
 
 rule samtools_index_f2:
     input:
-        os.path.join(config["working_dir"], "bams/F2/bwamem2/marked/{sample}.bam")
+        os.path.join(config["working_dir"], "bams/F2/bwamem2/marked/{F2_sample}.bam")
     output:
-        os.path.join(config["working_dir"], "bams/F2/bwamem2/marked/{sample}.bam.bai")
+        os.path.join(config["working_dir"], "bams/F2/bwamem2/marked/{F2_sample}.bam.bai")
     container:
-        "docker://quay.io/biocontainers/samtools:0.1.19--h94a8ba4_5"
+        config["samtools"]
     shell:
         """
         samtools index \

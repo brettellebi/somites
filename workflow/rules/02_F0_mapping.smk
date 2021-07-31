@@ -1,71 +1,154 @@
-rule map_reads:
+#rule copy_f0_seq_data:
+#    input:
+#        get_fastq_F0,
+#    output:
+#        expand(os.path.join(config["working_dir"], "fastqs/F2/{{F2_sample}}_{pair}.txt.gz"),
+#            pair = PAIRS
+#        ),
+#    shell:
+#        """
+#        cp {input[0]} {output[0]} ;
+#        cp {input[1]} {output[1]}
+#        """
+
+rule map_reads_F0:
     input:
         target = config["ref_prefix"] + ".fasta",
-        query = get_fastq,
+        query = get_fastq_F0,
     output:
-        os.path.join(config["working_dir"], "sams/F0/mapped/{sample}-{unit}.sam")
+        os.path.join(config["working_dir"], "sams/F0/mapped/{F0_sample}-{unit}.sam")
     params:
-        extra="-ax sr"
-    threads: 4
-    wrapper:
-        "0.74.0/bio/minimap2/aligner"
+        extra="-ax sr",
+    resources:
+        mem_mb = 10000
+    threads:
+        8
+    container:
+        config["minimap2"]
+    shell:
+        """
+        minimap2 \
+            -t {threads} \
+            {params.extra} \
+            {input.target} \
+            {input.query} \
+                > {output[0]}
+        """
 
-rule replace_rg:
+rule replace_rg_F0:
     input:
-        os.path.join(config["working_dir"], "sams/F0/mapped/{sample}-{unit}.sam")
+        os.path.join(config["working_dir"], "sams/F0/mapped/{F0_sample}-{unit}.sam")
     output:
-        os.path.join(config["working_dir"], "sams/F0/grouped/{sample}-{unit}.sam")
+        os.path.join(config["working_dir"], "sams/F0/grouped/{F0_sample}-{unit}.sam")
+    log:
+        os.path.join(config["working_dir"], "logs/replace_rg_F0/{F0_sample}_{unit}.log")
     params:
-        "RGLB=lib1 RGPL=ILLUMINA RGPU={unit} RGSM={sample}"
+        "RGLB=lib1 RGPL=ILLUMINA RGPU={unit} RGSM={F0_sample}"
     resources:
         mem_mb=1024
-    wrapper:
-        "0.74.0/bio/picard/addorreplacereadgroups"
+    container:
+        config["picard"]
+    shell:
+        """
+        picard AddOrReplaceReadGroups \
+            -Xmx{resources.mem_mb}M \
+            {params} \
+            INPUT={input[0]} \
+            OUTPUT={output[0]} \
+                &> {log}
+        """
 
-rule sort_sam:
+rule sort_sam_F0:
     input:
-        os.path.join(config["working_dir"], "sams/F0/grouped/{sample}-{unit}.sam")
+        os.path.join(config["working_dir"], "sams/F0/grouped/{F0_sample}-{unit}.sam")
     output:
-        os.path.join(config["working_dir"], "bams/F0/sorted/{sample}-{unit}.bam")
+        os.path.join(config["working_dir"], "bams/F0/sorted/{F0_sample}-{unit}.bam")
+    log:
+        os.path.join(config["working_dir"], "logs/sort_sam_F0/{F0_sample}_{unit}.log")
     params:
         sort_order="coordinate",
-        extra=lambda wildcards: "VALIDATION_STRINGENCY=LENIENT TMP_DIR=" + config["tmp_dir"] # optional: Extra arguments for picard.
+        extra=lambda wildcards: "VALIDATION_STRINGENCY=LENIENT TMP_DIR=" + config["tmp_dir"]
     resources:
-        mem_mb=1024
-    wrapper:
-        "0.74.0/bio/picard/sortsam"
+        java_mem_mb = 4096,
+        mem_mb = 20000
+    container:
+        config["picard"]
+    shell:
+        """
+        picard SortSam \
+            -Xmx{resources.java_mem_mb}M \
+            {params.extra} \
+            INPUT={input[0]} \
+            OUTPUT={output[0]} \
+            SORT_ORDER={params.sort_order} \
+                &> {log}
+        """
 
-rule mark_duplicates:
+rule mark_duplicates_F0:
     input:
-        os.path.join(config["working_dir"], "bams/F0/sorted/{sample}-{unit}.bam")
+        os.path.join(config["working_dir"], "bams/F0/sorted/{F0_sample}-{unit}.bam")
     output:
-        bam=os.path.join(config["working_dir"], "bams/F0/marked/{sample}-{unit}.bam"),
-        metrics=os.path.join(config["working_dir"], "bams/F0/marked/{sample}-{unit}.metrics.txt")
+        bam=os.path.join(config["working_dir"], "bams/F0/marked/{F0_sample}-{unit}.bam"),
+        metrics=os.path.join(config["working_dir"], "bams/F0/marked/{F0_sample}-{unit}.metrics.txt")
+    log:
+        os.path.join(config["working_dir"], "logs/mark_duplicates_F0/{F0_sample}_{unit}.log")
     params:
         lambda wildcards: "REMOVE_DUPLICATES=true TMP_DIR=" + config["tmp_dir"]
     resources:
-        mem_mb=1024
-    wrapper:
-        "0.74.0/bio/picard/markduplicates"
+        java_mem_mb=1024,
+        mem_mb=10000
+    container:
+        config["picard"]
+    shell:
+        """
+        picard MarkDuplicates \
+            -Xmx{resources.java_mem_mb}M \
+            {params} \
+            INPUT={input[0]} \
+            OUTPUT={output.bam} \
+            METRICS_FILE={output.metrics} \
+                &> {log}
+        """
 
-rule merge_bams:
+rule merge_bams_F0:
     input:
-        expand(os.path.join(config["working_dir"], "bams/F0/marked/{{sample}}-{unit}.bam"),
+        expand(os.path.join(config["working_dir"], "bams/F0/marked/{{F0_sample}}-{unit}.bam"),
             unit = list(set(F0_samples['unit']))
         )
     output:
-        os.path.join(config["working_dir"], "bams/F0/merged/{sample}.bam")
+        os.path.join(config["working_dir"], "bams/F0/merged/{F0_sample}.bam")
+    log:
+        os.path.join(config["working_dir"], "logs/merge_bams_F0/{F0_sample}.log")
     params:
-        lambda wildcards: "VALIDATION_STRINGENCY=LENIENT TMP_DIR=" + config["tmp_dir"]
+        extra = lambda wildcards: "VALIDATION_STRINGENCY=LENIENT TMP_DIR=" + config["tmp_dir"],
+        in_files = lambda wildcards, input: " I=".join(input)
     resources:
-        mem_mb=1024
-    wrapper:
-        "0.74.0/bio/picard/mergesamfiles"
+        java_mem_mb=1024
+    container:
+        config["picard"]
+    shell:
+        """
+        picard MergeSamFiles \
+            -Xmx{resources.java_mem_mb}M \
+            {params.extra} \
+            INPUT={params.in_files} \
+            OUTPUT={output} \
+                &> {log}
+        """
 
-rule samtools_index:
+rule samtools_index_F0:
     input:
-        os.path.join(config["working_dir"], "bams/F0/merged/{sample}.bam")
+        os.path.join(config["working_dir"], "bams/F0/merged/{F0_sample}.bam")
     output:
-        os.path.join(config["working_dir"], "bams/F0/merged/{sample}.bam.bai")
-    wrapper:
-        "0.74.0/bio/samtools/index"
+        os.path.join(config["working_dir"], "bams/F0/merged/{F0_sample}.bam.bai")
+    log:
+        os.path.join(config["working_dir"], "logs/samtools_index_F0/{F0_sample}.log")
+    container:
+        config["samtools"]
+    shell:
+        """
+        samtools index \
+            {input[0]} \
+            {output[0]} \
+            {log}
+        """

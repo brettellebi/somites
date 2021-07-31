@@ -18,7 +18,7 @@ snakemake \
   --jobs 5000 \
   --latency-wait 100 \
   --cluster-config config/cluster.yaml \
-  --cluster 'bsub -g /snakemake_bgenie -J {cluster.name} -q {cluster.queue} -n {cluster.n} -M {cluster.memory} -outdir {cluster.outdir} -o {cluster.outfile} -e {cluster.error}' \
+  --cluster 'bsub -g /snakemake_bgenie -J {cluster.name} -q {cluster.queue} -n {cluster.n} -M {cluster.memory} -o {cluster.outfile}' \
   --keep-going \
   --rerun-incomplete \
   --use-conda \
@@ -31,11 +31,13 @@ snakemake \
 ####################
 
 ssh proxy-codon
-bsub -M 20000 -Is """
+bsub -M 20000 -Is bash
+module load singularity-3.7.0-gcc-9.3.0-dp5ffrp 
 singularity shell --bind /hps/software/users/birney/ian/rstudio_db:/var/lib/rstudio-server \
                   --bind /hps/software/users/birney/ian/tmp:/tmp \
                   --bind /hps/software/users/birney/ian/run:/run \
                   docker://brettellebi/somite_f2:latest
-"""
 # Then run rserver, setting path of config file containing library path
 rserver --rsession-config-file /hps/software/users/birney/ian/repos/somites/workflow/envs/rstudio_server/rsession.conf
+
+ssh -L 8787:hl-codon-37-04:8787 proxy-codon
