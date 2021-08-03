@@ -1,5 +1,12 @@
 #!/usr/bin/env Rscript
 
+# Send log
+
+log <- file(snakemake@log[[1]], open="wt")
+sink(log)
+
+# Rest of script
+
 library(ViteRbi)
 source(snakemake@input[["source_code"]])
 

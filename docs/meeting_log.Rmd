@@ -13,6 +13,14 @@ output:
     highlight: pygments
 ---
 
+# 3 August 2021
+
+Added Cab and Kaga karyoplots.
+
+Removed use of (almost) all wrappers in Snakemake pipeline. Now all rules are containerised other than pulling the Ensembl sequence. 
+
+[NOTE]{color="red"}: Install `plotly` in R container.
+
 # 15 July 2021
 
 Notes for Ali:
