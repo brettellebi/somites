@@ -67,7 +67,8 @@ To determine which state is associated with which parental strain.
 In the pipeline, we set *Cab* as F0_1 and *Kaga* as F0_2. 
 
 ```{r}
-head(df_list$`5000`)
+head(df_list$`5000`) %>% 
+  DT::datatable(.)
 ```
 
 `ratio = mat / (mat + pat)`, where `mat` = Cab and `pat` = Kaga.
@@ -730,7 +731,7 @@ base_cov_df = df %>%
 
 Plot
 
-```{r}
+```{r, out.width='100%'}
 # Plot
 ck_prop_plot = base_cov_df %>% 
   dplyr::mutate(STATE = factor(STATE, levels = c(0,1,2, "UNCLASSIFIED")),

@@ -17,9 +17,9 @@ output:
 
 Added Cab and Kaga karyoplots.
 
-Removed use of (almost) all wrappers in Snakemake pipeline. Now all rules are containerised other than pulling the Ensembl sequence. 
+Removed use of (almost) all wrappers in Snakemake pipeline. Now all rules are containerised other than for pulling the reference sequence from Ensembl. 
 
-[NOTE]{color="red"}: Install `plotly` in R container.
+[NOTE]{color="red"}: Install `plotly` and `DT` in R container.
 
 # 15 July 2021
 

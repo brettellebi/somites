@@ -9,6 +9,7 @@ library(karyoploteR)
 library(ggbeeswarm)
 library(sommer)
 library(plotly)
+library(DT)
 
 ####################
 # Palettes
