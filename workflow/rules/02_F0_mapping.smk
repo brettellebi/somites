@@ -1,20 +1,7 @@
-#rule copy_f0_seq_data:
-#    input:
-#        get_fastq_F0,
-#    output:
-#        expand(os.path.join(config["working_dir"], "fastqs/F2/{{F2_sample}}_{pair}.txt.gz"),
-#            pair = PAIRS
-#        ),
-#    shell:
-#        """
-#        cp {input[0]} {output[0]} ;
-#        cp {input[1]} {output[1]}
-#        """
-
 rule map_reads_F0:
     input:
         target = config["ref_prefix"] + ".fasta",
-        query = get_fastq_F0,
+        query = lambda wildcards: F0_samples.loc[(wildcards.F0_sample, wildcards.unit), ["fq1", "fq2"]].dropna().tolist(),
     output:
         os.path.join(config["working_dir"], "sams/F0/mapped/{F0_sample}-{unit}.sam")
     params:
@@ -150,5 +137,5 @@ rule samtools_index_F0:
         samtools index \
             {input[0]} \
             {output[0]} \
-            {log}
+                &> {log}
         """

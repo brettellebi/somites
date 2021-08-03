@@ -2,14 +2,13 @@ include: "rules/00_common.smk"
 
 ##### Target rules #####
 
-
 rule all:
     input:
 ################
 ## 00_common.smk
 ################
 ## create_f2_samples_file
-#        config["F2_samples"]
+#        config["F2_samples"],
 ################
 ## 01_ref.smk
 ################
@@ -34,43 +33,43 @@ rule all:
 #                F0_sample = F0_samples['sample'],
 #                unit = F0_samples['unit']
 #        ),
-## sort_sam
+## sort_sam_F0
 #        expand(os.path.join(config["working_dir"], "bams/F0/sorted/{F0_sample}-{unit}.bam"),
 #                zip,
 #                F0_sample = F0_samples['sample'],
 #                unit = F0_samples['unit']
 #        ),
-## mark_duplicates
+## mark_duplicates_F0
 #        expand(os.path.join(config["working_dir"], "bams/F0/marked/{F0_sample}-{unit}.bam"),
 #                zip,
 #                F0_sample = F0_samples['sample'],
 #                unit = F0_samples['unit']                
 #        ),
-## merge_bams
+## merge_bams_F0
 #        expand(os.path.join(config["working_dir"], "bams/F0/merged/{F0_sample}.bam"),
 #                F0_sample = config["F0_lines"]
 #        ),
-## samtools_index_f0
+## samtools_index_F0
 #        expand(os.path.join(config["working_dir"], "bams/F0/merged/{F0_sample}.bam.bai"),
 #                F0_sample = config["F0_lines"]
 #        ),
 ################
 ## 03_F0_calling.smk
 ################
-# haplotype_caller
-        expand(os.path.join(config["working_dir"], "vcfs/F0/gvcfs/{F0_sample}/{contig}.g.vcf"),
-                F0_sample = config["F0_lines"],
-                contig = get_contigs(),
-        ),
-# combine_calls
-        expand(os.path.join(config["working_dir"], "vcfs/F0/combined/all.{contig}.g.vcf.gz"),
-                contig = get_contigs(),
-        ),
-# genotype_variants
-        expand(os.path.join(config["working_dir"], "vcfs/F0/genotyped/all.{contig}.vcf.gz"),
-                contig = get_contigs(),
-        ),
-# marge_variants
+## haplotype_caller
+#        expand(os.path.join(config["working_dir"], "vcfs/F0/gvcfs/{F0_sample}/{contig}.g.vcf"),
+#                F0_sample = config["F0_lines"],
+#                contig = get_contigs(),
+#        ),
+## combine_calls
+#        expand(os.path.join(config["working_dir"], "vcfs/F0/combined/all.{contig}.g.vcf.gz"),
+#                contig = get_contigs(),
+#        ),
+## genotype_variants
+#        expand(os.path.join(config["working_dir"], "vcfs/F0/genotyped/all.{contig}.vcf.gz"),
+#                contig = get_contigs(),
+#        ),
+# merge_variants
         expand(os.path.join(config["data_store_dir"], "vcfs/F0/final/all.vcf.gz")),
 ################
 ## 04_F2_mapping.smk
@@ -78,7 +77,7 @@ rule all:
 ## copy_f2_seq_data
 #        expand(os.path.join(config["working_dir"], "fastqs/F2/{F2_sample}_{pair}.txt.gz"),
 #                F2_sample = F2_samples['SAMPLE'],
-#                pair = PAIRS
+#                pair = config["pairs"]
 #        ),
 ## bwa_mem2_mem
 #        expand(os.path.join(config["working_dir"], "sams/F2/bwamem2/mapped/{F2_sample}.sam"),
@@ -95,7 +94,7 @@ rule all:
 ## samtools_index_f2
 #        expand(os.path.join(config["working_dir"], "bams/F2/bwamem2/marked/{F2_sample}.bam.bai"),
 #                F2_sample = F2_samples['SAMPLE']
-#        )
+#        ),
 ################
 ## 05_F2_recomb_blocks.smk
 ################
@@ -105,34 +104,42 @@ rule all:
 #        ),
 ## get_divergent_sites
 #        os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/homo_divergent/all.txt"),
-## bam_readcount
+## bam_readcount_F2
 #        expand(os.path.join(config["working_dir"], "dp4s/batch_01/bwamem2/{F2_sample}.dp4.txt"),
 #                F2_sample = F2_samples['SAMPLE']
 #        ),
-## make_dp_AB
+## make_dp_AB_F2
 #        expand(os.path.join(config["working_dir"], "dpABs/batch_01/bwamem2/{F2_sample}.txt"),
 #                F2_sample = F2_samples['SAMPLE']
 #        ),
-## run_rc_block
+## run_rc_block_F2
 #        expand(os.path.join(config["data_store_dir"], "recombination_blocks/20210716_hmm_output_batch_01_binlen_{bin_length}.txt"),
 #                bin_length = config["bin_length"]
-#        )
-################
-## 06_F0_recomb_blocks.smk
-################
-## get_ref_alt_sites
-#        os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/ref_alt/all.txt"),
-## bam_readcount_F0
-#        expand(os.path.join(config["working_dir"], "dp4s/F0/{F0_sample}.dp4.txt"),
-#                F0_sample = config["F0_lines"]
-#        )
+#        ),
+###############
+# 06_F0_recomb_blocks.smk
+###############
+# get_ref_alt_sites
+        os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/ref_alt/all.txt"),
+# bam_readcount_F0
+        expand(os.path.join(config["working_dir"], "dp4s/F0/{F0_sample}.dp4.txt"),
+                F0_sample = config["F0_lines"]
+        ),
+# make_dp_AB_F0
+        expand(os.path.join(config["working_dir"], "dpABs/F0/{F0_sample}.txt"),
+                F0_sample = config["F0_lines"]
+        ),
+# run_rc_block_F0
+        expand(os.path.join(config["data_store_dir"], "recombination_blocks/20210802_hmm_output_F0_binlen_{bin_length_F0}.txt"),
+                bin_length_F0 = config["bin_length_F0"]
+        ),
 
 
 ##### Modules #####
 
-include: "rules/01_ref.smk"
-include: "rules/02_F0_mapping.smk"
+#include: "rules/01_ref.smk"
+#include: "rules/02_F0_mapping.smk"
 include: "rules/03_F0_calling.smk"
 #include: "rules/04_F2_mapping.smk"
 #include: "rules/05_F2_recomb_blocks.smk"
-#include: "rules/06_F0_recomb_blocks.smk"
+include: "rules/06_F0_recomb_blocks.smk"

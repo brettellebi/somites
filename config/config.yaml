@@ -5,8 +5,8 @@ F0_samples:
     config/F0_samples.txt
 # To ensure that they remain in the right order for certain rules, e.g. `get_divergent_sites`:
 F0_lines: 
-    - "Cab"
-    - "Kaga"
+    - Cab
+    - Kaga
 F2_samples:
     config/F2_samples.txt
 F2_valid_lanes:
@@ -14,9 +14,9 @@ F2_valid_lanes:
 ####################
 # Parameters
 ####################
-groups:
-    - "1"
-    - "2"
+pairs:
+    - 1
+    - 2
 contigs:
     - 1
     - 24
@@ -32,39 +32,41 @@ bin_length:
     - 10000
     - 15000
     - 20000
+bin_length_F0:
+    - 5000
 ####################
 # Locations
 ####################
 ref_prefix:
-    "/hps/nobackup/birney/users/ian/somites/refs/hdrr"
+    /hps/nobackup/birney/users/ian/somites/refs/hdrr
 raw_data_dir:
-    "/nfs/research/birney/projects/indigene/raw_data/Ali"
+    /nfs/research/birney/projects/indigene/raw_data/Ali
 working_dir:
-    "/hps/nobackup/birney/users/ian/somites"
+    /hps/nobackup/birney/users/ian/somites
 tmp_dir:
-    "/hps/nobackup/birney/users/ian/somites/tmp"
+    /hps/nobackup/birney/users/ian/somites/tmp
 data_store_dir:
-    "/nfs/research/birney/users/ian/somites"
+    /nfs/research/birney/users/ian/somites
 ####################
 # Containers
 ####################
 minimap2:
-    "docker://quay.io/biocontainers/minimap2:2.21--h5bf99c6_0"
+    docker://quay.io/biocontainers/minimap2:2.21--h5bf99c6_0
 bwa-mem2:
-    "docker://quay.io/biocontainers/bwa-mem2:2.2.1--he513fc3_0"
+    docker://quay.io/biocontainers/bwa-mem2:2.2.1--he513fc3_0
 picard:
-    "docker://quay.io/biocontainers/picard:2.9.2--2"
+    docker://quay.io/biocontainers/picard:2.9.2--2
 gatk:
-    "docker://quay.io/biocontainers/gatk4:4.2.0.0--0"
+    docker://quay.io/biocontainers/gatk4:4.2.0.0--0
 samtools:
-    "docker://quay.io/biocontainers/samtools:1.13--h8c37831_0"
+    docker://quay.io/biocontainers/samtools:1.13--h8c37831_0
 bcftools:
-    "docker://biocontainers/bcftools:v1.9-1-deb_cv1"
+    docker://biocontainers/bcftools:v1.9-1-deb_cv1
 pandas:
-    "docker://quay.io/biocontainers/pandas:1.1.5"
+    docker://quay.io/biocontainers/pandas:1.1.5
 bam-readcount:
-    "docker://quay.io/biocontainers/bam-readcount:0.8--py36pl526h94a8ba4_4"
+    docker://quay.io/biocontainers/bam-readcount:0.8--py36pl526h94a8ba4_4
 R:
-    "docker://brettellebi/somite_f2:latest"
+    docker://brettellebi/somite_f2:latest
 
 

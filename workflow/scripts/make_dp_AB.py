@@ -1,5 +1,14 @@
 #!/usr/bin/env python3
 
+# Send stdout and stderr to log file
+
+import sys
+
+with open(snakemake.log[0], "w") as f:
+    sys.stderr = sys.stdout = f
+
+# Import libraries
+
 import pandas as pd
 import numpy as np
 

@@ -1,27 +1,10 @@
-#rule bwa_mem2_mem:
-#    input:
-#        reads=get_fastq_F2,
-#        idx=rules.bwa_mem2_index.output,
-#    output:
-#        os.path.join(config["working_dir"], "bams/F2/bwamem2/sorted/{F2_sample}.bam"),
-#    params:
-#        index=lambda wildcards: config["ref_prefix"] + ".fasta",
-#        extra=r"-R '@RG\tID:{F2_sample}\tSM:{F2_sample}'",
-#        sort="samtools",
-#        sort_order="coordinate",
-#        sort_extra=""
-#    threads: 8
-#    wrapper:
-#        "v0.75.0/bio/bwa-mem2/mem"
-
-# Wrapper doesn't work with many files, so use container instead
-
 rule copy_f2_seq_data:
     input:
-        get_fastq_F2,
+        lambda wildcards: F2_samples.loc[wildcards.F2_sample, ["fq1", "fq2"]].dropna().tolist(),
     output:
         expand(os.path.join(config["working_dir"], "fastqs/F2/{{F2_sample}}_{pair}.txt.gz"),
-            pair = PAIRS
+            F2_sample = F2_samples['SAMPLE'],
+            pair = config["pairs"]
         ),
     shell:
         """
@@ -32,7 +15,8 @@ rule copy_f2_seq_data:
 rule bwa_mem2_mem:
     input:
         reads=expand(os.path.join(config["working_dir"], "fastqs/F2/{{F2_sample}}_{pair}.txt.gz"),
-            pair = PAIRS
+            F2_sample = F2_samples['SAMPLE'],
+            pair = config["pairs"]
         ),
         idx=rules.bwa_mem2_index.output,
     output:
@@ -42,7 +26,10 @@ rule bwa_mem2_mem:
         extra=r"-R '@RG\tID:{F2_sample}\tSM:{F2_sample}'",
     container:
         config["bwa-mem2"]
-    threads: 8
+    resources:
+        mem_mb = 10000
+    threads:
+        8
     shell:
         """
         bwa-mem2 mem \
@@ -56,7 +43,6 @@ rule bwa_mem2_mem:
 # log file here: /hps/nobackup/birney/users/ian/somites/logs/bwa_mem2_mem/2604307_sample\=7171.err
 # [mem_sam_pe_batch_post] paired reads have different names: "�0�����O&�����x�7�Z�HĻ�@�%Q�ü��", "ST-K00119:220:HKNVLBBXY:7:1101:1661:1138"
 # That sample is hashed out of `config/F2_samples.txt` until the issue is resolved.
-
 rule sort_sam_f2:
     input:
         os.path.join(config["working_dir"], "sams/F2/bwamem2/mapped/{F2_sample}.sam"),
@@ -68,17 +54,17 @@ rule sort_sam_f2:
     container:
         config["picard"]
     resources:
-        mem_mb=1024
+        java_mem_mb = 1024,
+        mem_mb = 20000
     shell:
         """
         picard SortSam \
-            -Xmx{resources.mem_mb}M \
+            -Xmx{resources.java_mem_mb}M \
             {params.extra} \
             INPUT={input[0]} \
             OUTPUT={output[0]} \
             SORT_ORDER={params.sort_order}
         """
-
 rule mark_duplicates_f2:
     input:
         os.path.join(config["working_dir"], "bams/F2/bwamem2/sorted/{F2_sample}.bam")

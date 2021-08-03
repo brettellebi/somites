@@ -13,7 +13,7 @@
 module load singularity-3.7.0-gcc-9.3.0-dp5ffrp
 bsub -Is bash
 cd /hps/software/users/birney/ian/repos/somites
-conda activate snakemake_6.4.1
+conda activate snakemake_6.6.1
 snakemake \
   --jobs 5000 \
   --latency-wait 100 \
