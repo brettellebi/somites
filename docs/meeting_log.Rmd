@@ -13,6 +13,111 @@ output:
     highlight: pygments
 ---
 
+# 31 August 2021
+
+## Location on EMBL server:
+
+We use AnyConnect
+
+vpn-gw1.embl.de 
+
+Server:
+
+smb://aulehla
+
+Username:
+
+seleit
+
+Location
+smb://aulehla/aulehla/NGS_Data_Library/2021-08-12-AAAG3YWHV
+
+## `ascli`
+
+They can use ascli from the terminal. All the info is at <https://intranet.embl.de/it_services/services/data_sharing/aspera/index.html>.
+
+`ascli` docs: <https://www.rubydoc.info/gems/aspera-cli>
+
+Examples from docs:
+
+```{ruby, eval = F}
+ascli faspex health
+ascli faspex package list
+ascli faspex package list --box=sent --fields=package_id --format=csv --display=data|tail -n 1);\
+ascli faspex package list --fields=package_id --format=csv --display=data|tail -n 1);\
+ascli faspex package recv --to-folder=. --box=sent --id="my_package_id"
+ascli faspex package recv --to-folder=. --id="my_package_id"
+ascli faspex package recv --to-folder=. --id=ALL --once-only=yes
+ascli faspex package recv --to-folder=. --link="my_faspex_publink_recv_from_fxuser"
+ascli faspex package send --delivery-info=@json:'{"title":"Important files delivery","recipients":["internal.user@example.com","FASPEX_USERNAME"]}' testfile.bin
+ascli faspex package send --link="my_faspex_publink_send_to_dropbox" --delivery-info=@json:'{"title":"Important files delivery"}' testfile.bin
+ascli faspex package send --link="my_faspex_publink_send_to_fxuser" --delivery-info=@json:'{"title":"Important files delivery"}' testfile.bin
+ascli faspex source name "Server Files" node br /
+ascli faspex5 node list --value=@json:'{"type":"received","subtype":"mypackages"}'
+ascli faspex5 package list --value=@json:'{"mailbox":"inbox","state":["released"]}'
+ascli faspex5 package receive --id="my_package_id" --to-folder=.
+ascli faspex5 package send --value=@json:'{"title":"test title","recipients":[{"name":"${f5_user}"}]}' testfile.bin
+```
+
+Test:
+```{bash, eval = F}
+# On EBI cluster
+cd /nfs/ftp/private/indigene_ftp/upload/Ali/Kaga-Cab_F2_Fish201-400_WGS/
+
+## Example
+ascli faspex package recv --to-folder=. --link="my_faspex_publink_recv_from_fxuser"
+
+## Tests
+ascli faspex package recv --to-folder=. --link="https://faspex.embl.de/aspera/faspex/external_deliveries/4366?passcode=221f3482a4d9b2fd87da2d21a2916156c2c1870d&expiration=MjAyMS0wOS0wN1QxMjo0Mjo0NVo="
+#W, [2021-08-31T13:46:21.054223 #411589]  WARN -- : A new version is available: 4.2.0. You #have 4.1.0. Upgrade with: gem update 
+#ascp: Error creating illegal char conversion table EINVAL, exiting.
+#E, [2021-08-31T13:46:27.329374 #411589] ERROR -- : code: 11
+#W, [2021-08-31T13:46:27.329485 #411589]  WARN -- : An error occured: ascp failed with code #1
+#W, [2021-08-31T13:46:27.329507 #411589]  WARN -- : resuming in  2 seconds (retry left:6)
+#ascp: Error creating illegal char conversion table EINVAL, exiting.
+#E, [2021-08-31T13:46:30.441640 #411589] ERROR -- : code: 11
+#W, [2021-08-31T13:46:30.441728 #411589]  WARN -- : An error occured: ascp failed with code #1
+#E, [2021-08-31T13:46:30.441748 #411589] ERROR -- : non-retryable error
+#ERROR: FASP(ascp]: ascp failed with code 1
+
+ascli faspex package recv --to-folder=. --link="https://faspex.embl.de/aspera/faspex/external_deliveries/4366?passcode=221f3482a4d9b2fd87da2d21a2916156c2c1870d&expiration=MjAyMS0wOS0wN1QxMjo0Mjo0NVo=#"
+# As above
+
+ascli faspex package recv --to-folder=. --link="https://faspex.embl.de/aspera/faspex/external_deliveries/4366?passcode=221f3482a4d9b2fd87da2d21a2916156c2c1870d&expiration=MjAyMS0wOS0wN1QxMjo0Mjo0NVo"
+# As above
+
+ascli faspex package recv --to-folder=. --link=https://faspex.embl.de/aspera/faspex/external_deliveries/4366?passcode=221f3482a4d9b2fd87da2d21a2916156c2c1870d&expiration=MjAyMS0wOS0wN1QxMjo0Mjo0NVo=#
+# As above
+
+ascli faspex package recv --to-folder=. --delivery-info="https://faspex.embl.de/aspera/faspex/external_deliveries/4366?passcode=221f3482a4d9b2fd87da2d21a2916156c2c1870d&expiration=MjAyMS0wOS0wN1QxMjo0Mjo0NVo="
+# ERROR: Argument: Missing mandatory option: id
+
+ascli faspex package recv --id=brettell@ebi.ac.uk --to-folder=. --delivery-info="https://faspex.embl.de/aspera/faspex/external_deliveries/4366?passcode=221f3482a4d9b2fd87da2d21a2916156c2c1870d&expiration=MjAyMS0wOS0wN1QxMjo0Mjo0NVo="
+# ERROR: Argument: Missing mandatory option: url
+
+ascli faspex package recv --id=brettell@ebi.ac.uk --to-folder=. --url="https://faspex.embl.de/aspera/faspex/external_deliveries/4366?passcode=221f3482a4d9b2fd87da2d21a2916156c2c1870d&expiration=MjAyMS0wOS0wN1QxMjo0Mjo0NVo="
+# ERROR: Argument: Missing mandatory option: username
+
+ascli faspex package recv --id=brettell@ebi.ac.uk --username=brettell@ebi.ac.uk --to-folder=. --url="https://faspex.embl.de/aspera/faspex/external_deliveries/4366?passcode=221f3482a4d9b2fd87da2d21a2916156c2c1870d&expiration=MjAyMS0wOS0wN1QxMjo0Mjo0NVo="
+# ERROR: Argument: Missing mandatory option: password
+
+ascli faspex package recv --to-folder=. --transfer=httpgw --transfer-info=@json:'{"url":"https://faspex.embl.de/aspera/faspex/external_deliveries/4366?passcode=221f3482a4d9b2fd87da2d21a2916156c2c1870d&expiration=MjAyMS0wOS0wN1QxMjo0Mjo0NVo=#"}'
+```
+
+
+## `lftp`
+
+Hi,
+You can use the lftp command present in datatransfer.embl.de (here is a tutorial) https://linuxconfig.org/lftp-tutorial-on-linux-with-examples .
+If you want to send files that are in your group share, they will be available at /g/ location.
+Cheers.
+
+---
+Josep Manel Andrés Moscardó
+Systems Engineer, IT Operations
+EMBL Heidelberg
+T +49 6221 387-8394 
+
 # 3 August 2021
 
 Added Cab and Kaga karyoplots.
