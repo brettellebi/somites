@@ -8,12 +8,11 @@
 # EBI codon cluster
 ####################
 
-#module load singularity-3.5.3-gcc-9.3.0-o6v53jz
-#module load singularity-3.6.4-gcc-9.3.0-yvkwp5n
+ssh codon
 module load singularity-3.7.0-gcc-9.3.0-dp5ffrp
-bsub -Is bash
+bsub -M 20000 -Is bash
 cd /hps/software/users/birney/ian/repos/somites
-conda activate snakemake_6.6.1
+conda activate snakemake_6.7.0
 snakemake \
   --jobs 5000 \
   --latency-wait 100 \
@@ -41,3 +40,13 @@ singularity shell --bind /hps/software/users/birney/ian/rstudio_db:/var/lib/rstu
 rserver --rsession-config-file /hps/software/users/birney/ian/repos/somites/workflow/envs/rstudio_server/rsession.conf
 
 ssh -L 8787:hl-codon-37-04:8787 proxy-codon
+
+####################
+# Copying data from FTP to Codon cluster
+####################
+
+# e.g.
+bsub -o /dev/null -q datamover "cp -r /nfs/ftp/private/indigene_ftp/upload/Ali/Kaga-Cab_F2_Fish201-400_WGS /nfs/research/birney/projects/indigene/raw_data/Ali/"
+
+# First batch `Kaga-Cab_F2_First200WGS`: 186 - 1 (171) = 185
+# Second batch `Kaga-Cab_F2_Fish201-400_WGS`: 192

@@ -6,7 +6,7 @@ __default__:
   outfile: "{log}"
 # 01_ref.smk
 bwa_mem2_index:
-  memory: {resources.mem_mb}
+  memory: "{resources.mem_mb}"
 # 02_F0_mapping.smk
 map_reads_F0:
   memory: "{resources.mem_mb}"

@@ -1,9 +1,17 @@
 #!/usr/bin/env Rscript
 
+# Send output to log
+
+log <- file(snakemake@log[[1]], open="wt")
+sink(log)
+sink(log, type = "message")
+
+# Script
+
 library(tidyverse)
 
 # Get list of files
-files = list.files(snakemake@input[["input_dir"]],
+files = list.files(snakemake@input[["input_dirs"]],
                    full.names = T,
                    pattern = "sequence.txt.gz$")
 

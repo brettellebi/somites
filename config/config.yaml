@@ -40,8 +40,9 @@ bin_length_F0:
 ####################
 ref_prefix:
     /hps/nobackup/birney/users/ian/somites/refs/hdrr
-raw_data_dir:
-    /nfs/research/birney/projects/indigene/raw_data/Ali
+F2_sequence_dirs:
+    - /nfs/research/birney/projects/indigene/raw_data/Ali/Kaga-Cab_F2_First200WGS
+    - /nfs/research/birney/projects/indigene/raw_data/Ali/Kaga-Cab_F2_Fish201-400_WGS
 working_dir:
     /hps/nobackup/birney/users/ian/somites
 tmp_dir:

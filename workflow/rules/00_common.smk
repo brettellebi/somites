@@ -18,13 +18,15 @@ F0_samples = pd.read_table(config["F0_samples"], comment = '#', dtype = str).set
 
 ## Note: THIS RULE WAS RUN BEFORE ANYTHING ELSE,
 ## WHILE HASHING OUT THE TWO `F2_samples = pd....` lines below
-## Run again when the location of the raw sequencing data changes,
+## Run again when config["F2_sequence_dirs"] changes,
 ## e.g. when this pipeline is run on a new HPC.
 rule create_f2_samples_file:
     input:
-        input_dir = os.path.join(config["raw_data_dir"], "Kaga-Cab_F2_First200WGS")
+        input_dirs = config["F2_sequence_dirs"]
     output:
         config["F2_samples"]
+    log:
+        os.path.join(config["working_dir"], "logs/create_f2_samples_file/create_f2_samples_file.log")
     container:
         "docker://brettellebi/somite_f2:latest"
     script:

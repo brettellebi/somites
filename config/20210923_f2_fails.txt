@@ -1,0 +1,24 @@
+204 [gzread] <fd:4>: incorrect data check
+214 [gzread] <fd:4>: invalid code lengths set
+221 [gzread] <fd:3>: invalid stored block lengths
+232 [gzread] <fd:3>: invalid block type
+234 [gzread] <fd:4>: invalid block type
+236 [gzread] <fd:4>: incorrect data check
+255 [gzread] <fd:3>: invalid block type
+261 [gzread] <fd:3>: invalid distance too far back
+269 [gzread] <fd:4>: invalid block type
+291 [0000] 2. Calling kt_for - worker_aln
+301 [0000] 3. Calling kt_for - worker_sam
+333 [gzread] <fd:3>: invalid block type
+334 [gzread] <fd:4>: invalid distance too far back
+343 [mem_sam_pe_batch_post] paired reads have different names: "VH00531:3:AAAG3YWHV:1:1411:72027:25554", "VHCCCGGCCCCCCCCCCCCCC"
+344 [gzread] <fd:4>: invalid literal/length code
+345 [gzread] <fd:4>: invalid stored block lengths
+350 [mem_sam_pe_batch_post] paired reads have different names: "VH00531:3:AAAG3YWHV:2:1401:10184:AGTAC6666:CGCCTCCC-CC-C53ACGTCCCCTCCC-CC-C53ACGTCCCCTCCC-CC-C53ACGTCCCCTCCC-CC-C56:CGCCT6:CGCCTCCATTA:CGCCTCCATTA:CGCCTCCATTA:CCCTTCCATTA:CGCCTCCATTA:CCCTTCCATTA:CGCCTCCATTA:CCCTTCCATTA:CGCCTCCATTA:CCCTTCCATTA:CGCCTCCATTA:CCCTTCCATTA:CGCCTCCATTA:CCCTTCCATTA:CCGCCTA:CCGCAAACCC-CAAC31:3C39CC3333666G-CTCCCVH00CCCCCCC-CAAAGC3ACCCCCACC-CC-;CCC-C53TTTTTTT53ACCCACCA531:3:CACC-CAACVH3ACCTCTT53H005CCCCCCCTGACC01:CCTCTTCCCCCAC3T53AGTTAAATTACAACCTCTT53H005CCCCCCCTGACC01:GAACCCCCCC;CCCCCCCTTCCCTCCCTCCCCCTGACC01:GAACCCCCCC;CCCCCCCTTCCCTCCCTCCCCCTGACCCC531:CCCCCCCCCCCCCCACCCCCCATTA:CGCCTTT8GG:CGCC", "VH00531:3:AAAG3YWHV:2:1401:38966:21276"
+359 [gzread] <fd:4>: too many length or distance symbols
+360 [gzread] <fd:4>: incorrect data check
+368 [gzread] <fd:3>: invalid block type
+374 [gzread] <fd:4>: incorrect data check
+375 [gzread] <fd:4>: incorrect data check
+390 [mem_sam_pe_batch_post] paired reads have different names: "VH00531:3:AAAG3YWHV:2:1507:43113:23756", "VH00531:3:AAAG3YWHV:2:1507:22984:23699"
+

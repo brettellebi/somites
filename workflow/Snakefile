@@ -71,18 +71,18 @@ rule all:
 #        ),
 # merge_variants
 #        expand(os.path.join(config["data_store_dir"], "vcfs/F0/final/all.vcf.gz")),
-################
-## 04_F2_mapping.smk
-################
+###############
+# 04_F2_mapping.smk
+###############
 ## copy_f2_seq_data
 #        expand(os.path.join(config["working_dir"], "fastqs/F2/{F2_sample}_{pair}.txt.gz"),
 #                F2_sample = F2_samples['SAMPLE'],
 #                pair = config["pairs"]
 #        ),
-## bwa_mem2_mem
-#        expand(os.path.join(config["working_dir"], "sams/F2/bwamem2/mapped/{F2_sample}.sam"),
-#                F2_sample = F2_samples['SAMPLE']
-#        ),
+# bwa_mem2_mem
+        expand(os.path.join(config["working_dir"], "sams/F2/bwamem2/mapped/{F2_sample}.sam"),
+                F2_sample = ["171", "291", "301"]
+        ),
 ## sort_sam_f2
 #        expand(os.path.join(config["working_dir"], "bams/F2/bwamem2/sorted/{F2_sample}.bam"),
 #                F2_sample = F2_samples['SAMPLE']
@@ -116,37 +116,37 @@ rule all:
 #        expand(os.path.join(config["data_store_dir"], "recombination_blocks/20210716_hmm_output_batch_01_binlen_{bin_length}.txt"),
 #                bin_length = config["bin_length"]
 #        ),
-###############
-# 06_F0_recomb_blocks.smk
-###############
-# get_ref_alt_sites
-        expand(os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/ref_alt/by_chr/{contig}.txt"),
-                contig = get_contigs(),
-        ),
-# bam_readcount_F0
-        expand(os.path.join(config["working_dir"], "dp4s/F0/{F0_sample}/{contig}.dp4.txt"),
-                F0_sample = config["F0_lines"],
-                contig = get_contigs(),
-        ),
-# make_dp_AB_F0
-        expand(os.path.join(config["working_dir"], "dpABs/F0/{F0_sample}/{contig}.txt"),
-                F0_sample = config["F0_lines"],
-                contig = get_contigs(),
-        ),
-# combine_dp_AB_F0
-        expand(os.path.join(config["working_dir"], "dpABs/F0/{F0_sample}/all/all.txt"),
-                F0_sample = config["F0_lines"],
-        ),
-# run_rc_block_F0
-        expand(os.path.join(config["data_store_dir"], "recombination_blocks/20210803_hmm_output_F0_binlen_{bin_length}.txt"),
-                bin_length = config["bin_length_F0"]
-        ),
+################
+## 06_F0_recomb_blocks.smk
+################
+## get_ref_alt_sites
+#        expand(os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/ref_alt/by_chr/{contig}.txt"),
+#                contig = get_contigs(),
+#        ),
+## bam_readcount_F0
+#        expand(os.path.join(config["working_dir"], "dp4s/F0/{F0_sample}/{contig}.dp4.txt"),
+#                F0_sample = config["F0_lines"],
+#                contig = get_contigs(),
+#        ),
+## make_dp_AB_F0
+#        expand(os.path.join(config["working_dir"], "dpABs/F0/{F0_sample}/{contig}.txt"),
+#                F0_sample = config["F0_lines"],
+#                contig = get_contigs(),
+#        ),
+## combine_dp_AB_F0
+#        expand(os.path.join(config["working_dir"], "dpABs/F0/{F0_sample}/all/all.txt"),
+#                F0_sample = config["F0_lines"],
+#        ),
+## run_rc_block_F0
+#        expand(os.path.join(config["data_store_dir"], "recombination_blocks/20210803_hmm_output_F0_binlen_{bin_length}.txt"),
+#                bin_length = config["bin_length_F0"]
+#        ),
 
 ##### Modules #####
 
-#include: "rules/01_ref.smk"
-#include: "rules/02_F0_mapping.smk"
+include: "rules/01_ref.smk"
+include: "rules/02_F0_mapping.smk"
 include: "rules/03_F0_calling.smk"
-#include: "rules/04_F2_mapping.smk"
-#include: "rules/05_F2_recomb_blocks.smk"
+include: "rules/04_F2_mapping.smk"
+include: "rules/05_F2_recomb_blocks.smk"
 include: "rules/06_F0_recomb_blocks.smk"
