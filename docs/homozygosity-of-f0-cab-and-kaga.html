@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Chapter 3 Homozygosity of F0 Cab and Kaga | Somite period F2 analysis</title>
+<meta name="author" content="Ian Brettell">
+<meta name="description" content='3.1 Read in total medaka genome count # Get chromosome lengths med_chr_lens = read.table(here::here("data",                   "Oryzias_latipes.ASM223467v1.dna.toplevel.fa_chr_counts.txt"),        ...'>
+<meta name="generator" content="bookdown 0.24.2 with bs4_book()">
+<meta property="og:title" content="Chapter 3 Homozygosity of F0 Cab and Kaga | Somite period F2 analysis">
+<meta property="og:type" content="book">
+<meta property="og:description" content='3.1 Read in total medaka genome count # Get chromosome lengths med_chr_lens = read.table(here::here("data",                   "Oryzias_latipes.ASM223467v1.dna.toplevel.fa_chr_counts.txt"),        ...'>
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chapter 3 Homozygosity of F0 Cab and Kaga | Somite period F2 analysis">
+<meta name="twitter:description" content='3.1 Read in total medaka genome count # Get chromosome lengths med_chr_lens = read.table(here::here("data",                   "Oryzias_latipes.ASM223467v1.dna.toplevel.fa_chr_counts.txt"),        ...'>
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/header-attrs-2.10/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.2.5.1/tabs.js"></script><script src="libs/bs3compat-0.2.5.1/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="libs/htmlwidgets-1.5.3/htmlwidgets.js"></script><script src="libs/plotly-binding-4.9.4.1/plotly.js"></script><script src="libs/typedarray-0.1/typedarray.min.js"></script><link href="libs/crosstalk-1.1.1/css/crosstalk.css" rel="stylesheet">
+<script src="libs/crosstalk-1.1.1/js/crosstalk.min.js"></script><link href="libs/plotly-htmlwidgets-css-1.57.1/plotly-htmlwidgets.css" rel="stylesheet">
+<script src="libs/plotly-main-1.57.1/plotly-latest.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><link rel="stylesheet" href="style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="">Somite period F2 analysis</a>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html"><span class="header-section-number">1</span> About</a></li>
+<li><a class="" href="alignment-of-f0-and-f2-generations.html"><span class="header-section-number">2</span> Alignment of F0 and F2 generations</a></li>
+<li><a class="active" href="homozygosity-of-f0-cab-and-kaga.html"><span class="header-section-number">3</span> Homozygosity of F0 Cab and Kaga</a></li>
+<li><a class="" href="parts.html"><span class="header-section-number">4</span> Parts</a></li>
+<li><a class="" href="footnotes-and-citations.html"><span class="header-section-number">5</span> Footnotes and citations</a></li>
+<li><a class="" href="blocks.html"><span class="header-section-number">6</span> Blocks</a></li>
+<li><a class="" href="sharing-your-book.html"><span class="header-section-number">7</span> Sharing your book</a></li>
+<li><a class="" href="references.html">References</a></li>
+</ul>
+
+        <div class="book-extra">
+          <p><a id="book-repo" href="https://github.com/brettellebi/somites">View book source <i class="fab fa-github"></i></a></p>
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="homozygosity-of-f0-cab-and-kaga" class="section level1" number="3">
+<h1>
+<span class="header-section-number">3</span> Homozygosity of F0 Cab and Kaga<a class="anchor" aria-label="anchor" href="#homozygosity-of-f0-cab-and-kaga"><i class="fas fa-link"></i></a>
+</h1>
+<div id="read-in-total-medaka-genome-count" class="section level2" number="3.1">
+<h2>
+<span class="header-section-number">3.1</span> Read in total medaka genome count<a class="anchor" aria-label="anchor" href="#read-in-total-medaka-genome-count"><i class="fas fa-link"></i></a>
+</h2>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Get chromosome lengths</span>
+<span class="va">med_chr_lens</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.table</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"data"</span>,
+                                     <span class="st">"Oryzias_latipes.ASM223467v1.dna.toplevel.fa_chr_counts.txt"</span><span class="op">)</span>,
+                          col.names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"chr"</span>, <span class="st">"end"</span><span class="op">)</span><span class="op">)</span>
+<span class="co"># Add start</span>
+<span class="va">med_chr_lens</span><span class="op">$</span><span class="va">start</span> <span class="op">=</span> <span class="fl">1</span>
+<span class="co"># Reorder</span>
+<span class="va">med_chr_lens</span> <span class="op">=</span> <span class="va">med_chr_lens</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">chr</span>, <span class="va">start</span>, <span class="va">end</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="co"># remove MT</span>
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">chr</span> <span class="op">!=</span> <span class="st">"MT"</span><span class="op">)</span>
+
+<span class="co"># Total HdrR sequence length</span>
+<span class="va">total_hdrr_bases</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">med_chr_lens</span><span class="op">$</span><span class="va">end</span><span class="op">)</span></code></pre></div>
+</div>
+<div id="read-in-data" class="section level2" number="3.2">
+<h2>
+<span class="header-section-number">3.2</span> Read in data<a class="anchor" aria-label="anchor" href="#read-in-data"><i class="fas fa-link"></i></a>
+</h2>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">in_dir</span> <span class="op">=</span> <span class="st">"/nfs/research/birney/users/ian/somites/recombination_blocks"</span>
+
+<span class="va">in_files</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span><span class="op">(</span><span class="va">in_dir</span>, pattern <span class="op">=</span> <span class="st">"20210803_hmm_output_F0"</span>, full.names <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>
+
+<span class="co"># Read into list</span>
+<span class="va">ck_list</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">in_files</span>, <span class="kw">function</span><span class="op">(</span><span class="va">FILE</span><span class="op">)</span><span class="op">{</span>
+  <span class="va">out</span> <span class="op">=</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_tsv</a></span><span class="op">(</span><span class="va">FILE</span>,
+                        col_types <span class="op">=</span> <span class="st">"ciiidii"</span><span class="op">)</span>
+<span class="op">}</span><span class="op">)</span>
+<span class="co"># Set names as bin length</span>
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">ck_list</span><span class="op">)</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/basename.html">basename</a></span><span class="op">(</span><span class="va">in_files</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_split.html">str_split</a></span><span class="op">(</span><span class="st">"_"</span>, simplify <span class="op">=</span> <span class="cn">T</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://rdrr.io/r/base/subset.html">subset</a></span><span class="op">(</span>select <span class="op">=</span> <span class="fl">6</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_remove.html">str_remove</a></span><span class="op">(</span><span class="st">".txt"</span><span class="op">)</span>
+<span class="co"># Reorder</span>
+<span class="va">ck_list</span> <span class="op">=</span> <span class="va">ck_list</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html">order</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">ck_list</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">]</span>
+
+<span class="va">counter</span> <span class="op">=</span> <span class="fl">0</span>
+<span class="va">ck_list</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">ck_list</span>, <span class="kw">function</span><span class="op">(</span><span class="va">data</span><span class="op">)</span><span class="op">{</span>
+  <span class="va">counter</span> <span class="op">&lt;&lt;-</span> <span class="va">counter</span> <span class="op">+</span> <span class="fl">1</span>
+  <span class="co"># set bin length</span>
+  <span class="va">bin_length</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">ck_list</span><span class="op">)</span><span class="op">[</span><span class="va">counter</span><span class="op">]</span><span class="op">)</span>
+  <span class="co"># add bin start and end coordinates</span>
+  <span class="va">df</span> <span class="op">=</span> <span class="va">data</span> <span class="op">%&gt;%</span> 
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>LANE <span class="op">=</span> <span class="va">sample</span> <span class="op">%&gt;%</span>
+                    <span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_split.html">str_split</a></span><span class="op">(</span><span class="st">"/"</span>, simplify <span class="op">=</span> <span class="cn">T</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+                    <span class="fu"><a href="https://rdrr.io/r/base/subset.html">subset</a></span><span class="op">(</span>select <span class="op">=</span> <span class="fl">10</span><span class="op">)</span>,
+                  BIN_LENGTH <span class="op">=</span> <span class="va">bin_length</span>,
+                  BIN_START <span class="op">=</span> <span class="va">bin</span> <span class="op">*</span> <span class="va">bin_length</span> <span class="op">+</span> <span class="fl">1</span>,
+                  BIN_END <span class="op">=</span> <span class="va">bin</span> <span class="op">*</span> <span class="va">bin_length</span> <span class="op">+</span> <span class="va">bin_length</span>,
+                  BIN_LENGTH_KB <span class="op">=</span> <span class="va">BIN_LENGTH</span> <span class="op">/</span> <span class="fl">1e3</span>,
+                  READS_PER_BIN <span class="op">=</span> <span class="va">mat</span> <span class="op">+</span> <span class="va">pat</span><span class="op">)</span>
+  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span>
+<span class="op">}</span><span class="op">)</span>
+
+<span class="co"># Recode `ck_list$state` so that 0,1,2 corresponds to HOM_REF, HET, HOM_ALT </span>
+<span class="va">ck_list</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">ck_list</span>, <span class="kw">function</span><span class="op">(</span><span class="va">df</span><span class="op">)</span><span class="op">{</span>
+  <span class="va">df</span> <span class="op">=</span> <span class="va">df</span> <span class="op">%&gt;%</span> 
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>state <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/recode.html">recode</a></span><span class="op">(</span><span class="va">state</span>,
+                                        `0` <span class="op">=</span> <span class="fl">2</span>,
+                                        `1` <span class="op">=</span> <span class="fl">1</span>,
+                                        `2` <span class="op">=</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span>
+<span class="op">}</span><span class="op">)</span></code></pre></div>
+<div id="get-total-number-of-bases-covered-by-each-state" class="section level3" number="3.2.1">
+<h3>
+<span class="header-section-number">3.2.1</span> Get total number of bases covered by each state<a class="anchor" aria-label="anchor" href="#get-total-number-of-bases-covered-by-each-state"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Take 5kb DF</span>
+<span class="va">df</span> <span class="op">=</span> <span class="va">ck_list</span><span class="op">$</span><span class="va">`5000`</span>
+
+<span class="co"># Set states to loop over</span>
+<span class="va">states</span> <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">2</span>
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">states</span><span class="op">)</span> <span class="op">=</span> <span class="va">states</span>
+
+<span class="co"># Run loop over each LANE</span>
+
+<span class="va">base_cov_df</span> <span class="op">=</span> <span class="va">df</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://rdrr.io/r/base/split.html">split</a></span><span class="op">(</span><span class="va">.</span>, f <span class="op">=</span> <span class="va">.</span><span class="op">$</span><span class="va">LANE</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">.</span>, <span class="kw">function</span><span class="op">(</span><span class="va">LANE</span><span class="op">)</span><span class="op">{</span>
+    <span class="co"># convert to ranges object</span>
+    <span class="va">lane_ranges</span> <span class="op">=</span> <span class="fu">GenomicRanges</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/makeGRangesFromDataFrame.html">makeGRangesFromDataFrame</a></span><span class="op">(</span><span class="va">LANE</span>,
+                                                          keep.extra.columns <span class="op">=</span> <span class="cn">T</span>,
+                                                          ignore.strand <span class="op">=</span> <span class="cn">T</span>,
+                                                          seqnames.field <span class="op">=</span> <span class="st">"chr"</span>, 
+                                                          start.field <span class="op">=</span> <span class="st">"BIN_START"</span>,
+                                                          end.field <span class="op">=</span> <span class="st">"BIN_END"</span><span class="op">)</span>
+    <span class="co"># get total bases covered by each state</span>
+    <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map_dfr</a></span><span class="op">(</span><span class="va">states</span>, <span class="kw">function</span><span class="op">(</span><span class="va">STATE</span><span class="op">)</span><span class="op">{</span>
+      <span class="va">lane_ranges</span><span class="op">[</span><span class="va">lane_ranges</span><span class="op">$</span><span class="va">state</span> <span class="op">==</span> <span class="va">STATE</span><span class="op">]</span> <span class="op">%&gt;%</span> 
+        <span class="co"># merge contiguous ranges</span>
+        <span class="fu">GenomicRanges</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/inter-range-methods.html">reduce</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+        <span class="co"># get width of ranges</span>
+        <span class="fu">width</span><span class="op">(</span><span class="va">.</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+        <span class="co"># get total bases covered</span>
+        <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+        <span class="co"># coerce into data frame</span>
+        <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="st">"BASES_COVERED"</span> <span class="op">=</span> <span class="va">.</span><span class="op">)</span>
+      <span class="op">}</span>, .id <span class="op">=</span> <span class="st">"STATE"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+        <span class="co"># add FREQ column</span>
+        <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>FREQ <span class="op">=</span> <span class="va">BASES_COVERED</span> <span class="op">/</span> <span class="va">total_hdrr_bases</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+        <span class="co"># add UNCLASSIFIED row</span>
+        <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/add_row.html">add_row</a></span><span class="op">(</span>STATE <span class="op">=</span> <span class="st">"UNCLASSIFIED"</span>, 
+                        BASES_COVERED <span class="op">=</span> <span class="va">total_hdrr_bases</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">.</span><span class="op">$</span><span class="va">BASES_COVERED</span><span class="op">)</span>,
+                        FREQ <span class="op">=</span> <span class="op">(</span><span class="va">total_hdrr_bases</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">.</span><span class="op">$</span><span class="va">BASES_COVERED</span><span class="op">)</span><span class="op">)</span> <span class="op">/</span> <span class="va">total_hdrr_bases</span><span class="op">)</span>
+    <span class="op">}</span>
+  <span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html">bind_rows</a></span><span class="op">(</span>.id <span class="op">=</span> <span class="st">"LANE"</span><span class="op">)</span></code></pre></div>
+<p>Plot</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Plot</span>
+<span class="va">ck_prop_plot</span> <span class="op">=</span> <span class="va">base_cov_df</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>STATE <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">STATE</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span>,<span class="fl">2</span>, <span class="st">"UNCLASSIFIED"</span><span class="op">)</span><span class="op">)</span>,
+                STATE_RECODE <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/recode.html">recode</a></span><span class="op">(</span><span class="va">STATE</span>,
+                                             `0` <span class="op">=</span> <span class="st">"HOM REF (HdrR)"</span>,
+                                             `1` <span class="op">=</span> <span class="st">"HET"</span>,
+                                             `2` <span class="op">=</span> <span class="st">"HOM ALT"</span>,
+                                             <span class="st">"UNCLASSIFIED"</span> <span class="op">=</span> <span class="st">"Unclassified"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="co"># plot</span>
+  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span><span class="va">STATE_RECODE</span>, <span class="va">FREQ</span>, colour <span class="op">=</span> <span class="va">STATE</span>, fill <span class="op">=</span> <span class="va">STATE</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">geom_col</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">facet_grid</span><span class="op">(</span>cols <span class="op">=</span> <span class="fu">vars</span><span class="op">(</span><span class="va">LANE</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">scale_colour_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="va">pal_ck_1_lines</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">scale_fill_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="va">pal_ck_1</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">guides</span><span class="op">(</span>colour <span class="op">=</span> <span class="st">"none"</span>, fill <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">xlab</span><span class="op">(</span><span class="st">"Genotype"</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">ylab</span><span class="op">(</span><span class="st">"Proportion of reference bases covered"</span><span class="op">)</span>
+
+<span class="va">ck_prop_plot</span></code></pre></div>
+<div class="inline-figure"><img src="02-F0_homozygosity_files/figure-html/unnamed-chunk-5-1.png" width="100%"></div>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R">
+<span class="co"># Interactive version</span>
+<span class="fu">ggplotly</span><span class="op">(</span><span class="va">ck_prop_plot</span><span class="op">)</span></code></pre></div>
+<div id="htmlwidget-9f788424fff4088573b2" style="width:100%;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-9f788424fff4088573b2">{"x":{"data":[{"orientation":"v","width":0.9,"base":0,"x":[1],"y":[0.396401902537317],"text":"STATE_RECODE: HOM REF (HdrR)<br />FREQ: 0.396401903<br />STATE: 0<br />STATE: 0","type":"bar","marker":{"autocolorscale":false,"color":"rgba(255,111,89,1)","line":{"width":1.88976377952756,"color":"rgba(155,11,0,1)"}},"name":"0","legendgroup":"0","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":0.9,"base":0,"x":[1],"y":[0.00491798562818014],"text":"STATE_RECODE: HOM REF (HdrR)<br />FREQ: 0.004917986<br />STATE: 0<br />STATE: 0","type":"bar","marker":{"autocolorscale":false,"color":"rgba(255,111,89,1)","line":{"width":1.88976377952756,"color":"rgba(155,11,0,1)"}},"name":"0","legendgroup":"0","showlegend":false,"xaxis":"x2","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":0.9,"base":0,"x":[2],"y":[0.521497201791511],"text":"STATE_RECODE: HET<br />FREQ: 0.521497202<br />STATE: 1<br />STATE: 1","type":"bar","marker":{"autocolorscale":false,"color":"rgba(0,0,34,1)","line":{"width":1.88976377952756,"color":"rgba(100,100,134,1)"}},"name":"1","legendgroup":"1","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":0.9,"base":0,"x":[2],"y":[0.575731275990362],"text":"STATE_RECODE: HET<br />FREQ: 0.575731276<br />STATE: 1<br />STATE: 1","type":"bar","marker":{"autocolorscale":false,"color":"rgba(0,0,34,1)","line":{"width":1.88976377952756,"color":"rgba(100,100,134,1)"}},"name":"1","legendgroup":"1","showlegend":false,"xaxis":"x2","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":0.9,"base":0,"x":[3],"y":[0.00649146856462004],"text":"STATE_RECODE: HOM ALT<br />FREQ: 0.006491469<br />STATE: 2<br />STATE: 2","type":"bar","marker":{"autocolorscale":false,"color":"rgba(67,170,139,1)","line":{"width":1.88976377952756,"color":"rgba(0,70,39,1)"}},"name":"2","legendgroup":"2","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":0.9,"base":0,"x":[3],"y":[0.388520864626231],"text":"STATE_RECODE: HOM ALT<br />FREQ: 0.388520865<br />STATE: 2<br />STATE: 2","type":"bar","marker":{"autocolorscale":false,"color":"rgba(67,170,139,1)","line":{"width":1.88976377952756,"color":"rgba(0,70,39,1)"}},"name":"2","legendgroup":"2","showlegend":false,"xaxis":"x2","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":0.9,"base":0,"x":[4],"y":[0.0756094271065516],"text":"STATE_RECODE: Unclassified<br />FREQ: 0.075609427<br />STATE: UNCLASSIFIED<br />STATE: UNCLASSIFIED","type":"bar","marker":{"autocolorscale":false,"color":"rgba(251,245,243,1)","line":{"width":1.88976377952756,"color":"rgba(101,95,93,1)"}},"name":"UNCLASSIFIED","legendgroup":"UNCLASSIFIED","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":0.9,"base":0,"x":[4],"y":[0.0308298737552272],"text":"STATE_RECODE: Unclassified<br />FREQ: 0.030829874<br />STATE: UNCLASSIFIED<br />STATE: UNCLASSIFIED","type":"bar","marker":{"autocolorscale":false,"color":"rgba(251,245,243,1)","line":{"width":1.88976377952756,"color":"rgba(101,95,93,1)"}},"name":"UNCLASSIFIED","legendgroup":"UNCLASSIFIED","showlegend":false,"xaxis":"x2","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":37.9178082191781,"r":18.9954337899543,"b":40.1826484018265,"l":43.1050228310502},"plot_bgcolor":"rgba(255,255,255,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"xaxis":{"domain":[0,0.495923026744945],"automargin":true,"type":"linear","autorange":false,"range":[0.4,4.6],"tickmode":"array","ticktext":["HOM REF (HdrR)","HET","HOM ALT","Unclassified"],"tickvals":[1,2,3,4],"categoryorder":"array","categoryarray":["HOM REF (HdrR)","HET","HOM ALT","Unclassified"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":"","hoverformat":".2f"},"annotations":[{"text":"Genotype","x":0.5,"y":-0.0176940639269406,"showarrow":false,"ax":0,"ay":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"xref":"paper","yref":"paper","textangle":-0,"xanchor":"center","yanchor":"top","annotationType":"axis"},{"text":"Proportion of reference bases covered","x":-0.0159001956947162,"y":0.5,"showarrow":false,"ax":0,"ay":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"xref":"paper","yref":"paper","textangle":-90,"xanchor":"right","yanchor":"center","annotationType":"axis"},{"text":"Cab","x":0.247961513372472,"y":1,"showarrow":false,"ax":0,"ay":0,"font":{"color":"rgba(26,26,26,1)","family":"","size":11.689497716895},"xref":"paper","yref":"paper","textangle":-0,"xanchor":"center","yanchor":"bottom"},{"text":"Kaga","x":0.752038486627528,"y":1,"showarrow":false,"ax":0,"ay":0,"font":{"color":"rgba(26,26,26,1)","family":"","size":11.689497716895},"xref":"paper","yref":"paper","textangle":-0,"xanchor":"center","yanchor":"bottom"}],"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-0.0287865637995181,0.60451783978988],"tickmode":"array","ticktext":["0.0","0.2","0.4","0.6"],"tickvals":[0,0.2,0.4,0.6],"categoryorder":"array","categoryarray":["0.0","0.2","0.4","0.6"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x","title":"","hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":"transparent","line":{"color":"rgba(51,51,51,1)","width":0.66417600664176,"linetype":"solid"},"yref":"paper","xref":"paper","x0":0,"x1":0.495923026744945,"y0":0,"y1":1},{"type":"rect","fillcolor":"rgba(217,217,217,1)","line":{"color":"rgba(51,51,51,1)","width":0.66417600664176,"linetype":"solid"},"yref":"paper","xref":"paper","x0":0,"x1":0.495923026744945,"y0":0,"y1":23.37899543379,"yanchor":1,"ysizemode":"pixel"},{"type":"rect","fillcolor":"transparent","line":{"color":"rgba(51,51,51,1)","width":0.66417600664176,"linetype":"solid"},"yref":"paper","xref":"paper","x0":0.504076973255055,"x1":1,"y0":0,"y1":1},{"type":"rect","fillcolor":"rgba(217,217,217,1)","line":{"color":"rgba(51,51,51,1)","width":0.66417600664176,"linetype":"solid"},"yref":"paper","xref":"paper","x0":0.504076973255055,"x1":1,"y0":0,"y1":23.37899543379,"yanchor":1,"ysizemode":"pixel"}],"xaxis2":{"type":"linear","autorange":false,"range":[0.4,4.6],"tickmode":"array","ticktext":["HOM REF (HdrR)","HET","HOM ALT","Unclassified"],"tickvals":[1,2,3,4],"categoryorder":"array","categoryarray":["HOM REF (HdrR)","HET","HOM ALT","Unclassified"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"domain":[0.504076973255055,1],"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":"","hoverformat":".2f"},"showlegend":true,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.88976377952756,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.689497716895},"y":1},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","showSendToCloud":false},"source":"A","attrs":{"15b1b8270acefb":{"x":{},"y":{},"colour":{},"fill":{},"type":"bar"}},"cur_data":"15b1b8270acefb","visdat":{"15b1b8270acefb":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<div id="karyoplot" class="section level2" number="3.3">
+<h2>
+<span class="header-section-number">3.3</span> Karyoplot<a class="anchor" aria-label="anchor" href="#karyoplot"><i class="fas fa-link"></i></a>
+</h2>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">bb_list_ck</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">ck_list</span>, <span class="kw">function</span><span class="op">(</span><span class="va">df</span><span class="op">)</span><span class="op">{</span>
+  <span class="co"># loop over different bin lengths</span>
+  <span class="va">block_bounds_list</span> <span class="op">=</span> <span class="va">df</span> <span class="op">%&gt;%</span> 
+    <span class="co"># loop over LANE</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/split.html">split</a></span><span class="op">(</span><span class="va">.</span>, f <span class="op">=</span> <span class="va">.</span><span class="op">$</span><span class="va">LANE</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+    <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">.</span>, <span class="kw">function</span><span class="op">(</span><span class="va">LANE</span><span class="op">)</span><span class="op">{</span>
+      <span class="co"># loop over CHR</span>
+      <span class="va">LANE</span> <span class="op">%&gt;%</span> 
+        <span class="fu"><a href="https://rdrr.io/r/base/split.html">split</a></span><span class="op">(</span><span class="va">.</span>, f <span class="op">=</span> <span class="va">.</span><span class="op">$</span><span class="va">chr</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+        <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">.</span>, <span class="kw">function</span><span class="op">(</span><span class="va">CHR</span><span class="op">)</span><span class="op">{</span>
+          <span class="co"># Get lengths of each contiguous state</span>
+          <span class="va">cont_len</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rle.html">rle</a></span><span class="op">(</span><span class="va">CHR</span><span class="op">$</span><span class="va">state</span><span class="op">)</span>
+          
+          <span class="co"># Get cumulative sum of those lengths</span>
+          <span class="va">cum_blocks</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/cumsum.html">cumsum</a></span><span class="op">(</span><span class="va">cont_len</span><span class="op">$</span><span class="va">lengths</span><span class="op">)</span>
+          
+          <span class="co"># Get rows that correspond to block changes</span>
+          <span class="va">block_bounds</span> <span class="op">=</span> <span class="va">CHR</span><span class="op">[</span><span class="va">cum_blocks</span>, <span class="op">]</span> <span class="op">%&gt;%</span> 
+            <span class="co"># Add end of previous black</span>
+            <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>END_PREV <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/lead-lag.html">lag</a></span><span class="op">(</span><span class="va">BIN_END</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+            <span class="co"># Replace the NA in the first row with `1`</span>
+            <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>END_PREV <span class="op">=</span> <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/replace_na.html">replace_na</a></span><span class="op">(</span><span class="va">END_PREV</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+            <span class="co"># Add colour</span>
+            <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>COLOUR <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/recode.html">recode</a></span><span class="op">(</span><span class="va">state</span>,
+                                                 <span class="op">!</span><span class="op">!</span><span class="op">!</span><span class="va">pal_ck_1</span><span class="op">[</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">pal_ck_1</span><span class="op">)</span> <span class="op">==</span> <span class="st">"UNCLASSIFIED"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span><span class="op">)</span> 
+          
+        <span class="op">}</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+            <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html">bind_rows</a></span><span class="op">(</span><span class="op">)</span>
+      
+  <span class="op">}</span><span class="op">)</span>
+<span class="op">}</span><span class="op">)</span></code></pre></div>
+<p>Extract y cutoff points for each y</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">lc_list_ck</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">bb_list_ck</span>, <span class="kw">function</span><span class="op">(</span><span class="va">block_bounds_list</span><span class="op">)</span><span class="op">{</span>
+  <span class="va">lane_cutoffs</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/cut.html">cut</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">1</span>, breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">block_bounds_list</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+    <span class="fu"><a href="https://rdrr.io/r/base/levels.html">levels</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+    <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>lower <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html">sub</a></span><span class="op">(</span><span class="st">"\\((.+),.*"</span>, <span class="st">"\\1"</span>, <span class="va">.</span><span class="op">)</span> <span class="op">)</span>,
+               upper <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html">sub</a></span><span class="op">(</span><span class="st">"[^,]*,([^]]*)\\]"</span>, <span class="st">"\\1"</span>, <span class="va">.</span><span class="op">)</span> <span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html">desc</a></span><span class="op">(</span><span class="va">lower</span><span class="op">)</span><span class="op">)</span>
+  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="va">lane_cutoffs</span><span class="op">)</span>
+<span class="op">}</span><span class="op">)</span></code></pre></div>
+<p>Plot Karyoplots</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">counter_A</span> <span class="op">=</span> <span class="fl">0</span>
+<span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">bb_list_ck</span>, <span class="kw">function</span><span class="op">(</span><span class="va">block_bounds_list</span><span class="op">)</span><span class="op">{</span>
+  <span class="va">counter_A</span> <span class="op">&lt;&lt;-</span> <span class="va">counter_A</span> <span class="op">+</span> <span class="fl">1</span>
+  <span class="co"># set file name</span>
+  <span class="va">file_name</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"20210803_ck_karyoplot_"</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">bb_list</span><span class="op">)</span><span class="op">[</span><span class="va">counter_A</span><span class="op">]</span>, <span class="st">".png"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span>
+  <span class="va">file_out</span> <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"docs/plots"</span>, <span class="va">file_name</span><span class="op">)</span>
+  
+  <span class="co"># Get lane cutoffs</span>
+  <span class="va">lane_cutoffs</span> <span class="op">=</span> <span class="va">lc_list_ck</span><span class="op">[[</span><span class="va">counter_A</span><span class="op">]</span><span class="op">]</span>
+  
+  <span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span>file<span class="op">=</span><span class="va">file_out</span>,
+      width<span class="op">=</span><span class="fl">13000</span>,
+      height<span class="op">=</span><span class="fl">3000</span>,
+      units <span class="op">=</span> <span class="st">"px"</span>,
+      res <span class="op">=</span> <span class="fl">300</span><span class="op">)</span>
+  
+  <span class="co"># Plot ideogram</span>
+  <span class="va">kp</span> <span class="op">=</span> <span class="fu">karyoploteR</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/karyoploteR/man/plotKaryotype.html">plotKaryotype</a></span><span class="op">(</span><span class="va">med_genome</span>, plot.type <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>
+  <span class="co"># Add data background</span>
+  <span class="co">#karyoploteR::kpDataBackground(kp, r0=0, r1 = 1, color = "white")</span>
+  
+  <span class="co"># Add rectangles in loop</span>
+  <span class="va">counter_B</span> <span class="op">=</span> <span class="fl">0</span>
+  <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">block_bounds_list</span>, <span class="kw">function</span><span class="op">(</span><span class="va">LANE</span><span class="op">)</span><span class="op">{</span>
+    <span class="co"># Add to counter_B</span>
+    <span class="va">counter_B</span> <span class="op">&lt;&lt;-</span> <span class="va">counter_B</span> <span class="op">+</span> <span class="fl">1</span>
+    <span class="co"># Add rectangles</span>
+    <span class="fu">karyoploteR</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/karyoploteR/man/kpRect.html">kpRect</a></span><span class="op">(</span><span class="va">kp</span>,
+                        chr <span class="op">=</span> <span class="va">LANE</span><span class="op">$</span><span class="va">chr</span>,
+                        x0 <span class="op">=</span> <span class="va">LANE</span><span class="op">$</span><span class="va">END_PREV</span>,
+                        x1 <span class="op">=</span> <span class="va">LANE</span><span class="op">$</span><span class="va">BIN_END</span>,
+                        y0 <span class="op">=</span> <span class="va">lane_cutoffs</span><span class="op">[</span><span class="va">counter_B</span>, <span class="op">]</span> <span class="op">%&gt;%</span> 
+                          <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html">pull</a></span><span class="op">(</span><span class="va">lower</span><span class="op">)</span>,
+                        y1 <span class="op">=</span> <span class="va">lane_cutoffs</span><span class="op">[</span><span class="va">counter_B</span>, <span class="op">]</span> <span class="op">%&gt;%</span> 
+                          <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html">pull</a></span><span class="op">(</span><span class="va">upper</span><span class="op">)</span>,
+                        col <span class="op">=</span> <span class="va">LANE</span><span class="op">$</span><span class="va">COLOUR</span>,
+                        border <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span>
+    <span class="co"># Add axis label</span>
+    <span class="fu">karyoploteR</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/karyoploteR/man/kpAddLabels.html">kpAddLabels</a></span><span class="op">(</span><span class="va">kp</span>, labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">LANE</span><span class="op">$</span><span class="va">LANE</span><span class="op">)</span>,
+                             r0 <span class="op">=</span> <span class="va">lane_cutoffs</span><span class="op">[</span><span class="va">counter_B</span>, <span class="op">]</span> <span class="op">%&gt;%</span> 
+                               <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html">pull</a></span><span class="op">(</span><span class="va">lower</span><span class="op">)</span>,
+                             r1 <span class="op">=</span> <span class="va">lane_cutoffs</span><span class="op">[</span><span class="va">counter_B</span>, <span class="op">]</span> <span class="op">%&gt;%</span> 
+                               <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html">pull</a></span><span class="op">(</span><span class="va">upper</span><span class="op">)</span>,
+                             cex <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span>
+  <span class="op">}</span><span class="op">)</span>
+  
+  
+  <span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span>  
+<span class="op">}</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"docs/plots/20210803_ck_karyoplot_5000.png"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<div class="figure">
+<span style="display:block;" id="fig:unnamed-chunk-9"></span>
+<img src="docs/plots/20210803_ck_karyoplot_5000.png" alt="Bin length: 5 kb" width="6500"><p class="caption">
+Figure 3.1: Bin length: 5 kb
+</p>
+</div>
+
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="alignment-of-f0-and-f2-generations.html"><span class="header-section-number">2</span> Alignment of F0 and F2 generations</a></div>
+<div class="next"><a href="parts.html"><span class="header-section-number">4</span> Parts</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#homozygosity-of-f0-cab-and-kaga"><span class="header-section-number">3</span> Homozygosity of F0 Cab and Kaga</a></li>
+<li><a class="nav-link" href="#read-in-total-medaka-genome-count"><span class="header-section-number">3.1</span> Read in total medaka genome count</a></li>
+<li>
+<a class="nav-link" href="#read-in-data"><span class="header-section-number">3.2</span> Read in data</a><ul class="nav navbar-nav"><li><a class="nav-link" href="#get-total-number-of-bases-covered-by-each-state"><span class="header-section-number">3.2.1</span> Get total number of bases covered by each state</a></li></ul>
+</li>
+<li><a class="nav-link" href="#karyoplot"><span class="header-section-number">3.3</span> Karyoplot</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+<li><a id="book-source" href="https://github.com/brettellebi/somites/blob/master/02-F0_homozygosity.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/brettellebi/somites/edit/master/02-F0_homozygosity.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Somite period F2 analysis</strong>" was written by Ian Brettell. It was last built on 2021-10-21.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script><script type="text/x-mathjax-config">const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+for (let popover of popovers) {
+  const div = document.createElement('div');
+  div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+  div.innerHTML = popover.getAttribute('data-content');
+
+  var has_math = div.querySelector("span.math");
+  if (has_math) {
+    document.body.appendChild(div);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+    MathJax.Hub.Queue(function() {
+      popover.setAttribute('data-content', div.innerHTML);
+      document.body.removeChild(div);
+    })
+  }
+}
+</script>
+</body>
+</html>
