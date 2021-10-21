@@ -1,0 +1,258 @@
+# Homozygosity of F0 Cab and Kaga
+
+```{r, include = F}
+library(here)
+source(here::here("code/source/02-F0_homozygosity.R"))
+```
+
+## Read in total medaka genome count
+
+```{r}
+# Get chromosome lengths
+med_chr_lens = read.table(here::here("data",
+                                     "Oryzias_latipes.ASM223467v1.dna.toplevel.fa_chr_counts.txt"),
+                          col.names = c("chr", "end"))
+# Add start
+med_chr_lens$start = 1
+# Reorder
+med_chr_lens = med_chr_lens %>% 
+  dplyr::select(chr, start, end) %>% 
+  # remove MT
+  dplyr::filter(chr != "MT")
+
+# Total HdrR sequence length
+total_hdrr_bases = sum(med_chr_lens$end)
+```
+
+## Read in data
+
+```{r}
+in_dir = "/nfs/research/birney/users/ian/somites/recombination_blocks"
+
+in_files = list.files(in_dir, pattern = "20210803_hmm_output_F0", full.names = T)
+
+# Read into list
+ck_list = purrr::map(in_files, function(FILE){
+  out = readr::read_tsv(FILE,
+                        col_types = "ciiidii")
+})
+# Set names as bin length
+names(ck_list) = basename(in_files) %>% 
+  stringr::str_split("_", simplify = T) %>% 
+  subset(select = 6) %>% 
+  stringr::str_remove(".txt")
+# Reorder
+ck_list = ck_list[order(as.numeric(names(ck_list)))]
+
+counter = 0
+ck_list = purrr::map(ck_list, function(data){
+  counter <<- counter + 1
+  # set bin length
+  bin_length = as.numeric(names(ck_list)[counter])
+  # add bin start and end coordinates
+  df = data %>% 
+    dplyr::mutate(LANE = sample %>%
+                    stringr::str_split("/", simplify = T) %>% 
+                    subset(select = 10),
+                  BIN_LENGTH = bin_length,
+                  BIN_START = bin * bin_length + 1,
+                  BIN_END = bin * bin_length + bin_length,
+                  BIN_LENGTH_KB = BIN_LENGTH / 1e3,
+                  READS_PER_BIN = mat + pat)
+  return(df)
+})
+
+# Recode `ck_list$state` so that 0,1,2 corresponds to HOM_REF, HET, HOM_ALT 
+ck_list = purrr::map(ck_list, function(df){
+  df = df %>% 
+    dplyr::mutate(state = dplyr::recode(state,
+                                        `0` = 2,
+                                        `1` = 1,
+                                        `2` = 0))
+})
+```
+
+### Get total number of bases covered by each state
+
+```{r}
+# Take 5kb DF
+df = ck_list$`5000`
+
+# Set states to loop over
+states = 0:2
+names(states) = states
+
+# Run loop over each LANE
+
+base_cov_df = df %>% 
+  split(., f = .$LANE) %>% 
+  purrr::map(., function(LANE){
+    # convert to ranges object
+    lane_ranges = GenomicRanges::makeGRangesFromDataFrame(LANE,
+                                                          keep.extra.columns = T,
+                                                          ignore.strand = T,
+                                                          seqnames.field = "chr", 
+                                                          start.field = "BIN_START",
+                                                          end.field = "BIN_END")
+    # get total bases covered by each state
+    purrr::map_dfr(states, function(STATE){
+      lane_ranges[lane_ranges$state == STATE] %>% 
+        # merge contiguous ranges
+        GenomicRanges::reduce(.) %>% 
+        # get width of ranges
+        width(.) %>% 
+        # get total bases covered
+        sum(.) %>% 
+        # coerce into data frame
+        data.frame("BASES_COVERED" = .)
+      }, .id = "STATE") %>% 
+        # add FREQ column
+        dplyr::mutate(FREQ = BASES_COVERED / total_hdrr_bases) %>% 
+        # add UNCLASSIFIED row
+        tibble::add_row(STATE = "UNCLASSIFIED", 
+                        BASES_COVERED = total_hdrr_bases - sum(.$BASES_COVERED),
+                        FREQ = (total_hdrr_bases - sum(.$BASES_COVERED)) / total_hdrr_bases)
+    }
+  ) %>% 
+  dplyr::bind_rows(.id = "LANE")
+
+```
+
+Plot
+
+```{r, out.width='100%'}
+# Plot
+ck_prop_plot = base_cov_df %>% 
+  dplyr::mutate(STATE = factor(STATE, levels = c(0,1,2, "UNCLASSIFIED")),
+                STATE_RECODE = dplyr::recode(STATE,
+                                             `0` = "HOM REF (HdrR)",
+                                             `1` = "HET",
+                                             `2` = "HOM ALT",
+                                             "UNCLASSIFIED" = "Unclassified")) %>% 
+  # plot
+  ggplot(aes(STATE_RECODE, FREQ, colour = STATE, fill = STATE)) +
+    geom_col() +
+    facet_grid(cols = vars(LANE)) +
+    theme_bw() +
+    scale_colour_manual(values = pal_ck_1_lines) +
+    scale_fill_manual(values = pal_ck_1) +
+    guides(colour = "none", fill = "none") +
+    xlab("Genotype") +
+    ylab("Proportion of reference bases covered")
+
+ck_prop_plot
+
+# Interactive version
+ggplotly(ck_prop_plot)
+```
+
+## Karyoplot
+
+```{r}
+bb_list_ck = purrr::map(ck_list, function(df){
+  # loop over different bin lengths
+  block_bounds_list = df %>% 
+    # loop over LANE
+    split(., f = .$LANE) %>% 
+    purrr::map(., function(LANE){
+      # loop over CHR
+      LANE %>% 
+        split(., f = .$chr) %>% 
+        purrr::map(., function(CHR){
+          # Get lengths of each contiguous state
+          cont_len = rle(CHR$state)
+          
+          # Get cumulative sum of those lengths
+          cum_blocks = cumsum(cont_len$lengths)
+          
+          # Get rows that correspond to block changes
+          block_bounds = CHR[cum_blocks, ] %>% 
+            # Add end of previous black
+            dplyr::mutate(END_PREV = dplyr::lag(BIN_END)) %>% 
+            # Replace the NA in the first row with `1`
+            dplyr::mutate(END_PREV = tidyr::replace_na(END_PREV, 1)) %>% 
+            # Add colour
+            dplyr::mutate(COLOUR = dplyr::recode(state,
+                                                 !!!pal_ck_1[-which(names(pal_ck_1) == "UNCLASSIFIED")])) 
+          
+        }) %>% 
+            dplyr::bind_rows()
+      
+  })
+})
+```
+
+Extract y cutoff points for each y
+
+```{r}
+lc_list_ck = purrr::map(bb_list_ck, function(block_bounds_list){
+  lane_cutoffs = cut(0:1, breaks = length(block_bounds_list)) %>% 
+    levels(.) %>% 
+    data.frame(lower = as.numeric( sub("\\((.+),.*", "\\1", .) ),
+               upper = as.numeric( sub("[^,]*,([^]]*)\\]", "\\1", .) )) %>% 
+    dplyr::arrange(dplyr::desc(lower))
+  return(lane_cutoffs)
+})
+```
+
+Plot Karyoplots
+
+```{r, eval = F}
+counter_A = 0
+purrr::map(bb_list_ck, function(block_bounds_list){
+  counter_A <<- counter_A + 1
+  # set file name
+  file_name = paste("20210803_ck_karyoplot_", names(bb_list)[counter_A], ".png", sep = "")
+  file_out = here::here("docs/plots", file_name)
+  
+  # Get lane cutoffs
+  lane_cutoffs = lc_list_ck[[counter_A]]
+  
+  png(file=file_out,
+      width=13000,
+      height=3000,
+      units = "px",
+      res = 300)
+  
+  # Plot ideogram
+  kp = karyoploteR::plotKaryotype(med_genome, plot.type = 5)
+  # Add data background
+  #karyoploteR::kpDataBackground(kp, r0=0, r1 = 1, color = "white")
+  
+  # Add rectangles in loop
+  counter_B = 0
+  purrr::map(block_bounds_list, function(LANE){
+    # Add to counter_B
+    counter_B <<- counter_B + 1
+    # Add rectangles
+    karyoploteR::kpRect(kp,
+                        chr = LANE$chr,
+                        x0 = LANE$END_PREV,
+                        x1 = LANE$BIN_END,
+                        y0 = lane_cutoffs[counter_B, ] %>% 
+                          dplyr::pull(lower),
+                        y1 = lane_cutoffs[counter_B, ] %>% 
+                          dplyr::pull(upper),
+                        col = LANE$COLOUR,
+                        border = NA)
+    # Add axis label
+    karyoploteR::kpAddLabels(kp, labels = unique(LANE$LANE),
+                             r0 = lane_cutoffs[counter_B, ] %>% 
+                               dplyr::pull(lower),
+                             r1 = lane_cutoffs[counter_B, ] %>% 
+                               dplyr::pull(upper),
+                             cex = 0.5)
+  })
+  
+  
+  dev.off()  
+})
+```
+
+```{r, fig.cap = "Bin length: 5 kb"}
+knitr::include_graphics(here::here("docs/plots/20210803_ck_karyoplot_5000.png"))
+```
+
+
+
+

@@ -19,16 +19,40 @@ Figures and tables *with captions* can also be cross-referenced from elsewhere i
 
 See Figure \@ref(fig:nice-fig).
 
-```{r nice-fig, fig.cap='Here is a nice figure!', out.width='80%', fig.asp=.75, fig.align='center', fig.alt='Plot with connected points showing that vapor pressure of mercury increases exponentially as temperature increases.'}
+
+```r
 par(mar = c(4, 4, .1, .1))
 plot(pressure, type = 'b', pch = 19)
 ```
 
+<div class="figure" style="text-align: center">
+<img src="02-cross-refs_files/figure-html/nice-fig-1.png" alt="Plot with connected points showing that vapor pressure of mercury increases exponentially as temperature increases." width="80%" />
+<p class="caption">(\#fig:nice-fig)Here is a nice figure!</p>
+</div>
+
 Don't miss Table \@ref(tab:nice-tab).
 
-```{r nice-tab, tidy=FALSE}
+
+```r
 knitr::kable(
   head(pressure, 10), caption = 'Here is a nice table!',
   booktabs = TRUE
 )
 ```
+
+
+
+Table: (\#tab:nice-tab)Here is a nice table!
+
+| temperature| pressure|
+|-----------:|--------:|
+|           0|   0.0002|
+|          20|   0.0012|
+|          40|   0.0060|
+|          60|   0.0300|
+|          80|   0.0900|
+|         100|   0.2700|
+|         120|   0.7500|
+|         140|   1.8500|
+|         160|   4.2000|
+|         180|   8.8000|
