@@ -1,0 +1,25 @@
+
+Bootstrap: docker
+From: rocker/tidyverse:4.1.0
+
+%post
+    # Install packages required for R packages
+    apt update
+    apt install -y libbz2-dev liblzma-dev libglpk40 libmagick++-dev
+
+    # Install CRAN packages
+    install2.r --error \
+        BiocManager \
+        devtools \
+        plotly \
+        GGally \
+        geiger
+    
+    # Install correct version of `matrixStats`
+    R -e 'devtools::install_version("matrixStats", ">= 0.60.1", repos = "https://cloud.r-project.org/")'
+    
+    # Install non-CRAN packages
+    R -e 'BiocManager::install("karyoploteR")'
+
+    # Install ViteRbi
+    R -e "devtools::install_github('tf2/ViteRbi', upgrade = 'never')"

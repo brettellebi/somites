@@ -17,7 +17,7 @@ output:
 
 The following samples failed during the alignment of the second batch of F2 individuals: `config/20210923_f2_fails.txt`. See that file for error types.
 
-# 22 September 2021
+# 22 September 2021
 
 * Ali has finished uploading the second batch of F2 sequences.
 * Tom has given me the GridLMM code, which is saved to `code/association_testing/gridLMM_gwas.R`

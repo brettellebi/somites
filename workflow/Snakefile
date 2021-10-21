@@ -81,7 +81,7 @@ rule all:
 #        ),
 # bwa_mem2_mem
         expand(os.path.join(config["working_dir"], "sams/F2/bwamem2/mapped/{F2_sample}.sam"),
-                F2_sample = ["171", "291", "301"]
+                F2_sample = F2_samples['SAMPLE']
         ),
 ## sort_sam_f2
 #        expand(os.path.join(config["working_dir"], "bams/F2/bwamem2/sorted/{F2_sample}.bam"),

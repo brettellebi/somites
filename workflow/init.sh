@@ -29,13 +29,22 @@ snakemake \
 # RStudio Server
 ####################
 
+# Build container
+# Set container path
+CONT=/hps/software/users/birney/ian/containers/somites/R_4.1.0.sif
+
+singularity build --remote \
+    $CONT \
+    workflow/envs/R_4.1.0/R_4.1.0.def
+
 ssh proxy-codon
 bsub -M 20000 -Is bash
-module load singularity-3.7.0-gcc-9.3.0-dp5ffrp 
+module load singularity-3.7.0-gcc-9.3.0-dp5ffrp
+CONT=/hps/software/users/birney/ian/containers/somites/R_4.1.0.sif
 singularity shell --bind /hps/software/users/birney/ian/rstudio_db:/var/lib/rstudio-server \
                   --bind /hps/software/users/birney/ian/tmp:/tmp \
                   --bind /hps/software/users/birney/ian/run:/run \
-                  docker://brettellebi/somite_f2:latest
+                  $CONT
 # Then run rserver, setting path of config file containing library path
 rserver --rsession-config-file /hps/software/users/birney/ian/repos/somites/workflow/envs/rstudio_server/rsession.conf
 

@@ -7,8 +7,6 @@
 255 [gzread] <fd:3>: invalid block type
 261 [gzread] <fd:3>: invalid distance too far back
 269 [gzread] <fd:4>: invalid block type
-291 [0000] 2. Calling kt_for - worker_aln
-301 [0000] 3. Calling kt_for - worker_sam
 333 [gzread] <fd:3>: invalid block type
 334 [gzread] <fd:4>: invalid distance too far back
 343 [mem_sam_pe_batch_post] paired reads have different names: "VH00531:3:AAAG3YWHV:1:1411:72027:25554", "VHCCCGGCCCCCCCCCCCCCC"
