@@ -20,7 +20,7 @@ git clone https://github.com/brettellebi/somites.git
 
 4. Create global Snakemake environment:
 ```bash
-conda create -f snakemake_6.4.1
+conda create -f snakemake_6.7.0
 ```
 
 5. Edit `somites/config/config.yaml` and `somites/init.sh` to adapt to Heidelberg cluster.

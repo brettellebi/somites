@@ -1,8 +1,12 @@
+---
+zotero: "PhD"
+---
+
 # Homozygosity of F0 Cab and Kaga
 
 ```{r, include = F}
 library(here)
-source(here::here("code/source/02-F0_homozygosity.R"))
+source(here::here("book/source/02-F0_homozygosity.R"))
 ```
 
 ## Read in total medaka genome count
@@ -252,7 +256,3 @@ purrr::map(bb_list_ck, function(block_bounds_list){
 ```{r, fig.cap = "Bin length: 5 kb"}
 knitr::include_graphics(here::here("docs/plots/20210803_ck_karyoplot_5000.png"))
 ```
-
-
-
-

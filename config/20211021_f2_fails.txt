@@ -1,0 +1,2 @@
+214 [mem_sam_pe_batch_post] paired reads have different names: "VH00558:3:AAAGTY7HV:2:2503:39288:4181", "@@@@Y7HGTGGCC"
+221 [gzread] <fd:4>: incorrect data check
