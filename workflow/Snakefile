@@ -83,39 +83,39 @@ rule all:
         expand(os.path.join(config["working_dir"], "sams/F2/bwamem2/mapped/{F2_sample}.sam"),
                 F2_sample = F2_samples['SAMPLE']
         ),
-## sort_sam_f2
-#        expand(os.path.join(config["working_dir"], "bams/F2/bwamem2/sorted/{F2_sample}.bam"),
-#                F2_sample = F2_samples['SAMPLE']
-#        ),
-## mark_duplicates_f2
-#        expand(os.path.join(config["working_dir"], "bams/F2/bwamem2/marked/{F2_sample}.bam"),
-#                F2_sample = F2_samples['SAMPLE']
-#        ),
-## samtools_index_f2
-#        expand(os.path.join(config["working_dir"], "bams/F2/bwamem2/marked/{F2_sample}.bam.bai"),
-#                F2_sample = F2_samples['SAMPLE']
-#        ),
-################
-## 05_F2_recomb_blocks.smk
-################
-## get_homozygous_sites
-#        expand(os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/homo_all/{F0_sample}.csv"),
-#                F0_sample = config["F0_lines"]
-#        ),
-## get_divergent_sites
-#        os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/homo_divergent/all.txt"),
-## bam_readcount_F2
-#        expand(os.path.join(config["working_dir"], "dp4s/batch_01/bwamem2/{F2_sample}.dp4.txt"),
-#                F2_sample = F2_samples['SAMPLE']
-#        ),
-## make_dp_AB_F2
-#        expand(os.path.join(config["working_dir"], "dpABs/batch_01/bwamem2/{F2_sample}.txt"),
-#                F2_sample = F2_samples['SAMPLE']
-#        ),
-## run_rc_block_F2
-#        expand(os.path.join(config["data_store_dir"], "recombination_blocks/20210716_hmm_output_batch_01_binlen_{bin_length}.txt"),
-#                bin_length = config["bin_length"]
-#        ),
+# sort_sam_f2
+        expand(os.path.join(config["working_dir"], "bams/F2/bwamem2/sorted/{F2_sample}.bam"),
+                F2_sample = F2_samples['SAMPLE']
+        ),
+# mark_duplicates_f2
+        expand(os.path.join(config["working_dir"], "bams/F2/bwamem2/marked/{F2_sample}.bam"),
+                F2_sample = F2_samples['SAMPLE']
+        ),
+# samtools_index_f2
+        expand(os.path.join(config["working_dir"], "bams/F2/bwamem2/marked/{F2_sample}.bam.bai"),
+                F2_sample = F2_samples['SAMPLE']
+        ),
+###############
+# 05_F2_recomb_blocks.smk
+###############
+# get_homozygous_sites
+        expand(os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/homo_all/{F0_sample}.csv"),
+                F0_sample = config["F0_lines"]
+        ),
+# get_divergent_sites
+        os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/homo_divergent/all.txt"),
+# bam_readcount_F2
+        expand(os.path.join(config["working_dir"], "dp4s/batch_01/bwamem2/{F2_sample}.dp4.txt"),
+                F2_sample = F2_samples['SAMPLE']
+        ),
+# make_dp_AB_F2
+        expand(os.path.join(config["working_dir"], "dpABs/batch_01/bwamem2/{F2_sample}.txt"),
+                F2_sample = F2_samples['SAMPLE']
+        ),
+# run_rc_block_F2
+        expand(os.path.join(config["data_store_dir"], "recombination_blocks/20210716_hmm_output_batch_01_binlen_{bin_length}.txt"),
+                bin_length = config["bin_length"]
+        ),
 ################
 ## 06_F0_recomb_blocks.smk
 ################
