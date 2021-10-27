@@ -51,6 +51,15 @@ def rules(row, column):
 joined['F0_1_COUNT'] = joined.apply(lambda x: rules(x, "F0_1_ALLELE"), 1)
 joined['F0_2_COUNT'] = joined.apply(lambda x: rules(x, "F0_2_ALLELE"), 1)
 
+# Drop NAs
+
+joined = joined.dropna()
+
+# Convert F0_1_COUNT and F0_2_COUNT to integers
+
+joined['F0_1_COUNT'] = joined['F0_1_COUNT'].astype(int)
+joined['F0_2_COUNT'] = joined['F0_2_COUNT'].astype(int)
+
 # Write to file
 
 joined[["F0_1_ALLELE", "F0_1_COUNT", "F0_2_ALLELE", "F0_2_COUNT"]].to_csv(snakemake.output[0], sep = "\t", header = False)

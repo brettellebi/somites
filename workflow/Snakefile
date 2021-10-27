@@ -113,7 +113,8 @@ rule all:
                 F2_sample = F2_samples['SAMPLE']
         ),
 # run_rc_block_F2
-        expand(os.path.join(config["data_store_dir"], "recombination_blocks/20210716_hmm_output_batch_01_binlen_{bin_length}.txt"),
+        expand(os.path.join(config["data_store_dir"], "recombination_blocks/{date_of_processing}/F2_{bin_length}.txt"),
+                date_of_processing = config["date_of_processing"],
                 bin_length = config["bin_length"]
         ),
 ################

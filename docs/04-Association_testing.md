@@ -4,7 +4,8 @@ zotero: PhD
 
 # Association testing
 
-```{r, message = F, warning = F}
+
+```r
 library(here)
 source(here::here("book/source/04-Association_testing.R"))
 ```
@@ -19,27 +20,13 @@ First 400 phenotype data: <https://github.com/brettellebi/somites/tree/master/da
  intercept period -> intercept in the table
  mean period -> mean in the table
 
-```{r}
+
+```r
 pheno_file = here::here("data/20210917_First400_F2_DF.xlsx")
 pheno = readxl::read_xlsx(pheno_file)
 
 # Which samples are missing phenotypes? 
 which(!1:400 %in% as.integer(pheno$fish %>% str_remove("KC")))
-```
-
-## Test `run_rc_block.R` code
-
-```{r}
-library(ViteRbi)
-source(here::here("workflow/scripts/rc_block_hmm.R"))
-
-dp_files = list.files("/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2",
-                      full.names = T)
-
-bin_len = 5000
-
-pin = "all"
-bin1 =collect_chunked_data(dp_files, 1, length(dp_files), bin_len = bin_len)
-
+#> [1]  23 278
 ```
 

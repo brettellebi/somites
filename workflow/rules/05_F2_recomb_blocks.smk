@@ -85,9 +85,9 @@ rule run_rc_block_F2:
         ),
         source_code = "workflow/scripts/rc_block_hmm.R"
     output:
-        os.path.join(config["data_store_dir"], "recombination_blocks/20210716_hmm_output_batch_01_binlen_{bin_length}.txt"),
+        os.path.join(config["data_store_dir"], "recombination_blocks/{date_of_processing}/F2_{bin_length}.txt"),
     log:
-        os.path.join(config["working_dir"], "logs/run_rc_block/{bin_length}.log")
+        os.path.join(config["working_dir"], "logs/run_rc_block/{date_of_processing}/{bin_length}.log")
     params:
         bin_length = lambda wildcards: wildcards.bin_length
     resources:
