@@ -9,6 +9,264 @@ library(here)
 source(here::here("book/source/04-Association_testing.R"))
 ```
 
+## Read in F2 recombination blocks
+
+### Read data
+
+```{r}
+in_dir = "/nfs/research/birney/users/ian/somites/recombination_blocks/20211027"
+
+in_files = list.files(in_dir, pattern = "F2_", full.names = T)
+
+# Read into list
+data_list = purrr::map(in_files, function(FILE){
+  out = readr::read_tsv(FILE,
+                        col_types = "ciiidii")
+})
+# Set names as bin length
+names(data_list) = basename(in_files) %>% 
+  stringr::str_split("_", simplify = T) %>% 
+  subset(select = 2) %>% 
+  stringr::str_remove(".txt")
+# Reorder
+data_list = data_list[order(as.numeric(names(data_list)))]
+
+counter = 0
+df_list = purrr::map(data_list, function(data){
+  counter <<- counter + 1
+  # set bin length
+  bin_length = as.numeric(names(data_list)[counter])
+  # add bin start and end coordinates
+  df = data %>% 
+    dplyr::mutate(SAMPLE = basename(sample) %>% 
+                    stringr::str_remove(".txt") %>% 
+                    as.numeric(.),
+                  BIN_START = (bin - 1) * bin_length + 1,
+                  BIN_END = bin * bin_length) %>% 
+    # recode state to make 0 == "Cab"
+    dplyr::mutate(STATE = dplyr::recode(state,
+                                        `0` = 2,
+                                        `1` = 1,
+                                        `2` = 0)) %>% 
+    dplyr::select(SAMPLE, CHROM = chr, BIN = bin, BIN_START, BIN_END, STATE)
+  
+  return(df)
+})
+
+
+```
+
+### How many possible blocks have at least one call? 
+
+#### Read in *HdrR* chromosomes
+
+```{r}
+# Get chromosome lengths
+med_chr_lens = read.table(here::here("data",
+                                     "Oryzias_latipes.ASM223467v1.dna.toplevel.fa_chr_counts.txt"),
+                          col.names = c("chr", "end"))
+# Add start
+med_chr_lens$start = 1
+# Reorder
+med_chr_lens = med_chr_lens %>% 
+  dplyr::select(chr, start, end) %>% 
+  # remove MT
+  dplyr::filter(chr != "MT")
+
+```
+
+#### Count total existing bins
+
+```{r}
+bin_lengths = as.integer(names(df_list))
+names(bin_lengths) = bin_lengths
+
+n_bins = purrr::map(bin_lengths, function(BIN_LENGTH){
+  purrr::map_int(med_chr_lens$end, function(CHR_END){
+    out = seq(from = 1, to = CHR_END, by = BIN_LENGTH)
+    
+    return(length(out))
+  })
+})
+
+n_bins_total = purrr::map_int(n_bins, sum)
+```
+
+#### Proportion of total bins with calls
+
+```{r}
+# Get total number of samples
+n_samples = df_list$`5000`$SAMPLE %>%
+  unique(.) %>% 
+  length(.)
+
+# Build DF of bins
+n_bins_df = purrr::map_dfr(1:length(df_list), function(COUNTER){
+  # Bin length
+  bin_length = as.numeric(names(df_list)[COUNTER])
+  # Number of total bins
+  n_bins = n_bins_total[COUNTER]
+  # Number of bins with calls
+  n_bins_with_calls = df_list[[COUNTER]] %>% 
+    dplyr::distinct(CHROM, BIN_START) %>% 
+    nrow(.)
+  # Number of bins with calls for each 
+  n_bins_no_missing = df_list[[COUNTER]] %>% 
+    dplyr::count(CHROM, BIN_START) %>%
+    dplyr::filter(n == n_samples) %>%
+    nrow(.)
+  
+  # Build final data frame
+  out = tibble::tibble(BIN_LENGTH = bin_length,
+                       N_BINS = n_bins,
+                       N_BINS_WITH_CALLS = n_bins_with_calls,
+                       N_BINS_NO_MISSING = n_bins_no_missing) %>% 
+    dplyr::mutate(PROP_BINS_WITH_CALLS = N_BINS_WITH_CALLS/ N_BINS,
+                  PROP_BINS_NO_MISSING = N_BINS_NO_MISSING / N_BINS )
+  
+  return(out)
+})
+
+DT::datatable(n_bins_df)
+```
+
+
+### Merge recombination blocks
+
+#### List with final recoded genotypes (including NA)
+
+```{r}
+gt_list = purrr::map(df_list, function(BIN_LENGTH_DF){
+  
+  # Widen data frame
+  gt_final = BIN_LENGTH_DF %>% 
+    tidyr::pivot_wider(names_from = SAMPLE, values_from = STATE)
+  
+  # Pull out matrix of genotypes
+  gt_mat = as.matrix(gt_final[, 5:ncol(gt_final)])
+  
+  # Get indexes of loci with > 1 genotype
+  bins_to_keep = logical()
+  
+  for (ROW in 1:nrow(gt_mat)){
+    # get unique values in each row
+    out = unique(gt_mat[ROW, ])
+    # remove NAs
+    out = out[!is.na(out)]
+    # if more than one value, return TRUE
+    if (length(out) > 1) {
+      bins_to_keep[ROW] = TRUE
+    }
+    # if just one value (i.e. if all samples are the same genotype at that locus), return false 
+    else {
+      bins_to_keep[ROW] = FALSE
+    }
+  }
+  
+  # filter gt_final
+  gt_filt = gt_final %>% 
+    dplyr::filter(bins_to_keep) %>% 
+    # recode genotypes to -1, 0, 1
+    dplyr::mutate(dplyr::across(-c("CHROM", "BIN", "BIN_START", "BIN_END"),
+                                ~dplyr::recode(.x,
+                                               `0` = -1,
+                                               `1` = 0,
+                                               `2` = 1))) %>% 
+    # order
+    dplyr::arrange(CHROM, BIN_START)  
+  
+  return(gt_filt)
+}) 
+
+
+gt_list$`20000` %>% 
+  head(.) %>% 
+  DT::datatable(.) 
+```
+
+#### List with final recoded genotypes (excluding NA)
+
+```{r}
+  # TAKE COMPLETE CASES FOR TESTING
+  gt_complete = gt_filt %>%
+    dplyr::filter(complete.cases(.)) %>% 
+    dplyr::mutate(dplyr::across(-c("CHROM", "BIN_START", "BIN_END"),
+                                ~dplyr::recode(.x,
+                                               `0` = -1,
+                                               `1` = 0,
+                                               `2` = 1))) %>% 
+    dplyr::arrange(CHROM, BIN_START)
+```
+
+
+## Simulate phenotype
+
+### Extract sample of genotypes
+
+```{r}
+# Get random 10 loci
+set.seed(10)
+## Set minimum number of samples with (non-missing) call
+min_calls = 377
+## Pull out random SNPs
+snp_sample = gt_df %>% 
+  dplyr::count(chr, BIN_START) %>% 
+  dplyr::filter(n >= min_calls) %>% 
+  dplyr::slice_sample(n = 10) %>% 
+  dplyr::arrange(chr, BIN_START) %>% 
+  dplyr::select(chr, BIN_START)
+
+# Join to `gt_df`
+gt_sample = snp_sample %>% 
+  dplyr::left_join(gt_df %>% 
+                     dplyr::select(SAMPLE, chr, BIN_START, state),
+                   by = (c("chr", "BIN_START"))) %>% 
+  dplyr::mutate(LOCUS = paste(chr, BIN_START, sep = ":")) %>% 
+  dplyr::select(LOCUS, SAMPLE, state) %>% 
+  tidyr::pivot_wider(names_from = SAMPLE, values_from = state)
+
+gt_sample %>% 
+  DT::datatable(.)
+
+gt_sample_file = here::here("data/20211027_association_testing/test/gt_sample.csv")
+# Save to file
+readr::write_csv(gt_sample, gt_sample_file)
+```
+
+### Simulate phenotype
+
+```{r}
+# N samples
+N = length(unique(gt_df$SAMPLE))
+# N phenotypes
+P = 1
+# Porportion of total genetic variance
+genVar = 0.5
+# Proportion of genetic variance of genetic variant effects
+h2s = 1
+# Proportion of total noise variance
+noiseVar = 0.5
+# Proportion of noise variance of observational noise effects
+phi = 1
+
+sim_pheno = PhenotypeSimulator::runSimulation(N = N, P = P, 
+                                              genVar = genVar, h2s = h2s, 
+                                              noiseVar = noiseVar, phi = phi,
+                                              cNrSNP = 10,
+                                              genotypefile = gt_sample_file,
+                                              format = "delim",
+                                              genoDelimiter = ",")
+```
+
+### Test GridLMM
+
+```{r}
+test = gt_df %>% 
+  dplyr::slice_sample(n = 1000) %>% 
+  dplyr::select(SA)
+```
+
+
 ## Phenotype data
 
 First 400 phenotype data: <https://github.com/brettellebi/somites/tree/master/data/20210917_First400_F2_DF.xlsx>.
@@ -42,4 +300,5 @@ pin = "all"
 bin1 =collect_chunked_data(dp_files, 1, length(dp_files), bin_len = bin_len)
 
 ```
+
 

@@ -59,8 +59,8 @@ ck_list = purrr::map(ck_list, function(data){
                     stringr::str_split("/", simplify = T) %>% 
                     subset(select = 10),
                   BIN_LENGTH = bin_length,
-                  BIN_START = bin * bin_length + 1,
-                  BIN_END = bin * bin_length + bin_length,
+                  BIN_START = (bin - 1) * bin_length + 1,
+                  BIN_END = bin * bin_length,
                   BIN_LENGTH_KB = BIN_LENGTH / 1e3,
                   READS_PER_BIN = mat + pat)
   return(df)

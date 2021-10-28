@@ -38,7 +38,7 @@ singularity build --remote \
     workflow/envs/R_4.1.0/R_4.1.0.def
 
 ssh proxy-codon
-bsub -M 20000 -Is bash
+bsub -M 50000 -Is bash
 module load singularity-3.7.0-gcc-9.3.0-dp5ffrp
 CONT=/hps/software/users/birney/ian/containers/somites/R_4.1.0.sif
 singularity shell --bind /hps/software/users/birney/ian/rstudio_db:/var/lib/rstudio-server \

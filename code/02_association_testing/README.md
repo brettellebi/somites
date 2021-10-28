@@ -8,7 +8,7 @@ Should be fairly self explanatory, but:
 
 * `all_genotypes.txt`: coded -1,0,1 (AA, AB, BB), rows are samples, columns are "SNPs" (recombination blocks).
 
-* `all_positions.txt`: genome corrdinates (chr, start, end) **NB**. In the example I simply put an index which related to a different file (i.e. the merged recombination blocks) but this could (should) have had the real positions.
+* `all_positions.txt`: genome coordinates (chr, start, end) **NB**. In the example I simply put an index which related to a different file (i.e. the merged recombination blocks) but this could (should) have had the real positions.
 
 * `phenotypes.txt`: this has sample_id (or file name) and phenotype.
 

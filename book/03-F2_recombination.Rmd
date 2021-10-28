@@ -12,9 +12,9 @@ source(here::here("book/source/03-F2_recombination.R"))
 ## Read in data
 
 ```{r}
-in_dir = "/nfs/research/birney/users/ian/somites/recombination_blocks"
+in_dir = "/nfs/research/birney/users/ian/somites/recombination_blocks/20211027"
 
-in_files = list.files(in_dir, pattern = "20210716_hmm_output_batch_01", full.names = T)
+in_files = list.files(in_dir, pattern = "F2_", full.names = T)
 
 # Read into list
 data_list = purrr::map(in_files, function(FILE){
@@ -24,7 +24,7 @@ data_list = purrr::map(in_files, function(FILE){
 # Set names as bin length
 names(data_list) = basename(in_files) %>% 
   stringr::str_split("_", simplify = T) %>% 
-  subset(select = 7) %>% 
+  subset(select = 2) %>% 
   stringr::str_remove(".txt")
 # Reorder
 data_list = data_list[order(as.numeric(names(data_list)))]
@@ -40,8 +40,8 @@ df_list = purrr::map(data_list, function(data){
                     stringr::str_remove(".txt") %>% 
                     as.numeric(.),
                   BIN_LENGTH = bin_length,
-                  BIN_START = bin * bin_length + 1,
-                  BIN_END = bin * bin_length + bin_length,
+                  BIN_START = (bin - 1) * bin_length + 1,
+                  BIN_END = bin * bin_length,
                   BIN_LENGTH_KB = BIN_LENGTH / 1e3,
                   READS_PER_BIN = mat + pat)
   return(df)
@@ -67,12 +67,13 @@ Plot `ratio` against `state`
 ```{r, eval = F}
 df_list$`5000` %>%
   dplyr::mutate(state = factor(state, levels = 0:2)) %>% 
+  dplyr::slice_sample(n = 1e6) %>% 
   ggplot() +
     geom_boxplot(aes(state, ratio)) +
     guides(colour = "none") +
     theme_bw()
 # Save
-ggsave(here::here("docs/plots/20210716_ratio_v_state.png"),
+ggsave(here::here("docs/plots/20211027_ratio_v_state.png"),
        device = "png",
        width = 8,
        height = 5,
@@ -81,7 +82,7 @@ ggsave(here::here("docs/plots/20210716_ratio_v_state.png"),
 ```
 
 ```{r, out.width='80%'}
-knitr::include_graphics(here::here("docs/plots/20210716_ratio_v_state.png"))
+knitr::include_graphics(here::here("docs/plots/20211027_ratio_v_state.png"))
 ```
 
 
@@ -295,11 +296,11 @@ base_cov_df_chr = df %>%
 ```
 
 ```{r, eval = F}
-saveRDS(base_cov_df_chr, here::here("data/20210716_base_cov_per_chr.rds"))
+saveRDS(base_cov_df_chr, here::here("data/20211027_base_cov_per_chr.rds"))
 ```
 
 ```{r, include = F}
-base_cov_df_chr = readRDS(here::here("data/20210716_base_cov_per_chr.rds"))
+base_cov_df_chr = readRDS(here::here("data/20211027_base_cov_per_chr.rds"))
 ```
 
 Plot
@@ -370,7 +371,7 @@ df %>%
 ```
 
 ```{r}
-ggsave(here::here("plots/20210716_gt_freqs_sites.png"),
+ggsave(here::here("plots/20211027_gt_freqs_sites.png"),
        device = "png",
        width = 10,
        height = 5.8,
@@ -453,7 +454,7 @@ bb_list = purrr::map(df_list, function(df){
           
           # Get rows that correspond to block changes
           block_bounds = CHR[cum_blocks, ] %>% 
-            # Add end of previous black
+            # Add end of previous block
             dplyr::mutate(END_PREV = dplyr::lag(BIN_END)) %>% 
             # Replace the NA in the first row with `1`
             dplyr::mutate(END_PREV = tidyr::replace_na(END_PREV, 1)) %>% 
@@ -468,22 +469,21 @@ bb_list = purrr::map(df_list, function(df){
 })
 
 
-
 ```
 
 ```{r, eval = F, echo = F}
-saveRDS(bb_list, here::here("data/20210716_bb_list.rds"))
+saveRDS(bb_list, here::here("data/20211027_bb_list.rds"))
 ```
 
 ```{r, include = F}
-bb_list = readRDS(here::here("data/20210716_bb_list.rds"))
+bb_list = readRDS(here::here("data/20211027_bb_list.rds"))
 ```
 
 Extract y cutoff points for each lane
 
 ```{r}
 lc_list = purrr::map(bb_list, function(block_bounds_list){
-  lane_cutoffs = cut(0:1, breaks = length(block_bounds_list)) %>% 
+  lane_cutoffs = cut(0:1, breaks = length(block_bounds_list), dig.lab = 7) %>% 
     levels(.) %>% 
     data.frame(lower = as.numeric( sub("\\((.+),.*", "\\1", .) ),
                upper = as.numeric( sub("[^,]*,([^]]*)\\]", "\\1", .) )) %>% 
@@ -499,7 +499,7 @@ counter_A = 0
 purrr::map(bb_list, function(block_bounds_list){
   counter_A <<- counter_A + 1
   # set file name
-  file_name = paste("20210716_karyoplot_", names(bb_list)[counter_A], ".png", sep = "")
+  file_name = paste("20211027_karyoplot_", names(bb_list)[counter_A], ".png", sep = "")
   file_out = here::here("docs/plots", file_name)
   
   # Get lane cutoffs
@@ -507,7 +507,7 @@ purrr::map(bb_list, function(block_bounds_list){
   
   png(file=file_out,
       width=13000,
-      height=13000,
+      height=26000,
       units = "px",
       res = 300)
   
@@ -549,21 +549,21 @@ purrr::map(bb_list, function(block_bounds_list){
 ```
 
 ```{r, fig.cap = "Bin length: 5 kb"}
-knitr::include_graphics(here::here("docs/plots/20210716_karyoplot_5000.png"))
+knitr::include_graphics(here::here("docs/plots/20211027_karyoplot_5000.png"))
 ```
 
 Don't show other bin lengths because they look the same.
 
 ```{r, eval = F, fig.cap = "Bin length: 10 kb"}
-knitr::include_graphics(here::here("docs/plots/20210716_karyoplot_10000.png"))
+knitr::include_graphics(here::here("docs/plots/20211027_karyoplot_10000.png"))
 ```
 
 ```{r, eval = F, fig.cap = "Bin length: 15 kb"}
-knitr::include_graphics(here::here("docs/plots/20210716_karyoplot_15000.png"))
+knitr::include_graphics(here::here("docs/plots/20211027_karyoplot_15000.png"))
 ```
 
 ```{r, eval = F, fig.cap = "Bin length: 20 kb"}
-knitr::include_graphics(here::here("docs/plots/20210716_karyoplot_20000.png"))
+knitr::include_graphics(here::here("docs/plots/20211027_karyoplot_20000.png"))
 ```
 
 # Realised relationship matrix
@@ -572,7 +572,7 @@ knitr::include_graphics(here::here("docs/plots/20210716_karyoplot_20000.png"))
 
 ```{r, eval = F}
 # Process data
-gt_mat_rc = data %>% 
+gt_mat_rc = df_list$`5000` %>% 
   # extract LANE names from sample name, and create site name by binding `chr` and `block`
   dplyr::mutate(LANE = basename(sample) %>% 
                   stringr::str_remove(".txt") %>% 
@@ -606,7 +606,7 @@ saveRDS(rrmat, here::here("data/realised_relationship_matrix.rds"))
 ```{r, eval = F}
 rrmat = readRDS(here::here("data/realised_relationship_matrix.rds"))
 
-png(here::here("docs/plots/20210713_rrm_heatmap.png"),
+png(here::here("docs/plots/20211027_rrm_heatmap.png"),
     width = 20,
     height = 20,
     units = "in",
@@ -619,5 +619,5 @@ dev.off()
 ```
 
 ```{r}
-knitr::include_graphics(here::here("docs/plots/20210713_rrm_heatmap.png"))
+knitr::include_graphics(here::here("docs/plots/20211027_rrm_heatmap.png"))
 ```
