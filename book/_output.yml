@@ -2,6 +2,7 @@ bookdown::bs4_book:
   css: style.css
   theme:
     primary: "#3C1642"
+    font_scale: 0.8
   repo: https://github.com/brettellebi/somites
 bookdown::pdf_book:
   includes:

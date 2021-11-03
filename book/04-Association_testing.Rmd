@@ -71,7 +71,14 @@ med_chr_lens$start = 1
 med_chr_lens = med_chr_lens %>% 
   dplyr::select(chr, start, end) %>% 
   # remove MT
-  dplyr::filter(chr != "MT")
+  dplyr::filter(chr != "MT") %>% 
+  # convert to integer
+  dplyr::mutate(chr = as.integer(chr)) %>% 
+  # Add cumulative bases
+  dplyr::mutate(CUMSUM = cumsum(end),
+                TOT = CUMSUM - end) %>% 
+  # Add midpoint for each chr
+  dplyr::mutate(MID_TOT = TOT + (end / 2))
 
 ```
 
@@ -121,7 +128,7 @@ n_bins_df = purrr::map_dfr(1:length(df_list), function(COUNTER){
                        N_BINS = n_bins,
                        N_BINS_WITH_CALLS = n_bins_with_calls,
                        N_BINS_NO_MISSING = n_bins_no_missing) %>% 
-    dplyr::mutate(PROP_BINS_WITH_CALLS = N_BINS_WITH_CALLS/ N_BINS,
+    dplyr::mutate(PROP_BINS_WITH_CALLS = N_BINS_WITH_CALLS / N_BINS,
                   PROP_BINS_NO_MISSING = N_BINS_NO_MISSING / N_BINS )
   
   return(out)
@@ -133,7 +140,7 @@ DT::datatable(n_bins_df)
 
 ### Merge recombination blocks
 
-#### List with final recoded genotypes (including NA)
+#### List with final recoded genotypes (including NAs)
 
 ```{r}
 gt_list = purrr::map(df_list, function(BIN_LENGTH_DF){
@@ -184,60 +191,83 @@ gt_list$`20000` %>%
   DT::datatable(.) 
 ```
 
-#### List with final recoded genotypes (excluding NA)
+#### List with final recoded genotypes (complete cases only)
 
 ```{r}
-  # TAKE COMPLETE CASES FOR TESTING
-  gt_complete = gt_filt %>%
-    dplyr::filter(complete.cases(.)) %>% 
-    dplyr::mutate(dplyr::across(-c("CHROM", "BIN_START", "BIN_END"),
-                                ~dplyr::recode(.x,
-                                               `0` = -1,
-                                               `1` = 0,
-                                               `2` = 1))) %>% 
-    dplyr::arrange(CHROM, BIN_START)
+gt_nomiss_list = purrr::map(gt_list, function(BIN_LENGTH_DF){
+  BIN_LENGTH_DF %>%
+    dplyr::filter(complete.cases(.))
+})
+
 ```
 
 
 ## Simulate phenotype
 
-### Extract sample of genotypes
+### Extract samples of genotypes
 
 ```{r}
+# Set directory
+out_dir_test = file.path(lts_dir, "association_testing/20211027_test")
+```
+
+These must be written to a file because `PhenotypeSimulator` reads delimited genotypes from files.
+
+
+```{r, eval = F, results = "hide"}
 # Get random 10 loci
 set.seed(10)
-## Set minimum number of samples with (non-missing) call
-min_calls = 377
-## Pull out random SNPs
-snp_sample = gt_df %>% 
-  dplyr::count(chr, BIN_START) %>% 
-  dplyr::filter(n >= min_calls) %>% 
-  dplyr::slice_sample(n = 10) %>% 
-  dplyr::arrange(chr, BIN_START) %>% 
-  dplyr::select(chr, BIN_START)
+n_loci = 10
+# NOTE: PhenotypeSimulator::readStandardGenotypes states that the genotype file must
+# delim: a [delimter]-delimited file of [(NrSNPs+1) x (NrSamples+1)] genotypes with the snpIDs in the first column and the sampleIDs in the first row and genotypes encoded as numbers between 0 and 2 representing the (posterior) mean genotype, or dosage of the minor allele.
 
-# Join to `gt_df`
-gt_sample = snp_sample %>% 
-  dplyr::left_join(gt_df %>% 
-                     dplyr::select(SAMPLE, chr, BIN_START, state),
-                   by = (c("chr", "BIN_START"))) %>% 
-  dplyr::mutate(LOCUS = paste(chr, BIN_START, sep = ":")) %>% 
-  dplyr::select(LOCUS, SAMPLE, state) %>% 
-  tidyr::pivot_wider(names_from = SAMPLE, values_from = state)
+sample_gts = purrr::map(seq_along(gt_nomiss_list), function(COUNTER){
+  
+  # Pull out random SNPs
+  snp_sample = gt_nomiss_list[[COUNTER]] %>% 
+    dplyr::slice_sample(n = n_loci) %>% 
+    dplyr::arrange(CHROM, BIN_START) %>% 
+    # create locus column
+    dplyr::mutate(LOCUS = paste(CHROM, BIN_START, sep = ":")) %>% 
+    # remove superfluous columns
+    dplyr::select(-c(CHROM, BIN, BIN_START, BIN_END)) %>% 
+    # recode back to 0,1,2
+    dplyr::mutate(dplyr::across(-LOCUS,
+                                ~dplyr::recode(.x,
+                                               `-1` = 0,
+                                               `0` = 1,
+                                               `1` = 2))) %>% 
+    # reorder columns
+    dplyr::select(LOCUS, everything())
+  
+})
+names(sample_gts) = names(gt_nomiss_list)
 
-gt_sample %>% 
-  DT::datatable(.)
+purrr::map(seq_along(sample_gts), function(COUNTER){
+  # save to file
+  bin_length = names(sample_gts)[COUNTER]
+  out_file = file.path(out_dir_test, "target_loci", paste(bin_length, ".csv", sep = ""))
+  readr::write_csv(sample_gts[[COUNTER]], out_file)
+})
 
-gt_sample_file = here::here("data/20211027_association_testing/test/gt_sample.csv")
-# Save to file
-readr::write_csv(gt_sample, gt_sample_file)
+saveRDS(sample_gts, file.path(out_dir_test, "target_loci/sample_gts.rds"))
 ```
+
+```{r, include = F}
+sample_gts = readRDS(file.path(out_dir_test, "target_loci/sample_gts.rds"))
+```
+
 
 ### Simulate phenotype
 
 ```{r}
+sim_path = file.path(out_dir_test, "simulated_phenotypes/20211103_sim_phenos.rds")
+```
+
+```{r, eval = F}
+set.seed(5671)
 # N samples
-N = length(unique(gt_df$SAMPLE))
+N = n_samples
 # N phenotypes
 P = 1
 # Porportion of total genetic variance
@@ -249,23 +279,217 @@ noiseVar = 0.5
 # Proportion of noise variance of observational noise effects
 phi = 1
 
-sim_pheno = PhenotypeSimulator::runSimulation(N = N, P = P, 
-                                              genVar = genVar, h2s = h2s, 
-                                              noiseVar = noiseVar, phi = phi,
-                                              cNrSNP = 10,
-                                              genotypefile = gt_sample_file,
-                                              format = "delim",
-                                              genoDelimiter = ",")
+sim_phenos = purrr::map(seq_along(sample_gts), function(COUNTER){
+  # get sample file path
+  bin_length = names(sample_gts)[COUNTER]
+  gt_sample_file = file.path(out_dir_test, "target_loci", paste(bin_length, ".csv", sep = ""))
+    
+  sim_pheno = PhenotypeSimulator::runSimulation(N = N, P = P, 
+                                                genVar = genVar, h2s = h2s, 
+                                                noiseVar = noiseVar, phi = phi,
+                                                cNrSNP = n_loci,
+                                                genotypefile = gt_sample_file,
+                                                format = "delim",
+                                                genoDelimiter = ",")
+  
+  return(sim_pheno)
+})
+names(sim_phenos) = names(sample_gts)
+
+saveRDS(sim_phenos, sim_path)
 ```
 
-### Test GridLMM
+```{r, include = F}
+sim_phenos = readRDS(sim_path)
+```
+
+## Reformat genotypes for GridLMM
+
+### Complete cases
 
 ```{r}
-test = gt_df %>% 
-  dplyr::slice_sample(n = 1000) %>% 
-  dplyr::select(SA)
+final_nomiss = purrr::map(seq_along(gt_nomiss_list), function(COUNTER){
+  out = list()
+  
+  # Genotypes
+  out[["genotypes"]] = gt_nomiss_list[[COUNTER]] %>% 
+    dplyr::select(-c(CHROM, BIN, BIN_START, BIN_END)) %>% 
+    # convert to matrix
+    as.matrix(.) %>% 
+    # transpose to put samples as rows
+    t(.) %>% 
+    # convert to data frame
+    as.data.frame(.)
+  
+  # Positions
+  out[["positions"]] = gt_nomiss_list[[COUNTER]] %>% 
+    dplyr::select(CHROM, BIN_START, BIN_END)
+  
+  # Phenotypes
+  out[["phenotypes"]] = data.frame(SAMPLE = rownames(sim_phenos[[COUNTER]]$phenoComponentsFinal$Y),
+                                   Y = sim_phenos[[COUNTER]]$phenoComponentsFinal$Y %>%
+                                     as.numeric()
+                                   )
+    
+  return(out)
+})
+names(final_nomiss) = names(gt_nomiss_list)
 ```
 
+### With NAs
+
+```{r}
+final_wmiss = purrr::map(seq_along(gt_list), function(COUNTER){
+  out = list()
+  
+  # Genotypes
+  out[["genotypes"]] = gt_list[[COUNTER]] %>% 
+    dplyr::select(-c(CHROM, BIN, BIN_START, BIN_END)) %>% 
+    # convert to matrix
+    as.matrix(.) %>% 
+    # transpose to put samples as rows
+    t(.) %>% 
+    # convert to data frame
+    as.data.frame(.)
+  
+  # Positions
+  out[["positions"]] = gt_nomiss_list[[COUNTER]] %>% 
+    dplyr::select(CHROM, BIN_START, BIN_END)
+  
+  # Phenotypes
+  out[["phenotypes"]] = data.frame(SAMPLE = rownames(sim_phenos[[COUNTER]]$phenoComponentsFinal$Y),
+                                   Y = sim_phenos[[COUNTER]]$phenoComponentsFinal$Y %>%
+                                     as.numeric()
+                                   )
+    
+  return(out)
+})
+names(final_wmiss) = names(gt_list)
+```
+
+## Test GridLMM
+
+### Run GWAS
+
+```{r}
+test_out_nomiss = file.path(out_dir_test, "gwas_results", "gwas_results_nomiss.rds")
+```
+
+```{r, eval = F}
+gwas_tests_nomiss = purrr::map(final_nomiss, function(BIN_LENGTH){
+  run_gwas(d = BIN_LENGTH$genotypes,
+           m = BIN_LENGTH$positions,
+           p = BIN_LENGTH$phenotypes)
+})
+
+saveRDS(gwas_tests_nomiss, test_out_nomiss)
+```
+
+```{r, include = F}
+gwas_tests_nomiss = readRDS(test_out_nomiss)
+```
+
+### Plot
+
+```{r}
+# Create custom Manhattan plot
+gwas_pal = c("#2B2D42", "#F7B267", "#F25C54")
+names(gwas_pal) = c("target", "even chr", "odd chr")
+significance_line = 3.6
+suggestive_line = 2.9
+
+purrr::map(seq_along(gwas_tests_nomiss), function(COUNTER){
+  # Get bin length
+  BIN_LENGTH = names(gwas_tests_nomiss)[COUNTER] %>% 
+    as.numeric(.)
+  
+  # Clean data frame
+  test_results = gwas_tests_nomiss[[COUNTER]]$results %>% 
+    dplyr::left_join(med_chr_lens, by = c("Chr" = "chr")) %>% 
+    # add x-coord
+    dplyr::mutate(X_COORD = pos + TOT) %>% 
+    # change column names
+    dplyr::rename(CHROM = Chr, BIN_START = pos) %>% 
+    # add BIN_END
+    dplyr::mutate(BIN_END = BIN_START + BIN_LENGTH - 1) %>% 
+    # add locus
+    dplyr::mutate(LOCUS = paste(CHROM, BIN_START, sep = ":")) %>%
+    # target or not
+    dplyr::mutate(TARGET = dplyr::if_else(LOCUS %in% sample_gts[[COUNTER]]$LOCUS,
+                                          "yes",
+                                          "no"),
+                  TARGET = factor(TARGET, levels = c("yes", "no"))) %>% 
+    # create vector of colours
+    dplyr::mutate(COLOUR = dplyr::case_when(TARGET == "yes" ~ names(gwas_pal)[1],
+                                            gtools::even(CHROM) ~ names(gwas_pal)[2],
+                                            gtools::odd(CHROM) ~ names(gwas_pal)[3]),
+                  # order so that `target` is plotted last, at the front
+                  COLOUR = factor(COLOUR, levels = rev(names(gwas_pal))),
+                  SHAPE = dplyr::if_else(TARGET == "yes",
+                                         18,
+                                         20),
+                  SIZE = dplyr::if_else(TARGET == "yes",
+                                         1,
+                                         0.5),
+                  ALPHA = dplyr::if_else(TARGET == "yes",
+                                         1,
+                                         0.5)
+                  )
+  
+  # Plot
+  p1 = test_results %>% 
+    ggplot(aes(x = X_COORD,
+               y = -log10(p_value_REML),
+               colour = COLOUR,
+               shape = SHAPE,
+               size = SIZE,
+               alpha = ALPHA,
+               label = CHROM,
+               label2 = BIN_START,
+               label3 = BIN_END)) + 
+    geom_point() +
+    aes(group = rev(TARGET)) +
+    scale_color_manual(values = gwas_pal) +
+    scale_shape_identity() +
+    scale_size_identity() +
+    scale_alpha_identity() +
+    scale_x_continuous(breaks = med_chr_lens$MID_TOT, 
+                       labels = med_chr_lens$chr) +
+    theme_bw() +
+    theme(panel.grid.major.x = element_blank(),
+          panel.grid.minor.x = element_blank()
+    ) +
+    guides(colour = "none") + 
+    ggtitle(paste("Bin length:", BIN_LENGTH)) +
+    xlab("Chromosome") +
+    ylab("-log10(p-value)") + 
+    geom_hline(yintercept = significance_line, colour = "#1effbc", linetype = "dashed") +
+    geom_hline(yintercept = suggestive_line, colour = "#5c95ff", linetype = "dashed")
+  
+  ggplotly(p1, tooltip = c("CHROM", "BIN_START", "BIN_END"))
+
+})
+```
+
+### Include missing genotypes
+
+```{r}
+test_out_wmiss = file.path(out_dir_test, "gwas_results", "gwas_results_wmiss.rds")
+```
+
+```{r, eval = F}
+gwas_tests_nomiss = purrr::map(final_wmiss, function(BIN_LENGTH){
+  run_gwas(d = BIN_LENGTH$genotypes,
+           m = BIN_LENGTH$positions,
+           p = BIN_LENGTH$phenotypes)
+})
+
+saveRDS(gwas_tests_nomiss, test_out_nomiss)
+```
+
+```{r, include = F}
+gwas_tests_nomiss = readRDS(test_out_nomiss)
+```
 
 ## Phenotype data
 
