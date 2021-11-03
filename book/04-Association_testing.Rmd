@@ -339,7 +339,7 @@ names(final_nomiss) = names(gt_nomiss_list)
 ### With NAs
 
 ```{r}
-final_wmiss = purrr::map(seq_along(gt_list), function(COUNTER){
+final_wimiss = purrr::map(seq_along(gt_list), function(COUNTER){
   out = list()
   
   # Genotypes
@@ -353,7 +353,7 @@ final_wmiss = purrr::map(seq_along(gt_list), function(COUNTER){
     as.data.frame(.)
   
   # Positions
-  out[["positions"]] = gt_nomiss_list[[COUNTER]] %>% 
+  out[["positions"]] = gt_list[[COUNTER]] %>% 
     dplyr::select(CHROM, BIN_START, BIN_END)
   
   # Phenotypes
@@ -364,12 +364,14 @@ final_wmiss = purrr::map(seq_along(gt_list), function(COUNTER){
     
   return(out)
 })
-names(final_wmiss) = names(gt_list)
+names(final_wimiss) = names(gt_list)
 ```
 
 ## Test GridLMM
 
-### Run GWAS
+### No missing
+
+#### Run GWAS
 
 ```{r}
 test_out_nomiss = file.path(out_dir_test, "gwas_results", "gwas_results_nomiss.rds")
@@ -389,7 +391,7 @@ saveRDS(gwas_tests_nomiss, test_out_nomiss)
 gwas_tests_nomiss = readRDS(test_out_nomiss)
 ```
 
-### Plot
+#### Plot
 
 ```{r}
 # Create custom Manhattan plot
@@ -473,22 +475,106 @@ purrr::map(seq_along(gwas_tests_nomiss), function(COUNTER){
 
 ### Include missing genotypes
 
+#### Run GWAS
+
 ```{r}
-test_out_wmiss = file.path(out_dir_test, "gwas_results", "gwas_results_wmiss.rds")
+test_out_wimiss = file.path(out_dir_test, "gwas_results", "gwas_results_wimiss.rds")
 ```
 
 ```{r, eval = F}
-gwas_tests_nomiss = purrr::map(final_wmiss, function(BIN_LENGTH){
+gwas_tests_wimiss = purrr::map(final_wimiss, function(BIN_LENGTH){
   run_gwas(d = BIN_LENGTH$genotypes,
            m = BIN_LENGTH$positions,
            p = BIN_LENGTH$phenotypes)
 })
 
-saveRDS(gwas_tests_nomiss, test_out_nomiss)
+saveRDS(gwas_tests_wimiss, test_out_wimiss)
 ```
 
 ```{r, include = F}
-gwas_tests_nomiss = readRDS(test_out_nomiss)
+gwas_tests_wimiss = readRDS(test_out_wimiss)
+```
+
+#### Plot
+
+```{r}
+# Create custom Manhattan plot
+gwas_pal = c("#2B2D42", "#F7B267", "#F25C54")
+names(gwas_pal) = c("target", "even chr", "odd chr")
+significance_line = 3.6
+suggestive_line = 2.9
+
+purrr::map(seq_along(gwas_tests_wimiss), function(COUNTER){
+  # Get bin length
+  BIN_LENGTH = names(gwas_tests_wimiss)[COUNTER] %>% 
+    as.numeric(.)
+  
+  # Clean data frame
+  test_results = gwas_tests_wimiss[[COUNTER]]$results %>% 
+    dplyr::left_join(med_chr_lens, by = c("Chr" = "chr")) %>% 
+    # add x-coord
+    dplyr::mutate(X_COORD = pos + TOT) %>% 
+    # change column names
+    dplyr::rename(CHROM = Chr, BIN_START = pos) %>% 
+    # add BIN_END
+    dplyr::mutate(BIN_END = BIN_START + BIN_LENGTH - 1) %>% 
+    # add locus
+    dplyr::mutate(LOCUS = paste(CHROM, BIN_START, sep = ":")) %>%
+    # target or not
+    dplyr::mutate(TARGET = dplyr::if_else(LOCUS %in% sample_gts[[COUNTER]]$LOCUS,
+                                          "yes",
+                                          "no"),
+                  TARGET = factor(TARGET, levels = c("yes", "no"))) %>% 
+    # create vector of colours
+    dplyr::mutate(COLOUR = dplyr::case_when(TARGET == "yes" ~ names(gwas_pal)[1],
+                                            gtools::even(CHROM) ~ names(gwas_pal)[2],
+                                            gtools::odd(CHROM) ~ names(gwas_pal)[3]),
+                  # order so that `target` is plotted last, at the front
+                  COLOUR = factor(COLOUR, levels = rev(names(gwas_pal))),
+                  SHAPE = dplyr::if_else(TARGET == "yes",
+                                         18,
+                                         20),
+                  SIZE = dplyr::if_else(TARGET == "yes",
+                                         1,
+                                         0.5),
+                  ALPHA = dplyr::if_else(TARGET == "yes",
+                                         1,
+                                         0.5)
+                  )
+  
+  # Plot
+  p1 = test_results %>% 
+    ggplot(aes(x = X_COORD,
+               y = -log10(p_value_REML),
+               colour = COLOUR,
+               shape = SHAPE,
+               size = SIZE,
+               alpha = ALPHA,
+               label = CHROM,
+               label2 = BIN_START,
+               label3 = BIN_END)) + 
+    geom_point() +
+    aes(group = rev(TARGET)) +
+    scale_color_manual(values = gwas_pal) +
+    scale_shape_identity() +
+    scale_size_identity() +
+    scale_alpha_identity() +
+    scale_x_continuous(breaks = med_chr_lens$MID_TOT, 
+                       labels = med_chr_lens$chr) +
+    theme_bw() +
+    theme(panel.grid.major.x = element_blank(),
+          panel.grid.minor.x = element_blank()
+    ) +
+    guides(colour = "none") + 
+    ggtitle(paste("Bin length:", BIN_LENGTH)) +
+    xlab("Chromosome") +
+    ylab("-log10(p-value)") + 
+    geom_hline(yintercept = significance_line, colour = "#1effbc", linetype = "dashed") +
+    geom_hline(yintercept = suggestive_line, colour = "#5c95ff", linetype = "dashed")
+  
+  ggplotly(p1, tooltip = c("CHROM", "BIN_START", "BIN_END"))
+
+})
 ```
 
 ## Phenotype data
