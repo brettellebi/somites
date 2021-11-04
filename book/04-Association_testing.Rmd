@@ -371,7 +371,7 @@ gwas_tests_nomiss = readRDS(test_out_nomiss)
 ```{r}
 # Create custom Manhattan plot
 
-purrr::map(seq_along(gwas_tests_nomiss), function(COUNTER){
+test_man_nomiss = purrr::map(seq_along(gwas_tests_nomiss), function(COUNTER){
   # Get bin length
   BIN_LENGTH = names(gwas_tests_nomiss)[COUNTER] %>% 
     as.numeric(.)
@@ -439,9 +439,15 @@ purrr::map(seq_along(gwas_tests_nomiss), function(COUNTER){
     geom_hline(yintercept = significance_line, colour = "#1effbc", linetype = "dashed") +
     geom_hline(yintercept = suggestive_line, colour = "#5c95ff", linetype = "dashed")
   
-  ggplotly(p1, tooltip = c("CHROM", "BIN_START", "BIN_END"))
-
+  out = ggplotly(p1, tooltip = c("CHROM", "BIN_START", "BIN_END"))
+  
+  return(out)
 })
+
+test_man_nomiss[[1]]
+test_man_nomiss[[2]]
+test_man_nomiss[[3]]
+test_man_nomiss[[4]]
 ```
 
 ### Include missing genotypes
@@ -475,7 +481,7 @@ names(gwas_pal) = c("target", "even chr", "odd chr")
 significance_line = 3.6
 suggestive_line = 2.9
 
-purrr::map(seq_along(gwas_tests_wimiss), function(COUNTER){
+test_man_wimiss = purrr::map(seq_along(gwas_tests_wimiss), function(COUNTER){
   # Get bin length
   BIN_LENGTH = names(gwas_tests_wimiss)[COUNTER] %>% 
     as.numeric(.)
@@ -543,9 +549,16 @@ purrr::map(seq_along(gwas_tests_wimiss), function(COUNTER){
     geom_hline(yintercept = significance_line, colour = "#1effbc", linetype = "dashed") +
     geom_hline(yintercept = suggestive_line, colour = "#5c95ff", linetype = "dashed")
   
-  ggplotly(p1, tooltip = c("CHROM", "BIN_START", "BIN_END"))
+  out = ggplotly(p1, tooltip = c("CHROM", "BIN_START", "BIN_END"))
+  
+  return(out)
 
 })
+
+test_man_wimiss[[1]]
+test_man_wimiss[[2]]
+test_man_wimiss[[3]]
+test_man_wimiss[[4]]
 ```
 
 ## Phenotype data
@@ -597,20 +610,29 @@ plot_dat = purrr::map(seq_along(gwas_true), function(COUNTER_1){
 names(plot_dat) = names(gwas_true)
 
 # Plot
-purrr::map(seq_along(plot_dat), function(COUNTER_1){
+final_mans = purrr::map(seq_along(plot_dat), function(COUNTER_1){
   purrr::map(seq_along(plot_dat[[COUNTER_1]]), function(COUNTER_2){
     # Get bin length
     BIN_LENGTH = names(plot_dat[[COUNTER_1]])[COUNTER_2] %>% 
       as.numeric()
     # Plot
-    plot_int_man(plot_dat[[COUNTER_1]][[COUNTER_2]],
+    out = plot_int_man(plot_dat[[COUNTER_1]][[COUNTER_2]],
                  phenotype = names(plot_dat)[COUNTER_1],
                  bin_length = names(plot_dat[[COUNTER_1]])[COUNTER_2],
                  gwas_pal = gwas_pal[2:3],
                  med_chr_lens = med_chr_lens)
     
+    return(out)
   })
 })
+
+# Mean
+final_mans[[1]][[1]]
+final_mans[[1]][[4]]
+
+# Intercept
+final_mans[[2]][[1]]
+final_mans[[2]][[4]]
 ```
 
 

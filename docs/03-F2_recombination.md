@@ -18,17 +18,17 @@ in_dir = "/nfs/research/birney/users/ian/somites/recombination_blocks/20211027"
 
 in_files = list.files(in_dir, pattern = "F2_", full.names = T)
 
-# Read into list
+##Read into list
 data_list = purrr::map(in_files, function(FILE){
   out = readr::read_tsv(FILE,
                         col_types = "ciiidii")
 })
-# Set names as bin length
+##Set names as bin length
 names(data_list) = basename(in_files) %>% 
   stringr::str_split("_", simplify = T) %>% 
   subset(select = 2) %>% 
   stringr::str_remove(".txt")
-# Reorder
+##Reorder
 data_list = data_list[order(as.numeric(names(data_list)))]
 
 counter = 0
@@ -63,8 +63,8 @@ head(df_list$`5000`) %>%
 ```
 
 ```{=html}
-<div id="htmlwidget-8fecfd5468b510a050b2" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-8fecfd5468b510a050b2">{"x":{"filter":"none","data":[["1","2","3","4","5","6"],["/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt"],[0,5,4,11,16,5],[3,1,2,6,30,3],[4,6,8,11,16,17],[0,0.833333333333333,0.666666666666667,0.647058823529412,0.347826086956522,0.625],[1,1,1,1,1,1],[1,1,1,1,1,1],[1,1,1,1,1,1],[5000,5000,5000,5000,5000,5000],[15001,25001,35001,50001,75001,80001],[20000,30000,40000,55000,80000,85000],[5,5,5,5,5,5],[3,6,6,17,46,8]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>sample<\/th>\n      <th>mat<\/th>\n      <th>pat<\/th>\n      <th>bin<\/th>\n      <th>ratio<\/th>\n      <th>chr<\/th>\n      <th>state<\/th>\n      <th>LANE<\/th>\n      <th>BIN_LENGTH<\/th>\n      <th>BIN_START<\/th>\n      <th>BIN_END<\/th>\n      <th>BIN_LENGTH_KB<\/th>\n      <th>READS_PER_BIN<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[2,3,4,5,6,7,8,9,10,11,12,13]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-066ced5d6bfdca641b72" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-066ced5d6bfdca641b72">{"x":{"filter":"none","data":[["1","2","3","4","5","6"],["/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt"],[0,5,4,11,16,5],[3,1,2,6,30,3],[4,6,8,11,16,17],[0,0.833333333333333,0.666666666666667,0.647058823529412,0.347826086956522,0.625],[1,1,1,1,1,1],[1,1,1,1,1,1],[1,1,1,1,1,1],[5000,5000,5000,5000,5000,5000],[15001,25001,35001,50001,75001,80001],[20000,30000,40000,55000,80000,85000],[5,5,5,5,5,5],[3,6,6,17,46,8]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>sample<\/th>\n      <th>mat<\/th>\n      <th>pat<\/th>\n      <th>bin<\/th>\n      <th>ratio<\/th>\n      <th>chr<\/th>\n      <th>state<\/th>\n      <th>LANE<\/th>\n      <th>BIN_LENGTH<\/th>\n      <th>BIN_START<\/th>\n      <th>BIN_END<\/th>\n      <th>BIN_LENGTH_KB<\/th>\n      <th>READS_PER_BIN<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[2,3,4,5,6,7,8,9,10,11,12,13]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 ```
 
 `ratio = mat / (mat + pat)`, where `mat` = Cab and `pat` = Kaga.
@@ -80,7 +80,7 @@ df_list$`5000` %>%
     geom_boxplot(aes(state, ratio)) +
     guides(colour = "none") +
     theme_bw()
-# Save
+##Save
 ggsave(here::here("book/plots/20211027_ratio_v_state.png"),
        device = "png",
        width = 8,
@@ -114,16 +114,16 @@ df_list = purrr::map(df_list, function(df){
 ```
 
 
-# Read counts per bin
+## Read counts per bin
 
 
 ```r
-# How many bins in each data frame? 
+##How many bins in each data frame? 
 purrr::map_int(df_list, nrow)
 #>     5000    10000    15000    20000 
 #> 34410781 20625067 14908601 11724535
 
-# Plot
+##Plot
 df_list %>% 
   dplyr::bind_rows() %>% 
   dplyr::slice_sample(n = 1e5) %>% 
@@ -153,9 +153,9 @@ df_list %>%
     geom_point(alpha = 0.2) +
     theme_bw() +
     facet_grid(cols = vars(BIN_LENGTH)) +
-#    scale_colour_manual(values = c("#778DA9", "#415A77", "#1B263B", "#0D1B2A")) +
+##   scale_colour_manual(values = c("#778DA9", "#415A77", "#1B263B", "#0D1B2A")) +
     guides(fill = "none")
-#> Warning: Removed 66 rows containing missing values
+#> Warning: Removed 54 rows containing missing values
 #> (geom_point).
 ```
 
@@ -163,7 +163,7 @@ df_list %>%
 
 ```r
 
-# Limit to bins with 0-100 reads
+##Limit to bins with 0-100 reads
 df_list %>% 
   dplyr::bind_rows() %>% 
   dplyr::slice_sample(n = 1e5) %>% 
@@ -173,52 +173,52 @@ df_list %>%
     geom_point(alpha = 0.2) +
     theme_bw() +
     facet_grid(cols = vars(BIN_LENGTH)) +
-#    scale_colour_manual(values = c("#778DA9", "#415A77", "#1B263B", "#0D1B2A")) +
+##   scale_colour_manual(values = c("#778DA9", "#415A77", "#1B263B", "#0D1B2A")) +
     guides(fill = "none") +
     xlim(0,100)
-#> Warning: Removed 23399 rows containing missing values
+#> Warning: Removed 23767 rows containing missing values
 #> (geom_point).
 ```
 
 <img src="03-F2_recombination_files/figure-html/unnamed-chunk-8-2.png" width="672" />
 
 
-# Proportion of genome and sites called as a given state
+## Proportion of genome and sites called as a given state
 
-## Proportion of *genome* covered by each state
+### Proportion of *genome* covered by each state
 
-### Read in total medaka genome count
+#### Read in total medaka genome count
 
 
 ```r
-# Get chromosome lengths
+##Get chromosome lengths
 med_chr_lens = read.table(here::here("data",
                                      "Oryzias_latipes.ASM223467v1.dna.toplevel.fa_chr_counts.txt"),
                           col.names = c("chr", "end"))
-# Add start
+##Add start
 med_chr_lens$start = 1
-# Reorder
+##Reorder
 med_chr_lens = med_chr_lens %>% 
   dplyr::select(chr, start, end) %>% 
   # remove MT
   dplyr::filter(chr != "MT")
 
-# Total HdrR sequence length
+##Total HdrR sequence length
 total_hdrr_bases = sum(med_chr_lens$end)
 ```
 
-### Get total number of bases covered by each state
+#### Get total number of bases covered by each state
 
 
 ```r
-# Take 5kb DF
+##Take 5kb DF
 df = df_list$`5000`
 
-# Set states to loop over
+##Set states to loop over
 states = 0:2
 names(states) = states
 
-# Run loop over each LANE
+##Run loop over each LANE
 
 base_cov_df = df %>% 
   split(., f = .$LANE) %>% 
@@ -257,7 +257,7 @@ Plot
 
 
 ```r
-# Plot
+##Plot
 base_cov_df %>% 
   dplyr::mutate(STATE = factor(STATE, levels = c(0,1,2, "UNCLASSIFIED")),
                 STATE_RECODE = dplyr::recode(STATE,
@@ -286,11 +286,11 @@ Process.
 
 
 ```r
-# Set states to loop over
+##Set states to loop over
 states = 0:2
 names(states) = states
 
-# Run loop over each LANE
+##Run loop over each LANE
 
 base_cov_df_chr = df %>% 
   split(., f = .$LANE) %>% 
@@ -341,7 +341,7 @@ saveRDS(base_cov_df_chr, here::here("data/20211027_base_cov_per_chr.rds"))
 Plot
 
 ```r
-# Plot
+##Plot
 base_cov_df_chr %>% 
   dplyr::mutate(STATE = factor(STATE, levels = c(0,1,2, "UNCLASSIFIED")),
                 STATE_RECODE = dplyr::recode(STATE,
@@ -474,13 +474,13 @@ df %>%
 <p class="caption">(\#fig:unnamed-chunk-18)Frequency per-chromosome based on number of sites</p>
 </div>
 
-# Karyoplot
+##Karyoplot
 
 Make custom chromosome scaffold
 
 
 ```r
-# Create custom genome 
+##Create custom genome 
 med_genome = regioneR::toGRanges(med_chr_lens)
 ```
 
@@ -623,7 +623,7 @@ knitr::include_graphics(here::here("book/plots/20211027_karyoplot_15000.png"))
 knitr::include_graphics(here::here("book/plots/20211027_karyoplot_20000.png"))
 ```
 
-# Realised relationship matrix
+##Realised relationship matrix
 
 ## Process data
 
@@ -636,7 +636,7 @@ gt_mat_rc = df_list$`5000` %>%
                   stringr::str_remove(".txt") %>% 
                   as.numeric(.),
                 SITE = paste(chr, bin, sep = ":")) %>% 
-#  dplyr::filter(SITE %in% unique(SITE)[1:10]) %>% 
+## dplyr::filter(SITE %in% unique(SITE)[1:10]) %>% 
   dplyr::select(LANE, SITE, state) %>% 
   # recode 0,1,2 to -1,0,1
   dplyr::mutate(state = dplyr::recode(state,
@@ -652,10 +652,10 @@ gt_mat_rc = df_list$`5000` %>%
   # convert to matrix
   as.matrix(.)
 
-# Compute realised relationship matrix
+#Compute realised relationship matrix
 rrmat = sommer::A.mat(gt_mat_rc)
 
-# Save object
+#Save object
 saveRDS(rrmat, here::here("data/realised_relationship_matrix.rds"))
 ```
 

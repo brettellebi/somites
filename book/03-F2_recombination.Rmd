@@ -16,17 +16,17 @@ in_dir = "/nfs/research/birney/users/ian/somites/recombination_blocks/20211027"
 
 in_files = list.files(in_dir, pattern = "F2_", full.names = T)
 
-# Read into list
+##Read into list
 data_list = purrr::map(in_files, function(FILE){
   out = readr::read_tsv(FILE,
                         col_types = "ciiidii")
 })
-# Set names as bin length
+##Set names as bin length
 names(data_list) = basename(in_files) %>% 
   stringr::str_split("_", simplify = T) %>% 
   subset(select = 2) %>% 
   stringr::str_remove(".txt")
-# Reorder
+##Reorder
 data_list = data_list[order(as.numeric(names(data_list)))]
 
 counter = 0
@@ -72,7 +72,7 @@ df_list$`5000` %>%
     geom_boxplot(aes(state, ratio)) +
     guides(colour = "none") +
     theme_bw()
-# Save
+##Save
 ggsave(here::here("book/plots/20211027_ratio_v_state.png"),
        device = "png",
        width = 8,
@@ -102,13 +102,13 @@ df_list = purrr::map(df_list, function(df){
 ```
 
 
-# Read counts per bin
+## Read counts per bin
 
 ```{r}
-# How many bins in each data frame? 
+##How many bins in each data frame? 
 purrr::map_int(df_list, nrow)
 
-# Plot
+##Plot
 df_list %>% 
   dplyr::bind_rows() %>% 
   dplyr::slice_sample(n = 1e5) %>% 
@@ -133,10 +133,10 @@ df_list %>%
     geom_point(alpha = 0.2) +
     theme_bw() +
     facet_grid(cols = vars(BIN_LENGTH)) +
-#    scale_colour_manual(values = c("#778DA9", "#415A77", "#1B263B", "#0D1B2A")) +
+##   scale_colour_manual(values = c("#778DA9", "#415A77", "#1B263B", "#0D1B2A")) +
     guides(fill = "none")
 
-# Limit to bins with 0-100 reads
+##Limit to bins with 0-100 reads
 df_list %>% 
   dplyr::bind_rows() %>% 
   dplyr::slice_sample(n = 1e5) %>% 
@@ -146,46 +146,46 @@ df_list %>%
     geom_point(alpha = 0.2) +
     theme_bw() +
     facet_grid(cols = vars(BIN_LENGTH)) +
-#    scale_colour_manual(values = c("#778DA9", "#415A77", "#1B263B", "#0D1B2A")) +
+##   scale_colour_manual(values = c("#778DA9", "#415A77", "#1B263B", "#0D1B2A")) +
     guides(fill = "none") +
     xlim(0,100)
 ```
 
 
-# Proportion of genome and sites called as a given state
+## Proportion of genome and sites called as a given state
 
-## Proportion of *genome* covered by each state
+### Proportion of *genome* covered by each state
 
-### Read in total medaka genome count
+#### Read in total medaka genome count
 
 ```{r}
-# Get chromosome lengths
+##Get chromosome lengths
 med_chr_lens = read.table(here::here("data",
                                      "Oryzias_latipes.ASM223467v1.dna.toplevel.fa_chr_counts.txt"),
                           col.names = c("chr", "end"))
-# Add start
+##Add start
 med_chr_lens$start = 1
-# Reorder
+##Reorder
 med_chr_lens = med_chr_lens %>% 
   dplyr::select(chr, start, end) %>% 
   # remove MT
   dplyr::filter(chr != "MT")
 
-# Total HdrR sequence length
+##Total HdrR sequence length
 total_hdrr_bases = sum(med_chr_lens$end)
 ```
 
-### Get total number of bases covered by each state
+#### Get total number of bases covered by each state
 
 ```{r}
-# Take 5kb DF
+##Take 5kb DF
 df = df_list$`5000`
 
-# Set states to loop over
+##Set states to loop over
 states = 0:2
 names(states) = states
 
-# Run loop over each LANE
+##Run loop over each LANE
 
 base_cov_df = df %>% 
   split(., f = .$LANE) %>% 
@@ -224,7 +224,7 @@ base_cov_df = df %>%
 Plot
 
 ```{r}
-# Plot
+##Plot
 base_cov_df %>% 
   dplyr::mutate(STATE = factor(STATE, levels = c(0,1,2, "UNCLASSIFIED")),
                 STATE_RECODE = dplyr::recode(STATE,
@@ -250,11 +250,11 @@ base_cov_df %>%
 Process.
 
 ```{r, eval = F}
-# Set states to loop over
+##Set states to loop over
 states = 0:2
 names(states) = states
 
-# Run loop over each LANE
+##Run loop over each LANE
 
 base_cov_df_chr = df %>% 
   split(., f = .$LANE) %>% 
@@ -305,7 +305,7 @@ base_cov_df_chr = readRDS(here::here("data/20211027_base_cov_per_chr.rds"))
 
 Plot
 ```{r, fig.dim = c(16,13)}
-# Plot
+##Plot
 base_cov_df_chr %>% 
   dplyr::mutate(STATE = factor(STATE, levels = c(0,1,2, "UNCLASSIFIED")),
                 STATE_RECODE = dplyr::recode(STATE,
@@ -424,12 +424,12 @@ df %>%
     
 ```
 
-# Karyoplot
+##Karyoplot
 
 Make custom chromosome scaffold
 
 ```{r}
-# Create custom genome 
+##Create custom genome 
 med_genome = regioneR::toGRanges(med_chr_lens)
 ```
 
@@ -566,7 +566,7 @@ knitr::include_graphics(here::here("book/plots/20211027_karyoplot_15000.png"))
 knitr::include_graphics(here::here("book/plots/20211027_karyoplot_20000.png"))
 ```
 
-# Realised relationship matrix
+##Realised relationship matrix
 
 ## Process data
 
@@ -578,7 +578,7 @@ gt_mat_rc = df_list$`5000` %>%
                   stringr::str_remove(".txt") %>% 
                   as.numeric(.),
                 SITE = paste(chr, bin, sep = ":")) %>% 
-#  dplyr::filter(SITE %in% unique(SITE)[1:10]) %>% 
+## dplyr::filter(SITE %in% unique(SITE)[1:10]) %>% 
   dplyr::select(LANE, SITE, state) %>% 
   # recode 0,1,2 to -1,0,1
   dplyr::mutate(state = dplyr::recode(state,
@@ -594,10 +594,10 @@ gt_mat_rc = df_list$`5000` %>%
   # convert to matrix
   as.matrix(.)
 
-# Compute realised relationship matrix
+#Compute realised relationship matrix
 rrmat = sommer::A.mat(gt_mat_rc)
 
-# Save object
+#Save object
 saveRDS(rrmat, here::here("data/realised_relationship_matrix.rds"))
 ```
 

@@ -23,8 +23,6 @@ by-chromosome
 proportion-of-sites-covered-by-each-state
 genome-wide
 per-chromosome
-karyoplot-1
-realised-relationship-matrix
 process-data
 plot
 association-testing

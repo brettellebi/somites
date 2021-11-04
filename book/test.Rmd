@@ -1,0 +1,16 @@
+# Testing
+
+## ggplotly
+
+```{r}
+library(tidyverse)
+library(plotly)
+
+p1 = tibble::tibble(x = rnorm(1e4),
+                    y = rnorm(1e4)) %>% 
+  ggplot() +
+    geom_point(aes(x, y))
+
+ggplotly(p1)
+```
+
