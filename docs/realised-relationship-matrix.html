@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Chapter 8 Realised relationship matrix | Somite period F2 analysis</title>
+<meta name="author" content="Ian Brettell">
+<meta name="description" content="8.1 Process data # Process data gt_mat_rc = df_list$`5000` %&gt;%  # extract LANE names from sample name, and create site name by binding `chr` and `block`  dplyr::mutate(LANE = basename(sample) %&gt;% ...">
+<meta name="generator" content="bookdown 0.24.2 with bs4_book()">
+<meta property="og:title" content="Chapter 8 Realised relationship matrix | Somite period F2 analysis">
+<meta property="og:type" content="book">
+<meta property="og:description" content="8.1 Process data # Process data gt_mat_rc = df_list$`5000` %&gt;%  # extract LANE names from sample name, and create site name by binding `chr` and `block`  dplyr::mutate(LANE = basename(sample) %&gt;% ...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chapter 8 Realised relationship matrix | Somite period F2 analysis">
+<meta name="twitter:description" content="8.1 Process data # Process data gt_mat_rc = df_list$`5000` %&gt;%  # extract LANE names from sample name, and create site name by binding `chr` and `block`  dplyr::mutate(LANE = basename(sample) %&gt;% ...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/header-attrs-2.10/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.2.5.1/tabs.js"></script><script src="libs/bs3compat-0.2.5.1/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="libs/htmlwidgets-1.5.3/htmlwidgets.js"></script><script src="libs/plotly-binding-4.9.4.1/plotly.js"></script><script src="libs/typedarray-0.1/typedarray.min.js"></script><link href="libs/crosstalk-1.1.1/css/crosstalk.css" rel="stylesheet">
+<script src="libs/crosstalk-1.1.1/js/crosstalk.min.js"></script><link href="libs/plotly-htmlwidgets-css-1.57.1/plotly-htmlwidgets.css" rel="stylesheet">
+<script src="libs/plotly-main-1.57.1/plotly-latest.min.js"></script><link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet">
+<script src="libs/datatables-binding-0.18/datatables.js"></script><link href="libs/dt-core-1.10.20/css/jquery.dataTables.min.css" rel="stylesheet">
+<link href="libs/dt-core-1.10.20/css/jquery.dataTables.extra.css" rel="stylesheet">
+<script src="libs/dt-core-1.10.20/js/jquery.dataTables.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><link rel="stylesheet" href="style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="">Somite period F2 analysis</a>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html"><span class="header-section-number">1</span> About</a></li>
+<li><a class="" href="alignment-of-f0-and-f2-generations.html"><span class="header-section-number">2</span> Alignment of F0 and F2 generations</a></li>
+<li><a class="" href="homozygosity-of-f0-cab-and-kaga.html"><span class="header-section-number">3</span> Homozygosity of F0 Cab and Kaga</a></li>
+<li><a class="" href="f2-recombination-blocks.html"><span class="header-section-number">4</span> F2 recombination blocks</a></li>
+<li><a class="" href="read-counts-per-bin.html"><span class="header-section-number">5</span> Read counts per bin</a></li>
+<li><a class="" href="proportion-of-genome-and-sites-called-as-a-given-state.html"><span class="header-section-number">6</span> Proportion of genome and sites called as a given state</a></li>
+<li><a class="" href="karyoplot-1.html"><span class="header-section-number">7</span> Karyoplot</a></li>
+<li><a class="active" href="realised-relationship-matrix.html"><span class="header-section-number">8</span> Realised relationship matrix</a></li>
+<li><a class="" href="association-testing.html"><span class="header-section-number">9</span> Association testing</a></li>
+</ul>
+
+        <div class="book-extra">
+          <p><a id="book-repo" href="https://github.com/brettellebi/somites">View book source <i class="fab fa-github"></i></a></p>
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="realised-relationship-matrix" class="section level1" number="8">
+<h1>
+<span class="header-section-number">8</span> Realised relationship matrix<a class="anchor" aria-label="anchor" href="#realised-relationship-matrix"><i class="fas fa-link"></i></a>
+</h1>
+<div id="process-data" class="section level2" number="8.1">
+<h2>
+<span class="header-section-number">8.1</span> Process data<a class="anchor" aria-label="anchor" href="#process-data"><i class="fas fa-link"></i></a>
+</h2>
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Process data</span>
+<span class="va">gt_mat_rc</span> <span class="op">=</span> <span class="va">df_list</span><span class="op">$</span><span class="va">`5000`</span> <span class="op">%&gt;%</span> 
+  <span class="co"># extract LANE names from sample name, and create site name by binding `chr` and `block`</span>
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>LANE <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/basename.html">basename</a></span><span class="op">(</span><span class="va">sample</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+                  <span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_remove.html">str_remove</a></span><span class="op">(</span><span class="st">".txt"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+                  <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span>,
+                SITE <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="va">chr</span>, <span class="va">bin</span>, sep <span class="op">=</span> <span class="st">":"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+<span class="co">#  dplyr::filter(SITE %in% unique(SITE)[1:10]) %&gt;% </span>
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">LANE</span>, <span class="va">SITE</span>, <span class="va">state</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="co"># recode 0,1,2 to -1,0,1</span>
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>state <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/recode.html">recode</a></span><span class="op">(</span><span class="va">state</span>,
+                                      `0` <span class="op">=</span> <span class="op">-</span><span class="fl">1</span>,
+                                      `1` <span class="op">=</span> <span class="fl">0</span>,
+                                      `2` <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="co"># pivot to put sites into columns</span>
+  <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_wider.html">pivot_wider</a></span><span class="op">(</span>id_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">LANE</span>, <span class="va">SITE</span><span class="op">)</span>,
+                     names_from <span class="op">=</span> <span class="va">SITE</span>,
+                     values_from <span class="op">=</span> <span class="va">state</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="co"># remove LANE column</span>
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">LANE</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="co"># convert to matrix</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span>
+
+<span class="co"># Compute realised relationship matrix</span>
+<span class="va">rrmat</span> <span class="op">=</span> <span class="fu">sommer</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/sommer/man/A.mat.html">A.mat</a></span><span class="op">(</span><span class="va">gt_mat_rc</span><span class="op">)</span>
+
+<span class="co"># Save object</span>
+<span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">rrmat</span>, <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"data/realised_relationship_matrix.rds"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+</div>
+<div id="plot" class="section level2" number="8.2">
+<h2>
+<span class="header-section-number">8.2</span> Plot<a class="anchor" aria-label="anchor" href="#plot"><i class="fas fa-link"></i></a>
+</h2>
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">rrmat</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"data/realised_relationship_matrix.rds"</span><span class="op">)</span><span class="op">)</span>
+
+<span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"book/plots/20211027_rrm_heatmap.png"</span><span class="op">)</span>,
+    width <span class="op">=</span> <span class="fl">20</span>,
+    height <span class="op">=</span> <span class="fl">20</span>,
+    units <span class="op">=</span> <span class="st">"in"</span>,
+    res <span class="op">=</span> <span class="fl">400</span><span class="op">)</span>
+
+<span class="va">heat_cols</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/colorRamp.html">colorRampPalette</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"#9EC5AB"</span>, <span class="st">"#0D4045"</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/stats/heatmap.html">heatmap</a></span><span class="op">(</span><span class="va">rrmat</span>, symm <span class="op">=</span> <span class="cn">T</span>, col <span class="op">=</span> <span class="fu">heat_cols</span><span class="op">(</span><span class="fl">100</span><span class="op">)</span><span class="op">)</span>
+
+<span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"book/plots/20211027_rrm_heatmap.png"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<div class="inline-figure"><img src="plots/20211027_rrm_heatmap.png" width="4000"></div>
+
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="karyoplot-1.html"><span class="header-section-number">7</span> Karyoplot</a></div>
+<div class="next"><a href="association-testing.html"><span class="header-section-number">9</span> Association testing</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#realised-relationship-matrix"><span class="header-section-number">8</span> Realised relationship matrix</a></li>
+<li><a class="nav-link" href="#process-data"><span class="header-section-number">8.1</span> Process data</a></li>
+<li><a class="nav-link" href="#plot"><span class="header-section-number">8.2</span> Plot</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+<li><a id="book-source" href="https://github.com/brettellebi/somites/blob/master/03-F2_recombination.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/brettellebi/somites/edit/master/03-F2_recombination.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Somite period F2 analysis</strong>" was written by Ian Brettell. It was last built on 2021-11-04.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer>
+</body>
+</html>

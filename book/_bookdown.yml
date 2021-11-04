@@ -12,6 +12,6 @@ rmd_files: [
   
   "01-Data_processing_with_Snakemake.Rmd",
   "02-F0_homozygosity.Rmd",
-#  "03-F2_recombination.Rmd",
-#  "04-Association_testing.Rmd"
+  "03-F2_recombination.Rmd",
+  "04-Association_testing.Rmd"
 ]

@@ -13,7 +13,8 @@ From: rocker/tidyverse:4.1.0
         devtools \
         plotly \
         GGally \
-        geiger
+        geiger \
+        KRLS
     
     # Install correct version of `matrixStats`
     R -e 'devtools::install_version("matrixStats", ">= 0.60.1", repos = "https://cloud.r-project.org/")'
@@ -23,3 +24,6 @@ From: rocker/tidyverse:4.1.0
 
     # Install ViteRbi
     R -e "devtools::install_github('tf2/ViteRbi', upgrade = 'never')"
+
+    # Install GridLMM
+    R -e "devtools::install_github('deruncie/GridLMM')"

@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Chapter 9 Association testing | Somite period F2 analysis</title>
+<meta name="author" content="Ian Brettell">
+<meta name="description" content='library(here) source(here::here("book/source/04-Association_testing.R"))  9.1 Read in F2 recombination blocks  9.1.1 Read data in_dir =...'>
+<meta name="generator" content="bookdown 0.24.2 with bs4_book()">
+<meta property="og:title" content="Chapter 9 Association testing | Somite period F2 analysis">
+<meta property="og:type" content="book">
+<meta property="og:description" content='library(here) source(here::here("book/source/04-Association_testing.R"))  9.1 Read in F2 recombination blocks  9.1.1 Read data in_dir =...'>
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chapter 9 Association testing | Somite period F2 analysis">
+<meta name="twitter:description" content='library(here) source(here::here("book/source/04-Association_testing.R"))  9.1 Read in F2 recombination blocks  9.1.1 Read data in_dir =...'>
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/header-attrs-2.10/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.2.5.1/tabs.js"></script><script src="libs/bs3compat-0.2.5.1/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="libs/htmlwidgets-1.5.3/htmlwidgets.js"></script><script src="libs/plotly-binding-4.9.4.1/plotly.js"></script><script src="libs/typedarray-0.1/typedarray.min.js"></script><link href="libs/crosstalk-1.1.1/css/crosstalk.css" rel="stylesheet">
+<script src="libs/crosstalk-1.1.1/js/crosstalk.min.js"></script><link href="libs/plotly-htmlwidgets-css-1.57.1/plotly-htmlwidgets.css" rel="stylesheet">
+<script src="libs/plotly-main-1.57.1/plotly-latest.min.js"></script><link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet">
+<script src="libs/datatables-binding-0.18/datatables.js"></script><link href="libs/dt-core-1.10.20/css/jquery.dataTables.min.css" rel="stylesheet">
+<link href="libs/dt-core-1.10.20/css/jquery.dataTables.extra.css" rel="stylesheet">
+<script src="libs/dt-core-1.10.20/js/jquery.dataTables.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><link rel="stylesheet" href="style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="">Somite period F2 analysis</a>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html"><span class="header-section-number">1</span> About</a></li>
+<li><a class="" href="alignment-of-f0-and-f2-generations.html"><span class="header-section-number">2</span> Alignment of F0 and F2 generations</a></li>
+<li><a class="" href="homozygosity-of-f0-cab-and-kaga.html"><span class="header-section-number">3</span> Homozygosity of F0 Cab and Kaga</a></li>
+<li><a class="" href="f2-recombination-blocks.html"><span class="header-section-number">4</span> F2 recombination blocks</a></li>
+<li><a class="" href="read-counts-per-bin.html"><span class="header-section-number">5</span> Read counts per bin</a></li>
+<li><a class="" href="proportion-of-genome-and-sites-called-as-a-given-state.html"><span class="header-section-number">6</span> Proportion of genome and sites called as a given state</a></li>
+<li><a class="" href="karyoplot-1.html"><span class="header-section-number">7</span> Karyoplot</a></li>
+<li><a class="" href="realised-relationship-matrix.html"><span class="header-section-number">8</span> Realised relationship matrix</a></li>
+<li><a class="active" href="association-testing.html"><span class="header-section-number">9</span> Association testing</a></li>
+</ul>
+
+        <div class="book-extra">
+          <p><a id="book-repo" href="https://github.com/brettellebi/somites">View book source <i class="fab fa-github"></i></a></p>
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="association-testing" class="section level1" number="9">
+<h1>
+<span class="header-section-number">9</span> Association testing<a class="anchor" aria-label="anchor" href="#association-testing"><i class="fas fa-link"></i></a>
+</h1>
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://here.r-lib.org/">here</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"book/source/04-Association_testing.R"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<div id="read-in-f2-recombination-blocks" class="section level2" number="9.1">
+<h2>
+<span class="header-section-number">9.1</span> Read in F2 recombination blocks<a class="anchor" aria-label="anchor" href="#read-in-f2-recombination-blocks"><i class="fas fa-link"></i></a>
+</h2>
+<div id="read-data" class="section level3" number="9.1.1">
+<h3>
+<span class="header-section-number">9.1.1</span> Read data<a class="anchor" aria-label="anchor" href="#read-data"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">in_dir</span> <span class="op">=</span> <span class="st">"/nfs/research/birney/users/ian/somites/recombination_blocks/20211027"</span>
+
+<span class="va">in_files</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span><span class="op">(</span><span class="va">in_dir</span>, pattern <span class="op">=</span> <span class="st">"F2_"</span>, full.names <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>
+
+<span class="co"># Read into list</span>
+<span class="va">data_list</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">in_files</span>, <span class="kw">function</span><span class="op">(</span><span class="va">FILE</span><span class="op">)</span><span class="op">{</span>
+  <span class="va">out</span> <span class="op">=</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_tsv</a></span><span class="op">(</span><span class="va">FILE</span>,
+                        col_types <span class="op">=</span> <span class="st">"ciiidii"</span><span class="op">)</span>
+<span class="op">}</span><span class="op">)</span>
+<span class="co"># Set names as bin length</span>
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">data_list</span><span class="op">)</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/basename.html">basename</a></span><span class="op">(</span><span class="va">in_files</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_split.html">str_split</a></span><span class="op">(</span><span class="st">"_"</span>, simplify <span class="op">=</span> <span class="cn">T</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://rdrr.io/r/base/subset.html">subset</a></span><span class="op">(</span>select <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_remove.html">str_remove</a></span><span class="op">(</span><span class="st">".txt"</span><span class="op">)</span>
+<span class="co"># Reorder</span>
+<span class="va">data_list</span> <span class="op">=</span> <span class="va">data_list</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html">order</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">data_list</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">]</span>
+
+<span class="va">counter</span> <span class="op">=</span> <span class="fl">0</span>
+<span class="va">df_list</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">data_list</span>, <span class="kw">function</span><span class="op">(</span><span class="va">data</span><span class="op">)</span><span class="op">{</span>
+  <span class="va">counter</span> <span class="op">&lt;&lt;-</span> <span class="va">counter</span> <span class="op">+</span> <span class="fl">1</span>
+  <span class="co"># set bin length</span>
+  <span class="va">bin_length</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">data_list</span><span class="op">)</span><span class="op">[</span><span class="va">counter</span><span class="op">]</span><span class="op">)</span>
+  <span class="co"># add bin start and end coordinates</span>
+  <span class="va">df</span> <span class="op">=</span> <span class="va">data</span> <span class="op">%&gt;%</span> 
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>SAMPLE <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/basename.html">basename</a></span><span class="op">(</span><span class="va">sample</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+                    <span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_remove.html">str_remove</a></span><span class="op">(</span><span class="st">".txt"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+                    <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span>,
+                  BIN_START <span class="op">=</span> <span class="op">(</span><span class="va">bin</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span> <span class="op">*</span> <span class="va">bin_length</span> <span class="op">+</span> <span class="fl">1</span>,
+                  BIN_END <span class="op">=</span> <span class="va">bin</span> <span class="op">*</span> <span class="va">bin_length</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+    <span class="co"># recode state to make 0 == "Cab"</span>
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>STATE <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/recode.html">recode</a></span><span class="op">(</span><span class="va">state</span>,
+                                        `0` <span class="op">=</span> <span class="fl">2</span>,
+                                        `1` <span class="op">=</span> <span class="fl">1</span>,
+                                        `2` <span class="op">=</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">SAMPLE</span>, CHROM <span class="op">=</span> <span class="va">chr</span>, BIN <span class="op">=</span> <span class="va">bin</span>, <span class="va">BIN_START</span>, <span class="va">BIN_END</span>, <span class="va">STATE</span><span class="op">)</span>
+  
+  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span>
+<span class="op">}</span><span class="op">)</span></code></pre></div>
+</div>
+<div id="how-many-possible-blocks-have-at-least-one-call" class="section level3" number="9.1.2">
+<h3>
+<span class="header-section-number">9.1.2</span> How many possible blocks have at least one call?<a class="anchor" aria-label="anchor" href="#how-many-possible-blocks-have-at-least-one-call"><i class="fas fa-link"></i></a>
+</h3>
+<div id="count-total-existing-bins" class="section level4" number="9.1.2.1">
+<h4>
+<span class="header-section-number">9.1.2.1</span> Count total existing bins<a class="anchor" aria-label="anchor" href="#count-total-existing-bins"><i class="fas fa-link"></i></a>
+</h4>
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">bin_lengths</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">df_list</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">bin_lengths</span><span class="op">)</span> <span class="op">=</span> <span class="va">bin_lengths</span>
+
+<span class="va">n_bins</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">bin_lengths</span>, <span class="kw">function</span><span class="op">(</span><span class="va">BIN_LENGTH</span><span class="op">)</span><span class="op">{</span>
+  <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map_int</a></span><span class="op">(</span><span class="va">med_chr_lens</span><span class="op">$</span><span class="va">end</span>, <span class="kw">function</span><span class="op">(</span><span class="va">CHR_END</span><span class="op">)</span><span class="op">{</span>
+    <span class="va">out</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span>from <span class="op">=</span> <span class="fl">1</span>, to <span class="op">=</span> <span class="va">CHR_END</span>, by <span class="op">=</span> <span class="va">BIN_LENGTH</span><span class="op">)</span>
+    
+    <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span><span class="op">)</span>
+  <span class="op">}</span><span class="op">)</span>
+<span class="op">}</span><span class="op">)</span>
+
+<span class="va">n_bins_total</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map_int</a></span><span class="op">(</span><span class="va">n_bins</span>, <span class="va">sum</span><span class="op">)</span></code></pre></div>
+</div>
+<div id="proportion-of-total-bins-with-calls" class="section level4" number="9.1.2.2">
+<h4>
+<span class="header-section-number">9.1.2.2</span> Proportion of total bins with calls<a class="anchor" aria-label="anchor" href="#proportion-of-total-bins-with-calls"><i class="fas fa-link"></i></a>
+</h4>
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Get total number of samples</span>
+<span class="va">n_samples</span> <span class="op">=</span> <span class="va">df_list</span><span class="op">$</span><span class="va">`5000`</span><span class="op">$</span><span class="va">SAMPLE</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span>
+
+<span class="co"># Build DF of bins</span>
+<span class="va">n_bins_df</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map_dfr</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">df_list</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">COUNTER</span><span class="op">)</span><span class="op">{</span>
+  <span class="co"># Bin length</span>
+  <span class="va">bin_length</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">df_list</span><span class="op">)</span><span class="op">[</span><span class="va">COUNTER</span><span class="op">]</span><span class="op">)</span>
+  <span class="co"># Number of total bins</span>
+  <span class="va">n_bins</span> <span class="op">=</span> <span class="va">n_bins_total</span><span class="op">[</span><span class="va">COUNTER</span><span class="op">]</span>
+  <span class="co"># Number of bins with calls</span>
+  <span class="va">n_bins_with_calls</span> <span class="op">=</span> <span class="va">df_list</span><span class="op">[[</span><span class="va">COUNTER</span><span class="op">]</span><span class="op">]</span> <span class="op">%&gt;%</span> 
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html">distinct</a></span><span class="op">(</span><span class="va">CHROM</span>, <span class="va">BIN_START</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+    <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span>
+  <span class="co"># Number of bins with calls for each </span>
+  <span class="va">n_bins_no_missing</span> <span class="op">=</span> <span class="va">df_list</span><span class="op">[[</span><span class="va">COUNTER</span><span class="op">]</span><span class="op">]</span> <span class="op">%&gt;%</span> 
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html">count</a></span><span class="op">(</span><span class="va">CHROM</span>, <span class="va">BIN_START</span><span class="op">)</span> <span class="op">%&gt;%</span>
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">n</span> <span class="op">==</span> <span class="va">n_samples</span><span class="op">)</span> <span class="op">%&gt;%</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span>
+  
+  <span class="co"># Build final data frame</span>
+  <span class="va">out</span> <span class="op">=</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span>BIN_LENGTH <span class="op">=</span> <span class="va">bin_length</span>,
+                       N_BINS <span class="op">=</span> <span class="va">n_bins</span>,
+                       N_BINS_WITH_CALLS <span class="op">=</span> <span class="va">n_bins_with_calls</span>,
+                       N_BINS_NO_MISSING <span class="op">=</span> <span class="va">n_bins_no_missing</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>PROP_BINS_WITH_CALLS <span class="op">=</span> <span class="va">N_BINS_WITH_CALLS</span> <span class="op">/</span> <span class="va">N_BINS</span>,
+                  PROP_BINS_NO_MISSING <span class="op">=</span> <span class="va">N_BINS_NO_MISSING</span> <span class="op">/</span> <span class="va">N_BINS</span> <span class="op">)</span>
+  
+  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span>
+<span class="op">}</span><span class="op">)</span>
+
+<span class="fu">DT</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html">datatable</a></span><span class="op">(</span><span class="va">n_bins_df</span><span class="op">)</span></code></pre></div>
+<div id="htmlwidget-caa78431e141ff308e71" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-caa78431e141ff308e71">{"x":{"filter":"none","data":[["1","2","3","4"],[5000,10000,15000,20000],[146819,73414,48947,36712],[111237,62489,43734,33761],[10256,11886,11909,11520],[0.757647171006477,0.851186422208298,0.893497047827242,0.919617563739377],[0.0698547190758689,0.161903724085324,0.243303981857928,0.313793854870342]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>BIN_LENGTH<\/th>\n      <th>N_BINS<\/th>\n      <th>N_BINS_WITH_CALLS<\/th>\n      <th>N_BINS_NO_MISSING<\/th>\n      <th>PROP_BINS_WITH_CALLS<\/th>\n      <th>PROP_BINS_NO_MISSING<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,2,3,4,5,6]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<div id="merge-recombination-blocks" class="section level3" number="9.1.3">
+<h3>
+<span class="header-section-number">9.1.3</span> Merge recombination blocks<a class="anchor" aria-label="anchor" href="#merge-recombination-blocks"><i class="fas fa-link"></i></a>
+</h3>
+<div id="list-with-final-recoded-genotypes-including-nas" class="section level4" number="9.1.3.1">
+<h4>
+<span class="header-section-number">9.1.3.1</span> List with final recoded genotypes (including NAs)<a class="anchor" aria-label="anchor" href="#list-with-final-recoded-genotypes-including-nas"><i class="fas fa-link"></i></a>
+</h4>
+<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">gt_list</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">df_list</span>, <span class="kw">function</span><span class="op">(</span><span class="va">BIN_LENGTH_DF</span><span class="op">)</span><span class="op">{</span>
+  
+  <span class="co"># Widen data frame</span>
+  <span class="va">gt_final</span> <span class="op">=</span> <span class="va">BIN_LENGTH_DF</span> <span class="op">%&gt;%</span> 
+    <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_wider.html">pivot_wider</a></span><span class="op">(</span>names_from <span class="op">=</span> <span class="va">SAMPLE</span>, values_from <span class="op">=</span> <span class="va">STATE</span><span class="op">)</span>
+  
+  <span class="co"># Pull out matrix of genotypes</span>
+  <span class="va">gt_mat</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span><span class="op">(</span><span class="va">gt_final</span><span class="op">[</span>, <span class="fl">5</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span><span class="op">(</span><span class="va">gt_final</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>
+  
+  <span class="co"># Get indexes of loci with &gt; 1 genotype</span>
+  <span class="va">bins_to_keep</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/logical.html">logical</a></span><span class="op">(</span><span class="op">)</span>
+  
+  <span class="kw">for</span> <span class="op">(</span><span class="va">ROW</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">gt_mat</span><span class="op">)</span><span class="op">)</span><span class="op">{</span>
+    <span class="co"># get unique values in each row</span>
+    <span class="va">out</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">gt_mat</span><span class="op">[</span><span class="va">ROW</span>, <span class="op">]</span><span class="op">)</span>
+    <span class="co"># remove NAs</span>
+    <span class="va">out</span> <span class="op">=</span> <span class="va">out</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span><span class="op">]</span>
+    <span class="co"># if more than one value, return TRUE</span>
+    <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">1</span><span class="op">)</span> <span class="op">{</span>
+      <span class="va">bins_to_keep</span><span class="op">[</span><span class="va">ROW</span><span class="op">]</span> <span class="op">=</span> <span class="cn">TRUE</span>
+    <span class="op">}</span>
+    <span class="co"># if just one value (i.e. if all samples are the same genotype at that locus), return false </span>
+    <span class="kw">else</span> <span class="op">{</span>
+      <span class="va">bins_to_keep</span><span class="op">[</span><span class="va">ROW</span><span class="op">]</span> <span class="op">=</span> <span class="cn">FALSE</span>
+    <span class="op">}</span>
+  <span class="op">}</span>
+  
+  <span class="co"># filter gt_final</span>
+  <span class="va">gt_filt</span> <span class="op">=</span> <span class="va">gt_final</span> <span class="op">%&gt;%</span> 
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">bins_to_keep</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+    <span class="co"># recode genotypes to -1, 0, 1</span>
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/across.html">across</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"CHROM"</span>, <span class="st">"BIN"</span>, <span class="st">"BIN_START"</span>, <span class="st">"BIN_END"</span><span class="op">)</span>,
+                                <span class="op">~</span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/recode.html">recode</a></span><span class="op">(</span><span class="va">.x</span>,
+                                               `0` <span class="op">=</span> <span class="op">-</span><span class="fl">1</span>,
+                                               `1` <span class="op">=</span> <span class="fl">0</span>,
+                                               `2` <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+    <span class="co"># order</span>
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">CHROM</span>, <span class="va">BIN_START</span><span class="op">)</span>  
+  
+  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="va">gt_filt</span><span class="op">)</span>
+<span class="op">}</span><span class="op">)</span> 
+
+
+<span class="va">gt_list</span><span class="op">$</span><span class="va">`20000`</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">DT</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html">datatable</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span> </code></pre></div>
+<div id="htmlwidget-b20a1e645f0095da9596" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-b20a1e645f0095da9596">{"x":{"filter":"none","data":[["1","2","3","4","5","6"],[1,1,1,1,1,1],[1,2,3,4,5,6],[1,20001,40001,60001,80001,100001],[20000,40000,60000,80000,100000,120000],[0,0,null,0,0,0],[0,-1,null,-1,-1,-1],[-1,-1,null,-1,-1,-1],[0,0,null,0,0,0],[0,0,null,0,0,0],[0,0,null,0,0,0],[0,-1,null,-1,-1,-1],[-1,-1,-1,-1,-1,-1],[-1,-1,null,-1,-1,-1],[-1,-1,null,-1,-1,-1],[0,null,0,-1,-1,-1],[0,0,null,0,0,0],[-1,-1,null,-1,-1,-1],[0,0,0,0,0,0],[-1,-1,-1,-1,-1,-1],[0,-1,null,-1,-1,-1],[-1,-1,null,-1,-1,-1],[0,0,null,0,0,0],[-1,null,null,-1,-1,-1],[0,-1,-1,-1,-1,-1],[null,1,null,1,1,1],[-1,null,-1,-1,-1,-1],[-1,-1,null,-1,-1,-1],[0,0,null,0,0,0],[-1,-1,null,-1,-1,-1],[0,0,0,0,0,0],[0,0,null,0,0,0],[0,0,null,0,0,0],[0,-1,null,-1,-1,-1],[1,1,null,1,1,1],[-1,-1,-1,-1,-1,-1],[-1,-1,null,-1,-1,-1],[0,-1,null,-1,-1,-1],[-1,-1,-1,-1,-1,-1],[-1,-1,null,-1,-1,-1],[0,0,null,0,0,0],[0,0,null,0,0,0],[0,0,0,-1,-1,-1],[0,-1,-1,-1,-1,-1],[-1,-1,null,-1,-1,-1],[0,0,null,0,0,0],[0,0,null,0,0,0],[0,0,null,0,0,0],[0,0,null,0,0,0],[null,null,0,1,1,1],[-1,-1,null,-1,-1,-1],[0,0,0,0,0,0],[-1,-1,null,-1,-1,-1],[-1,-1,null,-1,-1,-1],[-1,-1,null,-1,-1,-1],[-1,-1,null,-1,-1,-1],[-1,-1,null,-1,-1,-1],[0,0,null,0,0,0],[0,0,null,0,0,0],[0,0,null,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,-1,null,-1,-1,-1],[0,0,null,0,0,0],[0,0,null,0,0,0],[0,0,null,0,0,0],[0,-1,null,-1,-1,-1],[-1,-1,null,-1,-1,-1],[0,0,0,0,0,0],[0,0,null,0,0,0],[0,-1,null,-1,-1,-1],[0,-1,null,-1,-1,-1],[0,0,null,0,0,0],[-1,-1,null,-1,-1,-1],[0,0,null,0,0,0],[0,-1,null,-1,-1,-1],[-1,-1,null,-1,-1,-1],[0,0,null,0,0,0],[1,1,1,1,1,1],[1,1,null,1,1,1],[0,0,null,0,0,0],[-1,-1,null,-1,-1,-1],[0,0,null,0,0,0],[-1,-1,-1,-1,-1,-1],[0,-1,-1,-1,-1,-1],[0,-1,-1,-1,-1,-1],[-1,-1,null,-1,-1,-1],[0,0,0,0,0,0],[0,-1,null,-1,-1,-1],[-1,-1,null,-1,-1,-1],[0,0,0,0,0,0],[-1,-1,-1,-1,-1,-1],[-1,-1,null,-1,-1,-1],[1,1,1,1,1,1],[-1,-1,null,-1,-1,-1],[-1,-1,-1,-1,-1,-1],[-1,-1,null,-1,-1,-1],[0,0,0,0,0,0],[-1,-1,null,-1,-1,-1],[0,-1,-1,-1,-1,-1],[0,0,null,0,0,0],[0,0,0,0,0,0],[0,null,null,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,null,0,0,0],[0,0,null,0,0,0],[1,1,1,1,1,1],[0,0,null,0,0,0],[0,0,0,0,0,0],[0,0,null,0,0,0],[0,0,0,0,0,0],[-1,-1,null,-1,-1,-1],[0,0,null,0,0,0],[-1,-1,-1,-1,-1,-1],[0,0,0,0,0,0],[1,1,null,1,1,1],[-1,-1,-1,-1,-1,-1],[0,0,0,-1,-1,-1],[0,0,0,0,0,0],[0,0,null,0,0,0],[0,0,0,0,0,0],[null,0,0,1,1,1],[0,-1,-1,-1,-1,-1],[1,1,null,1,1,1],[0,0,null,0,0,0],[0,-1,-1,-1,-1,-1],[0,0,0,0,0,0],[0,0,0,0,0,0],[-1,-1,-1,-1,-1,-1],[0,0,0,0,0,0],[0,-1,-1,-1,-1,-1],[-1,-1,null,-1,-1,-1],[-1,-1,null,-1,-1,-1],[0,-1,null,-1,-1,-1],[0,0,0,1,1,1],[-1,-1,null,-1,-1,-1],[0,-1,null,-1,-1,-1],[0,-1,null,-1,-1,-1],[0,0,0,0,0,0],[0,0,null,0,0,0],[0,0,null,0,0,0],[0,-1,-1,-1,-1,-1],[0,0,0,-1,-1,-1],[0,0,null,0,0,0],[-1,-1,null,-1,-1,-1],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,null,0,0,0,0],[-1,-1,-1,-1,-1,-1],[0,0,null,0,0,0],[0,0,0,0,0,0],[0,0,null,0,0,0],[null,0,0,0,0,0],[null,0,0,1,null,1],[0,-1,-1,-1,-1,-1],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,null,0,0,0],[0,-1,null,-1,-1,-1],[0,0,0,0,0,0],[0,0,null,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[-1,-1,-1,-1,-1,-1],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,null,0,0,0],[null,null,0,-1,-1,-1],[0,0,null,0,0,0],[0,0,null,0,0,0],[1,1,null,1,1,1],[-1,-1,null,-1,-1,-1],[0,0,null,0,0,0],[null,null,null,null,null,0],[0,0,null,0,0,0],[0,-1,null,-1,-1,-1],[-1,-1,null,-1,-1,-1],[0,0,null,0,0,0],[-1,-1,null,-1,-1,-1],[0,0,0,0,0,0],[-1,-1,null,-1,-1,-1],[-1,-1,null,-1,-1,-1],[0,0,null,0,0,0],[0,0,null,0,0,0],[-1,-1,null,-1,-1,-1],[0,0,null,0,0,0],[-1,-1,null,-1,-1,-1],[0,-1,null,-1,-1,-1],[0,-1,null,-1,-1,-1],[0,-1,null,-1,-1,-1],[0,0,null,0,0,0],[1,1,null,1,0,0],[0,0,null,0,0,0],[0,0,null,0,0,0],[-1,-1,null,-1,-1,-1],[0,0,null,0,0,0],[1,1,null,1,1,1],[-1,-1,null,-1,-1,-1],[1,0,null,0,0,0],[0,0,null,0,0,0],[0,-1,null,-1,-1,-1],[0,0,null,0,0,0],[0,0,null,0,0,0],[0,0,null,0,0,0],[0,0,null,0,0,0],[-1,-1,null,-1,-1,-1],[-1,-1,null,-1,-1,-1],[0,-1,null,-1,-1,-1],[0,0,null,0,0,0],[0,0,null,0,0,0],[-1,-1,null,-1,-1,-1],[0,0,null,0,0,0],[-1,-1,null,-1,-1,-1],[0,-1,null,-1,-1,-1],[0,-1,null,-1,-1,-1],[0,0,null,0,0,0],[0,0,null,0,0,0],[-1,-1,null,-1,-1,-1],[0,0,null,0,0,0],[0,-1,null,-1,-1,-1],[0,0,null,0,0,0],[-1,-1,null,-1,null,-1],[0,-1,null,-1,-1,-1],[0,-1,null,-1,-1,-1],[1,1,null,1,1,1],[1,1,null,1,1,1],[0,0,null,0,0,0],[-1,-1,null,-1,-1,-1],[0,0,null,0,0,0],[0,-1,null,-1,-1,-1],[0,0,null,0,0,0],[0,-1,null,-1,-1,-1],[-1,-1,null,-1,-1,-1],[0,0,null,0,0,0],[0,0,null,0,0,0],[0,0,null,0,0,0],[0,-1,null,-1,-1,-1],[0,-1,null,-1,-1,-1],[0,-1,null,-1,-1,-1],[0,0,null,0,0,0],[0,0,null,0,0,0],[0,0,null,0,0,0],[0,-1,null,-1,-1,-1],[1,1,null,1,1,1],[0,0,null,0,0,0],[0,-1,null,-1,-1,-1],[1,1,null,1,1,1],[-1,-1,null,-1,-1,-1],[1,1,null,1,1,1],[0,0,null,0,0,0],[0,0,null,0,0,0],[0,0,null,0,0,0],[0,0,null,0,0,0],[1,1,null,1,1,1],[0,-1,null,-1,-1,-1],[0,-1,null,-1,-1,-1],[-1,-1,null,-1,-1,-1],[-1,-1,null,-1,-1,-1],[0,0,null,0,0,0],[0,0,null,0,0,null],[0,0,null,0,0,0],[0,0,null,0,0,0],[0,-1,null,-1,-1,-1],[0,-1,null,-1,-1,-1],[0,0,null,0,0,0],[-1,-1,null,-1,-1,-1],[-1,-1,null,-1,-1,-1],[-1,-1,null,-1,-1,-1],[0,0,null,0,0,0],[0,0,null,0,0,0],[0,0,null,0,0,0],[0,0,null,0,0,0],[-1,-1,null,-1,-1,-1],[0,-1,null,-1,-1,-1],[0,0,null,0,0,0],[-1,-1,null,-1,-1,-1],[0,0,null,0,0,0],[0,0,null,0,0,0],[0,0,null,0,0,0],[0,0,null,0,0,0],[-1,-1,null,-1,-1,-1],[-1,-1,null,-1,-1,-1],[0,0,null,0,0,0],[0,-1,null,-1,-1,-1],[0,-1,null,-1,-1,-1],[0,0,null,0,0,0],[0,0,null,0,0,0],[-1,-1,null,-1,-1,-1],[0,0,null,0,0,0],[0,-1,null,-1,-1,-1],[0,-1,null,-1,-1,-1],[-1,-1,null,-1,-1,-1],[0,0,null,0,0,0],[0,-1,null,-1,-1,-1],[0,0,null,0,0,0],[0,-1,null,-1,-1,-1],[-1,-1,null,-1,-1,-1],[-1,-1,null,-1,-1,-1],[0,0,null,0,0,0],[0,0,null,0,0,0],[0,0,null,0,0,0],[0,0,null,0,0,0],[-1,-1,null,-1,-1,-1],[-1,-1,null,-1,-1,-1],[0,0,null,0,0,0],[0,0,null,0,0,0],[0,-1,null,-1,-1,-1],[0,0,null,0,0,0],[-1,-1,null,-1,-1,-1],[0,-1,null,-1,-1,-1],[1,1,null,1,1,1],[-1,-1,null,-1,-1,-1],[0,0,null,0,0,0],[-1,-1,null,-1,-1,-1],[0,0,null,0,0,0],[0,0,null,0,0,0],[-1,-1,null,-1,-1,-1],[-1,-1,null,-1,-1,-1],[0,0,null,0,0,0],[0,-1,null,-1,-1,-1],[-1,-1,null,-1,-1,-1],[-1,-1,null,-1,-1,-1],[-1,-1,null,-1,-1,-1],[1,1,null,0,0,0],[0,0,null,0,0,0],[0,0,null,0,0,0],[-1,-1,null,-1,-1,-1],[0,-1,null,-1,-1,-1],[-1,-1,null,-1,-1,-1],[1,0,null,0,0,0],[0,0,null,0,0,0],[-1,-1,null,-1,-1,-1],[0,0,null,0,0,0],[-1,-1,null,-1,-1,-1],[-1,-1,null,-1,-1,-1],[0,0,null,0,0,0],[0,0,null,0,0,0],[0,1,null,1,1,1],[0,0,null,0,0,0],[0,-1,null,-1,-1,-1],[0,0,null,0,0,0],[-1,-1,null,-1,-1,-1],[0,0,null,0,0,0],[0,0,null,0,0,0],[0,0,null,0,0,0],[-1,-1,null,-1,-1,-1],[-1,-1,null,-1,-1,-1],[0,0,null,0,0,0],[0,-1,null,-1,-1,-1],[1,0,null,0,0,0],[-1,-1,null,-1,-1,-1],[0,0,null,0,0,0],[0,0,null,0,0,0],[0,-1,null,-1,-1,-1],[-1,-1,null,-1,-1,-1],[0,0,null,0,0,0],[-1,-1,null,-1,-1,-1],[0,0,null,0,0,0],[0,0,null,0,0,null],[0,0,null,0,0,null],[0,0,null,0,0,0],[0,-1,null,-1,-1,-1],[-1,-1,null,-1,-1,-1],[0,0,null,0,0,0],[1,1,null,1,1,1],[0,0,null,0,0,0],[0,0,null,0,0,0],[0,-1,null,-1,-1,-1],[0,-1,null,-1,-1,-1],[0,0,null,0,0,0],[0,-1,null,-1,-1,-1],[0,0,null,0,0,0],[0,0,null,0,0,0],[0,0,null,0,0,0],[-1,-1,null,-1,-1,-1],[0,0,null,0,0,0],[-1,-1,null,-1,-1,-1]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>CHROM<\/th>\n      <th>BIN<\/th>\n      <th>BIN_START<\/th>\n      <th>BIN_END<\/th>\n      <th>1<\/th>\n      <th>2<\/th>\n      <th>4<\/th>\n      <th>6<\/th>\n      <th>8<\/th>\n      <th>9<\/th>\n      <th>10<\/th>\n      <th>11<\/th>\n      <th>12<\/th>\n      <th>13<\/th>\n      <th>14<\/th>\n      <th>15<\/th>\n      <th>16<\/th>\n      <th>17<\/th>\n      <th>18<\/th>\n      <th>20<\/th>\n      <th>21<\/th>\n      <th>22<\/th>\n      <th>23<\/th>\n      <th>24<\/th>\n      <th>25<\/th>\n      <th>26<\/th>\n      <th>27<\/th>\n      <th>29<\/th>\n      <th>30<\/th>\n      <th>31<\/th>\n      <th>32<\/th>\n      <th>33<\/th>\n      <th>34<\/th>\n      <th>35<\/th>\n      <th>36<\/th>\n      <th>37<\/th>\n      <th>38<\/th>\n      <th>40<\/th>\n      <th>41<\/th>\n      <th>42<\/th>\n      <th>43<\/th>\n      <th>44<\/th>\n      <th>45<\/th>\n      <th>46<\/th>\n      <th>47<\/th>\n      <th>48<\/th>\n      <th>49<\/th>\n      <th>50<\/th>\n      <th>51<\/th>\n      <th>53<\/th>\n      <th>54<\/th>\n      <th>55<\/th>\n      <th>57<\/th>\n      <th>58<\/th>\n      <th>59<\/th>\n      <th>60<\/th>\n      <th>61<\/th>\n      <th>62<\/th>\n      <th>63<\/th>\n      <th>64<\/th>\n      <th>65<\/th>\n      <th>66<\/th>\n      <th>67<\/th>\n      <th>68<\/th>\n      <th>69<\/th>\n      <th>70<\/th>\n      <th>71<\/th>\n      <th>72<\/th>\n      <th>73<\/th>\n      <th>74<\/th>\n      <th>75<\/th>\n      <th>76<\/th>\n      <th>77<\/th>\n      <th>78<\/th>\n      <th>79<\/th>\n      <th>80<\/th>\n      <th>81<\/th>\n      <th>82<\/th>\n      <th>83<\/th>\n      <th>84<\/th>\n      <th>85<\/th>\n      <th>86<\/th>\n      <th>87<\/th>\n      <th>88<\/th>\n      <th>89<\/th>\n      <th>90<\/th>\n      <th>91<\/th>\n      <th>92<\/th>\n      <th>93<\/th>\n      <th>94<\/th>\n      <th>95<\/th>\n      <th>96<\/th>\n      <th>97<\/th>\n      <th>98<\/th>\n      <th>99<\/th>\n      <th>100<\/th>\n      <th>101<\/th>\n      <th>102<\/th>\n      <th>103<\/th>\n      <th>104<\/th>\n      <th>105<\/th>\n      <th>106<\/th>\n      <th>107<\/th>\n      <th>108<\/th>\n      <th>109<\/th>\n      <th>110<\/th>\n      <th>111<\/th>\n      <th>112<\/th>\n      <th>113<\/th>\n      <th>114<\/th>\n      <th>115<\/th>\n      <th>116<\/th>\n      <th>117<\/th>\n      <th>118<\/th>\n      <th>119<\/th>\n      <th>120<\/th>\n      <th>122<\/th>\n      <th>123<\/th>\n      <th>124<\/th>\n      <th>125<\/th>\n      <th>126<\/th>\n      <th>127<\/th>\n      <th>128<\/th>\n      <th>129<\/th>\n      <th>130<\/th>\n      <th>131<\/th>\n      <th>132<\/th>\n      <th>133<\/th>\n      <th>135<\/th>\n      <th>136<\/th>\n      <th>137<\/th>\n      <th>138<\/th>\n      <th>139<\/th>\n      <th>140<\/th>\n      <th>141<\/th>\n      <th>142<\/th>\n      <th>143<\/th>\n      <th>144<\/th>\n      <th>145<\/th>\n      <th>146<\/th>\n      <th>147<\/th>\n      <th>148<\/th>\n      <th>149<\/th>\n      <th>150<\/th>\n      <th>151<\/th>\n      <th>152<\/th>\n      <th>153<\/th>\n      <th>154<\/th>\n      <th>156<\/th>\n      <th>157<\/th>\n      <th>159<\/th>\n      <th>161<\/th>\n      <th>162<\/th>\n      <th>163<\/th>\n      <th>164<\/th>\n      <th>165<\/th>\n      <th>166<\/th>\n      <th>167<\/th>\n      <th>168<\/th>\n      <th>169<\/th>\n      <th>170<\/th>\n      <th>171<\/th>\n      <th>172<\/th>\n      <th>174<\/th>\n      <th>175<\/th>\n      <th>176<\/th>\n      <th>178<\/th>\n      <th>179<\/th>\n      <th>180<\/th>\n      <th>181<\/th>\n      <th>182<\/th>\n      <th>183<\/th>\n      <th>184<\/th>\n      <th>185<\/th>\n      <th>186<\/th>\n      <th>187<\/th>\n      <th>188<\/th>\n      <th>189<\/th>\n      <th>190<\/th>\n      <th>191<\/th>\n      <th>192<\/th>\n      <th>193<\/th>\n      <th>194<\/th>\n      <th>195<\/th>\n      <th>196<\/th>\n      <th>197<\/th>\n      <th>198<\/th>\n      <th>199<\/th>\n      <th>200<\/th>\n      <th>201<\/th>\n      <th>202<\/th>\n      <th>203<\/th>\n      <th>204<\/th>\n      <th>205<\/th>\n      <th>206<\/th>\n      <th>207<\/th>\n      <th>208<\/th>\n      <th>209<\/th>\n      <th>210<\/th>\n      <th>212<\/th>\n      <th>213<\/th>\n      <th>214<\/th>\n      <th>215<\/th>\n      <th>216<\/th>\n      <th>218<\/th>\n      <th>219<\/th>\n      <th>220<\/th>\n      <th>221<\/th>\n      <th>222<\/th>\n      <th>223<\/th>\n      <th>224<\/th>\n      <th>225<\/th>\n      <th>226<\/th>\n      <th>227<\/th>\n      <th>228<\/th>\n      <th>229<\/th>\n      <th>230<\/th>\n      <th>231<\/th>\n      <th>232<\/th>\n      <th>233<\/th>\n      <th>234<\/th>\n      <th>235<\/th>\n      <th>236<\/th>\n      <th>237<\/th>\n      <th>238<\/th>\n      <th>239<\/th>\n      <th>240<\/th>\n      <th>241<\/th>\n      <th>242<\/th>\n      <th>243<\/th>\n      <th>244<\/th>\n      <th>245<\/th>\n      <th>247<\/th>\n      <th>248<\/th>\n      <th>249<\/th>\n      <th>250<\/th>\n      <th>251<\/th>\n      <th>252<\/th>\n      <th>253<\/th>\n      <th>254<\/th>\n      <th>255<\/th>\n      <th>256<\/th>\n      <th>259<\/th>\n      <th>260<\/th>\n      <th>261<\/th>\n      <th>262<\/th>\n      <th>263<\/th>\n      <th>264<\/th>\n      <th>265<\/th>\n      <th>266<\/th>\n      <th>267<\/th>\n      <th>268<\/th>\n      <th>269<\/th>\n      <th>270<\/th>\n      <th>271<\/th>\n      <th>272<\/th>\n      <th>273<\/th>\n      <th>274<\/th>\n      <th>275<\/th>\n      <th>276<\/th>\n      <th>277<\/th>\n      <th>278<\/th>\n      <th>280<\/th>\n      <th>281<\/th>\n      <th>282<\/th>\n      <th>283<\/th>\n      <th>284<\/th>\n      <th>285<\/th>\n      <th>286<\/th>\n      <th>287<\/th>\n      <th>288<\/th>\n      <th>289<\/th>\n      <th>290<\/th>\n      <th>291<\/th>\n      <th>292<\/th>\n      <th>293<\/th>\n      <th>294<\/th>\n      <th>295<\/th>\n      <th>296<\/th>\n      <th>297<\/th>\n      <th>298<\/th>\n      <th>299<\/th>\n      <th>300<\/th>\n      <th>301<\/th>\n      <th>302<\/th>\n      <th>303<\/th>\n      <th>304<\/th>\n      <th>306<\/th>\n      <th>307<\/th>\n      <th>308<\/th>\n      <th>309<\/th>\n      <th>310<\/th>\n      <th>311<\/th>\n      <th>312<\/th>\n      <th>313<\/th>\n      <th>314<\/th>\n      <th>315<\/th>\n      <th>316<\/th>\n      <th>317<\/th>\n      <th>318<\/th>\n      <th>319<\/th>\n      <th>320<\/th>\n      <th>321<\/th>\n      <th>322<\/th>\n      <th>323<\/th>\n      <th>324<\/th>\n      <th>326<\/th>\n      <th>327<\/th>\n      <th>328<\/th>\n      <th>329<\/th>\n      <th>330<\/th>\n      <th>331<\/th>\n      <th>332<\/th>\n      <th>333<\/th>\n      <th>334<\/th>\n      <th>335<\/th>\n      <th>336<\/th>\n      <th>337<\/th>\n      <th>338<\/th>\n      <th>339<\/th>\n      <th>340<\/th>\n      <th>341<\/th>\n      <th>342<\/th>\n      <th>343<\/th>\n      <th>344<\/th>\n      <th>345<\/th>\n      <th>346<\/th>\n      <th>347<\/th>\n      <th>348<\/th>\n      <th>349<\/th>\n      <th>350<\/th>\n      <th>351<\/th>\n      <th>352<\/th>\n      <th>353<\/th>\n      <th>354<\/th>\n      <th>355<\/th>\n      <th>356<\/th>\n      <th>357<\/th>\n      <th>358<\/th>\n      <th>359<\/th>\n      <th>360<\/th>\n      <th>361<\/th>\n      <th>362<\/th>\n      <th>363<\/th>\n      <th>364<\/th>\n      <th>365<\/th>\n      <th>366<\/th>\n      <th>367<\/th>\n      <th>368<\/th>\n      <th>369<\/th>\n      <th>370<\/th>\n      <th>371<\/th>\n      <th>372<\/th>\n      <th>373<\/th>\n      <th>374<\/th>\n      <th>375<\/th>\n      <th>376<\/th>\n      <th>377<\/th>\n      <th>378<\/th>\n      <th>379<\/th>\n      <th>380<\/th>\n      <th>381<\/th>\n      <th>382<\/th>\n      <th>383<\/th>\n      <th>384<\/th>\n      <th>385<\/th>\n      <th>386<\/th>\n      <th>387<\/th>\n      <th>388<\/th>\n      <th>389<\/th>\n      <th>390<\/th>\n      <th>391<\/th>\n      <th>392<\/th>\n      <th>393<\/th>\n      <th>394<\/th>\n      <th>395<\/th>\n      <th>396<\/th>\n      <th>397<\/th>\n      <th>398<\/th>\n      <th>399<\/th>\n      <th>400<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,177,178,179,180,181,182,183,184,185,186,187,188,189,190,191,192,193,194,195,196,197,198,199,200,201,202,203,204,205,206,207,208,209,210,211,212,213,214,215,216,217,218,219,220,221,222,223,224,225,226,227,228,229,230,231,232,233,234,235,236,237,238,239,240,241,242,243,244,245,246,247,248,249,250,251,252,253,254,255,256,257,258,259,260,261,262,263,264,265,266,267,268,269,270,271,272,273,274,275,276,277,278,279,280,281,282,283,284,285,286,287,288,289,290,291,292,293,294,295,296,297,298,299,300,301,302,303,304,305,306,307,308,309,310,311,312,313,314,315,316,317,318,319,320,321,322,323,324,325,326,327,328,329,330,331,332,333,334,335,336,337,338,339,340,341,342,343,344,345,346,347,348,349,350,351,352,353,354,355,356,357,358,359,360,361,362,363,364,365,366,367,368,369,370,371,372,373,374,375,376,377,378,379,380,381]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+</div>
+<div id="list-with-final-recoded-genotypes-complete-cases-only" class="section level4" number="9.1.3.2">
+<h4>
+<span class="header-section-number">9.1.3.2</span> List with final recoded genotypes (complete cases only)<a class="anchor" aria-label="anchor" href="#list-with-final-recoded-genotypes-complete-cases-only"><i class="fas fa-link"></i></a>
+</h4>
+<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">gt_nomiss_list</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">gt_list</span>, <span class="kw">function</span><span class="op">(</span><span class="va">BIN_LENGTH_DF</span><span class="op">)</span><span class="op">{</span>
+  <span class="va">BIN_LENGTH_DF</span> <span class="op">%&gt;%</span>
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/complete.cases.html">complete.cases</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span><span class="op">)</span>
+<span class="op">}</span><span class="op">)</span></code></pre></div>
+</div>
+</div>
+</div>
+<div id="simulate-phenotype" class="section level2" number="9.2">
+<h2>
+<span class="header-section-number">9.2</span> Simulate phenotype<a class="anchor" aria-label="anchor" href="#simulate-phenotype"><i class="fas fa-link"></i></a>
+</h2>
+<div id="extract-samples-of-genotypes" class="section level3" number="9.2.1">
+<h3>
+<span class="header-section-number">9.2.1</span> Extract samples of genotypes<a class="anchor" aria-label="anchor" href="#extract-samples-of-genotypes"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Set directory</span>
+<span class="va">out_dir_test</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">lts_dir</span>, <span class="st">"association_testing/20211027_test"</span><span class="op">)</span></code></pre></div>
+<p>These must be written to a file because <code>PhenotypeSimulator</code> reads delimited genotypes from files.</p>
+<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Get random 10 loci</span>
+<span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span>
+<span class="va">n_loci</span> <span class="op">=</span> <span class="fl">10</span>
+<span class="co"># NOTE: PhenotypeSimulator::readStandardGenotypes states that the genotype file must</span>
+<span class="co"># delim: a [delimter]-delimited file of [(NrSNPs+1) x (NrSamples+1)] genotypes with the snpIDs in the first column and the sampleIDs in the first row and genotypes encoded as numbers between 0 and 2 representing the (posterior) mean genotype, or dosage of the minor allele.</span>
+
+<span class="va">sample_gts</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_along</a></span><span class="op">(</span><span class="va">gt_nomiss_list</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">COUNTER</span><span class="op">)</span><span class="op">{</span>
+  
+  <span class="co"># Pull out random SNPs</span>
+  <span class="va">snp_sample</span> <span class="op">=</span> <span class="va">gt_nomiss_list</span><span class="op">[[</span><span class="va">COUNTER</span><span class="op">]</span><span class="op">]</span> <span class="op">%&gt;%</span> 
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html">slice_sample</a></span><span class="op">(</span>n <span class="op">=</span> <span class="va">n_loci</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">CHROM</span>, <span class="va">BIN_START</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+    <span class="co"># create locus column</span>
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>LOCUS <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="va">CHROM</span>, <span class="va">BIN_START</span>, sep <span class="op">=</span> <span class="st">":"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+    <span class="co"># remove superfluous columns</span>
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">CHROM</span>, <span class="va">BIN</span>, <span class="va">BIN_START</span>, <span class="va">BIN_END</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+    <span class="co"># recode back to 0,1,2</span>
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/across.html">across</a></span><span class="op">(</span><span class="op">-</span><span class="va">LOCUS</span>,
+                                <span class="op">~</span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/recode.html">recode</a></span><span class="op">(</span><span class="va">.x</span>,
+                                               `-1` <span class="op">=</span> <span class="fl">0</span>,
+                                               `0` <span class="op">=</span> <span class="fl">1</span>,
+                                               `1` <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+    <span class="co"># reorder columns</span>
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">LOCUS</span>, <span class="fu">everything</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
+  
+<span class="op">}</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">sample_gts</span><span class="op">)</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">gt_nomiss_list</span><span class="op">)</span>
+
+<span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_along</a></span><span class="op">(</span><span class="va">sample_gts</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">COUNTER</span><span class="op">)</span><span class="op">{</span>
+  <span class="co"># save to file</span>
+  <span class="va">bin_length</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">sample_gts</span><span class="op">)</span><span class="op">[</span><span class="va">COUNTER</span><span class="op">]</span>
+  <span class="va">out_file</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">out_dir_test</span>, <span class="st">"target_loci"</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="va">bin_length</span>, <span class="st">".csv"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span>
+  <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/write_delim.html">write_csv</a></span><span class="op">(</span><span class="va">sample_gts</span><span class="op">[[</span><span class="va">COUNTER</span><span class="op">]</span><span class="op">]</span>, <span class="va">out_file</span><span class="op">)</span>
+<span class="op">}</span><span class="op">)</span>
+
+<span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">sample_gts</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">out_dir_test</span>, <span class="st">"target_loci/sample_gts.rds"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+</div>
+<div id="simulate-phenotype-1" class="section level3" number="9.2.2">
+<h3>
+<span class="header-section-number">9.2.2</span> Simulate phenotype<a class="anchor" aria-label="anchor" href="#simulate-phenotype-1"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">sim_path</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">out_dir_test</span>, <span class="st">"simulated_phenotypes/20211103_sim_phenos.rds"</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">5671</span><span class="op">)</span>
+<span class="co"># N samples</span>
+<span class="va">N</span> <span class="op">=</span> <span class="va">n_samples</span>
+<span class="co"># N phenotypes</span>
+<span class="va">P</span> <span class="op">=</span> <span class="fl">1</span>
+<span class="co"># Porportion of total genetic variance</span>
+<span class="va">genVar</span> <span class="op">=</span> <span class="fl">0.5</span>
+<span class="co"># Proportion of genetic variance of genetic variant effects</span>
+<span class="va">h2s</span> <span class="op">=</span> <span class="fl">1</span>
+<span class="co"># Proportion of total noise variance</span>
+<span class="va">noiseVar</span> <span class="op">=</span> <span class="fl">0.5</span>
+<span class="co"># Proportion of noise variance of observational noise effects</span>
+<span class="va">phi</span> <span class="op">=</span> <span class="fl">1</span>
+
+<span class="va">sim_phenos</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_along</a></span><span class="op">(</span><span class="va">sample_gts</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">COUNTER</span><span class="op">)</span><span class="op">{</span>
+  <span class="co"># get sample file path</span>
+  <span class="va">bin_length</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">sample_gts</span><span class="op">)</span><span class="op">[</span><span class="va">COUNTER</span><span class="op">]</span>
+  <span class="va">gt_sample_file</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">out_dir_test</span>, <span class="st">"target_loci"</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="va">bin_length</span>, <span class="st">".csv"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span>
+    
+  <span class="va">sim_pheno</span> <span class="op">=</span> <span class="fu">PhenotypeSimulator</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/PhenotypeSimulator/man/runSimulation.html">runSimulation</a></span><span class="op">(</span>N <span class="op">=</span> <span class="va">N</span>, P <span class="op">=</span> <span class="va">P</span>, 
+                                                genVar <span class="op">=</span> <span class="va">genVar</span>, h2s <span class="op">=</span> <span class="va">h2s</span>, 
+                                                noiseVar <span class="op">=</span> <span class="va">noiseVar</span>, phi <span class="op">=</span> <span class="va">phi</span>,
+                                                cNrSNP <span class="op">=</span> <span class="va">n_loci</span>,
+                                                genotypefile <span class="op">=</span> <span class="va">gt_sample_file</span>,
+                                                format <span class="op">=</span> <span class="st">"delim"</span>,
+                                                genoDelimiter <span class="op">=</span> <span class="st">","</span><span class="op">)</span>
+  
+  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="va">sim_pheno</span><span class="op">)</span>
+<span class="op">}</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">sim_phenos</span><span class="op">)</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">sample_gts</span><span class="op">)</span>
+
+<span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">sim_phenos</span>, <span class="va">sim_path</span><span class="op">)</span></code></pre></div>
+</div>
+</div>
+<div id="reformat-genotypes-for-gridlmm" class="section level2" number="9.3">
+<h2>
+<span class="header-section-number">9.3</span> Reformat genotypes for GridLMM<a class="anchor" aria-label="anchor" href="#reformat-genotypes-for-gridlmm"><i class="fas fa-link"></i></a>
+</h2>
+<div id="complete-cases" class="section level3" number="9.3.1">
+<h3>
+<span class="header-section-number">9.3.1</span> Complete cases<a class="anchor" aria-label="anchor" href="#complete-cases"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">final_nomiss</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_along</a></span><span class="op">(</span><span class="va">gt_nomiss_list</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">COUNTER</span><span class="op">)</span><span class="op">{</span>
+  <span class="va">out</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">)</span>
+  
+  <span class="co"># Genotypes</span>
+  <span class="va">out</span><span class="op">[[</span><span class="st">"genotypes"</span><span class="op">]</span><span class="op">]</span> <span class="op">=</span> <span class="va">gt_nomiss_list</span><span class="op">[[</span><span class="va">COUNTER</span><span class="op">]</span><span class="op">]</span> <span class="op">%&gt;%</span> 
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">CHROM</span>, <span class="va">BIN</span>, <span class="va">BIN_START</span>, <span class="va">BIN_END</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+    <span class="co"># convert to matrix</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+    <span class="co"># transpose to put samples as rows</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+    <span class="co"># convert to data frame</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span>
+  
+  <span class="co"># Positions</span>
+  <span class="va">out</span><span class="op">[[</span><span class="st">"positions"</span><span class="op">]</span><span class="op">]</span> <span class="op">=</span> <span class="va">gt_nomiss_list</span><span class="op">[[</span><span class="va">COUNTER</span><span class="op">]</span><span class="op">]</span> <span class="op">%&gt;%</span> 
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">CHROM</span>, <span class="va">BIN_START</span>, <span class="va">BIN_END</span><span class="op">)</span>
+  
+  <span class="co"># Phenotypes</span>
+  <span class="va">out</span><span class="op">[[</span><span class="st">"phenotypes"</span><span class="op">]</span><span class="op">]</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>SAMPLE <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">sim_phenos</span><span class="op">[[</span><span class="va">COUNTER</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">phenoComponentsFinal</span><span class="op">$</span><span class="va">Y</span><span class="op">)</span>,
+                                   Y <span class="op">=</span> <span class="va">sim_phenos</span><span class="op">[[</span><span class="va">COUNTER</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">phenoComponentsFinal</span><span class="op">$</span><span class="va">Y</span> <span class="op">%&gt;%</span>
+                                     <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="op">)</span>
+                                   <span class="op">)</span>
+    
+  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span>
+<span class="op">}</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">final_nomiss</span><span class="op">)</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">gt_nomiss_list</span><span class="op">)</span></code></pre></div>
+</div>
+<div id="with-nas" class="section level3" number="9.3.2">
+<h3>
+<span class="header-section-number">9.3.2</span> With NAs<a class="anchor" aria-label="anchor" href="#with-nas"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">final_wimiss</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_along</a></span><span class="op">(</span><span class="va">gt_list</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">COUNTER</span><span class="op">)</span><span class="op">{</span>
+  <span class="va">out</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">)</span>
+  
+  <span class="co"># Genotypes</span>
+  <span class="va">out</span><span class="op">[[</span><span class="st">"genotypes"</span><span class="op">]</span><span class="op">]</span> <span class="op">=</span> <span class="va">gt_list</span><span class="op">[[</span><span class="va">COUNTER</span><span class="op">]</span><span class="op">]</span> <span class="op">%&gt;%</span> 
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">CHROM</span>, <span class="va">BIN</span>, <span class="va">BIN_START</span>, <span class="va">BIN_END</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+    <span class="co"># convert to matrix</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+    <span class="co"># transpose to put samples as rows</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+    <span class="co"># convert to data frame</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span>
+  
+  <span class="co"># Positions</span>
+  <span class="va">out</span><span class="op">[[</span><span class="st">"positions"</span><span class="op">]</span><span class="op">]</span> <span class="op">=</span> <span class="va">gt_list</span><span class="op">[[</span><span class="va">COUNTER</span><span class="op">]</span><span class="op">]</span> <span class="op">%&gt;%</span> 
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">CHROM</span>, <span class="va">BIN_START</span>, <span class="va">BIN_END</span><span class="op">)</span>
+  
+  <span class="co"># Phenotypes</span>
+  <span class="va">out</span><span class="op">[[</span><span class="st">"phenotypes"</span><span class="op">]</span><span class="op">]</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>SAMPLE <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">sim_phenos</span><span class="op">[[</span><span class="va">COUNTER</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">phenoComponentsFinal</span><span class="op">$</span><span class="va">Y</span><span class="op">)</span>,
+                                   Y <span class="op">=</span> <span class="va">sim_phenos</span><span class="op">[[</span><span class="va">COUNTER</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">phenoComponentsFinal</span><span class="op">$</span><span class="va">Y</span> <span class="op">%&gt;%</span>
+                                     <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="op">)</span>
+                                   <span class="op">)</span>
+    
+  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span>
+<span class="op">}</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">final_wimiss</span><span class="op">)</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">gt_list</span><span class="op">)</span></code></pre></div>
+</div>
+</div>
+<div id="test-gridlmm" class="section level2" number="9.4">
+<h2>
+<span class="header-section-number">9.4</span> Test GridLMM<a class="anchor" aria-label="anchor" href="#test-gridlmm"><i class="fas fa-link"></i></a>
+</h2>
+<div id="no-missing" class="section level3" number="9.4.1">
+<h3>
+<span class="header-section-number">9.4.1</span> No missing<a class="anchor" aria-label="anchor" href="#no-missing"><i class="fas fa-link"></i></a>
+</h3>
+<div id="run-gwas" class="section level4" number="9.4.1.1">
+<h4>
+<span class="header-section-number">9.4.1.1</span> Run GWAS<a class="anchor" aria-label="anchor" href="#run-gwas"><i class="fas fa-link"></i></a>
+</h4>
+<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">test_out_nomiss</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">out_dir_test</span>, <span class="st">"gwas_results"</span>, <span class="st">"gwas_results_nomiss.rds"</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">gwas_tests_nomiss</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">final_nomiss</span>, <span class="kw">function</span><span class="op">(</span><span class="va">BIN_LENGTH</span><span class="op">)</span><span class="op">{</span>
+  <span class="fu">run_gwas</span><span class="op">(</span>d <span class="op">=</span> <span class="va">BIN_LENGTH</span><span class="op">$</span><span class="va">genotypes</span>,
+           m <span class="op">=</span> <span class="va">BIN_LENGTH</span><span class="op">$</span><span class="va">positions</span>,
+           p <span class="op">=</span> <span class="va">BIN_LENGTH</span><span class="op">$</span><span class="va">phenotypes</span><span class="op">)</span>
+<span class="op">}</span><span class="op">)</span>
+
+<span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">gwas_tests_nomiss</span>, <span class="va">test_out_nomiss</span><span class="op">)</span></code></pre></div>
+</div>
+<div id="plot-1" class="section level4" number="9.4.1.2">
+<h4>
+<span class="header-section-number">9.4.1.2</span> Plot<a class="anchor" aria-label="anchor" href="#plot-1"><i class="fas fa-link"></i></a>
+</h4>
+<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Create custom Manhattan plot</span>
+
+<span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_along</a></span><span class="op">(</span><span class="va">gwas_tests_nomiss</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">COUNTER</span><span class="op">)</span><span class="op">{</span>
+  <span class="co"># Get bin length</span>
+  <span class="va">BIN_LENGTH</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">gwas_tests_nomiss</span><span class="op">)</span><span class="op">[</span><span class="va">COUNTER</span><span class="op">]</span> <span class="op">%&gt;%</span> 
+    <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span>
+  
+  <span class="co"># Clean data frame</span>
+  <span class="va">test_results</span> <span class="op">=</span> <span class="va">gwas_tests_nomiss</span><span class="op">[[</span><span class="va">COUNTER</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">results</span> <span class="op">%&gt;%</span> 
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span><span class="op">(</span><span class="va">med_chr_lens</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Chr"</span> <span class="op">=</span> <span class="st">"chr"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+    <span class="co"># add x-coord</span>
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>X_COORD <span class="op">=</span> <span class="va">pos</span> <span class="op">+</span> <span class="va">TOT</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+    <span class="co"># change column names</span>
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html">rename</a></span><span class="op">(</span>CHROM <span class="op">=</span> <span class="va">Chr</span>, BIN_START <span class="op">=</span> <span class="va">pos</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+    <span class="co"># add BIN_END</span>
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>BIN_END <span class="op">=</span> <span class="va">BIN_START</span> <span class="op">+</span> <span class="va">BIN_LENGTH</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+    <span class="co"># add locus</span>
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>LOCUS <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="va">CHROM</span>, <span class="va">BIN_START</span>, sep <span class="op">=</span> <span class="st">":"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+    <span class="co"># target or not</span>
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>TARGET <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/if_else.html">if_else</a></span><span class="op">(</span><span class="va">LOCUS</span> <span class="op">%in%</span> <span class="va">sample_gts</span><span class="op">[[</span><span class="va">COUNTER</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">LOCUS</span>,
+                                          <span class="st">"yes"</span>,
+                                          <span class="st">"no"</span><span class="op">)</span>,
+                  TARGET <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">TARGET</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"yes"</span>, <span class="st">"no"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+    <span class="co"># create vector of colours</span>
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>COLOUR <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html">case_when</a></span><span class="op">(</span><span class="va">TARGET</span> <span class="op">==</span> <span class="st">"yes"</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">gwas_pal</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,
+                                            <span class="fu">gtools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/gtools/man/oddeven.html">even</a></span><span class="op">(</span><span class="va">CHROM</span><span class="op">)</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">gwas_pal</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>,
+                                            <span class="fu">gtools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/gtools/man/oddeven.html">odd</a></span><span class="op">(</span><span class="va">CHROM</span><span class="op">)</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">gwas_pal</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span>,
+                  <span class="co"># order so that `target` is plotted last, at the front</span>
+                  COLOUR <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">COLOUR</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rev.html">rev</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">gwas_pal</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,
+                  SHAPE <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/if_else.html">if_else</a></span><span class="op">(</span><span class="va">TARGET</span> <span class="op">==</span> <span class="st">"yes"</span>,
+                                         <span class="fl">18</span>,
+                                         <span class="fl">20</span><span class="op">)</span>,
+                  SIZE <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/if_else.html">if_else</a></span><span class="op">(</span><span class="va">TARGET</span> <span class="op">==</span> <span class="st">"yes"</span>,
+                                         <span class="fl">1</span>,
+                                         <span class="fl">0.5</span><span class="op">)</span>,
+                  ALPHA <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/if_else.html">if_else</a></span><span class="op">(</span><span class="va">TARGET</span> <span class="op">==</span> <span class="st">"yes"</span>,
+                                         <span class="fl">1</span>,
+                                         <span class="fl">0.5</span><span class="op">)</span>
+                  <span class="op">)</span>
+  
+  <span class="co"># Plot</span>
+  <span class="va">p1</span> <span class="op">=</span> <span class="va">test_results</span> <span class="op">%&gt;%</span> 
+    <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">X_COORD</span>,
+               y <span class="op">=</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">log10</a></span><span class="op">(</span><span class="va">p_value_REML</span><span class="op">)</span>,
+               colour <span class="op">=</span> <span class="va">COLOUR</span>,
+               shape <span class="op">=</span> <span class="va">SHAPE</span>,
+               size <span class="op">=</span> <span class="va">SIZE</span>,
+               alpha <span class="op">=</span> <span class="va">ALPHA</span>,
+               label <span class="op">=</span> <span class="va">CHROM</span>,
+               label2 <span class="op">=</span> <span class="va">BIN_START</span>,
+               label3 <span class="op">=</span> <span class="va">BIN_END</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
+    <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">aes</span><span class="op">(</span>group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rev.html">rev</a></span><span class="op">(</span><span class="va">TARGET</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">scale_color_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="va">gwas_pal</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">scale_shape_identity</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">scale_size_identity</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">scale_alpha_identity</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">scale_x_continuous</span><span class="op">(</span>breaks <span class="op">=</span> <span class="va">med_chr_lens</span><span class="op">$</span><span class="va">MID_TOT</span>, 
+                       labels <span class="op">=</span> <span class="va">med_chr_lens</span><span class="op">$</span><span class="va">chr</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">theme</span><span class="op">(</span>panel.grid.major.x <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span>,
+          panel.grid.minor.x <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span>
+    <span class="op">)</span> <span class="op">+</span>
+    <span class="fu">guides</span><span class="op">(</span>colour <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span> <span class="op">+</span> 
+    <span class="fu">ggtitle</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"Bin length:"</span>, <span class="va">BIN_LENGTH</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">xlab</span><span class="op">(</span><span class="st">"Chromosome"</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">ylab</span><span class="op">(</span><span class="st">"-log10(p-value)"</span><span class="op">)</span> <span class="op">+</span> 
+    <span class="fu">geom_hline</span><span class="op">(</span>yintercept <span class="op">=</span> <span class="va">significance_line</span>, colour <span class="op">=</span> <span class="st">"#1effbc"</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">geom_hline</span><span class="op">(</span>yintercept <span class="op">=</span> <span class="va">suggestive_line</span>, colour <span class="op">=</span> <span class="st">"#5c95ff"</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span><span class="op">)</span>
+  
+  <span class="fu">ggplotly</span><span class="op">(</span><span class="va">p1</span>, tooltip <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"CHROM"</span>, <span class="st">"BIN_START"</span>, <span class="st">"BIN_END"</span><span class="op">)</span><span class="op">)</span>
+
+<span class="op">}</span><span class="op">)</span>
+<span class="co">#&gt; [[1]]</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; [[2]]</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; [[3]]</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; [[4]]</span></code></pre></div>
+</div>
+</div>
+<div id="include-missing-genotypes" class="section level3" number="9.4.2">
+<h3>
+<span class="header-section-number">9.4.2</span> Include missing genotypes<a class="anchor" aria-label="anchor" href="#include-missing-genotypes"><i class="fas fa-link"></i></a>
+</h3>
+<div id="run-gwas-1" class="section level4" number="9.4.2.1">
+<h4>
+<span class="header-section-number">9.4.2.1</span> Run GWAS<a class="anchor" aria-label="anchor" href="#run-gwas-1"><i class="fas fa-link"></i></a>
+</h4>
+<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">test_out_wimiss</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">out_dir_test</span>, <span class="st">"gwas_results"</span>, <span class="st">"gwas_results_wimiss.rds"</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">gwas_tests_wimiss</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">final_wimiss</span>, <span class="kw">function</span><span class="op">(</span><span class="va">BIN_LENGTH</span><span class="op">)</span><span class="op">{</span>
+  <span class="fu">run_gwas</span><span class="op">(</span>d <span class="op">=</span> <span class="va">BIN_LENGTH</span><span class="op">$</span><span class="va">genotypes</span>,
+           m <span class="op">=</span> <span class="va">BIN_LENGTH</span><span class="op">$</span><span class="va">positions</span>,
+           p <span class="op">=</span> <span class="va">BIN_LENGTH</span><span class="op">$</span><span class="va">phenotypes</span><span class="op">)</span>
+<span class="op">}</span><span class="op">)</span>
+
+<span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">gwas_tests_wimiss</span>, <span class="va">test_out_wimiss</span><span class="op">)</span></code></pre></div>
+</div>
+<div id="plot-2" class="section level4" number="9.4.2.2">
+<h4>
+<span class="header-section-number">9.4.2.2</span> Plot<a class="anchor" aria-label="anchor" href="#plot-2"><i class="fas fa-link"></i></a>
+</h4>
+<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Create custom Manhattan plot</span>
+<span class="va">gwas_pal</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"#2B2D42"</span>, <span class="st">"#F7B267"</span>, <span class="st">"#F25C54"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">gwas_pal</span><span class="op">)</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"target"</span>, <span class="st">"even chr"</span>, <span class="st">"odd chr"</span><span class="op">)</span>
+<span class="va">significance_line</span> <span class="op">=</span> <span class="fl">3.6</span>
+<span class="va">suggestive_line</span> <span class="op">=</span> <span class="fl">2.9</span>
+
+<span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_along</a></span><span class="op">(</span><span class="va">gwas_tests_wimiss</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">COUNTER</span><span class="op">)</span><span class="op">{</span>
+  <span class="co"># Get bin length</span>
+  <span class="va">BIN_LENGTH</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">gwas_tests_wimiss</span><span class="op">)</span><span class="op">[</span><span class="va">COUNTER</span><span class="op">]</span> <span class="op">%&gt;%</span> 
+    <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span>
+  
+  <span class="co"># Clean data frame</span>
+  <span class="va">test_results</span> <span class="op">=</span> <span class="va">gwas_tests_wimiss</span><span class="op">[[</span><span class="va">COUNTER</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">results</span> <span class="op">%&gt;%</span> 
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span><span class="op">(</span><span class="va">med_chr_lens</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Chr"</span> <span class="op">=</span> <span class="st">"chr"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+    <span class="co"># add x-coord</span>
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>X_COORD <span class="op">=</span> <span class="va">pos</span> <span class="op">+</span> <span class="va">TOT</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+    <span class="co"># change column names</span>
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html">rename</a></span><span class="op">(</span>CHROM <span class="op">=</span> <span class="va">Chr</span>, BIN_START <span class="op">=</span> <span class="va">pos</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+    <span class="co"># add BIN_END</span>
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>BIN_END <span class="op">=</span> <span class="va">BIN_START</span> <span class="op">+</span> <span class="va">BIN_LENGTH</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+    <span class="co"># add locus</span>
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>LOCUS <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="va">CHROM</span>, <span class="va">BIN_START</span>, sep <span class="op">=</span> <span class="st">":"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+    <span class="co"># target or not</span>
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>TARGET <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/if_else.html">if_else</a></span><span class="op">(</span><span class="va">LOCUS</span> <span class="op">%in%</span> <span class="va">sample_gts</span><span class="op">[[</span><span class="va">COUNTER</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">LOCUS</span>,
+                                          <span class="st">"yes"</span>,
+                                          <span class="st">"no"</span><span class="op">)</span>,
+                  TARGET <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">TARGET</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"yes"</span>, <span class="st">"no"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+    <span class="co"># create vector of colours</span>
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>COLOUR <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html">case_when</a></span><span class="op">(</span><span class="va">TARGET</span> <span class="op">==</span> <span class="st">"yes"</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">gwas_pal</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,
+                                            <span class="fu">gtools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/gtools/man/oddeven.html">even</a></span><span class="op">(</span><span class="va">CHROM</span><span class="op">)</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">gwas_pal</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>,
+                                            <span class="fu">gtools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/gtools/man/oddeven.html">odd</a></span><span class="op">(</span><span class="va">CHROM</span><span class="op">)</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">gwas_pal</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span>,
+                  <span class="co"># order so that `target` is plotted last, at the front</span>
+                  COLOUR <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">COLOUR</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rev.html">rev</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">gwas_pal</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,
+                  SHAPE <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/if_else.html">if_else</a></span><span class="op">(</span><span class="va">TARGET</span> <span class="op">==</span> <span class="st">"yes"</span>,
+                                         <span class="fl">18</span>,
+                                         <span class="fl">20</span><span class="op">)</span>,
+                  SIZE <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/if_else.html">if_else</a></span><span class="op">(</span><span class="va">TARGET</span> <span class="op">==</span> <span class="st">"yes"</span>,
+                                         <span class="fl">1</span>,
+                                         <span class="fl">0.5</span><span class="op">)</span>,
+                  ALPHA <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/if_else.html">if_else</a></span><span class="op">(</span><span class="va">TARGET</span> <span class="op">==</span> <span class="st">"yes"</span>,
+                                         <span class="fl">1</span>,
+                                         <span class="fl">0.5</span><span class="op">)</span>
+                  <span class="op">)</span>
+  
+  <span class="co"># Plot</span>
+  <span class="va">p1</span> <span class="op">=</span> <span class="va">test_results</span> <span class="op">%&gt;%</span> 
+    <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">X_COORD</span>,
+               y <span class="op">=</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">log10</a></span><span class="op">(</span><span class="va">p_value_REML</span><span class="op">)</span>,
+               colour <span class="op">=</span> <span class="va">COLOUR</span>,
+               shape <span class="op">=</span> <span class="va">SHAPE</span>,
+               size <span class="op">=</span> <span class="va">SIZE</span>,
+               alpha <span class="op">=</span> <span class="va">ALPHA</span>,
+               label <span class="op">=</span> <span class="va">CHROM</span>,
+               label2 <span class="op">=</span> <span class="va">BIN_START</span>,
+               label3 <span class="op">=</span> <span class="va">BIN_END</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
+    <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">aes</span><span class="op">(</span>group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rev.html">rev</a></span><span class="op">(</span><span class="va">TARGET</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">scale_color_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="va">gwas_pal</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">scale_shape_identity</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">scale_size_identity</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">scale_alpha_identity</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">scale_x_continuous</span><span class="op">(</span>breaks <span class="op">=</span> <span class="va">med_chr_lens</span><span class="op">$</span><span class="va">MID_TOT</span>, 
+                       labels <span class="op">=</span> <span class="va">med_chr_lens</span><span class="op">$</span><span class="va">chr</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">theme</span><span class="op">(</span>panel.grid.major.x <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span>,
+          panel.grid.minor.x <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span>
+    <span class="op">)</span> <span class="op">+</span>
+    <span class="fu">guides</span><span class="op">(</span>colour <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span> <span class="op">+</span> 
+    <span class="fu">ggtitle</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"Bin length:"</span>, <span class="va">BIN_LENGTH</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">xlab</span><span class="op">(</span><span class="st">"Chromosome"</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">ylab</span><span class="op">(</span><span class="st">"-log10(p-value)"</span><span class="op">)</span> <span class="op">+</span> 
+    <span class="fu">geom_hline</span><span class="op">(</span>yintercept <span class="op">=</span> <span class="va">significance_line</span>, colour <span class="op">=</span> <span class="st">"#1effbc"</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">geom_hline</span><span class="op">(</span>yintercept <span class="op">=</span> <span class="va">suggestive_line</span>, colour <span class="op">=</span> <span class="st">"#5c95ff"</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span><span class="op">)</span>
+  
+  <span class="fu">ggplotly</span><span class="op">(</span><span class="va">p1</span>, tooltip <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"CHROM"</span>, <span class="st">"BIN_START"</span>, <span class="st">"BIN_END"</span><span class="op">)</span><span class="op">)</span>
+
+<span class="op">}</span><span class="op">)</span>
+<span class="co">#&gt; [[1]]</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; [[2]]</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; [[3]]</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; [[4]]</span></code></pre></div>
+</div>
+</div>
+</div>
+<div id="phenotype-data" class="section level2" number="9.5">
+<h2>
+<span class="header-section-number">9.5</span> Phenotype data<a class="anchor" aria-label="anchor" href="#phenotype-data"><i class="fas fa-link"></i></a>
+</h2>
+<p>First 400 phenotype data: <a href="https://github.com/brettellebi/somites/tree/master/data/20210917_First400_F2_DF.xlsx" class="uri">https://github.com/brettellebi/somites/tree/master/data/20210917_First400_F2_DF.xlsx</a>.</p>
+<blockquote>
+<p>I also attach here the DataFrame of the phenotyping of the first 400 F2s (First400_F2_DF.xlsx)…</p>
+</blockquote>
+<blockquote>
+<p>Of interest for us for the association testing are the:
+intercept period -&gt; intercept in the table
+mean period -&gt; mean in the table</p>
+</blockquote>
+<p>Snakemake rules for running the GWAS over these phenotypes: <a href="https://github.com/brettellebi/somites/blob/master/workflow/rules/07_assocation_testing.smk" class="uri">https://github.com/brettellebi/somites/blob/master/workflow/rules/07_assocation_testing.smk</a></p>
+<div id="results" class="section level3" number="9.5.1">
+<h3>
+<span class="header-section-number">9.5.1</span> Results<a class="anchor" aria-label="anchor" href="#results"><i class="fas fa-link"></i></a>
+</h3>
+<div id="read-in-files" class="section level4" number="9.5.1.1">
+<h4>
+<span class="header-section-number">9.5.1.1</span> Read in files<a class="anchor" aria-label="anchor" href="#read-in-files"><i class="fas fa-link"></i></a>
+</h4>
+<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">target_phenos</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"mean"</span>, <span class="st">"intercept"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">target_phenos</span><span class="op">)</span> <span class="op">=</span> <span class="va">target_phenos</span>
+<span class="va">results_dir</span> <span class="op">=</span> <span class="st">"/nfs/research/birney/users/ian/somites/association_testing/20211104_true/results"</span>
+
+<span class="va">gwas_true</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">target_phenos</span>, <span class="kw">function</span><span class="op">(</span><span class="va">PHENO</span><span class="op">)</span><span class="op">{</span>
+  <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">bin_lengths</span>, <span class="kw">function</span><span class="op">(</span><span class="va">BIN_LENGTH</span><span class="op">)</span><span class="op">{</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">results_dir</span>, <span class="va">PHENO</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="va">BIN_LENGTH</span>, <span class="st">".rds"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+  <span class="op">}</span><span class="op">)</span>
+<span class="op">}</span><span class="op">)</span></code></pre></div>
+</div>
+<div id="manhattans" class="section level4" number="9.5.1.2">
+<h4>
+<span class="header-section-number">9.5.1.2</span> Manhattans<a class="anchor" aria-label="anchor" href="#manhattans"><i class="fas fa-link"></i></a>
+</h4>
+<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Process data</span>
+<span class="va">plot_dat</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_along</a></span><span class="op">(</span><span class="va">gwas_true</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">COUNTER_1</span><span class="op">)</span><span class="op">{</span>
+  <span class="va">bin_list</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_along</a></span><span class="op">(</span><span class="va">gwas_true</span><span class="op">[[</span><span class="va">COUNTER_1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">COUNTER_2</span><span class="op">)</span><span class="op">{</span>
+    <span class="va">BIN_LENGTH</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">gwas_true</span><span class="op">[[</span><span class="va">COUNTER_1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[</span><span class="va">COUNTER_2</span><span class="op">]</span> <span class="op">%&gt;%</span> 
+      <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="op">)</span>
+    <span class="va">out</span> <span class="op">=</span> <span class="fu">clean_gwas_res</span><span class="op">(</span><span class="va">gwas_true</span><span class="op">[[</span><span class="va">COUNTER_1</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">COUNTER_2</span><span class="op">]</span><span class="op">]</span>,
+                         bin_length <span class="op">=</span> <span class="va">BIN_LENGTH</span>,
+                         chr_lens <span class="op">=</span> <span class="va">med_chr_lens</span><span class="op">)</span>
+    
+    <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span>
+  <span class="op">}</span><span class="op">)</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">bin_list</span><span class="op">)</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">gwas_true</span><span class="op">[[</span><span class="va">COUNTER_1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>
+  
+  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="va">bin_list</span><span class="op">)</span>
+<span class="op">}</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">plot_dat</span><span class="op">)</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">gwas_true</span><span class="op">)</span>
+
+<span class="co"># Plot</span>
+<span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_along</a></span><span class="op">(</span><span class="va">plot_dat</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">COUNTER_1</span><span class="op">)</span><span class="op">{</span>
+  <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_along</a></span><span class="op">(</span><span class="va">plot_dat</span><span class="op">[[</span><span class="va">COUNTER_1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">COUNTER_2</span><span class="op">)</span><span class="op">{</span>
+    <span class="co"># Get bin length</span>
+    <span class="va">BIN_LENGTH</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">plot_dat</span><span class="op">[[</span><span class="va">COUNTER_1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[</span><span class="va">COUNTER_2</span><span class="op">]</span> <span class="op">%&gt;%</span> 
+      <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="op">)</span>
+    <span class="co"># Plot</span>
+    <span class="fu">plot_int_man</span><span class="op">(</span><span class="va">plot_dat</span><span class="op">[[</span><span class="va">COUNTER_1</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">COUNTER_2</span><span class="op">]</span><span class="op">]</span>,
+                 phenotype <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">plot_dat</span><span class="op">)</span><span class="op">[</span><span class="va">COUNTER_1</span><span class="op">]</span>,
+                 bin_length <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">plot_dat</span><span class="op">[[</span><span class="va">COUNTER_1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[</span><span class="va">COUNTER_2</span><span class="op">]</span>,
+                 gwas_pal <span class="op">=</span> <span class="va">gwas_pal</span><span class="op">[</span><span class="fl">2</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>,
+                 med_chr_lens <span class="op">=</span> <span class="va">med_chr_lens</span><span class="op">)</span>
+    
+  <span class="op">}</span><span class="op">)</span>
+<span class="op">}</span><span class="op">)</span>
+<span class="co">#&gt; [[1]]</span>
+<span class="co">#&gt; [[1]][[1]]</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; [[1]][[2]]</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; [[1]][[3]]</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; [[1]][[4]]</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; [[2]]</span>
+<span class="co">#&gt; [[2]][[1]]</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; [[2]][[2]]</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; [[2]][[3]]</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; [[2]][[4]]</span></code></pre></div>
+
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-mölder2021" class="csl-entry">
+Mölder, Felix, Kim Philipp Jablonski, Brice Letcher, Michael B. Hall, Christopher H. Tomkins-Tinch, Vanessa Sochat, Jan Forster, et al. <span>“Sustainable Data Analysis with Snakemake.”</span> <em>F1000Research</em> 10 (April 19, 2021): 33. <a href="https://doi.org/10.12688/f1000research.29032.2">https://doi.org/10.12688/f1000research.29032.2</a>.
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+
+
+
+
+  <div class="chapter-nav">
+<div class="prev"><a href="realised-relationship-matrix.html"><span class="header-section-number">8</span> Realised relationship matrix</a></div>
+<div class="empty"></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#association-testing"><span class="header-section-number">9</span> Association testing</a></li>
+<li>
+<a class="nav-link" href="#read-in-f2-recombination-blocks"><span class="header-section-number">9.1</span> Read in F2 recombination blocks</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#read-data"><span class="header-section-number">9.1.1</span> Read data</a></li>
+<li><a class="nav-link" href="#how-many-possible-blocks-have-at-least-one-call"><span class="header-section-number">9.1.2</span> How many possible blocks have at least one call?</a></li>
+<li><a class="nav-link" href="#merge-recombination-blocks"><span class="header-section-number">9.1.3</span> Merge recombination blocks</a></li>
+</ul>
+</li>
+<li>
+<a class="nav-link" href="#simulate-phenotype"><span class="header-section-number">9.2</span> Simulate phenotype</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#extract-samples-of-genotypes"><span class="header-section-number">9.2.1</span> Extract samples of genotypes</a></li>
+<li><a class="nav-link" href="#simulate-phenotype-1"><span class="header-section-number">9.2.2</span> Simulate phenotype</a></li>
+</ul>
+</li>
+<li>
+<a class="nav-link" href="#reformat-genotypes-for-gridlmm"><span class="header-section-number">9.3</span> Reformat genotypes for GridLMM</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#complete-cases"><span class="header-section-number">9.3.1</span> Complete cases</a></li>
+<li><a class="nav-link" href="#with-nas"><span class="header-section-number">9.3.2</span> With NAs</a></li>
+</ul>
+</li>
+<li>
+<a class="nav-link" href="#test-gridlmm"><span class="header-section-number">9.4</span> Test GridLMM</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#no-missing"><span class="header-section-number">9.4.1</span> No missing</a></li>
+<li><a class="nav-link" href="#include-missing-genotypes"><span class="header-section-number">9.4.2</span> Include missing genotypes</a></li>
+</ul>
+</li>
+<li>
+<a class="nav-link" href="#phenotype-data"><span class="header-section-number">9.5</span> Phenotype data</a><ul class="nav navbar-nav"><li><a class="nav-link" href="#results"><span class="header-section-number">9.5.1</span> Results</a></li></ul>
+</li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+<li><a id="book-source" href="https://github.com/brettellebi/somites/blob/master/04-Association_testing.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/brettellebi/somites/edit/master/04-Association_testing.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Somite period F2 analysis</strong>" was written by Ian Brettell. It was last built on 2021-11-04.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer>
+</body>
+</html>

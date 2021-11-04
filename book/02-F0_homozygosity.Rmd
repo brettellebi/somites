@@ -254,5 +254,5 @@ purrr::map(bb_list_ck, function(block_bounds_list){
 ```
 
 ```{r, fig.cap = "Bin length: 5 kb"}
-knitr::include_graphics(here::here("docs/plots/20210803_ck_karyoplot_5000.png"))
+knitr::include_graphics(here::here("book/plots/20210803_ck_karyoplot_5000.png"))
 ```

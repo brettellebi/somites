@@ -81,8 +81,84 @@ run_gwas <- function(d,m,p,invers_norm=F) {
   return(gwas)
 }
 
-plot_gwas <- function(gwas, title="", sig_cut=0, sugest=0) {
-  manhattan(gwas$results[complete.cases(gwas$results),],'Chr','pos','p_value_REML','snp', ylim=c(0,8), col=c("light blue", "dark blue"), suggestiveline = F, genomewideline = F, cex = 0.6, main=title)
-  abline(h=sig_cut, col="red", lty="dashed")
-  abline(h=sugest, col="blue", lty="dashed")
+########################
+# Generic functions
+########################
+
+clean_gwas_res = function(gwas_results, bin_length, chr_lens){
+  gwas_results$results %>% 
+    dplyr::left_join(med_chr_lens, by = c("Chr" = "chr")) %>% 
+    # add x-coord
+    dplyr::mutate(X_COORD = pos + TOT) %>% 
+    # change column names
+    dplyr::rename(CHROM = Chr, BIN_START = pos) %>% 
+    # add BIN_END
+    dplyr::mutate(BIN_END = BIN_START + bin_length - 1) %>% 
+    # add locus
+    dplyr::mutate(LOCUS = paste(CHROM, BIN_START, sep = ":"))
+} 
+
+plot_int_man = function(df, phenotype, bin_length, gwas_pal, size = 0.5, alpha = 0.5, med_chr_lens, sig_line = 3.6, sug_line = 2.9){
+  # Create palette
+  pal = rep_len(gwas_pal, length.out = nrow(med_chr_lens))
+  names(pal) = med_chr_lens$chr
+  
+  # Create plot
+  p = df %>% 
+    dplyr::mutate(CHROM = factor(CHROM, levels = med_chr_lens$chr)) %>% 
+    ggplot(aes(x = X_COORD,
+               y = -log10(p_value_REML),
+               colour = CHROM,
+               label = BIN_START,
+               label2 = BIN_END)) + 
+    geom_point(size = size,
+               alpha = alpha) +
+    scale_color_manual(values = pal) +
+    scale_x_continuous(breaks = med_chr_lens$MID_TOT, 
+                       labels = med_chr_lens$chr) +
+    theme_bw() +
+    theme(panel.grid.major.x = element_blank(),
+          panel.grid.minor.x = element_blank()
+    ) +
+    guides(colour = "none") +
+    ggtitle(paste("Phenotype: ", phenotype, "\nBin length: ",  bin_length, sep = "")) +
+    xlab("Chromosome") +
+    ylab("-log10(p-value)") + 
+    geom_hline(yintercept = sig_line, colour = "#1effbc", linetype = "dashed") +
+    geom_hline(yintercept = sug_line, colour = "#5c95ff", linetype = "dashed")
+  
+  ggplotly(p, tooltip = c("CHROM", "BIN_START", "BIN_END"))
 }
+
+########################
+# Plotting parameters
+########################
+
+gwas_pal = c("#2B2D42", "#F7B267", "#F25C54")
+names(gwas_pal) = c("target", "even chr", "odd chr")
+significance_line = 3.6
+suggestive_line = 2.9
+
+
+########################
+# HdrR chromosome data
+########################
+# Get chromosome lengths
+med_chr_lens = read.table(here::here("data",
+                                     "Oryzias_latipes.ASM223467v1.dna.toplevel.fa_chr_counts.txt"),
+                          col.names = c("chr", "end"))
+# Add start
+med_chr_lens$start = 1
+# Reorder
+med_chr_lens = med_chr_lens %>% 
+  dplyr::select(chr, start, end) %>% 
+  # remove MT
+  dplyr::filter(chr != "MT") %>% 
+  # convert to integer
+  dplyr::mutate(chr = as.integer(chr)) %>% 
+  # Add cumulative bases
+  dplyr::mutate(CUMSUM = cumsum(end),
+                TOT = CUMSUM - end) %>% 
+  # Add midpoint for each chr
+  dplyr::mutate(MID_TOT = TOT + (end / 2))
+

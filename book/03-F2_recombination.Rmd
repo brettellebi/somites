@@ -73,7 +73,7 @@ df_list$`5000` %>%
     guides(colour = "none") +
     theme_bw()
 # Save
-ggsave(here::here("docs/plots/20211027_ratio_v_state.png"),
+ggsave(here::here("book/plots/20211027_ratio_v_state.png"),
        device = "png",
        width = 8,
        height = 5,
@@ -82,7 +82,7 @@ ggsave(here::here("docs/plots/20211027_ratio_v_state.png"),
 ```
 
 ```{r, out.width='80%'}
-knitr::include_graphics(here::here("docs/plots/20211027_ratio_v_state.png"))
+knitr::include_graphics(here::here("book/plots/20211027_ratio_v_state.png"))
 ```
 
 
@@ -500,7 +500,7 @@ purrr::map(bb_list, function(block_bounds_list){
   counter_A <<- counter_A + 1
   # set file name
   file_name = paste("20211027_karyoplot_", names(bb_list)[counter_A], ".png", sep = "")
-  file_out = here::here("docs/plots", file_name)
+  file_out = here::here("book/plots", file_name)
   
   # Get lane cutoffs
   lane_cutoffs = lc_list[[counter_A]]
@@ -549,21 +549,21 @@ purrr::map(bb_list, function(block_bounds_list){
 ```
 
 ```{r, fig.cap = "Bin length: 5 kb"}
-knitr::include_graphics(here::here("docs/plots/20211027_karyoplot_5000.png"))
+knitr::include_graphics(here::here("book/plots/20211027_karyoplot_5000.png"))
 ```
 
 Don't show other bin lengths because they look the same.
 
 ```{r, eval = F, fig.cap = "Bin length: 10 kb"}
-knitr::include_graphics(here::here("docs/plots/20211027_karyoplot_10000.png"))
+knitr::include_graphics(here::here("book/plots/20211027_karyoplot_10000.png"))
 ```
 
 ```{r, eval = F, fig.cap = "Bin length: 15 kb"}
-knitr::include_graphics(here::here("docs/plots/20211027_karyoplot_15000.png"))
+knitr::include_graphics(here::here("book/plots/20211027_karyoplot_15000.png"))
 ```
 
 ```{r, eval = F, fig.cap = "Bin length: 20 kb"}
-knitr::include_graphics(here::here("docs/plots/20211027_karyoplot_20000.png"))
+knitr::include_graphics(here::here("book/plots/20211027_karyoplot_20000.png"))
 ```
 
 # Realised relationship matrix
@@ -606,7 +606,7 @@ saveRDS(rrmat, here::here("data/realised_relationship_matrix.rds"))
 ```{r, eval = F}
 rrmat = readRDS(here::here("data/realised_relationship_matrix.rds"))
 
-png(here::here("docs/plots/20211027_rrm_heatmap.png"),
+png(here::here("book/plots/20211027_rrm_heatmap.png"),
     width = 20,
     height = 20,
     units = "in",
@@ -619,5 +619,5 @@ dev.off()
 ```
 
 ```{r}
-knitr::include_graphics(here::here("docs/plots/20211027_rrm_heatmap.png"))
+knitr::include_graphics(here::here("book/plots/20211027_rrm_heatmap.png"))
 ```

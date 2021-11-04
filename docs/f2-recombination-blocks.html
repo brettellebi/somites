@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Chapter 4 F2 recombination blocks | Somite period F2 analysis</title>
+<meta name="author" content="Ian Brettell">
+<meta name="description" content='library(here) source(here::here("book/source/03-F2_recombination.R"))  4.1 Read in data in_dir = "/nfs/research/birney/users/ian/somites/recombination_blocks/20211027" in_files =...'>
+<meta name="generator" content="bookdown 0.24.2 with bs4_book()">
+<meta property="og:title" content="Chapter 4 F2 recombination blocks | Somite period F2 analysis">
+<meta property="og:type" content="book">
+<meta property="og:description" content='library(here) source(here::here("book/source/03-F2_recombination.R"))  4.1 Read in data in_dir = "/nfs/research/birney/users/ian/somites/recombination_blocks/20211027" in_files =...'>
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chapter 4 F2 recombination blocks | Somite period F2 analysis">
+<meta name="twitter:description" content='library(here) source(here::here("book/source/03-F2_recombination.R"))  4.1 Read in data in_dir = "/nfs/research/birney/users/ian/somites/recombination_blocks/20211027" in_files =...'>
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/header-attrs-2.10/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.2.5.1/tabs.js"></script><script src="libs/bs3compat-0.2.5.1/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="libs/htmlwidgets-1.5.3/htmlwidgets.js"></script><script src="libs/plotly-binding-4.9.4.1/plotly.js"></script><script src="libs/typedarray-0.1/typedarray.min.js"></script><link href="libs/crosstalk-1.1.1/css/crosstalk.css" rel="stylesheet">
+<script src="libs/crosstalk-1.1.1/js/crosstalk.min.js"></script><link href="libs/plotly-htmlwidgets-css-1.57.1/plotly-htmlwidgets.css" rel="stylesheet">
+<script src="libs/plotly-main-1.57.1/plotly-latest.min.js"></script><link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet">
+<script src="libs/datatables-binding-0.18/datatables.js"></script><link href="libs/dt-core-1.10.20/css/jquery.dataTables.min.css" rel="stylesheet">
+<link href="libs/dt-core-1.10.20/css/jquery.dataTables.extra.css" rel="stylesheet">
+<script src="libs/dt-core-1.10.20/js/jquery.dataTables.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><link rel="stylesheet" href="style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="">Somite period F2 analysis</a>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html"><span class="header-section-number">1</span> About</a></li>
+<li><a class="" href="alignment-of-f0-and-f2-generations.html"><span class="header-section-number">2</span> Alignment of F0 and F2 generations</a></li>
+<li><a class="" href="homozygosity-of-f0-cab-and-kaga.html"><span class="header-section-number">3</span> Homozygosity of F0 Cab and Kaga</a></li>
+<li><a class="active" href="f2-recombination-blocks.html"><span class="header-section-number">4</span> F2 recombination blocks</a></li>
+<li><a class="" href="read-counts-per-bin.html"><span class="header-section-number">5</span> Read counts per bin</a></li>
+<li><a class="" href="proportion-of-genome-and-sites-called-as-a-given-state.html"><span class="header-section-number">6</span> Proportion of genome and sites called as a given state</a></li>
+<li><a class="" href="karyoplot-1.html"><span class="header-section-number">7</span> Karyoplot</a></li>
+<li><a class="" href="realised-relationship-matrix.html"><span class="header-section-number">8</span> Realised relationship matrix</a></li>
+<li><a class="" href="association-testing.html"><span class="header-section-number">9</span> Association testing</a></li>
+</ul>
+
+        <div class="book-extra">
+          <p><a id="book-repo" href="https://github.com/brettellebi/somites">View book source <i class="fab fa-github"></i></a></p>
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="f2-recombination-blocks" class="section level1" number="4">
+<h1>
+<span class="header-section-number">4</span> F2 recombination blocks<a class="anchor" aria-label="anchor" href="#f2-recombination-blocks"><i class="fas fa-link"></i></a>
+</h1>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://here.r-lib.org/">here</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"book/source/03-F2_recombination.R"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<div id="read-in-data-1" class="section level2" number="4.1">
+<h2>
+<span class="header-section-number">4.1</span> Read in data<a class="anchor" aria-label="anchor" href="#read-in-data-1"><i class="fas fa-link"></i></a>
+</h2>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">in_dir</span> <span class="op">=</span> <span class="st">"/nfs/research/birney/users/ian/somites/recombination_blocks/20211027"</span>
+
+<span class="va">in_files</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span><span class="op">(</span><span class="va">in_dir</span>, pattern <span class="op">=</span> <span class="st">"F2_"</span>, full.names <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>
+
+<span class="co"># Read into list</span>
+<span class="va">data_list</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">in_files</span>, <span class="kw">function</span><span class="op">(</span><span class="va">FILE</span><span class="op">)</span><span class="op">{</span>
+  <span class="va">out</span> <span class="op">=</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_tsv</a></span><span class="op">(</span><span class="va">FILE</span>,
+                        col_types <span class="op">=</span> <span class="st">"ciiidii"</span><span class="op">)</span>
+<span class="op">}</span><span class="op">)</span>
+<span class="co"># Set names as bin length</span>
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">data_list</span><span class="op">)</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/basename.html">basename</a></span><span class="op">(</span><span class="va">in_files</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_split.html">str_split</a></span><span class="op">(</span><span class="st">"_"</span>, simplify <span class="op">=</span> <span class="cn">T</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://rdrr.io/r/base/subset.html">subset</a></span><span class="op">(</span>select <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_remove.html">str_remove</a></span><span class="op">(</span><span class="st">".txt"</span><span class="op">)</span>
+<span class="co"># Reorder</span>
+<span class="va">data_list</span> <span class="op">=</span> <span class="va">data_list</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html">order</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">data_list</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">]</span>
+
+<span class="va">counter</span> <span class="op">=</span> <span class="fl">0</span>
+<span class="va">df_list</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">data_list</span>, <span class="kw">function</span><span class="op">(</span><span class="va">data</span><span class="op">)</span><span class="op">{</span>
+  <span class="va">counter</span> <span class="op">&lt;&lt;-</span> <span class="va">counter</span> <span class="op">+</span> <span class="fl">1</span>
+  <span class="co"># set bin length</span>
+  <span class="va">bin_length</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">data_list</span><span class="op">)</span><span class="op">[</span><span class="va">counter</span><span class="op">]</span><span class="op">)</span>
+  <span class="co"># add bin start and end coordinates</span>
+  <span class="va">df</span> <span class="op">=</span> <span class="va">data</span> <span class="op">%&gt;%</span> 
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>LANE <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/basename.html">basename</a></span><span class="op">(</span><span class="va">sample</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+                    <span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_remove.html">str_remove</a></span><span class="op">(</span><span class="st">".txt"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+                    <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span>,
+                  BIN_LENGTH <span class="op">=</span> <span class="va">bin_length</span>,
+                  BIN_START <span class="op">=</span> <span class="op">(</span><span class="va">bin</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span> <span class="op">*</span> <span class="va">bin_length</span> <span class="op">+</span> <span class="fl">1</span>,
+                  BIN_END <span class="op">=</span> <span class="va">bin</span> <span class="op">*</span> <span class="va">bin_length</span>,
+                  BIN_LENGTH_KB <span class="op">=</span> <span class="va">BIN_LENGTH</span> <span class="op">/</span> <span class="fl">1e3</span>,
+                  READS_PER_BIN <span class="op">=</span> <span class="va">mat</span> <span class="op">+</span> <span class="va">pat</span><span class="op">)</span>
+  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span>
+<span class="op">}</span><span class="op">)</span></code></pre></div>
+</div>
+<div id="look-at-relationship-between-ratio-and-state" class="section level2" number="4.2">
+<h2>
+<span class="header-section-number">4.2</span> Look at relationship between <code>ratio</code> and <code>state</code><a class="anchor" aria-label="anchor" href="#look-at-relationship-between-ratio-and-state"><i class="fas fa-link"></i></a>
+</h2>
+<p>To determine which state is associated with which parental strain.</p>
+<p>In the pipeline, we set <em>Cab</em> as F0_1 and <em>Kaga</em> as F0_2.</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">df_list</span><span class="op">$</span><span class="va">`5000`</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">DT</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html">datatable</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span></code></pre></div>
+<div id="htmlwidget-8fecfd5468b510a050b2" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-8fecfd5468b510a050b2">{"x":{"filter":"none","data":[["1","2","3","4","5","6"],["/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt"],[0,5,4,11,16,5],[3,1,2,6,30,3],[4,6,8,11,16,17],[0,0.833333333333333,0.666666666666667,0.647058823529412,0.347826086956522,0.625],[1,1,1,1,1,1],[1,1,1,1,1,1],[1,1,1,1,1,1],[5000,5000,5000,5000,5000,5000],[15001,25001,35001,50001,75001,80001],[20000,30000,40000,55000,80000,85000],[5,5,5,5,5,5],[3,6,6,17,46,8]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>sample<\/th>\n      <th>mat<\/th>\n      <th>pat<\/th>\n      <th>bin<\/th>\n      <th>ratio<\/th>\n      <th>chr<\/th>\n      <th>state<\/th>\n      <th>LANE<\/th>\n      <th>BIN_LENGTH<\/th>\n      <th>BIN_START<\/th>\n      <th>BIN_END<\/th>\n      <th>BIN_LENGTH_KB<\/th>\n      <th>READS_PER_BIN<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[2,3,4,5,6,7,8,9,10,11,12,13]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script><p><code>ratio = mat / (mat + pat)</code>, where <code>mat</code> = Cab and <code>pat</code> = Kaga.</p>
+<p>Plot <code>ratio</code> against <code>state</code></p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">df_list</span><span class="op">$</span><span class="va">`5000`</span> <span class="op">%&gt;%</span>
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>state <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">state</span>, levels <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html">slice_sample</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">1e6</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">geom_boxplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span><span class="va">state</span>, <span class="va">ratio</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">guides</span><span class="op">(</span>colour <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span>
+<span class="co"># Save</span>
+<span class="fu">ggsave</span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"book/plots/20211027_ratio_v_state.png"</span><span class="op">)</span>,
+       device <span class="op">=</span> <span class="st">"png"</span>,
+       width <span class="op">=</span> <span class="fl">8</span>,
+       height <span class="op">=</span> <span class="fl">5</span>,
+       units <span class="op">=</span> <span class="st">"in"</span>,
+       dpi <span class="op">=</span> <span class="fl">400</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"book/plots/20211027_ratio_v_state.png"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<div class="inline-figure"><img src="plots/20211027_ratio_v_state.png" width="80%"></div>
+<p>This shows that state <code>0</code> is associated with a <em>low</em> ratio of Cab to Kaga, and therefore a call of <em>Kaga</em>.
+Vice versa for state <code>2</code> and <em>Cab</em>.</p>
+</div>
+<div id="recode-state-to-put-in-correct-order" class="section level2" number="4.3">
+<h2>
+<span class="header-section-number">4.3</span> Recode state to put in correct order<a class="anchor" aria-label="anchor" href="#recode-state-to-put-in-correct-order"><i class="fas fa-link"></i></a>
+</h2>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">df_list</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">df_list</span>, <span class="kw">function</span><span class="op">(</span><span class="va">df</span><span class="op">)</span><span class="op">{</span>
+  <span class="va">df</span> <span class="op">=</span> <span class="va">df</span> <span class="op">%&gt;%</span> 
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>state <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/recode.html">recode</a></span><span class="op">(</span><span class="va">state</span>,
+                                        `0` <span class="op">=</span> <span class="fl">2</span>,
+                                        `1` <span class="op">=</span> <span class="fl">1</span>,
+                                        `2` <span class="op">=</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span>
+<span class="op">}</span><span class="op">)</span></code></pre></div>
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="homozygosity-of-f0-cab-and-kaga.html"><span class="header-section-number">3</span> Homozygosity of F0 Cab and Kaga</a></div>
+<div class="next"><a href="read-counts-per-bin.html"><span class="header-section-number">5</span> Read counts per bin</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#f2-recombination-blocks"><span class="header-section-number">4</span> F2 recombination blocks</a></li>
+<li><a class="nav-link" href="#read-in-data-1"><span class="header-section-number">4.1</span> Read in data</a></li>
+<li><a class="nav-link" href="#look-at-relationship-between-ratio-and-state"><span class="header-section-number">4.2</span> Look at relationship between ratio and state</a></li>
+<li><a class="nav-link" href="#recode-state-to-put-in-correct-order"><span class="header-section-number">4.3</span> Recode state to put in correct order</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+<li><a id="book-source" href="https://github.com/brettellebi/somites/blob/master/03-F2_recombination.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/brettellebi/somites/edit/master/03-F2_recombination.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Somite period F2 analysis</strong>" was written by Ian Brettell. It was last built on 2021-11-04.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer>
+</body>
+</html>

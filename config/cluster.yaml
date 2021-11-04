@@ -40,3 +40,7 @@ combine_dp_AB_F0:
   memory: "{resources.mem_mb}"  
 run_rc_block_F0:
   memory: "{resources.mem_mb}"
+create_gwas_input:
+  memory: "{resources.mem_mb}"
+run_gwas:
+  memory: "{resources.mem_mb}"

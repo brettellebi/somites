@@ -11,6 +11,11 @@ F2_samples:
     config/F2_samples.txt
 F2_valid_lanes:
     config/F2_valid_lanes.txt
+phenotypes_file:
+    data/20210917_First400_F2_DF.xlsx
+target_phenotypes:
+    - intercept
+    - mean
 ####################
 # Parameters
 ####################

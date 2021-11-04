@@ -58,30 +58,6 @@ df_list = purrr::map(data_list, function(data){
 
 ### How many possible blocks have at least one call? 
 
-#### Read in *HdrR* chromosomes
-
-```{r}
-# Get chromosome lengths
-med_chr_lens = read.table(here::here("data",
-                                     "Oryzias_latipes.ASM223467v1.dna.toplevel.fa_chr_counts.txt"),
-                          col.names = c("chr", "end"))
-# Add start
-med_chr_lens$start = 1
-# Reorder
-med_chr_lens = med_chr_lens %>% 
-  dplyr::select(chr, start, end) %>% 
-  # remove MT
-  dplyr::filter(chr != "MT") %>% 
-  # convert to integer
-  dplyr::mutate(chr = as.integer(chr)) %>% 
-  # Add cumulative bases
-  dplyr::mutate(CUMSUM = cumsum(end),
-                TOT = CUMSUM - end) %>% 
-  # Add midpoint for each chr
-  dplyr::mutate(MID_TOT = TOT + (end / 2))
-
-```
-
 #### Count total existing bins
 
 ```{r}
@@ -212,7 +188,6 @@ out_dir_test = file.path(lts_dir, "association_testing/20211027_test")
 ```
 
 These must be written to a file because `PhenotypeSimulator` reads delimited genotypes from files.
-
 
 ```{r, eval = F, results = "hide"}
 # Get random 10 loci
@@ -395,10 +370,6 @@ gwas_tests_nomiss = readRDS(test_out_nomiss)
 
 ```{r}
 # Create custom Manhattan plot
-gwas_pal = c("#2B2D42", "#F7B267", "#F25C54")
-names(gwas_pal) = c("target", "even chr", "odd chr")
-significance_line = 3.6
-suggestive_line = 2.9
 
 purrr::map(seq_along(gwas_tests_nomiss), function(COUNTER){
   # Get bin length
@@ -586,29 +557,60 @@ First 400 phenotype data: <https://github.com/brettellebi/somites/tree/master/da
 >Of interest for us for the association testing are the:
  intercept period -> intercept in the table
  mean period -> mean in the table
+ 
+Snakemake rules for running the GWAS over these phenotypes: <https://github.com/brettellebi/somites/blob/master/workflow/rules/07_assocation_testing.smk>
+ 
+### Results
+
+#### Read in files
 
 ```{r}
-pheno_file = here::here("data/20210917_First400_F2_DF.xlsx")
-pheno = readxl::read_xlsx(pheno_file)
+target_phenos = c("mean", "intercept")
+names(target_phenos) = target_phenos
+results_dir = "/nfs/research/birney/users/ian/somites/association_testing/20211104_true/results"
 
-# Which samples are missing phenotypes? 
-which(!1:400 %in% as.integer(pheno$fish %>% str_remove("KC")))
+gwas_true = purrr::map(target_phenos, function(PHENO){
+  purrr::map(bin_lengths, function(BIN_LENGTH){
+    readRDS(file.path(results_dir, PHENO, paste(BIN_LENGTH, ".rds", sep = "")))
+  })
+})
 ```
 
-## Test `run_rc_block.R` code
+#### Manhattans
 
 ```{r}
-library(ViteRbi)
-source(here::here("workflow/scripts/rc_block_hmm.R"))
+# Process data
+plot_dat = purrr::map(seq_along(gwas_true), function(COUNTER_1){
+  bin_list = purrr::map(seq_along(gwas_true[[COUNTER_1]]), function(COUNTER_2){
+    BIN_LENGTH = names(gwas_true[[COUNTER_1]])[COUNTER_2] %>% 
+      as.numeric()
+    out = clean_gwas_res(gwas_true[[COUNTER_1]][[COUNTER_2]],
+                         bin_length = BIN_LENGTH,
+                         chr_lens = med_chr_lens)
+    
+    return(out)
+  })
+  names(bin_list) = names(gwas_true[[COUNTER_1]])
+  
+  return(bin_list)
+})
+names(plot_dat) = names(gwas_true)
 
-dp_files = list.files("/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2",
-                      full.names = T)
-
-bin_len = 5000
-
-pin = "all"
-bin1 =collect_chunked_data(dp_files, 1, length(dp_files), bin_len = bin_len)
-
+# Plot
+purrr::map(seq_along(plot_dat), function(COUNTER_1){
+  purrr::map(seq_along(plot_dat[[COUNTER_1]]), function(COUNTER_2){
+    # Get bin length
+    BIN_LENGTH = names(plot_dat[[COUNTER_1]])[COUNTER_2] %>% 
+      as.numeric()
+    # Plot
+    plot_int_man(plot_dat[[COUNTER_1]][[COUNTER_2]],
+                 phenotype = names(plot_dat)[COUNTER_1],
+                 bin_length = names(plot_dat[[COUNTER_1]])[COUNTER_2],
+                 gwas_pal = gwas_pal[2:3],
+                 med_chr_lens = med_chr_lens)
+    
+  })
+})
 ```
 
 
