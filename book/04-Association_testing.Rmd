@@ -2,7 +2,7 @@
 zotero: PhD
 ---
 
-# Association testing
+# Association testing with simulated phenotypes
 
 ```{r, message = F, warning = F}
 library(here)
@@ -161,8 +161,8 @@ gt_list = purrr::map(df_list, function(BIN_LENGTH_DF){
   return(gt_filt)
 }) 
 
-
-gt_list$`20000` %>% 
+# Show first 10 columns
+gt_list$`20000`[1:10, ] %>% 
   head(.) %>% 
   DT::datatable(.) 
 ```
@@ -436,8 +436,8 @@ test_man_nomiss = purrr::map(seq_along(gwas_tests_nomiss), function(COUNTER){
     ggtitle(paste("Bin length:", BIN_LENGTH)) +
     xlab("Chromosome") +
     ylab("-log10(p-value)") + 
-    geom_hline(yintercept = significance_line, colour = "#1effbc", linetype = "dashed") +
-    geom_hline(yintercept = suggestive_line, colour = "#5c95ff", linetype = "dashed")
+    geom_hline(yintercept = significance_line, colour = "#AAF683", linetype = "dashed") +
+    geom_hline(yintercept = suggestive_line, colour = "#60D394", linetype = "dashed")
   
   out = ggplotly(p1, tooltip = c("CHROM", "BIN_START", "BIN_END"))
   
@@ -450,7 +450,7 @@ test_man_nomiss[[3]]
 test_man_nomiss[[4]]
 ```
 
-### Include missing genotypes
+### Include loci with missing genotypes
 
 #### Run GWAS
 
@@ -546,8 +546,8 @@ test_man_wimiss = purrr::map(seq_along(gwas_tests_wimiss), function(COUNTER){
     ggtitle(paste("Bin length:", BIN_LENGTH)) +
     xlab("Chromosome") +
     ylab("-log10(p-value)") + 
-    geom_hline(yintercept = significance_line, colour = "#1effbc", linetype = "dashed") +
-    geom_hline(yintercept = suggestive_line, colour = "#5c95ff", linetype = "dashed")
+    geom_hline(yintercept = significance_line, colour = "#AAF683", linetype = "dashed") +
+    geom_hline(yintercept = suggestive_line, colour = "#60D394", linetype = "dashed")
   
   out = ggplotly(p1, tooltip = c("CHROM", "BIN_START", "BIN_END"))
   
@@ -561,78 +561,6 @@ test_man_wimiss[[3]]
 test_man_wimiss[[4]]
 ```
 
-## Phenotype data
 
-First 400 phenotype data: <https://github.com/brettellebi/somites/tree/master/data/20210917_First400_F2_DF.xlsx>.
-
->I also attach here the DataFrame of the phenotyping of the first 400 F2s (First400_F2_DF.xlsx)...
-
->Of interest for us for the association testing are the:
- intercept period -> intercept in the table
- mean period -> mean in the table
- 
-Snakemake rules for running the GWAS over these phenotypes: <https://github.com/brettellebi/somites/blob/master/workflow/rules/07_assocation_testing.smk>
- 
-### Results
-
-#### Read in files
-
-```{r}
-target_phenos = c("mean", "intercept")
-names(target_phenos) = target_phenos
-results_dir = "/nfs/research/birney/users/ian/somites/association_testing/20211104_true/results"
-
-gwas_true = purrr::map(target_phenos, function(PHENO){
-  purrr::map(bin_lengths, function(BIN_LENGTH){
-    readRDS(file.path(results_dir, PHENO, paste(BIN_LENGTH, ".rds", sep = "")))
-  })
-})
-```
-
-#### Manhattans
-
-```{r}
-# Process data
-plot_dat = purrr::map(seq_along(gwas_true), function(COUNTER_1){
-  bin_list = purrr::map(seq_along(gwas_true[[COUNTER_1]]), function(COUNTER_2){
-    BIN_LENGTH = names(gwas_true[[COUNTER_1]])[COUNTER_2] %>% 
-      as.numeric()
-    out = clean_gwas_res(gwas_true[[COUNTER_1]][[COUNTER_2]],
-                         bin_length = BIN_LENGTH,
-                         chr_lens = med_chr_lens)
-    
-    return(out)
-  })
-  names(bin_list) = names(gwas_true[[COUNTER_1]])
-  
-  return(bin_list)
-})
-names(plot_dat) = names(gwas_true)
-
-# Plot
-final_mans = purrr::map(seq_along(plot_dat), function(COUNTER_1){
-  purrr::map(seq_along(plot_dat[[COUNTER_1]]), function(COUNTER_2){
-    # Get bin length
-    BIN_LENGTH = names(plot_dat[[COUNTER_1]])[COUNTER_2] %>% 
-      as.numeric()
-    # Plot
-    out = plot_int_man(plot_dat[[COUNTER_1]][[COUNTER_2]],
-                 phenotype = names(plot_dat)[COUNTER_1],
-                 bin_length = names(plot_dat[[COUNTER_1]])[COUNTER_2],
-                 gwas_pal = gwas_pal[2:3],
-                 med_chr_lens = med_chr_lens)
-    
-    return(out)
-  })
-})
-
-# Mean
-final_mans[[1]][[1]]
-final_mans[[1]][[4]]
-
-# Intercept
-final_mans[[2]][[1]]
-final_mans[[2]][[4]]
-```
 
 

@@ -11,7 +11,7 @@ get-total-number-of-bases-covered-by-each-state
 karyoplot
 f2-recombination-blocks
 read-in-data-1
-look-at-relationship-between-ratio-and-state
+examine-relationship-between-ratio-and-state
 recode-state-to-put-in-correct-order
 read-counts-per-bin
 read-counts-by-proportion-of-kaga
@@ -23,9 +23,11 @@ by-chromosome
 proportion-of-sites-covered-by-each-state
 genome-wide
 per-chromosome
+karyoplot-1
+realised-relationship-matrix
 process-data
 plot
-association-testing
+association-testing-with-simulated-phenotypes
 read-in-f2-recombination-blocks
 read-data
 how-many-possible-blocks-have-at-least-one-call
@@ -44,10 +46,12 @@ test-gridlmm
 no-missing
 run-gwas
 plot-1
-include-missing-genotypes
+include-loci-with-missing-genotypes
 run-gwas-1
 plot-2
+gwls-results
 phenotype-data
+snakemake-rules
 results
 read-in-files
 manhattans

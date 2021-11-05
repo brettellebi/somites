@@ -50,7 +50,7 @@ df_list = purrr::map(data_list, function(data){
 })
 ```
 
-## Look at relationship between `ratio` and `state`
+## Examine relationship between `ratio` and `state`
 
 To determine which state is associated with which parental strain.
 
@@ -63,8 +63,8 @@ head(df_list$`5000`) %>%
 ```
 
 ```{=html}
-<div id="htmlwidget-5f717d8995e3551bfb9b" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-5f717d8995e3551bfb9b">{"x":{"filter":"none","data":[["1","2","3","4","5","6"],["/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt"],[0,5,4,11,16,5],[3,1,2,6,30,3],[4,6,8,11,16,17],[0,0.833333333333333,0.666666666666667,0.647058823529412,0.347826086956522,0.625],[1,1,1,1,1,1],[1,1,1,1,1,1],[1,1,1,1,1,1],[5000,5000,5000,5000,5000,5000],[15001,25001,35001,50001,75001,80001],[20000,30000,40000,55000,80000,85000],[5,5,5,5,5,5],[3,6,6,17,46,8]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>sample<\/th>\n      <th>mat<\/th>\n      <th>pat<\/th>\n      <th>bin<\/th>\n      <th>ratio<\/th>\n      <th>chr<\/th>\n      <th>state<\/th>\n      <th>LANE<\/th>\n      <th>BIN_LENGTH<\/th>\n      <th>BIN_START<\/th>\n      <th>BIN_END<\/th>\n      <th>BIN_LENGTH_KB<\/th>\n      <th>READS_PER_BIN<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[2,3,4,5,6,7,8,9,10,11,12,13]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-34216ed754e7780c5655" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-34216ed754e7780c5655">{"x":{"filter":"none","data":[["1","2","3","4","5","6"],["/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt"],[0,5,4,11,16,5],[3,1,2,6,30,3],[4,6,8,11,16,17],[0,0.833333333333333,0.666666666666667,0.647058823529412,0.347826086956522,0.625],[1,1,1,1,1,1],[1,1,1,1,1,1],[1,1,1,1,1,1],[5000,5000,5000,5000,5000,5000],[15001,25001,35001,50001,75001,80001],[20000,30000,40000,55000,80000,85000],[5,5,5,5,5,5],[3,6,6,17,46,8]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>sample<\/th>\n      <th>mat<\/th>\n      <th>pat<\/th>\n      <th>bin<\/th>\n      <th>ratio<\/th>\n      <th>chr<\/th>\n      <th>state<\/th>\n      <th>LANE<\/th>\n      <th>BIN_LENGTH<\/th>\n      <th>BIN_START<\/th>\n      <th>BIN_END<\/th>\n      <th>BIN_LENGTH_KB<\/th>\n      <th>READS_PER_BIN<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[2,3,4,5,6,7,8,9,10,11,12,13]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 ```
 
 `ratio = mat / (mat + pat)`, where `mat` = Cab and `pat` = Kaga.
@@ -100,7 +100,7 @@ knitr::include_graphics(here::here("book/plots/20211027_ratio_v_state.png"))
 This shows that state `0` is associated with a *low* ratio of Cab to Kaga, and therefore a call of *Kaga*.
 Vice versa for state `2` and *Cab*. 
 
-## Recode state to put in correct order
+### Recode state to put in correct order
 
 
 ```r
@@ -134,7 +134,7 @@ df_list %>%
     theme_bw() +
     scale_fill_manual(values = c("#778DA9", "#415A77", "#1B263B", "#0D1B2A")) +
     guides(fill = "none")
-#> Warning: Removed 88 rows containing non-finite values
+#> Warning: Removed 76 rows containing non-finite values
 #> (stat_boxplot).
 ```
 
@@ -155,7 +155,7 @@ df_list %>%
     facet_grid(cols = vars(BIN_LENGTH)) +
 ##   scale_colour_manual(values = c("#778DA9", "#415A77", "#1B263B", "#0D1B2A")) +
     guides(fill = "none")
-#> Warning: Removed 66 rows containing missing values
+#> Warning: Removed 83 rows containing missing values
 #> (geom_point).
 ```
 
@@ -176,7 +176,7 @@ df_list %>%
 ##   scale_colour_manual(values = c("#778DA9", "#415A77", "#1B263B", "#0D1B2A")) +
     guides(fill = "none") +
     xlim(0,100)
-#> Warning: Removed 23596 rows containing missing values
+#> Warning: Removed 23316 rows containing missing values
 #> (geom_point).
 ```
 
@@ -474,7 +474,7 @@ df %>%
 <p class="caption">(\#fig:unnamed-chunk-18)Frequency per-chromosome based on number of sites</p>
 </div>
 
-##Karyoplot
+## Karyoplot
 
 Make custom chromosome scaffold
 
@@ -623,9 +623,9 @@ knitr::include_graphics(here::here("book/plots/20211027_karyoplot_15000.png"))
 knitr::include_graphics(here::here("book/plots/20211027_karyoplot_20000.png"))
 ```
 
-##Realised relationship matrix
+## Realised relationship matrix
 
-## Process data
+### Process data
 
 
 ```r
@@ -659,7 +659,7 @@ rrmat = sommer::A.mat(gt_mat_rc)
 saveRDS(rrmat, here::here("data/realised_relationship_matrix.rds"))
 ```
 
-## Plot
+### Plot
 
 
 ```r

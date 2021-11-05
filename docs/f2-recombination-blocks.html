@@ -48,7 +48,8 @@
 <li><a class="" href="alignment-of-f0-and-f2-generations.html"><span class="header-section-number">2</span> Alignment of F0 and F2 generations</a></li>
 <li><a class="" href="homozygosity-of-f0-cab-and-kaga.html"><span class="header-section-number">3</span> Homozygosity of F0 Cab and Kaga</a></li>
 <li><a class="active" href="f2-recombination-blocks.html"><span class="header-section-number">4</span> F2 recombination blocks</a></li>
-<li><a class="" href="association-testing.html"><span class="header-section-number">5</span> Association testing</a></li>
+<li><a class="" href="association-testing-with-simulated-phenotypes.html"><span class="header-section-number">5</span> Association testing with simulated phenotypes</a></li>
+<li><a class="" href="gwls-results.html"><span class="header-section-number">6</span> GWLS results</a></li>
 </ul>
 
         <div class="book-extra">
@@ -103,17 +104,17 @@
   <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span>
 <span class="op">}</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="look-at-relationship-between-ratio-and-state" class="section level2" number="4.2">
+<div id="examine-relationship-between-ratio-and-state" class="section level2" number="4.2">
 <h2>
-<span class="header-section-number">4.2</span> Look at relationship between <code>ratio</code> and <code>state</code><a class="anchor" aria-label="anchor" href="#look-at-relationship-between-ratio-and-state"><i class="fas fa-link"></i></a>
+<span class="header-section-number">4.2</span> Examine relationship between <code>ratio</code> and <code>state</code><a class="anchor" aria-label="anchor" href="#examine-relationship-between-ratio-and-state"><i class="fas fa-link"></i></a>
 </h2>
 <p>To determine which state is associated with which parental strain.</p>
 <p>In the pipeline, we set <em>Cab</em> as F0_1 and <em>Kaga</em> as F0_2.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">df_list</span><span class="op">$</span><span class="va">`5000`</span><span class="op">)</span> <span class="op">%&gt;%</span> 
   <span class="fu">DT</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html">datatable</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span></code></pre></div>
-<div id="htmlwidget-5f717d8995e3551bfb9b" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-5f717d8995e3551bfb9b">{"x":{"filter":"none","data":[["1","2","3","4","5","6"],["/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt"],[0,5,4,11,16,5],[3,1,2,6,30,3],[4,6,8,11,16,17],[0,0.833333333333333,0.666666666666667,0.647058823529412,0.347826086956522,0.625],[1,1,1,1,1,1],[1,1,1,1,1,1],[1,1,1,1,1,1],[5000,5000,5000,5000,5000,5000],[15001,25001,35001,50001,75001,80001],[20000,30000,40000,55000,80000,85000],[5,5,5,5,5,5],[3,6,6,17,46,8]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>sample<\/th>\n      <th>mat<\/th>\n      <th>pat<\/th>\n      <th>bin<\/th>\n      <th>ratio<\/th>\n      <th>chr<\/th>\n      <th>state<\/th>\n      <th>LANE<\/th>\n      <th>BIN_LENGTH<\/th>\n      <th>BIN_START<\/th>\n      <th>BIN_END<\/th>\n      <th>BIN_LENGTH_KB<\/th>\n      <th>READS_PER_BIN<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[2,3,4,5,6,7,8,9,10,11,12,13]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script><p><code>ratio = mat / (mat + pat)</code>, where <code>mat</code> = Cab and <code>pat</code> = Kaga.</p>
+<div id="htmlwidget-34216ed754e7780c5655" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-34216ed754e7780c5655">{"x":{"filter":"none","data":[["1","2","3","4","5","6"],["/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt"],[0,5,4,11,16,5],[3,1,2,6,30,3],[4,6,8,11,16,17],[0,0.833333333333333,0.666666666666667,0.647058823529412,0.347826086956522,0.625],[1,1,1,1,1,1],[1,1,1,1,1,1],[1,1,1,1,1,1],[5000,5000,5000,5000,5000,5000],[15001,25001,35001,50001,75001,80001],[20000,30000,40000,55000,80000,85000],[5,5,5,5,5,5],[3,6,6,17,46,8]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>sample<\/th>\n      <th>mat<\/th>\n      <th>pat<\/th>\n      <th>bin<\/th>\n      <th>ratio<\/th>\n      <th>chr<\/th>\n      <th>state<\/th>\n      <th>LANE<\/th>\n      <th>BIN_LENGTH<\/th>\n      <th>BIN_START<\/th>\n      <th>BIN_END<\/th>\n      <th>BIN_LENGTH_KB<\/th>\n      <th>READS_PER_BIN<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[2,3,4,5,6,7,8,9,10,11,12,13]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script><p><code>ratio = mat / (mat + pat)</code>, where <code>mat</code> = Cab and <code>pat</code> = Kaga.</p>
 <p>Plot <code>ratio</code> against <code>state</code></p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">df_list</span><span class="op">$</span><span class="va">`5000`</span> <span class="op">%&gt;%</span>
@@ -135,11 +136,10 @@
 <div class="inline-figure"><img src="plots/20211027_ratio_v_state.png" width="80%"></div>
 <p>This shows that state <code>0</code> is associated with a <em>low</em> ratio of Cab to Kaga, and therefore a call of <em>Kaga</em>.
 Vice versa for state <code>2</code> and <em>Cab</em>.</p>
-</div>
-<div id="recode-state-to-put-in-correct-order" class="section level2" number="4.3">
-<h2>
-<span class="header-section-number">4.3</span> Recode state to put in correct order<a class="anchor" aria-label="anchor" href="#recode-state-to-put-in-correct-order"><i class="fas fa-link"></i></a>
-</h2>
+<div id="recode-state-to-put-in-correct-order" class="section level3" number="4.2.1">
+<h3>
+<span class="header-section-number">4.2.1</span> Recode state to put in correct order<a class="anchor" aria-label="anchor" href="#recode-state-to-put-in-correct-order"><i class="fas fa-link"></i></a>
+</h3>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">df_list</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">df_list</span>, <span class="kw">function</span><span class="op">(</span><span class="va">df</span><span class="op">)</span><span class="op">{</span>
   <span class="va">df</span> <span class="op">=</span> <span class="va">df</span> <span class="op">%&gt;%</span> 
@@ -149,9 +149,10 @@ Vice versa for state <code>2</code> and <em>Cab</em>.</p>
                                         `2` <span class="op">=</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span>
 <span class="op">}</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="read-counts-per-bin" class="section level2" number="4.4">
+</div>
+<div id="read-counts-per-bin" class="section level2" number="4.3">
 <h2>
-<span class="header-section-number">4.4</span> Read counts per bin<a class="anchor" aria-label="anchor" href="#read-counts-per-bin"><i class="fas fa-link"></i></a>
+<span class="header-section-number">4.3</span> Read counts per bin<a class="anchor" aria-label="anchor" href="#read-counts-per-bin"><i class="fas fa-link"></i></a>
 </h2>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">##How many bins in each data frame? </span>
@@ -170,13 +171,13 @@ Vice versa for state <code>2</code> and <em>Cab</em>.</p>
     <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu">scale_fill_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"#778DA9"</span>, <span class="st">"#415A77"</span>, <span class="st">"#1B263B"</span>, <span class="st">"#0D1B2A"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu">guides</span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span>
-<span class="co">#&gt; Warning: Removed 88 rows containing non-finite values</span>
+<span class="co">#&gt; Warning: Removed 76 rows containing non-finite values</span>
 <span class="co">#&gt; (stat_boxplot).</span></code></pre></div>
 <div class="inline-figure"><img src="03-F2_recombination_files/figure-html/unnamed-chunk-7-1.png" width="672"></div>
 </div>
-<div id="read-counts-by-proportion-of-kaga" class="section level2" number="4.5">
+<div id="read-counts-by-proportion-of-kaga" class="section level2" number="4.4">
 <h2>
-<span class="header-section-number">4.5</span> Read counts by proportion of Kaga<a class="anchor" aria-label="anchor" href="#read-counts-by-proportion-of-kaga"><i class="fas fa-link"></i></a>
+<span class="header-section-number">4.4</span> Read counts by proportion of Kaga<a class="anchor" aria-label="anchor" href="#read-counts-by-proportion-of-kaga"><i class="fas fa-link"></i></a>
 </h2>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">df_list</span> <span class="op">%&gt;%</span> 
@@ -190,7 +191,7 @@ Vice versa for state <code>2</code> and <em>Cab</em>.</p>
     <span class="fu">facet_grid</span><span class="op">(</span>cols <span class="op">=</span> <span class="fu">vars</span><span class="op">(</span><span class="va">BIN_LENGTH</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
 <span class="co">##   scale_colour_manual(values = c("#778DA9", "#415A77", "#1B263B", "#0D1B2A")) +</span>
     <span class="fu">guides</span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span>
-<span class="co">#&gt; Warning: Removed 66 rows containing missing values</span>
+<span class="co">#&gt; Warning: Removed 83 rows containing missing values</span>
 <span class="co">#&gt; (geom_point).</span></code></pre></div>
 <div class="inline-figure"><img src="03-F2_recombination_files/figure-html/unnamed-chunk-8-1.png" width="672"></div>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
@@ -208,21 +209,21 @@ Vice versa for state <code>2</code> and <em>Cab</em>.</p>
 <span class="co">##   scale_colour_manual(values = c("#778DA9", "#415A77", "#1B263B", "#0D1B2A")) +</span>
     <span class="fu">guides</span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu"><a href="https://rdrr.io/r/graphics/plot.window.html">xlim</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">100</span><span class="op">)</span>
-<span class="co">#&gt; Warning: Removed 23596 rows containing missing values</span>
+<span class="co">#&gt; Warning: Removed 23316 rows containing missing values</span>
 <span class="co">#&gt; (geom_point).</span></code></pre></div>
 <div class="inline-figure"><img src="03-F2_recombination_files/figure-html/unnamed-chunk-8-2.png" width="672"></div>
 </div>
-<div id="proportion-of-genome-and-sites-called-as-a-given-state" class="section level2" number="4.6">
+<div id="proportion-of-genome-and-sites-called-as-a-given-state" class="section level2" number="4.5">
 <h2>
-<span class="header-section-number">4.6</span> Proportion of genome and sites called as a given state<a class="anchor" aria-label="anchor" href="#proportion-of-genome-and-sites-called-as-a-given-state"><i class="fas fa-link"></i></a>
+<span class="header-section-number">4.5</span> Proportion of genome and sites called as a given state<a class="anchor" aria-label="anchor" href="#proportion-of-genome-and-sites-called-as-a-given-state"><i class="fas fa-link"></i></a>
 </h2>
-<div id="proportion-of-genome-covered-by-each-state" class="section level3" number="4.6.1">
+<div id="proportion-of-genome-covered-by-each-state" class="section level3" number="4.5.1">
 <h3>
-<span class="header-section-number">4.6.1</span> Proportion of <em>genome</em> covered by each state<a class="anchor" aria-label="anchor" href="#proportion-of-genome-covered-by-each-state"><i class="fas fa-link"></i></a>
+<span class="header-section-number">4.5.1</span> Proportion of <em>genome</em> covered by each state<a class="anchor" aria-label="anchor" href="#proportion-of-genome-covered-by-each-state"><i class="fas fa-link"></i></a>
 </h3>
-<div id="read-in-total-medaka-genome-count-1" class="section level4" number="4.6.1.1">
+<div id="read-in-total-medaka-genome-count-1" class="section level4" number="4.5.1.1">
 <h4>
-<span class="header-section-number">4.6.1.1</span> Read in total medaka genome count<a class="anchor" aria-label="anchor" href="#read-in-total-medaka-genome-count-1"><i class="fas fa-link"></i></a>
+<span class="header-section-number">4.5.1.1</span> Read in total medaka genome count<a class="anchor" aria-label="anchor" href="#read-in-total-medaka-genome-count-1"><i class="fas fa-link"></i></a>
 </h4>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">##Get chromosome lengths</span>
@@ -240,9 +241,9 @@ Vice versa for state <code>2</code> and <em>Cab</em>.</p>
 <span class="co">##Total HdrR sequence length</span>
 <span class="va">total_hdrr_bases</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">med_chr_lens</span><span class="op">$</span><span class="va">end</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="get-total-number-of-bases-covered-by-each-state-1" class="section level4" number="4.6.1.2">
+<div id="get-total-number-of-bases-covered-by-each-state-1" class="section level4" number="4.5.1.2">
 <h4>
-<span class="header-section-number">4.6.1.2</span> Get total number of bases covered by each state<a class="anchor" aria-label="anchor" href="#get-total-number-of-bases-covered-by-each-state-1"><i class="fas fa-link"></i></a>
+<span class="header-section-number">4.5.1.2</span> Get total number of bases covered by each state<a class="anchor" aria-label="anchor" href="#get-total-number-of-bases-covered-by-each-state-1"><i class="fas fa-link"></i></a>
 </h4>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">##Take 5kb DF</span>
@@ -308,9 +309,9 @@ Vice versa for state <code>2</code> and <em>Cab</em>.</p>
     <span class="fu">ylab</span><span class="op">(</span><span class="st">"Proportion of reference bases covered"</span><span class="op">)</span></code></pre></div>
 <div class="inline-figure"><img src="03-F2_recombination_files/figure-html/unnamed-chunk-11-1.png" width="672"></div>
 </div>
-<div id="by-chromosome" class="section level4" number="4.6.1.3">
+<div id="by-chromosome" class="section level4" number="4.5.1.3">
 <h4>
-<span class="header-section-number">4.6.1.3</span> By chromosome<a class="anchor" aria-label="anchor" href="#by-chromosome"><i class="fas fa-link"></i></a>
+<span class="header-section-number">4.5.1.3</span> By chromosome<a class="anchor" aria-label="anchor" href="#by-chromosome"><i class="fas fa-link"></i></a>
 </h4>
 <p>Process.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
@@ -386,13 +387,13 @@ Vice versa for state <code>2</code> and <em>Cab</em>.</p>
 <div class="inline-figure"><img src="03-F2_recombination_files/figure-html/unnamed-chunk-15-1.png" width="1536"></div>
 </div>
 </div>
-<div id="proportion-of-sites-covered-by-each-state" class="section level3" number="4.6.2">
+<div id="proportion-of-sites-covered-by-each-state" class="section level3" number="4.5.2">
 <h3>
-<span class="header-section-number">4.6.2</span> Proportion of <em>sites</em> covered by each state<a class="anchor" aria-label="anchor" href="#proportion-of-sites-covered-by-each-state"><i class="fas fa-link"></i></a>
+<span class="header-section-number">4.5.2</span> Proportion of <em>sites</em> covered by each state<a class="anchor" aria-label="anchor" href="#proportion-of-sites-covered-by-each-state"><i class="fas fa-link"></i></a>
 </h3>
-<div id="genome-wide" class="section level4" number="4.6.2.1">
+<div id="genome-wide" class="section level4" number="4.5.2.1">
 <h4>
-<span class="header-section-number">4.6.2.1</span> Genome-wide<a class="anchor" aria-label="anchor" href="#genome-wide"><i class="fas fa-link"></i></a>
+<span class="header-section-number">4.5.2.1</span> Genome-wide<a class="anchor" aria-label="anchor" href="#genome-wide"><i class="fas fa-link"></i></a>
 </h4>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">df</span> <span class="op">%&gt;%</span> 
@@ -442,9 +443,9 @@ Figure 4.1: Frequency based on number of sites
        units <span class="op">=</span> <span class="st">"in"</span>,
        dpi <span class="op">=</span> <span class="fl">400</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="per-chromosome" class="section level4" number="4.6.2.2">
+<div id="per-chromosome" class="section level4" number="4.5.2.2">
 <h4>
-<span class="header-section-number">4.6.2.2</span> Per chromosome<a class="anchor" aria-label="anchor" href="#per-chromosome"><i class="fas fa-link"></i></a>
+<span class="header-section-number">4.5.2.2</span> Per chromosome<a class="anchor" aria-label="anchor" href="#per-chromosome"><i class="fas fa-link"></i></a>
 </h4>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">df</span> <span class="op">%&gt;%</span> 
@@ -492,7 +493,13 @@ Figure 4.1: Frequency based on number of sites
 Figure 4.2: Frequency per-chromosome based on number of sites
 </p>
 </div>
-<p>##Karyoplot</p>
+</div>
+</div>
+</div>
+<div id="karyoplot-1" class="section level2" number="4.6">
+<h2>
+<span class="header-section-number">4.6</span> Karyoplot<a class="anchor" aria-label="anchor" href="#karyoplot-1"><i class="fas fa-link"></i></a>
+</h2>
 <p>Make custom chromosome scaffold</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">##Create custom genome </span>
@@ -606,14 +613,15 @@ Figure 4.3: Bin length: 5 kb
 <code class="sourceCode R"><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"book/plots/20211027_karyoplot_15000.png"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"book/plots/20211027_karyoplot_20000.png"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p>##Realised relationship matrix</p>
 </div>
-</div>
-</div>
-<div id="process-data" class="section level2" number="4.7">
+<div id="realised-relationship-matrix" class="section level2" number="4.7">
 <h2>
-<span class="header-section-number">4.7</span> Process data<a class="anchor" aria-label="anchor" href="#process-data"><i class="fas fa-link"></i></a>
+<span class="header-section-number">4.7</span> Realised relationship matrix<a class="anchor" aria-label="anchor" href="#realised-relationship-matrix"><i class="fas fa-link"></i></a>
 </h2>
+<div id="process-data" class="section level3" number="4.7.1">
+<h3>
+<span class="header-section-number">4.7.1</span> Process data<a class="anchor" aria-label="anchor" href="#process-data"><i class="fas fa-link"></i></a>
+</h3>
 <div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Process data</span>
 <span class="va">gt_mat_rc</span> <span class="op">=</span> <span class="va">df_list</span><span class="op">$</span><span class="va">`5000`</span> <span class="op">%&gt;%</span> 
@@ -644,10 +652,10 @@ Figure 4.3: Bin length: 5 kb
 <span class="co">#Save object</span>
 <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">rrmat</span>, <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"data/realised_relationship_matrix.rds"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="plot" class="section level2" number="4.8">
-<h2>
-<span class="header-section-number">4.8</span> Plot<a class="anchor" aria-label="anchor" href="#plot"><i class="fas fa-link"></i></a>
-</h2>
+<div id="plot" class="section level3" number="4.7.2">
+<h3>
+<span class="header-section-number">4.7.2</span> Plot<a class="anchor" aria-label="anchor" href="#plot"><i class="fas fa-link"></i></a>
+</h3>
 <div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">rrmat</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"data/realised_relationship_matrix.rds"</span><span class="op">)</span><span class="op">)</span>
 
@@ -667,26 +675,33 @@ Figure 4.3: Bin length: 5 kb
 
 </div>
 </div>
+</div>
   <div class="chapter-nav">
 <div class="prev"><a href="homozygosity-of-f0-cab-and-kaga.html"><span class="header-section-number">3</span> Homozygosity of F0 Cab and Kaga</a></div>
-<div class="next"><a href="association-testing.html"><span class="header-section-number">5</span> Association testing</a></div>
+<div class="next"><a href="association-testing-with-simulated-phenotypes.html"><span class="header-section-number">5</span> Association testing with simulated phenotypes</a></div>
 </div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
     <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#f2-recombination-blocks"><span class="header-section-number">4</span> F2 recombination blocks</a></li>
 <li><a class="nav-link" href="#read-in-data-1"><span class="header-section-number">4.1</span> Read in data</a></li>
-<li><a class="nav-link" href="#look-at-relationship-between-ratio-and-state"><span class="header-section-number">4.2</span> Look at relationship between ratio and state</a></li>
-<li><a class="nav-link" href="#recode-state-to-put-in-correct-order"><span class="header-section-number">4.3</span> Recode state to put in correct order</a></li>
-<li><a class="nav-link" href="#read-counts-per-bin"><span class="header-section-number">4.4</span> Read counts per bin</a></li>
-<li><a class="nav-link" href="#read-counts-by-proportion-of-kaga"><span class="header-section-number">4.5</span> Read counts by proportion of Kaga</a></li>
 <li>
-<a class="nav-link" href="#proportion-of-genome-and-sites-called-as-a-given-state"><span class="header-section-number">4.6</span> Proportion of genome and sites called as a given state</a><ul class="nav navbar-nav">
-<li><a class="nav-link" href="#proportion-of-genome-covered-by-each-state"><span class="header-section-number">4.6.1</span> Proportion of genome covered by each state</a></li>
-<li><a class="nav-link" href="#proportion-of-sites-covered-by-each-state"><span class="header-section-number">4.6.2</span> Proportion of sites covered by each state</a></li>
+<a class="nav-link" href="#examine-relationship-between-ratio-and-state"><span class="header-section-number">4.2</span> Examine relationship between ratio and state</a><ul class="nav navbar-nav"><li><a class="nav-link" href="#recode-state-to-put-in-correct-order"><span class="header-section-number">4.2.1</span> Recode state to put in correct order</a></li></ul>
+</li>
+<li><a class="nav-link" href="#read-counts-per-bin"><span class="header-section-number">4.3</span> Read counts per bin</a></li>
+<li><a class="nav-link" href="#read-counts-by-proportion-of-kaga"><span class="header-section-number">4.4</span> Read counts by proportion of Kaga</a></li>
+<li>
+<a class="nav-link" href="#proportion-of-genome-and-sites-called-as-a-given-state"><span class="header-section-number">4.5</span> Proportion of genome and sites called as a given state</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#proportion-of-genome-covered-by-each-state"><span class="header-section-number">4.5.1</span> Proportion of genome covered by each state</a></li>
+<li><a class="nav-link" href="#proportion-of-sites-covered-by-each-state"><span class="header-section-number">4.5.2</span> Proportion of sites covered by each state</a></li>
 </ul>
 </li>
-<li><a class="nav-link" href="#process-data"><span class="header-section-number">4.7</span> Process data</a></li>
-<li><a class="nav-link" href="#plot"><span class="header-section-number">4.8</span> Plot</a></li>
+<li><a class="nav-link" href="#karyoplot-1"><span class="header-section-number">4.6</span> Karyoplot</a></li>
+<li>
+<a class="nav-link" href="#realised-relationship-matrix"><span class="header-section-number">4.7</span> Realised relationship matrix</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#process-data"><span class="header-section-number">4.7.1</span> Process data</a></li>
+<li><a class="nav-link" href="#plot"><span class="header-section-number">4.7.2</span> Plot</a></li>
+</ul>
+</li>
 </ul>
 
       <div class="book-extra">

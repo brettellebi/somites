@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Chapter 6 GWLS results | Somite period F2 analysis</title>
+<meta name="author" content="Ian Brettell">
+<meta name="description" content='library(here) source(here::here("book/source/04-Association_testing.R"))  6.1 Phenotype data First 400 phenotype data:...'>
+<meta name="generator" content="bookdown 0.24.2 with bs4_book()">
+<meta property="og:title" content="Chapter 6 GWLS results | Somite period F2 analysis">
+<meta property="og:type" content="book">
+<meta property="og:description" content='library(here) source(here::here("book/source/04-Association_testing.R"))  6.1 Phenotype data First 400 phenotype data:...'>
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chapter 6 GWLS results | Somite period F2 analysis">
+<meta name="twitter:description" content='library(here) source(here::here("book/source/04-Association_testing.R"))  6.1 Phenotype data First 400 phenotype data:...'>
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/header-attrs-2.10/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.2.5.1/tabs.js"></script><script src="libs/bs3compat-0.2.5.1/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="libs/htmlwidgets-1.5.3/htmlwidgets.js"></script><script src="libs/plotly-binding-4.9.4.1/plotly.js"></script><script src="libs/typedarray-0.1/typedarray.min.js"></script><link href="libs/crosstalk-1.1.1/css/crosstalk.css" rel="stylesheet">
+<script src="libs/crosstalk-1.1.1/js/crosstalk.min.js"></script><link href="libs/plotly-htmlwidgets-css-1.57.1/plotly-htmlwidgets.css" rel="stylesheet">
+<script src="libs/plotly-main-1.57.1/plotly-latest.min.js"></script><link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet">
+<script src="libs/datatables-binding-0.18/datatables.js"></script><link href="libs/dt-core-1.10.20/css/jquery.dataTables.min.css" rel="stylesheet">
+<link href="libs/dt-core-1.10.20/css/jquery.dataTables.extra.css" rel="stylesheet">
+<script src="libs/dt-core-1.10.20/js/jquery.dataTables.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><link rel="stylesheet" href="style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="">Somite period F2 analysis</a>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html"><span class="header-section-number">1</span> About</a></li>
+<li><a class="" href="alignment-of-f0-and-f2-generations.html"><span class="header-section-number">2</span> Alignment of F0 and F2 generations</a></li>
+<li><a class="" href="homozygosity-of-f0-cab-and-kaga.html"><span class="header-section-number">3</span> Homozygosity of F0 Cab and Kaga</a></li>
+<li><a class="" href="f2-recombination-blocks.html"><span class="header-section-number">4</span> F2 recombination blocks</a></li>
+<li><a class="" href="association-testing-with-simulated-phenotypes.html"><span class="header-section-number">5</span> Association testing with simulated phenotypes</a></li>
+<li><a class="active" href="gwls-results.html"><span class="header-section-number">6</span> GWLS results</a></li>
+</ul>
+
+        <div class="book-extra">
+          <p><a id="book-repo" href="https://github.com/brettellebi/somites">View book source <i class="fab fa-github"></i></a></p>
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="gwls-results" class="section level1" number="6">
+<h1>
+<span class="header-section-number">6</span> GWLS results<a class="anchor" aria-label="anchor" href="#gwls-results"><i class="fas fa-link"></i></a>
+</h1>
+<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://here.r-lib.org/">here</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"book/source/04-Association_testing.R"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<div id="phenotype-data" class="section level2" number="6.1">
+<h2>
+<span class="header-section-number">6.1</span> Phenotype data<a class="anchor" aria-label="anchor" href="#phenotype-data"><i class="fas fa-link"></i></a>
+</h2>
+<p>First 400 phenotype data: <a href="https://github.com/brettellebi/somites/tree/master/data/20210917_First400_F2_DF.xlsx" class="uri">https://github.com/brettellebi/somites/tree/master/data/20210917_First400_F2_DF.xlsx</a>.</p>
+<blockquote>
+<p>I also attach here the DataFrame of the phenotyping of the first 400 F2s (First400_F2_DF.xlsx)…</p>
+</blockquote>
+<blockquote>
+<p>Of interest for us for the association testing are the:
+intercept period -&gt; intercept in the table
+mean period -&gt; mean in the table</p>
+</blockquote>
+</div>
+<div id="snakemake-rules" class="section level2" number="6.2">
+<h2>
+<span class="header-section-number">6.2</span> Snakemake rules<a class="anchor" aria-label="anchor" href="#snakemake-rules"><i class="fas fa-link"></i></a>
+</h2>
+<p>Snakemake rules for running the GWAS over these phenotypes: <a href="https://github.com/brettellebi/somites/blob/master/workflow/rules/07_assocation_testing.smk" class="uri">https://github.com/brettellebi/somites/blob/master/workflow/rules/07_assocation_testing.smk</a></p>
+</div>
+<div id="results" class="section level2" number="6.3">
+<h2>
+<span class="header-section-number">6.3</span> Results<a class="anchor" aria-label="anchor" href="#results"><i class="fas fa-link"></i></a>
+</h2>
+<div id="read-in-files" class="section level3" number="6.3.1">
+<h3>
+<span class="header-section-number">6.3.1</span> Read in files<a class="anchor" aria-label="anchor" href="#read-in-files"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">target_phenos</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"mean"</span>, <span class="st">"intercept"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">target_phenos</span><span class="op">)</span> <span class="op">=</span> <span class="va">target_phenos</span>
+<span class="va">bin_lengths</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">5000</span>, <span class="fl">10000</span>, <span class="fl">15000</span>, <span class="fl">20000</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">bin_lengths</span><span class="op">)</span> <span class="op">=</span> <span class="va">bin_lengths</span>
+<span class="va">results_dir</span> <span class="op">=</span> <span class="st">"/nfs/research/birney/users/ian/somites/association_testing/20211104_true/results"</span>
+
+<span class="va">gwas_true</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">target_phenos</span>, <span class="kw">function</span><span class="op">(</span><span class="va">PHENO</span><span class="op">)</span><span class="op">{</span>
+  <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">bin_lengths</span>, <span class="kw">function</span><span class="op">(</span><span class="va">BIN_LENGTH</span><span class="op">)</span><span class="op">{</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">results_dir</span>, <span class="va">PHENO</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="va">BIN_LENGTH</span>, <span class="st">".rds"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+  <span class="op">}</span><span class="op">)</span>
+<span class="op">}</span><span class="op">)</span></code></pre></div>
+</div>
+<div id="manhattans" class="section level3" number="6.3.2">
+<h3>
+<span class="header-section-number">6.3.2</span> Manhattans<a class="anchor" aria-label="anchor" href="#manhattans"><i class="fas fa-link"></i></a>
+</h3>
+<p>Process data</p>
+<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">plot_dat</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_along</a></span><span class="op">(</span><span class="va">gwas_true</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">COUNTER_1</span><span class="op">)</span><span class="op">{</span>
+  <span class="va">bin_list</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_along</a></span><span class="op">(</span><span class="va">gwas_true</span><span class="op">[[</span><span class="va">COUNTER_1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">COUNTER_2</span><span class="op">)</span><span class="op">{</span>
+    <span class="va">BIN_LENGTH</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">gwas_true</span><span class="op">[[</span><span class="va">COUNTER_1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[</span><span class="va">COUNTER_2</span><span class="op">]</span> <span class="op">%&gt;%</span> 
+      <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="op">)</span>
+    <span class="va">out</span> <span class="op">=</span> <span class="fu">clean_gwas_res</span><span class="op">(</span><span class="va">gwas_true</span><span class="op">[[</span><span class="va">COUNTER_1</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">COUNTER_2</span><span class="op">]</span><span class="op">]</span>,
+                         bin_length <span class="op">=</span> <span class="va">BIN_LENGTH</span>,
+                         chr_lens <span class="op">=</span> <span class="va">med_chr_lens</span><span class="op">)</span>
+    
+    <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span>
+  <span class="op">}</span><span class="op">)</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">bin_list</span><span class="op">)</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">gwas_true</span><span class="op">[[</span><span class="va">COUNTER_1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>
+  
+  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="va">bin_list</span><span class="op">)</span>
+<span class="op">}</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">plot_dat</span><span class="op">)</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">gwas_true</span><span class="op">)</span></code></pre></div>
+<p>Plot</p>
+<div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">plot_dir</span> <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"book/plots/20211104_gwls_results"</span><span class="op">)</span>
+<span class="co"># Plot</span>
+<span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_along</a></span><span class="op">(</span><span class="va">plot_dat</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">COUNTER_PHENO</span><span class="op">)</span><span class="op">{</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_along</a></span><span class="op">(</span><span class="va">plot_dat</span><span class="op">[[</span><span class="va">COUNTER_PHENO</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">COUNTER_BINL</span><span class="op">)</span><span class="op">{</span>
+    <span class="co"># Get pheno</span>
+    <span class="va">PHENO</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">plot_dat</span><span class="op">)</span><span class="op">[</span><span class="va">COUNTER_PHENO</span><span class="op">]</span>
+    <span class="co"># Get bin length</span>
+    <span class="va">BIN_LENGTH</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">plot_dat</span><span class="op">[[</span><span class="va">COUNTER_PHENO</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[</span><span class="va">COUNTER_BINL</span><span class="op">]</span> <span class="op">%&gt;%</span> 
+      <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="op">)</span>
+    <span class="co"># Plot</span>
+    <span class="va">out</span> <span class="op">=</span> <span class="fu">plot_man</span><span class="op">(</span><span class="va">plot_dat</span><span class="op">[[</span><span class="va">COUNTER_PHENO</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">COUNTER_BINL</span><span class="op">]</span><span class="op">]</span>,
+             phenotype <span class="op">=</span> <span class="va">PHENO</span>,
+             bin_length <span class="op">=</span> <span class="va">BIN_LENGTH</span>,
+             gwas_pal <span class="op">=</span> <span class="va">gwas_pal</span><span class="op">[</span><span class="fl">2</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>,
+             med_chr_lens <span class="op">=</span> <span class="va">med_chr_lens</span><span class="op">)</span>
+    
+    <span class="co">#ggsave(out,</span>
+    <span class="co">#       file.path(plot_dir, paste(PHENO, "_", BIN_LENGTH, ".png")),</span>
+    <span class="co">#       device = "png",</span>
+    <span class="co">#       width = 9.6,</span>
+    <span class="co">#       height = 6,</span>
+    <span class="co">#       units = "in",</span>
+    <span class="co">#       dpi = 400)</span>
+  <span class="op">}</span><span class="op">)</span>
+<span class="op">}</span><span class="op">)</span>
+<span class="co">#&gt; [[1]]</span>
+<span class="co">#&gt; [[1]][[1]]</span></code></pre></div>
+<div class="inline-figure"><img src="05-GWLS_results_files/figure-html/unnamed-chunk-4-1.png" width="672"></div>
+<pre><code>#&gt; 
+#&gt; [[1]][[2]]</code></pre>
+<div class="inline-figure"><img src="05-GWLS_results_files/figure-html/unnamed-chunk-4-2.png" width="672"></div>
+<pre><code>#&gt; 
+#&gt; [[1]][[3]]</code></pre>
+<div class="inline-figure"><img src="05-GWLS_results_files/figure-html/unnamed-chunk-4-3.png" width="672"></div>
+<pre><code>#&gt; 
+#&gt; [[1]][[4]]</code></pre>
+<div class="inline-figure"><img src="05-GWLS_results_files/figure-html/unnamed-chunk-4-4.png" width="672"></div>
+<pre><code>#&gt; 
+#&gt; 
+#&gt; [[2]]
+#&gt; [[2]][[1]]</code></pre>
+<div class="inline-figure"><img src="05-GWLS_results_files/figure-html/unnamed-chunk-4-5.png" width="672"></div>
+<pre><code>#&gt; 
+#&gt; [[2]][[2]]</code></pre>
+<div class="inline-figure"><img src="05-GWLS_results_files/figure-html/unnamed-chunk-4-6.png" width="672"></div>
+<pre><code>#&gt; 
+#&gt; [[2]][[3]]</code></pre>
+<div class="inline-figure"><img src="05-GWLS_results_files/figure-html/unnamed-chunk-4-7.png" width="672"></div>
+<pre><code>#&gt; 
+#&gt; [[2]][[4]]</code></pre>
+<div class="inline-figure"><img src="05-GWLS_results_files/figure-html/unnamed-chunk-4-8.png" width="672"></div>
+
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-mölder2021" class="csl-entry">
+Mölder, Felix, Kim Philipp Jablonski, Brice Letcher, Michael B. Hall, Christopher H. Tomkins-Tinch, Vanessa Sochat, Jan Forster, et al. <span>“Sustainable Data Analysis with Snakemake.”</span> <em>F1000Research</em> 10 (April 19, 2021): 33. <a href="https://doi.org/10.12688/f1000research.29032.2">https://doi.org/10.12688/f1000research.29032.2</a>.
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+
+
+
+
+  <div class="chapter-nav">
+<div class="prev"><a href="association-testing-with-simulated-phenotypes.html"><span class="header-section-number">5</span> Association testing with simulated phenotypes</a></div>
+<div class="empty"></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#gwls-results"><span class="header-section-number">6</span> GWLS results</a></li>
+<li><a class="nav-link" href="#phenotype-data"><span class="header-section-number">6.1</span> Phenotype data</a></li>
+<li><a class="nav-link" href="#snakemake-rules"><span class="header-section-number">6.2</span> Snakemake rules</a></li>
+<li>
+<a class="nav-link" href="#results"><span class="header-section-number">6.3</span> Results</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#read-in-files"><span class="header-section-number">6.3.1</span> Read in files</a></li>
+<li><a class="nav-link" href="#manhattans"><span class="header-section-number">6.3.2</span> Manhattans</a></li>
+</ul>
+</li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+<li><a id="book-source" href="https://github.com/brettellebi/somites/blob/master/05-GWLS_results.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/brettellebi/somites/edit/master/05-GWLS_results.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Somite period F2 analysis</strong>" was written by Ian Brettell. It was last built on 2021-11-05.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer>
+</body>
+</html>
