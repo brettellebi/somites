@@ -15,7 +15,9 @@ rule create_gwas_input:
     script:
         "../scripts/create_gwas_input.R"
 
-rule run_gwas:
+rule test_gwls:
+
+rule run_gwls:
     input:
         gt_pos_list = os.path.join(config["data_store_dir"], "association_testing/{date_of_assoc_test}_true/inputs/{bin_length}.rds"),
         phenotypes_file = config["phenotypes_file"],

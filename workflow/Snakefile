@@ -150,7 +150,13 @@ rule all:
                 date_of_assoc_test = config["date_of_assoc_test"],
                 bin_length = config["bin_length"]
         ),
-# run_gwas
+# test_gwls
+        expand(os.path.join(config["data_store_dir"], "association_testing/{date_of_assoc_test}_true/results/{target_phenotype}/{bin_length}.rds"),
+                date_of_assoc_test = config["date_of_assoc_test"],
+                target_phenotype = config["target_phenotypes"],
+                bin_length = config["bin_length"]
+        )
+# run_gwls
         expand(os.path.join(config["data_store_dir"], "association_testing/{date_of_assoc_test}_true/results/{target_phenotype}/{bin_length}.rds"),
                 date_of_assoc_test = config["date_of_assoc_test"],
                 target_phenotype = config["target_phenotypes"],

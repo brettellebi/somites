@@ -42,5 +42,5 @@ run_rc_block_F0:
   memory: "{resources.mem_mb}"
 create_gwas_input:
   memory: "{resources.mem_mb}"
-run_gwas:
+run_gwls:
   memory: "{resources.mem_mb}"

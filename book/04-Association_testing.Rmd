@@ -162,7 +162,7 @@ gt_list = purrr::map(df_list, function(BIN_LENGTH_DF){
 }) 
 
 # Show first 10 columns
-gt_list$`20000`[1:10, ] %>% 
+gt_list$`20000`[, 1:10] %>% 
   head(.) %>% 
   DT::datatable(.) 
 ```
@@ -245,7 +245,7 @@ set.seed(5671)
 N = n_samples
 # N phenotypes
 P = 1
-# Porportion of total genetic variance
+# Proportion of total genetic variance
 genVar = 0.5
 # Proportion of genetic variance of genetic variant effects
 h2s = 1
@@ -272,6 +272,12 @@ sim_phenos = purrr::map(seq_along(sample_gts), function(COUNTER){
 names(sim_phenos) = names(sample_gts)
 
 saveRDS(sim_phenos, sim_path)
+
+# Write as xlsx to use in same Snakemake code as true GWLS
+lapply(seq_along(sim_phenos), function(COUNTER){
+  out = tibble::tibble(SAMPLE = colnames(sample_gts[[COUNTER]])[-1],
+                       )
+})
 ```
 
 ```{r, include = F}
