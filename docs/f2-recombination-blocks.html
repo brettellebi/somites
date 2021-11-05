@@ -112,8 +112,8 @@
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">df_list</span><span class="op">$</span><span class="va">`5000`</span><span class="op">)</span> <span class="op">%&gt;%</span> 
   <span class="fu">DT</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html">datatable</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span></code></pre></div>
-<div id="htmlwidget-066ced5d6bfdca641b72" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-066ced5d6bfdca641b72">{"x":{"filter":"none","data":[["1","2","3","4","5","6"],["/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt"],[0,5,4,11,16,5],[3,1,2,6,30,3],[4,6,8,11,16,17],[0,0.833333333333333,0.666666666666667,0.647058823529412,0.347826086956522,0.625],[1,1,1,1,1,1],[1,1,1,1,1,1],[1,1,1,1,1,1],[5000,5000,5000,5000,5000,5000],[15001,25001,35001,50001,75001,80001],[20000,30000,40000,55000,80000,85000],[5,5,5,5,5,5],[3,6,6,17,46,8]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>sample<\/th>\n      <th>mat<\/th>\n      <th>pat<\/th>\n      <th>bin<\/th>\n      <th>ratio<\/th>\n      <th>chr<\/th>\n      <th>state<\/th>\n      <th>LANE<\/th>\n      <th>BIN_LENGTH<\/th>\n      <th>BIN_START<\/th>\n      <th>BIN_END<\/th>\n      <th>BIN_LENGTH_KB<\/th>\n      <th>READS_PER_BIN<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[2,3,4,5,6,7,8,9,10,11,12,13]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script><p><code>ratio = mat / (mat + pat)</code>, where <code>mat</code> = Cab and <code>pat</code> = Kaga.</p>
+<div id="htmlwidget-5f717d8995e3551bfb9b" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-5f717d8995e3551bfb9b">{"x":{"filter":"none","data":[["1","2","3","4","5","6"],["/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt"],[0,5,4,11,16,5],[3,1,2,6,30,3],[4,6,8,11,16,17],[0,0.833333333333333,0.666666666666667,0.647058823529412,0.347826086956522,0.625],[1,1,1,1,1,1],[1,1,1,1,1,1],[1,1,1,1,1,1],[5000,5000,5000,5000,5000,5000],[15001,25001,35001,50001,75001,80001],[20000,30000,40000,55000,80000,85000],[5,5,5,5,5,5],[3,6,6,17,46,8]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>sample<\/th>\n      <th>mat<\/th>\n      <th>pat<\/th>\n      <th>bin<\/th>\n      <th>ratio<\/th>\n      <th>chr<\/th>\n      <th>state<\/th>\n      <th>LANE<\/th>\n      <th>BIN_LENGTH<\/th>\n      <th>BIN_START<\/th>\n      <th>BIN_END<\/th>\n      <th>BIN_LENGTH_KB<\/th>\n      <th>READS_PER_BIN<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[2,3,4,5,6,7,8,9,10,11,12,13]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script><p><code>ratio = mat / (mat + pat)</code>, where <code>mat</code> = Cab and <code>pat</code> = Kaga.</p>
 <p>Plot <code>ratio</code> against <code>state</code></p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">df_list</span><span class="op">$</span><span class="va">`5000`</span> <span class="op">%&gt;%</span>
@@ -170,7 +170,7 @@ Vice versa for state <code>2</code> and <em>Cab</em>.</p>
     <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu">scale_fill_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"#778DA9"</span>, <span class="st">"#415A77"</span>, <span class="st">"#1B263B"</span>, <span class="st">"#0D1B2A"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu">guides</span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span>
-<span class="co">#&gt; Warning: Removed 64 rows containing non-finite values</span>
+<span class="co">#&gt; Warning: Removed 88 rows containing non-finite values</span>
 <span class="co">#&gt; (stat_boxplot).</span></code></pre></div>
 <div class="inline-figure"><img src="03-F2_recombination_files/figure-html/unnamed-chunk-7-1.png" width="672"></div>
 </div>
@@ -190,7 +190,7 @@ Vice versa for state <code>2</code> and <em>Cab</em>.</p>
     <span class="fu">facet_grid</span><span class="op">(</span>cols <span class="op">=</span> <span class="fu">vars</span><span class="op">(</span><span class="va">BIN_LENGTH</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
 <span class="co">##   scale_colour_manual(values = c("#778DA9", "#415A77", "#1B263B", "#0D1B2A")) +</span>
     <span class="fu">guides</span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span>
-<span class="co">#&gt; Warning: Removed 54 rows containing missing values</span>
+<span class="co">#&gt; Warning: Removed 66 rows containing missing values</span>
 <span class="co">#&gt; (geom_point).</span></code></pre></div>
 <div class="inline-figure"><img src="03-F2_recombination_files/figure-html/unnamed-chunk-8-1.png" width="672"></div>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
@@ -208,7 +208,7 @@ Vice versa for state <code>2</code> and <em>Cab</em>.</p>
 <span class="co">##   scale_colour_manual(values = c("#778DA9", "#415A77", "#1B263B", "#0D1B2A")) +</span>
     <span class="fu">guides</span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu"><a href="https://rdrr.io/r/graphics/plot.window.html">xlim</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">100</span><span class="op">)</span>
-<span class="co">#&gt; Warning: Removed 23767 rows containing missing values</span>
+<span class="co">#&gt; Warning: Removed 23596 rows containing missing values</span>
 <span class="co">#&gt; (geom_point).</span></code></pre></div>
 <div class="inline-figure"><img src="03-F2_recombination_files/figure-html/unnamed-chunk-8-2.png" width="672"></div>
 </div>
@@ -704,7 +704,7 @@ Figure 4.3: Bin length: 5 kb
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Somite period F2 analysis</strong>" was written by Ian Brettell. It was last built on 2021-11-04.</p>
+    <p>"<strong>Somite period F2 analysis</strong>" was written by Ian Brettell. It was last built on 2021-11-05.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

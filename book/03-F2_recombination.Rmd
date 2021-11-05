@@ -49,7 +49,7 @@ df_list = purrr::map(data_list, function(data){
 
 ```
 
-## Look at relationship between `ratio` and `state`
+## Examine relationship between `ratio` and `state`
 
 To determine which state is associated with which parental strain.
 
@@ -89,7 +89,7 @@ knitr::include_graphics(here::here("book/plots/20211027_ratio_v_state.png"))
 This shows that state `0` is associated with a *low* ratio of Cab to Kaga, and therefore a call of *Kaga*.
 Vice versa for state `2` and *Cab*. 
 
-## Recode state to put in correct order
+### Recode state to put in correct order
 
 ```{r}
 df_list = purrr::map(df_list, function(df){
@@ -424,7 +424,7 @@ df %>%
     
 ```
 
-##Karyoplot
+## Karyoplot
 
 Make custom chromosome scaffold
 
@@ -566,9 +566,9 @@ knitr::include_graphics(here::here("book/plots/20211027_karyoplot_15000.png"))
 knitr::include_graphics(here::here("book/plots/20211027_karyoplot_20000.png"))
 ```
 
-##Realised relationship matrix
+## Realised relationship matrix
 
-## Process data
+### Process data
 
 ```{r, eval = F}
 # Process data
@@ -601,7 +601,7 @@ rrmat = sommer::A.mat(gt_mat_rc)
 saveRDS(rrmat, here::here("data/realised_relationship_matrix.rds"))
 ```
 
-## Plot
+### Plot
 
 ```{r, eval = F}
 rrmat = readRDS(here::here("data/realised_relationship_matrix.rds"))
