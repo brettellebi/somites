@@ -97,7 +97,7 @@ lapply(seq_along(plot_dat), function(COUNTER_PHENO){
     # Plot
     out = plot_man(plot_dat[[COUNTER_PHENO]][[COUNTER_BINL]],
              phenotype = PHENO,
-             bin_length = BIN_LENGTH,
+             bin_length = BINL,
              gwas_pal = gwas_pal[2:3],
              med_chr_lens = med_chr_lens,
              sig_line = SIG_LEVEL) +
@@ -186,7 +186,7 @@ lapply(seq_along(plot_dat), function(COUNTER_PHENO){
     # Plot
     out = plot_man(plot_dat[[COUNTER_PHENO]][[COUNTER_BINL]],
              phenotype = PHENO,
-             bin_length = BIN_LENGTH,
+             bin_length = BINL,
              gwas_pal = gwas_pal[2:3],
              med_chr_lens = med_chr_lens,
              sig_line = SIG_LEVEL) +
