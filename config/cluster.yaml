@@ -29,20 +29,27 @@ bwa_mem2_mem:
 sort_sam_f2:
   memory: "{resources.mem_mb}"
 # 05_F2_recomb_blocks.smk
-bam_readcount_F2:
+bam_readcount_F2_all:
+  memory: "{resources.mem_mb}"
+bam_readcount_F2_excl_repeat_sites:
+  memory: "{resources.mem_mb}"
+bam_readcount_F2_excl_repeat_reads:
   memory: "{resources.mem_mb}"
 make_dp_AB_F2:
   memory: "{resources.mem_mb}"
 run_rc_block_F2:
   memory: "{resources.mem_mb}"
 # 06_F0_recomb_blocks.smk
-combine_dp_AB_F0:
+make_dp_AB_F0:
   memory: "{resources.mem_mb}"  
 run_rc_block_F0:
   memory: "{resources.mem_mb}"
+# 07_association_testing.smk
 create_gwas_input:
   memory: "{resources.mem_mb}"
 test_gwls:
   memory: "{resources.mem_mb}"
 run_gwls:
+  memory: "{resources.mem_mb}"
+run_permutations:
   memory: "{resources.mem_mb}"

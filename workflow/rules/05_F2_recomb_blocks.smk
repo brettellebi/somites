@@ -55,17 +55,71 @@ rule exclude_repeat_sites_F2:
     script:
         "../scripts/exclude_repeat_sites_F2.R"
 
-rule bam_readcount_F2:
+# Create a BED file of repeat regions
+rule create_repeats_bed:
+    input:
+        config["hdrr_repeats_gff"]
+    output:
+        os.path.join(config["data_store_dir"], "repeats/hdrr_repeats.bed")
+    log:
+        os.path.join(config["working_dir"], "logs/create_repeats_bed/all.log")
+    container:
+        config["R"]
+    script:
+        "../scripts/create_repeats_bed.R"
+
+# Filter reads that overlap repeat regions
+rule filter_repeats_from_bams_F2:
+    input:
+        bam = os.path.join(config["working_dir"], "bams/F2/bwamem2/marked/{F2_sample}.bam"),
+        repeats_bed = os.path.join(config["data_store_dir"], "repeats/hdrr_repeats.bed"),
+    output:
+        keep = os.path.join(config["working_dir"], "bams/F2/bwamem2/no_repeat_keep/{F2_sample}.bam"),
+        throw = os.path.join(config["working_dir"], "bams/F2/bwamem2/no_repeat_throw/{F2_sample}.bam"),
+    log:
+        os.path.join(config["working_dir"], "logs/filter_repeats_from_bams_F2/{F2_sample}.log"),
+    container:
+        config["samtools"]
+    shell:
+        """
+        samtools view \
+            --bam \
+            --targets-file {input.repeats_bed} \
+            --output-unselected {output.keep} \
+            {input.bam} \
+            > {output.throw} \
+                2> {log}
+        """
+
+rule samtools_index_f2_filtered_bams:
+    input:
+        os.path.join(config["working_dir"], "bams/F2/bwamem2/no_repeat_keep/{F2_sample}.bam")
+    output:
+        os.path.join(config["working_dir"], "bams/F2/bwamem2/no_repeat_keep/{F2_sample}.bam.bai")
+    log:
+        os.path.join(config["working_dir"], "logs/samtools_index_f2_filtered_bams/{F2_sample}.log") 
+    container:
+        config["samtools"]
+    shell:
+        """
+        samtools index \
+            {input[0]} \
+            {output[0]} \
+                2> {log}
+        """
+
+# Bam readcounts 
+    ## All sites
+rule bam_readcount_F2_all:
     input:
         bam = os.path.join(config["working_dir"], "bams/F2/bwamem2/marked/{F2_sample}.bam"),
         index = os.path.join(config["working_dir"], "bams/F2/bwamem2/marked/{F2_sample}.bam.bai"),
-        #sites_file = os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/homo_divergent/all.txt"),
-        sites_file = os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/homo_divergent/no_repeats.txt"),
+        sites_file = os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/homo_divergent/all.txt"),
         ref = config["ref_prefix"] + ".fasta",
     output:
-        os.path.join(config["working_dir"], "dp4s/batch_01/bwamem2/{F2_sample}.dp4.txt")
+        os.path.join(config["working_dir"], "dp4s/F2/all_sites/{F2_sample}.dp4.txt")
     log:
-        os.path.join(config["working_dir"], "logs/bam_readcount_F2/{F2_sample}.log")
+        os.path.join(config["working_dir"], "logs/bam_readcount_F2_all/{F2_sample}.log")
     resources:
         mem_mb = 10000
     container:
@@ -80,29 +134,83 @@ rule bam_readcount_F2:
                 > {output} 2> {log}
         """
 
+    ## Excluding SITES overlapping repeat regions
+rule bam_readcount_F2_excl_repeat_sites:
+    input:
+        bam = os.path.join(config["working_dir"], "bams/F2/bwamem2/marked/{F2_sample}.bam"),
+        index = os.path.join(config["working_dir"], "bams/F2/bwamem2/marked/{F2_sample}.bam.bai"),
+        # `sites_file` differs from above
+        sites_file = os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/homo_divergent/no_repeats.txt"),
+        ref = config["ref_prefix"] + ".fasta",
+    output:
+        os.path.join(config["working_dir"], "dp4s/F2/no_repeat_sites/{F2_sample}.dp4.txt")
+    log:
+        os.path.join(config["working_dir"], "logs/bam_readcount_F2_excl_repeat_sites/{F2_sample}.log")
+    resources:
+        mem_mb = 10000
+    container:
+        config["bam-readcount"]
+    shell:
+        """
+        bam-readcount \
+            -l {input.sites_file} \
+            -f {input.ref} \
+            {input.bam} | \
+            cut -f 1,15,28,41,54,67 -d ":" | sed 's/=//g' | sed 's/\\t:/\\t/g' | sed 's/:/\\t/g' \
+                > {output} 2> {log}
+        """
+
+    ## Excluding READS overlapping repeat regions
+rule bam_readcount_F2_excl_repeat_reads:
+    input:
+        # `bam` and `index` differ from above
+        bam = os.path.join(config["working_dir"], "bams/F2/bwamem2/no_repeat_keep/{F2_sample}.bam"),
+        index = os.path.join(config["working_dir"], "bams/F2/bwamem2/no_repeat_keep/{F2_sample}.bam.bai"),
+        sites_file = os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/homo_divergent/no_repeats.txt"),
+        ref = config["ref_prefix"] + ".fasta",
+    output:
+        os.path.join(config["working_dir"], "dp4s/F2/no_repeat_reads/{F2_sample}.dp4.txt")
+    log:
+        os.path.join(config["working_dir"], "logs/bam_readcount_F2_excl_repeat_reads/{F2_sample}.log")
+    resources:
+        mem_mb = 10000
+    container:
+        config["bam-readcount"]
+    shell:
+        """
+        bam-readcount \
+            -l {input.sites_file} \
+            -f {input.ref} \
+            {input.bam} | \
+            cut -f 1,15,28,41,54,67 -d ":" | sed 's/=//g' | sed 's/\\t:/\\t/g' | sed 's/:/\\t/g' \
+                > {output} 2> {log}
+        """
+
+# Make dpAB files
 rule make_dp_AB_F2:
     input:
-        dp4 = os.path.join(config["working_dir"], "dp4s/batch_01/bwamem2/{F2_sample}.dp4.txt"),
-        sites_file = os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/final/all.txt"),
+        dp4 = os.path.join(config["working_dir"], "dp4s/F2/{site_filter}/{F2_sample}.dp4.txt"),
+        sites_file = os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/homo_divergent/all.txt"),
     output:
-        os.path.join(config["working_dir"], "dpABs/batch_01/bwamem2/{F2_sample}.txt"),
+        os.path.join(config["working_dir"], "dpABs/F2/{site_filter}/{F2_sample}.txt"),
     log:
-        os.path.join(config["working_dir"], "logs/make_dp_AB/{F2_sample}.log")
+        os.path.join(config["working_dir"], "logs/make_dp_AB_F2/{site_filter}/{F2_sample}.log")
     resources:
         mem_mb = 10000
     script:
         "../scripts/make_dp_AB.py"
 
+# Run HMM recombination blocks
 rule run_rc_block_F2:
     input:
-        dp_files = expand(os.path.join(config["working_dir"], "dpABs/batch_01/bwamem2/{F2_sample}.txt"),
+        dp_files = expand(os.path.join(config["working_dir"], "dpABs/F2/{{site_filter}}/{F2_sample}.txt"),
             F2_sample = F2_samples['SAMPLE']
         ),
         source_code = "workflow/scripts/rc_block_hmm.R"
     output:
-        os.path.join(config["data_store_dir"], "recombination_blocks/{date_of_processing}/F2_{bin_length}.txt"),
+        os.path.join(config["data_store_dir"], "recombination_blocks/F2/{site_filter}/{bin_length}.txt"),
     log:
-        os.path.join(config["working_dir"], "logs/run_rc_block/{date_of_processing}/{bin_length}.log")
+        os.path.join(config["working_dir"], "logs/run_rc_block_F2/{site_filter}/{bin_length}.log")
     params:
         bin_length = lambda wildcards: wildcards.bin_length
     resources:

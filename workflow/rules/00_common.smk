@@ -37,6 +37,8 @@ F2_samples = pd.read_table(config["F2_samples"], comment = '#', dtype = str).set
     ["SAMPLE"], drop=False
 )
 
+PERM_SEEDS = list(range(1, config["n_permutations"][0] + 1))
+
 #######################
 ## Helper functions
 #######################

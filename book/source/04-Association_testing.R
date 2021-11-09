@@ -98,7 +98,7 @@ clean_gwas_res = function(gwas_results, bin_length, chr_lens){
     dplyr::mutate(LOCUS = paste(CHROM, BIN_START, sep = ":"))
 } 
 
-plot_man = function(df, phenotype, bin_length, gwas_pal, size = 0.5, alpha = 0.5, med_chr_lens, sig_line = 3.6, sug_line = 2.9){
+plot_man = function(df, phenotype, bin_length, gwas_pal, size = 0.5, alpha = 0.5, med_chr_lens, sig_line = 3.6){
   # Create palette
   pal = rep_len(gwas_pal, length.out = nrow(med_chr_lens))
   names(pal) = med_chr_lens$chr
@@ -124,14 +124,13 @@ plot_man = function(df, phenotype, bin_length, gwas_pal, size = 0.5, alpha = 0.5
     ggtitle(paste("Phenotype: ", phenotype, "\nBin length: ",  bin_length, sep = "")) +
     xlab("Chromosome") +
     ylab("-log10(p-value)") + 
-    geom_hline(yintercept = sig_line, colour = "#1effbc", linetype = "dashed") +
-    geom_hline(yintercept = sug_line, colour = "#5c95ff", linetype = "dashed")
+    geom_hline(yintercept = sig_line, colour = "#60D394", linetype = "dashed")
   
   return(p)
   
 }
 
-plot_int_man = function(df, phenotype, bin_length, gwas_pal, size = 0.5, alpha = 0.5, med_chr_lens, sig_line = 3.6, sug_line = 2.9){
+plot_int_man = function(df, phenotype, bin_length, gwas_pal, size = 0.5, alpha = 0.5, med_chr_lens, sig_line = NULL){
   # Create palette
   pal = rep_len(gwas_pal, length.out = nrow(med_chr_lens))
   names(pal) = med_chr_lens$chr
@@ -157,8 +156,7 @@ plot_int_man = function(df, phenotype, bin_length, gwas_pal, size = 0.5, alpha =
     ggtitle(paste("Phenotype: ", phenotype, "\nBin length: ",  bin_length, sep = "")) +
     xlab("Chromosome") +
     ylab("-log10(p-value)") + 
-    geom_hline(yintercept = sig_line, colour = "#1effbc", linetype = "dashed") +
-    geom_hline(yintercept = sug_line, colour = "#5c95ff", linetype = "dashed")
+    geom_hline(yintercept = sig_line, colour = "#1effbc", linetype = "dashed") 
   
   ggplotly(p, tooltip = c("CHROM", "BIN_START", "BIN_END"))
 }

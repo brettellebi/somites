@@ -119,31 +119,14 @@ rule all:
 #                date_of_processing = config["date_of_processing"],
 #                bin_length = config["bin_length"]
 #        ),
-################
-## 06_F0_recomb_blocks.smk
-################
-## get_ref_alt_sites
-#        expand(os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/ref_alt/by_chr/{contig}.txt"),
-#                contig = get_contigs(),
-#        ),
-## bam_readcount_F0
-#        expand(os.path.join(config["working_dir"], "dp4s/F0/{F0_sample}/{contig}.dp4.txt"),
-#                F0_sample = config["F0_lines"],
-#                contig = get_contigs(),
-#        ),
-## make_dp_AB_F0
-#        expand(os.path.join(config["working_dir"], "dpABs/F0/{F0_sample}/{contig}.txt"),
-#                F0_sample = config["F0_lines"],
-#                contig = get_contigs(),
-#        ),
-## combine_dp_AB_F0
-#        expand(os.path.join(config["working_dir"], "dpABs/F0/{F0_sample}/all/all.txt"),
-#                F0_sample = config["F0_lines"],
-#        ),
-## run_rc_block_F0
-#        expand(os.path.join(config["data_store_dir"], "recombination_blocks/20210803_hmm_output_F0_binlen_{bin_length}.txt"),
-#                bin_length = config["bin_length_F0"]
-#        ),
+###############
+# 06_F0_recomb_blocks.smk
+###############
+# run_rc_block_F0
+        expand(os.path.join(config["data_store_dir"], "recombination_blocks/F0/{site_filter}/{bin_length}.txt"),
+                site_filter = config["site_filter"],
+                bin_length = config["bin_length_F0"]
+        ),
 ################
 ## 07_association_testing.smk
 ################
@@ -159,11 +142,20 @@ rule all:
 #                bin_length = config["bin_length"]
 #        ),
 # run_gwls
-        expand(os.path.join(config["data_store_dir"], "association_testing/{date_of_assoc_test}_true/results/{target_phenotype}/{bin_length}.rds"),
+        expand(os.path.join(config["data_store_dir"], "association_testing/{date_of_assoc_test}_true/{site_filter}/results/{target_phenotype}/{bin_length}.rds"),
                 date_of_assoc_test = config["date_of_assoc_test"],
+                site_filter = config["site_filter"],
                 target_phenotype = config["target_phenotypes"],
                 bin_length = config["bin_length"]
-        )
+        ),
+# run permutations
+        expand(os.path.join(config["data_store_dir"], "association_testing/{date_of_assoc_test}_permutations/{site_filter}/{target_phenotype}/{bin_length}/{permutation_seed}.rds"),
+                date_of_assoc_test = config["date_of_assoc_test"],
+                site_filter = config["site_filter"],
+                target_phenotype = config["target_phenotypes"],
+                bin_length = config["bin_length"],
+                permutation_seed = PERM_SEEDS      
+        ),
 
 ##### Modules #####
 

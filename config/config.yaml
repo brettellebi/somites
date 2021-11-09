@@ -34,10 +34,12 @@ ref:
     release: 104
     # genome build
     build: ASM223467v1
-date_of_processing:
-    - 20211027
+site_filter:
+    - all_sites
+    - no_repeat_sites
+    - no_repeat_reads
 date_of_assoc_test:
-    - 20211104
+    #- 20211104
     - 20211109
 bin_length:
     - 5000
@@ -47,6 +49,8 @@ bin_length:
 bin_length_F0:
     - 5000
     - 100000
+n_permutations:
+    - 10
 ####################
 # Locations
 ####################
@@ -55,10 +59,10 @@ ref_prefix:
 F2_sequence_dirs:
     - /nfs/research/birney/projects/indigene/raw_data/Ali/Kaga-Cab_F2_First200WGS
     - /nfs/research/birney/projects/indigene/raw_data/Ali/Kaga-Cab_F2_Fish201-400_WGS
-working_dir:
-    /hps/nobackup/birney/users/ian/somites
 tmp_dir:
     /hps/nobackup/birney/users/ian/somites/tmp
+working_dir:
+    /hps/nobackup/birney/users/ian/somites
 data_store_dir:
     /nfs/research/birney/users/ian/somites
 ####################
