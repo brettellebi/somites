@@ -102,6 +102,8 @@ rule all:
 #        expand(os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/homo_all/{F0_sample}.csv"),
 #                F0_sample = config["F0_lines"]
 #        ),
+## exclude_repeat_sites_F2
+#        os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/homo_divergent/no_repeats.txt"),
 ## get_divergent_sites
 #        os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/homo_divergent/all.txt"),
 ## bam_readcount_F2
@@ -142,26 +144,27 @@ rule all:
 #        expand(os.path.join(config["data_store_dir"], "recombination_blocks/20210803_hmm_output_F0_binlen_{bin_length}.txt"),
 #                bin_length = config["bin_length_F0"]
 #        ),
-###############
-# 07_association_testing.smk
-###############
-# create_gwas_input
-        expand(os.path.join(config["data_store_dir"], "association_testing/{date_of_assoc_test}_true/inputs/{bin_length}.rds"),
-                date_of_assoc_test = config["date_of_assoc_test"],
-                bin_length = config["bin_length"]
-        ),
-# test_gwls
-        expand(os.path.join(config["data_store_dir"], "association_testing/{date_of_assoc_test}_true/results/{target_phenotype}/{bin_length}.rds"),
-                date_of_assoc_test = config["date_of_assoc_test"],
-                target_phenotype = config["target_phenotypes"],
-                bin_length = config["bin_length"]
-        )
+################
+## 07_association_testing.smk
+################
+## create_gwas_input
+#        expand(os.path.join(config["data_store_dir"], "association_testing/{date_of_assoc_test}_true/inputs/{bin_length}.rds"),
+#                date_of_assoc_test = config["date_of_assoc_test"],
+#                bin_length = config["bin_length"]
+#        ),
+## test_gwls
+#        expand(os.path.join(config["data_store_dir"], "association_testing/{date_of_assoc_test}_test/test_results/{bin_length}.rds"),
+#                date_of_assoc_test = config["date_of_assoc_test"],
+#                target_phenotype = config["target_phenotypes"],
+#                bin_length = config["bin_length"]
+#        ),
 # run_gwls
         expand(os.path.join(config["data_store_dir"], "association_testing/{date_of_assoc_test}_true/results/{target_phenotype}/{bin_length}.rds"),
                 date_of_assoc_test = config["date_of_assoc_test"],
                 target_phenotype = config["target_phenotypes"],
                 bin_length = config["bin_length"]
         )
+
 ##### Modules #####
 
 include: "rules/01_ref.smk"

@@ -11,6 +11,8 @@ F2_samples:
     config/F2_samples.txt
 F2_valid_lanes:
     config/F2_valid_lanes.txt
+hdrr_repeats_gff:
+    /nfs/research/birney/users/ian/mikk_genome/repeats/medaka_hdrr_repeats.fixed.gff
 phenotypes_file:
     data/20210917_First400_F2_DF.xlsx
 target_phenotypes:
@@ -36,6 +38,7 @@ date_of_processing:
     - 20211027
 date_of_assoc_test:
     - 20211104
+    - 20211109
 bin_length:
     - 5000
     - 10000

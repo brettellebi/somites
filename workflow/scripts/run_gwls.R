@@ -35,8 +35,10 @@ phenos = readxl::read_xlsx(PHENO_FILE) %>%
     # adjust sample names
     dplyr::mutate(SAMPLE = fish %>% stringr::str_remove("KC")) %>%
     # select key columns
-    dplyr::select(SAMPLE, all_of(TARGET_PHENO))
-
+    dplyr::select(SAMPLE, all_of(TARGET_PHENO)) %>%
+    # ensure that the phenotype column is numeric
+    dplyr::mutate(dplyr::across(all_of(TARGET_PHENO),
+                                ~ as.numeric(.x)))
 
 ## Filter genotypes for those that have phenotypes
 in_list[["genotypes"]] = in_list[["genotypes"]] %>%

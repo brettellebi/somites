@@ -273,10 +273,16 @@ names(sim_phenos) = names(sample_gts)
 
 saveRDS(sim_phenos, sim_path)
 
-# Write as xlsx to use in same Snakemake code as true GWLS
+# Write as .xlsx to use in same Snakemake code as true GWLS
 lapply(seq_along(sim_phenos), function(COUNTER){
-  out = tibble::tibble(SAMPLE = colnames(sample_gts[[COUNTER]])[-1],
-                       )
+  out = tibble::tibble(fish = colnames(sample_gts[[COUNTER]])[-1],
+                       Y = sim_phenos[[COUNTER]]$phenoComponentsFinal$Y)
+  # set path for output
+  out_file = file.path(lts_dir, 
+                       "association_testing/20211027_test/simulated_phenotypes",
+                       paste(names(sim_phenos)[COUNTER], ".xlsx", sep = ""))
+  # write to file
+  openxlsx::write.xlsx(out, out_file, overwrite = T)
 })
 ```
 
@@ -307,7 +313,7 @@ final_nomiss = purrr::map(seq_along(gt_nomiss_list), function(COUNTER){
     dplyr::select(CHROM, BIN_START, BIN_END)
   
   # Phenotypes
-  out[["phenotypes"]] = data.frame(SAMPLE = rownames(sim_phenos[[COUNTER]]$phenoComponentsFinal$Y),
+  out[["phenotypes"]] = data.frame(fish = rownames(sim_phenos[[COUNTER]]$phenoComponentsFinal$Y),
                                    Y = sim_phenos[[COUNTER]]$phenoComponentsFinal$Y %>%
                                      as.numeric()
                                    )
@@ -377,7 +383,7 @@ gwas_tests_nomiss = readRDS(test_out_nomiss)
 ```{r}
 # Create custom Manhattan plot
 
-test_man_nomiss = purrr::map(seq_along(gwas_tests_nomiss), function(COUNTER){
+test_man_nomiss = lapply(seq_along(gwas_tests_nomiss), function(COUNTER){
   # Get bin length
   BIN_LENGTH = names(gwas_tests_nomiss)[COUNTER] %>% 
     as.numeric(.)
@@ -449,11 +455,6 @@ test_man_nomiss = purrr::map(seq_along(gwas_tests_nomiss), function(COUNTER){
   
   return(out)
 })
-
-test_man_nomiss[[1]]
-test_man_nomiss[[2]]
-test_man_nomiss[[3]]
-test_man_nomiss[[4]]
 ```
 
 ### Include loci with missing genotypes
@@ -477,6 +478,15 @@ saveRDS(gwas_tests_wimiss, test_out_wimiss)
 ```{r, include = F}
 gwas_tests_wimiss = readRDS(test_out_wimiss)
 ```
+
+#### Read in results from Snakemake script
+
+```{r}
+gwas_tests_wimiss = purrr::map(bin_lengths, function(BIN_LENGTH){
+  readRDS(file.path(lts_dir, "association_testing/20211104_test/test_results", paste(BIN_LENGTH, ".rds", sep = "")))
+})
+```
+
 
 #### Plot
 

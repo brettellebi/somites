@@ -41,11 +41,26 @@ rule get_divergent_sites:
     script:
         "../scripts/get_divergent_sites.py"
 
+# Exclude target sites that overlap repeat regions
+rule exclude_repeat_sites_F2:
+    input:
+        target_sites = os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/homo_divergent/all.txt"),
+        repeats_file = config["hdrr_repeats_gff"]
+    output:
+        os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/homo_divergent/no_repeats.txt")
+    log:
+        os.path.join(config["working_dir"], "logs/exclude_repeat_sites_F2/all.log")
+    container:
+        config["R"]
+    script:
+        "../scripts/exclude_repeat_sites_F2.R"
+
 rule bam_readcount_F2:
     input:
         bam = os.path.join(config["working_dir"], "bams/F2/bwamem2/marked/{F2_sample}.bam"),
         index = os.path.join(config["working_dir"], "bams/F2/bwamem2/marked/{F2_sample}.bam.bai"),
-        sites_file = os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/homo_divergent/all.txt"),
+        #sites_file = os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/homo_divergent/all.txt"),
+        sites_file = os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/homo_divergent/no_repeats.txt"),
         ref = config["ref_prefix"] + ".fasta",
     output:
         os.path.join(config["working_dir"], "dp4s/batch_01/bwamem2/{F2_sample}.dp4.txt")

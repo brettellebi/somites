@@ -19,8 +19,8 @@ From: rocker/tidyverse:4.1.0
     # Install correct version of `matrixStats`
     R -e 'devtools::install_version("matrixStats", ">= 0.60.1", repos = "https://cloud.r-project.org/")'
     
-    # Install non-CRAN packages
-    R -e 'BiocManager::install("karyoploteR")'
+    # Install Bioconductor packages
+    R -e 'BiocManager::install(c("karyoploteR", "GenomicRanges"))'
 
     # Install ViteRbi
     R -e "devtools::install_github('tf2/ViteRbi', upgrade = 'never')"
