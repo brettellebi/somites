@@ -7,7 +7,7 @@
 library(tidyverse)
 library(karyoploteR)
 library(ggbeeswarm)
-library(sommer)
+#library(sommer)
 library(plotly)
 library(DT)
 

@@ -4,16 +4,16 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Chapter 6 GWLS results | Somite period F2 analysis</title>
+<title>Chapter 7 GWLS results | Somite period F2 analysis</title>
 <meta name="author" content="Ian Brettell">
-<meta name="description" content='library(here) source(here::here("book/source/04-Association_testing.R"))  6.1 Phenotype data First 400 phenotype data:...'>
+<meta name="description" content='library(here) source(here::here("book/source/04-Association_testing.R"))  7.1 Notes 20211104 association test performed on full sites file. Results here:...'>
 <meta name="generator" content="bookdown 0.24.2 with bs4_book()">
-<meta property="og:title" content="Chapter 6 GWLS results | Somite period F2 analysis">
+<meta property="og:title" content="Chapter 7 GWLS results | Somite period F2 analysis">
 <meta property="og:type" content="book">
-<meta property="og:description" content='library(here) source(here::here("book/source/04-Association_testing.R"))  6.1 Phenotype data First 400 phenotype data:...'>
+<meta property="og:description" content='library(here) source(here::here("book/source/04-Association_testing.R"))  7.1 Notes 20211104 association test performed on full sites file. Results here:...'>
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Chapter 6 GWLS results | Somite period F2 analysis">
-<meta name="twitter:description" content='library(here) source(here::here("book/source/04-Association_testing.R"))  6.1 Phenotype data First 400 phenotype data:...'>
+<meta name="twitter:title" content="Chapter 7 GWLS results | Somite period F2 analysis">
+<meta name="twitter:description" content='library(here) source(here::here("book/source/04-Association_testing.R"))  7.1 Notes 20211104 association test performed on full sites file. Results here:...'>
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/header-attrs-2.10/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.2.5.1/tabs.js"></script><script src="libs/bs3compat-0.2.5.1/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
@@ -47,9 +47,10 @@
 <li><a class="" href="index.html"><span class="header-section-number">1</span> About</a></li>
 <li><a class="" href="alignment-of-f0-and-f2-generations.html"><span class="header-section-number">2</span> Alignment of F0 and F2 generations</a></li>
 <li><a class="" href="homozygosity-of-f0-cab-and-kaga.html"><span class="header-section-number">3</span> Homozygosity of F0 Cab and Kaga</a></li>
-<li><a class="" href="f2-recombination-blocks.html"><span class="header-section-number">4</span> F2 recombination blocks</a></li>
-<li><a class="" href="association-testing-with-simulated-phenotypes.html"><span class="header-section-number">5</span> Association testing with simulated phenotypes</a></li>
-<li><a class="active" href="gwls-results.html"><span class="header-section-number">6</span> GWLS results</a></li>
+<li><a class="" href="f2-recombination-blocks-old.html"><span class="header-section-number">4</span> F2 recombination blocks (old)</a></li>
+<li><a class="" href="f2-recombination-blocks-new.html"><span class="header-section-number">5</span> F2 recombination blocks (new)</a></li>
+<li><a class="" href="association-testing-with-simulated-phenotypes.html"><span class="header-section-number">6</span> Association testing with simulated phenotypes</a></li>
+<li><a class="active" href="gwls-results.html"><span class="header-section-number">7</span> GWLS results</a></li>
 </ul>
 
         <div class="book-extra">
@@ -57,16 +58,27 @@
         </div>
       </nav>
 </div>
-  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="gwls-results" class="section level1" number="6">
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="gwls-results" class="section level1" number="7">
 <h1>
-<span class="header-section-number">6</span> GWLS results<a class="anchor" aria-label="anchor" href="#gwls-results"><i class="fas fa-link"></i></a>
+<span class="header-section-number">7</span> GWLS results<a class="anchor" aria-label="anchor" href="#gwls-results"><i class="fas fa-link"></i></a>
 </h1>
-<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb99"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://here.r-lib.org/">here</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"book/source/04-Association_testing.R"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<div id="phenotype-data" class="section level2" number="6.1">
+<div id="notes" class="section level2" number="7.1">
 <h2>
-<span class="header-section-number">6.1</span> Phenotype data<a class="anchor" aria-label="anchor" href="#phenotype-data"><i class="fas fa-link"></i></a>
+<span class="header-section-number">7.1</span> Notes<a class="anchor" aria-label="anchor" href="#notes"><i class="fas fa-link"></i></a>
+</h2>
+<ul>
+<li>20211104 association test performed on full sites file. Results here: <code>/nfs/research/birney/users/ian/somites/association_testing/20211104_true/results</code>
+</li>
+<li>20211109 association test performed on sites excluding those overlapping repeat regions. Results here: <code>/nfs/research/birney/users/ian/somites/association_testing/20211109_true/results</code>
+</li>
+</ul>
+</div>
+<div id="phenotype-data" class="section level2" number="7.2">
+<h2>
+<span class="header-section-number">7.2</span> Phenotype data<a class="anchor" aria-label="anchor" href="#phenotype-data"><i class="fas fa-link"></i></a>
 </h2>
 <p>First 400 phenotype data: <a href="https://github.com/brettellebi/somites/tree/master/data/20210917_First400_F2_DF.xlsx" class="uri">https://github.com/brettellebi/somites/tree/master/data/20210917_First400_F2_DF.xlsx</a>.</p>
 <blockquote>
@@ -78,26 +90,30 @@ intercept period -&gt; intercept in the table
 mean period -&gt; mean in the table</p>
 </blockquote>
 </div>
-<div id="snakemake-rules" class="section level2" number="6.2">
+<div id="snakemake-rules" class="section level2" number="7.3">
 <h2>
-<span class="header-section-number">6.2</span> Snakemake rules<a class="anchor" aria-label="anchor" href="#snakemake-rules"><i class="fas fa-link"></i></a>
+<span class="header-section-number">7.3</span> Snakemake rules<a class="anchor" aria-label="anchor" href="#snakemake-rules"><i class="fas fa-link"></i></a>
 </h2>
 <p>Snakemake rules for running the GWAS over these phenotypes: <a href="https://github.com/brettellebi/somites/blob/master/workflow/rules/07_assocation_testing.smk" class="uri">https://github.com/brettellebi/somites/blob/master/workflow/rules/07_assocation_testing.smk</a></p>
 </div>
-<div id="results" class="section level2" number="6.3">
+<div id="results" class="section level2" number="7.4">
 <h2>
-<span class="header-section-number">6.3</span> Results<a class="anchor" aria-label="anchor" href="#results"><i class="fas fa-link"></i></a>
+<span class="header-section-number">7.4</span> Results<a class="anchor" aria-label="anchor" href="#results"><i class="fas fa-link"></i></a>
 </h2>
-<div id="read-in-files" class="section level3" number="6.3.1">
+<div id="all-sites" class="section level3" number="7.4.1">
 <h3>
-<span class="header-section-number">6.3.1</span> Read in files<a class="anchor" aria-label="anchor" href="#read-in-files"><i class="fas fa-link"></i></a>
+<span class="header-section-number">7.4.1</span> All sites<a class="anchor" aria-label="anchor" href="#all-sites"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
+<div id="read-in-files" class="section level4" number="7.4.1.1">
+<h4>
+<span class="header-section-number">7.4.1.1</span> Read in files<a class="anchor" aria-label="anchor" href="#read-in-files"><i class="fas fa-link"></i></a>
+</h4>
+<div class="sourceCode" id="cb100"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">target_phenos</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"mean"</span>, <span class="st">"intercept"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">target_phenos</span><span class="op">)</span> <span class="op">=</span> <span class="va">target_phenos</span>
 <span class="va">bin_lengths</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">5000</span>, <span class="fl">10000</span>, <span class="fl">15000</span>, <span class="fl">20000</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">bin_lengths</span><span class="op">)</span> <span class="op">=</span> <span class="va">bin_lengths</span>
-<span class="va">results_dir</span> <span class="op">=</span> <span class="st">"/nfs/research/birney/users/ian/somites/association_testing/20211104_true/results"</span>
+<span class="va">results_dir</span> <span class="op">=</span> <span class="st">"/nfs/research/birney/users/ian/somites/association_testing/20211109_true/all_sites/results/"</span>
 
 <span class="va">gwas_true</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">target_phenos</span>, <span class="kw">function</span><span class="op">(</span><span class="va">PHENO</span><span class="op">)</span><span class="op">{</span>
   <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">bin_lengths</span>, <span class="kw">function</span><span class="op">(</span><span class="va">BIN_LENGTH</span><span class="op">)</span><span class="op">{</span>
@@ -105,12 +121,12 @@ mean period -&gt; mean in the table</p>
   <span class="op">}</span><span class="op">)</span>
 <span class="op">}</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="manhattans" class="section level3" number="6.3.2">
-<h3>
-<span class="header-section-number">6.3.2</span> Manhattans<a class="anchor" aria-label="anchor" href="#manhattans"><i class="fas fa-link"></i></a>
-</h3>
+<div id="manhattans" class="section level4" number="7.4.1.2">
+<h4>
+<span class="header-section-number">7.4.1.2</span> Manhattans<a class="anchor" aria-label="anchor" href="#manhattans"><i class="fas fa-link"></i></a>
+</h4>
 <p>Process data</p>
-<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb101"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">plot_dat</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_along</a></span><span class="op">(</span><span class="va">gwas_true</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">COUNTER_1</span><span class="op">)</span><span class="op">{</span>
   <span class="va">bin_list</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_along</a></span><span class="op">(</span><span class="va">gwas_true</span><span class="op">[[</span><span class="va">COUNTER_1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">COUNTER_2</span><span class="op">)</span><span class="op">{</span>
     <span class="va">BIN_LENGTH</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">gwas_true</span><span class="op">[[</span><span class="va">COUNTER_1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[</span><span class="va">COUNTER_2</span><span class="op">]</span> <span class="op">%&gt;%</span> 
@@ -126,63 +142,192 @@ mean period -&gt; mean in the table</p>
   <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="va">bin_list</span><span class="op">)</span>
 <span class="op">}</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">plot_dat</span><span class="op">)</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">gwas_true</span><span class="op">)</span></code></pre></div>
+<p>Read in significance levels from permutations</p>
+<div class="sourceCode" id="cb102"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">perm_file</span> <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"data/20211109_permutation_mins.csv"</span><span class="op">)</span>
+<span class="va">perms_df_mins</span> <span class="op">=</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv</a></span><span class="op">(</span><span class="va">perm_file</span>,
+                                col_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"ccid"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p>Plot</p>
-<div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">plot_dir</span> <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"book/plots/20211104_gwls_results"</span><span class="op">)</span>
+<div class="sourceCode" id="cb103"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">plot_dir</span> <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"book/plots/20211109/gwls_results/all_sites"</span><span class="op">)</span>
 <span class="co"># Plot</span>
 <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_along</a></span><span class="op">(</span><span class="va">plot_dat</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">COUNTER_PHENO</span><span class="op">)</span><span class="op">{</span>
   <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_along</a></span><span class="op">(</span><span class="va">plot_dat</span><span class="op">[[</span><span class="va">COUNTER_PHENO</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">COUNTER_BINL</span><span class="op">)</span><span class="op">{</span>
     <span class="co"># Get pheno</span>
     <span class="va">PHENO</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">plot_dat</span><span class="op">)</span><span class="op">[</span><span class="va">COUNTER_PHENO</span><span class="op">]</span>
     <span class="co"># Get bin length</span>
-    <span class="va">BIN_LENGTH</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">plot_dat</span><span class="op">[[</span><span class="va">COUNTER_PHENO</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[</span><span class="va">COUNTER_BINL</span><span class="op">]</span> <span class="op">%&gt;%</span> 
+    <span class="va">BINL</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">plot_dat</span><span class="op">[[</span><span class="va">COUNTER_PHENO</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[</span><span class="va">COUNTER_BINL</span><span class="op">]</span> <span class="op">%&gt;%</span> 
       <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="op">)</span>
+    <span class="co"># Get significant level</span>
+    <span class="va">SIG_LEVEL</span> <span class="op">=</span> <span class="va">perms_df_mins</span> <span class="op">%&gt;%</span>
+      <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">SITE_FILTER</span> <span class="op">==</span> <span class="st">"all_sites"</span>, <span class="va">TARGET_PHENO</span> <span class="op">==</span> <span class="va">PHENO</span>, <span class="va">BIN_LENGTH</span> <span class="op">==</span> <span class="va">BINL</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+      <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html">pull</a></span><span class="op">(</span><span class="va">MIN_P</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+      <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">log10</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span>
+    
     <span class="co"># Plot</span>
     <span class="va">out</span> <span class="op">=</span> <span class="fu">plot_man</span><span class="op">(</span><span class="va">plot_dat</span><span class="op">[[</span><span class="va">COUNTER_PHENO</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">COUNTER_BINL</span><span class="op">]</span><span class="op">]</span>,
              phenotype <span class="op">=</span> <span class="va">PHENO</span>,
-             bin_length <span class="op">=</span> <span class="va">BIN_LENGTH</span>,
+             bin_length <span class="op">=</span> <span class="va">BINL</span>,
              gwas_pal <span class="op">=</span> <span class="va">gwas_pal</span><span class="op">[</span><span class="fl">2</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>,
-             med_chr_lens <span class="op">=</span> <span class="va">med_chr_lens</span><span class="op">)</span>
+             med_chr_lens <span class="op">=</span> <span class="va">med_chr_lens</span>,
+             sig_line <span class="op">=</span> <span class="va">SIG_LEVEL</span><span class="op">)</span> <span class="op">+</span>
+      <span class="fu"><a href="https://rdrr.io/r/graphics/plot.window.html">ylim</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">7</span><span class="op">)</span>
     
-    <span class="co">#ggsave(out,</span>
-    <span class="co">#       file.path(plot_dir, paste(PHENO, "_", BIN_LENGTH, ".png")),</span>
-    <span class="co">#       device = "png",</span>
-    <span class="co">#       width = 9.6,</span>
-    <span class="co">#       height = 6,</span>
-    <span class="co">#       units = "in",</span>
-    <span class="co">#       dpi = 400)</span>
+    <span class="fu">ggsave</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">plot_dir</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="va">PHENO</span>, <span class="st">"_"</span>, <span class="va">BINL</span>, <span class="st">".png"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span>,
+           <span class="va">out</span>,
+           device <span class="op">=</span> <span class="st">"png"</span>,
+           width <span class="op">=</span> <span class="fl">9.6</span>,
+           height <span class="op">=</span> <span class="fl">6</span>,
+           units <span class="op">=</span> <span class="st">"in"</span>,
+           dpi <span class="op">=</span> <span class="fl">400</span><span class="op">)</span>
+    
+    <span class="va">out</span>
   <span class="op">}</span><span class="op">)</span>
 <span class="op">}</span><span class="op">)</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; [[1]][[1]]</span></code></pre></div>
-<div class="inline-figure"><img src="05-GWLS_results_files/figure-html/unnamed-chunk-4-1.png" width="672"></div>
+<div class="inline-figure"><img src="05-GWLS_results_files/figure-html/unnamed-chunk-5-1.png" width="672"></div>
 <pre><code>#&gt; 
 #&gt; [[1]][[2]]</code></pre>
-<div class="inline-figure"><img src="05-GWLS_results_files/figure-html/unnamed-chunk-4-2.png" width="672"></div>
+<div class="inline-figure"><img src="05-GWLS_results_files/figure-html/unnamed-chunk-5-2.png" width="672"></div>
 <pre><code>#&gt; 
 #&gt; [[1]][[3]]</code></pre>
-<div class="inline-figure"><img src="05-GWLS_results_files/figure-html/unnamed-chunk-4-3.png" width="672"></div>
+<div class="inline-figure"><img src="05-GWLS_results_files/figure-html/unnamed-chunk-5-3.png" width="672"></div>
 <pre><code>#&gt; 
 #&gt; [[1]][[4]]</code></pre>
-<div class="inline-figure"><img src="05-GWLS_results_files/figure-html/unnamed-chunk-4-4.png" width="672"></div>
+<div class="inline-figure"><img src="05-GWLS_results_files/figure-html/unnamed-chunk-5-4.png" width="672"></div>
 <pre><code>#&gt; 
 #&gt; 
 #&gt; [[2]]
 #&gt; [[2]][[1]]</code></pre>
-<div class="inline-figure"><img src="05-GWLS_results_files/figure-html/unnamed-chunk-4-5.png" width="672"></div>
+<div class="inline-figure"><img src="05-GWLS_results_files/figure-html/unnamed-chunk-5-5.png" width="672"></div>
 <pre><code>#&gt; 
 #&gt; [[2]][[2]]</code></pre>
-<div class="inline-figure"><img src="05-GWLS_results_files/figure-html/unnamed-chunk-4-6.png" width="672"></div>
+<div class="inline-figure"><img src="05-GWLS_results_files/figure-html/unnamed-chunk-5-6.png" width="672"></div>
 <pre><code>#&gt; 
 #&gt; [[2]][[3]]</code></pre>
-<div class="inline-figure"><img src="05-GWLS_results_files/figure-html/unnamed-chunk-4-7.png" width="672"></div>
+<div class="inline-figure"><img src="05-GWLS_results_files/figure-html/unnamed-chunk-5-7.png" width="672"></div>
 <pre><code>#&gt; 
 #&gt; [[2]][[4]]</code></pre>
-<div class="inline-figure"><img src="05-GWLS_results_files/figure-html/unnamed-chunk-4-8.png" width="672"></div>
+<div class="inline-figure"><img src="05-GWLS_results_files/figure-html/unnamed-chunk-5-8.png" width="672"></div>
+</div>
+</div>
+<div id="excluding-reads-overlapping-repeats" class="section level3" number="7.4.2">
+<h3>
+<span class="header-section-number">7.4.2</span> Excluding reads overlapping repeats<a class="anchor" aria-label="anchor" href="#excluding-reads-overlapping-repeats"><i class="fas fa-link"></i></a>
+</h3>
+<div id="read-in-files-1" class="section level4" number="7.4.2.1">
+<h4>
+<span class="header-section-number">7.4.2.1</span> Read in files<a class="anchor" aria-label="anchor" href="#read-in-files-1"><i class="fas fa-link"></i></a>
+</h4>
+<div class="sourceCode" id="cb111"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">filter_type</span> <span class="op">=</span> <span class="st">"no_repeat_reads"</span>
+<span class="va">target_phenos</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"mean"</span>, <span class="st">"intercept"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">target_phenos</span><span class="op">)</span> <span class="op">=</span> <span class="va">target_phenos</span>
+<span class="va">bin_lengths</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">5000</span>, <span class="fl">10000</span>, <span class="fl">15000</span>, <span class="fl">20000</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">bin_lengths</span><span class="op">)</span> <span class="op">=</span> <span class="va">bin_lengths</span>
+<span class="va">results_dir</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="st">"/nfs/research/birney/users/ian/somites/association_testing/20211109_true"</span>, <span class="va">filter_type</span>, <span class="st">"results"</span><span class="op">)</span>
+
+<span class="va">gwas_true</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">target_phenos</span>, <span class="kw">function</span><span class="op">(</span><span class="va">PHENO</span><span class="op">)</span><span class="op">{</span>
+  <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">bin_lengths</span>, <span class="kw">function</span><span class="op">(</span><span class="va">BIN_LENGTH</span><span class="op">)</span><span class="op">{</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">results_dir</span>, <span class="va">PHENO</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="va">BIN_LENGTH</span>, <span class="st">".rds"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+  <span class="op">}</span><span class="op">)</span>
+<span class="op">}</span><span class="op">)</span></code></pre></div>
+</div>
+<div id="manhattans-1" class="section level4" number="7.4.2.2">
+<h4>
+<span class="header-section-number">7.4.2.2</span> Manhattans<a class="anchor" aria-label="anchor" href="#manhattans-1"><i class="fas fa-link"></i></a>
+</h4>
+<p>Process data</p>
+<div class="sourceCode" id="cb112"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">plot_dat</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_along</a></span><span class="op">(</span><span class="va">gwas_true</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">COUNTER_1</span><span class="op">)</span><span class="op">{</span>
+  <span class="va">bin_list</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_along</a></span><span class="op">(</span><span class="va">gwas_true</span><span class="op">[[</span><span class="va">COUNTER_1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">COUNTER_2</span><span class="op">)</span><span class="op">{</span>
+    <span class="va">BIN_LENGTH</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">gwas_true</span><span class="op">[[</span><span class="va">COUNTER_1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[</span><span class="va">COUNTER_2</span><span class="op">]</span> <span class="op">%&gt;%</span> 
+      <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="op">)</span>
+    <span class="va">out</span> <span class="op">=</span> <span class="fu">clean_gwas_res</span><span class="op">(</span><span class="va">gwas_true</span><span class="op">[[</span><span class="va">COUNTER_1</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">COUNTER_2</span><span class="op">]</span><span class="op">]</span>,
+                         bin_length <span class="op">=</span> <span class="va">BIN_LENGTH</span>,
+                         chr_lens <span class="op">=</span> <span class="va">med_chr_lens</span><span class="op">)</span>
+    
+    <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span>
+  <span class="op">}</span><span class="op">)</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">bin_list</span><span class="op">)</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">gwas_true</span><span class="op">[[</span><span class="va">COUNTER_1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>
+  
+  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="va">bin_list</span><span class="op">)</span>
+<span class="op">}</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">plot_dat</span><span class="op">)</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">gwas_true</span><span class="op">)</span></code></pre></div>
+<p>Read in significance levels from permutations</p>
+<div class="sourceCode" id="cb113"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">perm_file</span> <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"data/20211109_permutation_mins.csv"</span><span class="op">)</span>
+<span class="va">perms_df_mins</span> <span class="op">=</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv</a></span><span class="op">(</span><span class="va">perm_file</span>,
+                                col_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"ccid"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<p>Plot</p>
+<div class="sourceCode" id="cb114"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">plot_dir</span> <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="st">"book/plots/20211109/gwls_results"</span>, <span class="va">filter_type</span><span class="op">)</span><span class="op">)</span>
+<span class="co"># Plot</span>
+<span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_along</a></span><span class="op">(</span><span class="va">plot_dat</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">COUNTER_PHENO</span><span class="op">)</span><span class="op">{</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_along</a></span><span class="op">(</span><span class="va">plot_dat</span><span class="op">[[</span><span class="va">COUNTER_PHENO</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">COUNTER_BINL</span><span class="op">)</span><span class="op">{</span>
+    <span class="co"># Get pheno</span>
+    <span class="va">PHENO</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">plot_dat</span><span class="op">)</span><span class="op">[</span><span class="va">COUNTER_PHENO</span><span class="op">]</span>
+    <span class="co"># Get bin length</span>
+    <span class="va">BINL</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">plot_dat</span><span class="op">[[</span><span class="va">COUNTER_PHENO</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[</span><span class="va">COUNTER_BINL</span><span class="op">]</span> <span class="op">%&gt;%</span> 
+      <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="op">)</span>
+    <span class="co"># Get significant level</span>
+    <span class="va">SIG_LEVEL</span> <span class="op">=</span> <span class="va">perms_df_mins</span> <span class="op">%&gt;%</span>
+      <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">SITE_FILTER</span> <span class="op">==</span> <span class="va">filter_type</span>, <span class="va">TARGET_PHENO</span> <span class="op">==</span> <span class="va">PHENO</span>, <span class="va">BIN_LENGTH</span> <span class="op">==</span> <span class="va">BINL</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+      <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html">pull</a></span><span class="op">(</span><span class="va">MIN_P</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+      <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">log10</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span>
+    
+    <span class="co"># Plot</span>
+    <span class="va">out</span> <span class="op">=</span> <span class="fu">plot_man</span><span class="op">(</span><span class="va">plot_dat</span><span class="op">[[</span><span class="va">COUNTER_PHENO</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">COUNTER_BINL</span><span class="op">]</span><span class="op">]</span>,
+             phenotype <span class="op">=</span> <span class="va">PHENO</span>,
+             bin_length <span class="op">=</span> <span class="va">BINL</span>,
+             gwas_pal <span class="op">=</span> <span class="va">gwas_pal</span><span class="op">[</span><span class="fl">2</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>,
+             med_chr_lens <span class="op">=</span> <span class="va">med_chr_lens</span>,
+             sig_line <span class="op">=</span> <span class="va">SIG_LEVEL</span><span class="op">)</span> <span class="op">+</span>
+      <span class="fu"><a href="https://rdrr.io/r/graphics/plot.window.html">ylim</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">7</span><span class="op">)</span>
+    
+    <span class="fu">ggsave</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">plot_dir</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="va">PHENO</span>, <span class="st">"_"</span>, <span class="va">BINL</span>, <span class="st">".png"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span>,
+           <span class="va">out</span>,
+           device <span class="op">=</span> <span class="st">"png"</span>,
+           width <span class="op">=</span> <span class="fl">9.6</span>,
+           height <span class="op">=</span> <span class="fl">6</span>,
+           units <span class="op">=</span> <span class="st">"in"</span>,
+           dpi <span class="op">=</span> <span class="fl">400</span><span class="op">)</span>
+    
+    <span class="va">out</span>
+  <span class="op">}</span><span class="op">)</span>
+<span class="op">}</span><span class="op">)</span>
+<span class="co">#&gt; [[1]]</span>
+<span class="co">#&gt; [[1]][[1]]</span></code></pre></div>
+<div class="inline-figure"><img src="05-GWLS_results_files/figure-html/unnamed-chunk-9-1.png" width="672"></div>
+<pre><code>#&gt; 
+#&gt; [[1]][[2]]</code></pre>
+<div class="inline-figure"><img src="05-GWLS_results_files/figure-html/unnamed-chunk-9-2.png" width="672"></div>
+<pre><code>#&gt; 
+#&gt; [[1]][[3]]</code></pre>
+<div class="inline-figure"><img src="05-GWLS_results_files/figure-html/unnamed-chunk-9-3.png" width="672"></div>
+<pre><code>#&gt; 
+#&gt; [[1]][[4]]</code></pre>
+<div class="inline-figure"><img src="05-GWLS_results_files/figure-html/unnamed-chunk-9-4.png" width="672"></div>
+<pre><code>#&gt; 
+#&gt; 
+#&gt; [[2]]
+#&gt; [[2]][[1]]</code></pre>
+<div class="inline-figure"><img src="05-GWLS_results_files/figure-html/unnamed-chunk-9-5.png" width="672"></div>
+<pre><code>#&gt; 
+#&gt; [[2]][[2]]</code></pre>
+<div class="inline-figure"><img src="05-GWLS_results_files/figure-html/unnamed-chunk-9-6.png" width="672"></div>
+<pre><code>#&gt; 
+#&gt; [[2]][[3]]</code></pre>
+<div class="inline-figure"><img src="05-GWLS_results_files/figure-html/unnamed-chunk-9-7.png" width="672"></div>
+<pre><code>#&gt; 
+#&gt; [[2]][[4]]</code></pre>
+<div class="inline-figure"><img src="05-GWLS_results_files/figure-html/unnamed-chunk-9-8.png" width="672"></div>
 
 <div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-mölder2021" class="csl-entry">
 Mölder, Felix, Kim Philipp Jablonski, Brice Letcher, Michael B. Hall, Christopher H. Tomkins-Tinch, Vanessa Sochat, Jan Forster, et al. <span>“Sustainable Data Analysis with Snakemake.”</span> <em>F1000Research</em> 10 (April 19, 2021): 33. <a href="https://doi.org/10.12688/f1000research.29032.2">https://doi.org/10.12688/f1000research.29032.2</a>.
+</div>
 </div>
 </div>
 </div>
@@ -195,18 +340,19 @@ Mölder, Felix, Kim Philipp Jablonski, Brice Letcher, Michael B. Hall, Christoph
 
 
   <div class="chapter-nav">
-<div class="prev"><a href="association-testing-with-simulated-phenotypes.html"><span class="header-section-number">5</span> Association testing with simulated phenotypes</a></div>
+<div class="prev"><a href="association-testing-with-simulated-phenotypes.html"><span class="header-section-number">6</span> Association testing with simulated phenotypes</a></div>
 <div class="empty"></div>
 </div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
     <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
-<li><a class="nav-link" href="#gwls-results"><span class="header-section-number">6</span> GWLS results</a></li>
-<li><a class="nav-link" href="#phenotype-data"><span class="header-section-number">6.1</span> Phenotype data</a></li>
-<li><a class="nav-link" href="#snakemake-rules"><span class="header-section-number">6.2</span> Snakemake rules</a></li>
+<li><a class="nav-link" href="#gwls-results"><span class="header-section-number">7</span> GWLS results</a></li>
+<li><a class="nav-link" href="#notes"><span class="header-section-number">7.1</span> Notes</a></li>
+<li><a class="nav-link" href="#phenotype-data"><span class="header-section-number">7.2</span> Phenotype data</a></li>
+<li><a class="nav-link" href="#snakemake-rules"><span class="header-section-number">7.3</span> Snakemake rules</a></li>
 <li>
-<a class="nav-link" href="#results"><span class="header-section-number">6.3</span> Results</a><ul class="nav navbar-nav">
-<li><a class="nav-link" href="#read-in-files"><span class="header-section-number">6.3.1</span> Read in files</a></li>
-<li><a class="nav-link" href="#manhattans"><span class="header-section-number">6.3.2</span> Manhattans</a></li>
+<a class="nav-link" href="#results"><span class="header-section-number">7.4</span> Results</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#all-sites"><span class="header-section-number">7.4.1</span> All sites</a></li>
+<li><a class="nav-link" href="#excluding-reads-overlapping-repeats"><span class="header-section-number">7.4.2</span> Excluding reads overlapping repeats</a></li>
 </ul>
 </li>
 </ul>
@@ -226,7 +372,7 @@ Mölder, Felix, Kim Philipp Jablonski, Brice Letcher, Michael B. Hall, Christoph
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Somite period F2 analysis</strong>" was written by Ian Brettell. It was last built on 2021-11-05.</p>
+    <p>"<strong>Somite period F2 analysis</strong>" was written by Ian Brettell. It was last built on 2021-11-11.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

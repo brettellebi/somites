@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Chapter 4 F2 recombination blocks (old) | Somite period F2 analysis</title>
+<meta name="author" content="Ian Brettell">
+<meta name="description" content='library(here) source(here::here("book/source/03-F2_recombination.R"))  4.1 Read in data in_dir = "/nfs/research/birney/users/ian/somites/recombination_blocks/20211027" in_files =...'>
+<meta name="generator" content="bookdown 0.24.2 with bs4_book()">
+<meta property="og:title" content="Chapter 4 F2 recombination blocks (old) | Somite period F2 analysis">
+<meta property="og:type" content="book">
+<meta property="og:description" content='library(here) source(here::here("book/source/03-F2_recombination.R"))  4.1 Read in data in_dir = "/nfs/research/birney/users/ian/somites/recombination_blocks/20211027" in_files =...'>
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chapter 4 F2 recombination blocks (old) | Somite period F2 analysis">
+<meta name="twitter:description" content='library(here) source(here::here("book/source/03-F2_recombination.R"))  4.1 Read in data in_dir = "/nfs/research/birney/users/ian/somites/recombination_blocks/20211027" in_files =...'>
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/header-attrs-2.10/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.2.5.1/tabs.js"></script><script src="libs/bs3compat-0.2.5.1/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="libs/htmlwidgets-1.5.3/htmlwidgets.js"></script><script src="libs/plotly-binding-4.9.4.1/plotly.js"></script><script src="libs/typedarray-0.1/typedarray.min.js"></script><link href="libs/crosstalk-1.1.1/css/crosstalk.css" rel="stylesheet">
+<script src="libs/crosstalk-1.1.1/js/crosstalk.min.js"></script><link href="libs/plotly-htmlwidgets-css-1.57.1/plotly-htmlwidgets.css" rel="stylesheet">
+<script src="libs/plotly-main-1.57.1/plotly-latest.min.js"></script><link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet">
+<script src="libs/datatables-binding-0.18/datatables.js"></script><link href="libs/dt-core-1.10.20/css/jquery.dataTables.min.css" rel="stylesheet">
+<link href="libs/dt-core-1.10.20/css/jquery.dataTables.extra.css" rel="stylesheet">
+<script src="libs/dt-core-1.10.20/js/jquery.dataTables.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><link rel="stylesheet" href="style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="">Somite period F2 analysis</a>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html"><span class="header-section-number">1</span> About</a></li>
+<li><a class="" href="alignment-of-f0-and-f2-generations.html"><span class="header-section-number">2</span> Alignment of F0 and F2 generations</a></li>
+<li><a class="" href="homozygosity-of-f0-cab-and-kaga.html"><span class="header-section-number">3</span> Homozygosity of F0 Cab and Kaga</a></li>
+<li><a class="active" href="f2-recombination-blocks-old.html"><span class="header-section-number">4</span> F2 recombination blocks (old)</a></li>
+<li><a class="" href="f2-recombination-blocks-new.html"><span class="header-section-number">5</span> F2 recombination blocks (new)</a></li>
+<li><a class="" href="association-testing-with-simulated-phenotypes.html"><span class="header-section-number">6</span> Association testing with simulated phenotypes</a></li>
+<li><a class="" href="gwls-results.html"><span class="header-section-number">7</span> GWLS results</a></li>
+</ul>
+
+        <div class="book-extra">
+          <p><a id="book-repo" href="https://github.com/brettellebi/somites">View book source <i class="fab fa-github"></i></a></p>
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="f2-recombination-blocks-old" class="section level1" number="4">
+<h1>
+<span class="header-section-number">4</span> F2 recombination blocks (old)<a class="anchor" aria-label="anchor" href="#f2-recombination-blocks-old"><i class="fas fa-link"></i></a>
+</h1>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://here.r-lib.org/">here</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"book/source/03-F2_recombination.R"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<div id="read-in-data-2" class="section level2" number="4.1">
+<h2>
+<span class="header-section-number">4.1</span> Read in data<a class="anchor" aria-label="anchor" href="#read-in-data-2"><i class="fas fa-link"></i></a>
+</h2>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">in_dir</span> <span class="op">=</span> <span class="st">"/nfs/research/birney/users/ian/somites/recombination_blocks/20211027"</span>
+
+<span class="va">in_files</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span><span class="op">(</span><span class="va">in_dir</span>, pattern <span class="op">=</span> <span class="st">"F2_"</span>, full.names <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>
+
+<span class="co">##Read into list</span>
+<span class="va">data_list</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">in_files</span>, <span class="kw">function</span><span class="op">(</span><span class="va">FILE</span><span class="op">)</span><span class="op">{</span>
+  <span class="va">out</span> <span class="op">=</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_tsv</a></span><span class="op">(</span><span class="va">FILE</span>,
+                        col_types <span class="op">=</span> <span class="st">"ciiidii"</span><span class="op">)</span>
+<span class="op">}</span><span class="op">)</span>
+<span class="co">##Set names as bin length</span>
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">data_list</span><span class="op">)</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/basename.html">basename</a></span><span class="op">(</span><span class="va">in_files</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_split.html">str_split</a></span><span class="op">(</span><span class="st">"_"</span>, simplify <span class="op">=</span> <span class="cn">T</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://rdrr.io/r/base/subset.html">subset</a></span><span class="op">(</span>select <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_remove.html">str_remove</a></span><span class="op">(</span><span class="st">".txt"</span><span class="op">)</span>
+<span class="co">##Reorder</span>
+<span class="va">data_list</span> <span class="op">=</span> <span class="va">data_list</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html">order</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">data_list</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">]</span>
+
+<span class="va">counter</span> <span class="op">=</span> <span class="fl">0</span>
+<span class="va">df_list</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">data_list</span>, <span class="kw">function</span><span class="op">(</span><span class="va">data</span><span class="op">)</span><span class="op">{</span>
+  <span class="va">counter</span> <span class="op">&lt;&lt;-</span> <span class="va">counter</span> <span class="op">+</span> <span class="fl">1</span>
+  <span class="co"># set bin length</span>
+  <span class="va">bin_length</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">data_list</span><span class="op">)</span><span class="op">[</span><span class="va">counter</span><span class="op">]</span><span class="op">)</span>
+  <span class="co"># add bin start and end coordinates</span>
+  <span class="va">df</span> <span class="op">=</span> <span class="va">data</span> <span class="op">%&gt;%</span> 
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>LANE <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/basename.html">basename</a></span><span class="op">(</span><span class="va">sample</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+                    <span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_remove.html">str_remove</a></span><span class="op">(</span><span class="st">".txt"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+                    <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span>,
+                  BIN_LENGTH <span class="op">=</span> <span class="va">bin_length</span>,
+                  BIN_START <span class="op">=</span> <span class="op">(</span><span class="va">bin</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span> <span class="op">*</span> <span class="va">bin_length</span> <span class="op">+</span> <span class="fl">1</span>,
+                  BIN_END <span class="op">=</span> <span class="va">bin</span> <span class="op">*</span> <span class="va">bin_length</span>,
+                  BIN_LENGTH_KB <span class="op">=</span> <span class="va">BIN_LENGTH</span> <span class="op">/</span> <span class="fl">1e3</span>,
+                  READS_PER_BIN <span class="op">=</span> <span class="va">mat</span> <span class="op">+</span> <span class="va">pat</span><span class="op">)</span>
+  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span>
+<span class="op">}</span><span class="op">)</span></code></pre></div>
+</div>
+<div id="examine-relationship-between-ratio-and-state" class="section level2" number="4.2">
+<h2>
+<span class="header-section-number">4.2</span> Examine relationship between <code>ratio</code> and <code>state</code><a class="anchor" aria-label="anchor" href="#examine-relationship-between-ratio-and-state"><i class="fas fa-link"></i></a>
+</h2>
+<p>To determine which state is associated with which parental strain.</p>
+<p>In the pipeline, we set <em>Cab</em> as F0_1 and <em>Kaga</em> as F0_2.</p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">df_list</span><span class="op">$</span><span class="va">`5000`</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">DT</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html">datatable</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span></code></pre></div>
+<div id="htmlwidget-9e29e24b2a66205dc9da" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-9e29e24b2a66205dc9da">{"x":{"filter":"none","data":[["1","2","3","4","5","6"],["/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/batch_01/bwamem2/1.txt"],[0,4,11,16,5,29],[3,2,6,30,3,32],[4,8,11,16,17,18],[0,0.666666666666667,0.647058823529412,0.347826086956522,0.625,0.475409836065574],[1,1,1,1,1,1],[1,1,1,1,1,1],[1,1,1,1,1,1],[5000,5000,5000,5000,5000,5000],[15001,35001,50001,75001,80001,85001],[20000,40000,55000,80000,85000,90000],[5,5,5,5,5,5],[3,6,17,46,8,61]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>sample<\/th>\n      <th>mat<\/th>\n      <th>pat<\/th>\n      <th>bin<\/th>\n      <th>ratio<\/th>\n      <th>chr<\/th>\n      <th>state<\/th>\n      <th>LANE<\/th>\n      <th>BIN_LENGTH<\/th>\n      <th>BIN_START<\/th>\n      <th>BIN_END<\/th>\n      <th>BIN_LENGTH_KB<\/th>\n      <th>READS_PER_BIN<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[2,3,4,5,6,7,8,9,10,11,12,13]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script><p><code>ratio = mat / (mat + pat)</code>, where <code>mat</code> = Cab and <code>pat</code> = Kaga.</p>
+<p>Plot <code>ratio</code> against <code>state</code></p>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">df_list</span><span class="op">$</span><span class="va">`5000`</span> <span class="op">%&gt;%</span>
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>state <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">state</span>, levels <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html">slice_sample</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">1e6</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">geom_boxplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span><span class="va">state</span>, <span class="va">ratio</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">guides</span><span class="op">(</span>colour <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span>
+<span class="co">##Save</span>
+<span class="fu">ggsave</span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"book/plots/20211027_ratio_v_state.png"</span><span class="op">)</span>,
+       device <span class="op">=</span> <span class="st">"png"</span>,
+       width <span class="op">=</span> <span class="fl">8</span>,
+       height <span class="op">=</span> <span class="fl">5</span>,
+       units <span class="op">=</span> <span class="st">"in"</span>,
+       dpi <span class="op">=</span> <span class="fl">400</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"book/plots/20211027_ratio_v_state.png"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<div class="inline-figure"><img src="plots/20211027_ratio_v_state.png" width="80%"></div>
+<p>This shows that state <code>0</code> is associated with a <em>low</em> ratio of Cab to Kaga, and therefore a call of <em>Kaga</em>.
+Vice versa for state <code>2</code> and <em>Cab</em>.</p>
+<div id="recode-state-to-put-in-correct-order" class="section level3" number="4.2.1">
+<h3>
+<span class="header-section-number">4.2.1</span> Recode state to put in correct order<a class="anchor" aria-label="anchor" href="#recode-state-to-put-in-correct-order"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">df_list</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">df_list</span>, <span class="kw">function</span><span class="op">(</span><span class="va">df</span><span class="op">)</span><span class="op">{</span>
+  <span class="va">df</span> <span class="op">=</span> <span class="va">df</span> <span class="op">%&gt;%</span> 
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>state <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/recode.html">recode</a></span><span class="op">(</span><span class="va">state</span>,
+                                        `0` <span class="op">=</span> <span class="fl">2</span>,
+                                        `1` <span class="op">=</span> <span class="fl">1</span>,
+                                        `2` <span class="op">=</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span>
+<span class="op">}</span><span class="op">)</span></code></pre></div>
+</div>
+</div>
+<div id="read-counts-per-bin" class="section level2" number="4.3">
+<h2>
+<span class="header-section-number">4.3</span> Read counts per bin<a class="anchor" aria-label="anchor" href="#read-counts-per-bin"><i class="fas fa-link"></i></a>
+</h2>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">##How many bins in each data frame? </span>
+<span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map_int</a></span><span class="op">(</span><span class="va">df_list</span>, <span class="va">nrow</span><span class="op">)</span>
+<span class="co">#&gt;     5000    10000    15000    20000 </span>
+<span class="co">#&gt; 32250155 19648391 14329553 11322702</span>
+
+<span class="co">##Plot</span>
+<span class="va">df_list</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html">bind_rows</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html">slice_sample</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">1e5</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>BIN_LENGTH_KB <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">BIN_LENGTH_KB</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">BIN_LENGTH_KB</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html">order</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">BIN_LENGTH_KB</span><span class="op">)</span><span class="op">)</span><span class="op">]</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="co"># Plot</span>
+  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span><span class="va">BIN_LENGTH_KB</span>, <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log10</a></span><span class="op">(</span><span class="va">READS_PER_BIN</span><span class="op">)</span>, fill <span class="op">=</span> <span class="va">BIN_LENGTH_KB</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">geom_boxplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">scale_fill_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"#778DA9"</span>, <span class="st">"#415A77"</span>, <span class="st">"#1B263B"</span>, <span class="st">"#0D1B2A"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">guides</span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span>
+<span class="co">#&gt; Warning: Removed 73 rows containing non-finite values</span>
+<span class="co">#&gt; (stat_boxplot).</span></code></pre></div>
+<div class="inline-figure"><img src="03-F2_recombination_files/figure-html/unnamed-chunk-7-1.png" width="672"></div>
+</div>
+<div id="read-counts-by-proportion-of-kaga" class="section level2" number="4.4">
+<h2>
+<span class="header-section-number">4.4</span> Read counts by proportion of Kaga<a class="anchor" aria-label="anchor" href="#read-counts-by-proportion-of-kaga"><i class="fas fa-link"></i></a>
+</h2>
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">df_list</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html">bind_rows</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html">slice_sample</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">1e5</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>PROP_KAGA <span class="op">=</span> <span class="va">pat</span> <span class="op">/</span> <span class="va">READS_PER_BIN</span> <span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="co"># Plot</span>
+  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span><span class="va">READS_PER_BIN</span>, <span class="va">PROP_KAGA</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">geom_point</span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">facet_grid</span><span class="op">(</span>cols <span class="op">=</span> <span class="fu">vars</span><span class="op">(</span><span class="va">BIN_LENGTH</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+<span class="co">##   scale_colour_manual(values = c("#778DA9", "#415A77", "#1B263B", "#0D1B2A")) +</span>
+    <span class="fu">guides</span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span>
+<span class="co">#&gt; Warning: Removed 72 rows containing missing values</span>
+<span class="co">#&gt; (geom_point).</span></code></pre></div>
+<div class="inline-figure"><img src="03-F2_recombination_files/figure-html/unnamed-chunk-8-1.png" width="672"></div>
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<code class="sourceCode R">
+<span class="co">##Limit to bins with 0-100 reads</span>
+<span class="va">df_list</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html">bind_rows</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html">slice_sample</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">1e5</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>PROP_KAGA <span class="op">=</span> <span class="va">pat</span> <span class="op">/</span> <span class="va">READS_PER_BIN</span> <span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="co"># Plot</span>
+  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span><span class="va">READS_PER_BIN</span>, <span class="va">PROP_KAGA</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">geom_point</span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">facet_grid</span><span class="op">(</span>cols <span class="op">=</span> <span class="fu">vars</span><span class="op">(</span><span class="va">BIN_LENGTH</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+<span class="co">##   scale_colour_manual(values = c("#778DA9", "#415A77", "#1B263B", "#0D1B2A")) +</span>
+    <span class="fu">guides</span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu"><a href="https://rdrr.io/r/graphics/plot.window.html">xlim</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">100</span><span class="op">)</span>
+<span class="co">#&gt; Warning: Removed 21107 rows containing missing values</span>
+<span class="co">#&gt; (geom_point).</span></code></pre></div>
+<div class="inline-figure"><img src="03-F2_recombination_files/figure-html/unnamed-chunk-8-2.png" width="672"></div>
+</div>
+<div id="proportion-of-genome-and-sites-called-as-a-given-state" class="section level2" number="4.5">
+<h2>
+<span class="header-section-number">4.5</span> Proportion of genome and sites called as a given state<a class="anchor" aria-label="anchor" href="#proportion-of-genome-and-sites-called-as-a-given-state"><i class="fas fa-link"></i></a>
+</h2>
+<div id="proportion-of-genome-covered-by-each-state" class="section level3" number="4.5.1">
+<h3>
+<span class="header-section-number">4.5.1</span> Proportion of <em>genome</em> covered by each state<a class="anchor" aria-label="anchor" href="#proportion-of-genome-covered-by-each-state"><i class="fas fa-link"></i></a>
+</h3>
+<div id="read-in-total-medaka-genome-count-1" class="section level4" number="4.5.1.1">
+<h4>
+<span class="header-section-number">4.5.1.1</span> Read in total medaka genome count<a class="anchor" aria-label="anchor" href="#read-in-total-medaka-genome-count-1"><i class="fas fa-link"></i></a>
+</h4>
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">##Get chromosome lengths</span>
+<span class="va">med_chr_lens</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.table</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"data"</span>,
+                                     <span class="st">"Oryzias_latipes.ASM223467v1.dna.toplevel.fa_chr_counts.txt"</span><span class="op">)</span>,
+                          col.names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"chr"</span>, <span class="st">"end"</span><span class="op">)</span><span class="op">)</span>
+<span class="co">##Add start</span>
+<span class="va">med_chr_lens</span><span class="op">$</span><span class="va">start</span> <span class="op">=</span> <span class="fl">1</span>
+<span class="co">##Reorder</span>
+<span class="va">med_chr_lens</span> <span class="op">=</span> <span class="va">med_chr_lens</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">chr</span>, <span class="va">start</span>, <span class="va">end</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="co"># remove MT</span>
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">chr</span> <span class="op">!=</span> <span class="st">"MT"</span><span class="op">)</span>
+
+<span class="co">##Total HdrR sequence length</span>
+<span class="va">total_hdrr_bases</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">med_chr_lens</span><span class="op">$</span><span class="va">end</span><span class="op">)</span></code></pre></div>
+</div>
+<div id="get-total-number-of-bases-covered-by-each-state-2" class="section level4" number="4.5.1.2">
+<h4>
+<span class="header-section-number">4.5.1.2</span> Get total number of bases covered by each state<a class="anchor" aria-label="anchor" href="#get-total-number-of-bases-covered-by-each-state-2"><i class="fas fa-link"></i></a>
+</h4>
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">##Take 5kb DF</span>
+<span class="va">df</span> <span class="op">=</span> <span class="va">df_list</span><span class="op">$</span><span class="va">`5000`</span>
+
+<span class="co">##Set states to loop over</span>
+<span class="va">states</span> <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">2</span>
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">states</span><span class="op">)</span> <span class="op">=</span> <span class="va">states</span>
+
+<span class="co">##Run loop over each LANE</span>
+
+<span class="va">base_cov_df</span> <span class="op">=</span> <span class="va">df</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://rdrr.io/r/base/split.html">split</a></span><span class="op">(</span><span class="va">.</span>, f <span class="op">=</span> <span class="va">.</span><span class="op">$</span><span class="va">LANE</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">.</span>, <span class="kw">function</span><span class="op">(</span><span class="va">LANE</span><span class="op">)</span><span class="op">{</span>
+    <span class="co"># convert to ranges object</span>
+    <span class="va">lane_ranges</span> <span class="op">=</span> <span class="fu">GenomicRanges</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/makeGRangesFromDataFrame.html">makeGRangesFromDataFrame</a></span><span class="op">(</span><span class="va">LANE</span>,
+                                                          keep.extra.columns <span class="op">=</span> <span class="cn">T</span>,
+                                                          ignore.strand <span class="op">=</span> <span class="cn">T</span>,
+                                                          seqnames.field <span class="op">=</span> <span class="st">"chr"</span>, 
+                                                          start.field <span class="op">=</span> <span class="st">"BIN_START"</span>,
+                                                          end.field <span class="op">=</span> <span class="st">"BIN_END"</span><span class="op">)</span>
+    <span class="co"># get total bases covered by each state</span>
+    <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map_dfr</a></span><span class="op">(</span><span class="va">states</span>, <span class="kw">function</span><span class="op">(</span><span class="va">STATE</span><span class="op">)</span><span class="op">{</span>
+      <span class="va">lane_ranges</span><span class="op">[</span><span class="va">lane_ranges</span><span class="op">$</span><span class="va">state</span> <span class="op">==</span> <span class="va">STATE</span><span class="op">]</span> <span class="op">%&gt;%</span> 
+        <span class="co"># merge contiguous ranges</span>
+        <span class="fu">GenomicRanges</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/inter-range-methods.html">reduce</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+        <span class="co"># get width of ranges</span>
+        <span class="fu">width</span><span class="op">(</span><span class="va">.</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+        <span class="co"># get total bases covered</span>
+        <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+        <span class="co"># coerce into data frame</span>
+        <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="st">"BASES_COVERED"</span> <span class="op">=</span> <span class="va">.</span><span class="op">)</span>
+      <span class="op">}</span>, .id <span class="op">=</span> <span class="st">"STATE"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+        <span class="co"># add FREQ column</span>
+        <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>FREQ <span class="op">=</span> <span class="va">BASES_COVERED</span> <span class="op">/</span> <span class="va">total_hdrr_bases</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+        <span class="co"># add UNCLASSIFIED row</span>
+        <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/add_row.html">add_row</a></span><span class="op">(</span>STATE <span class="op">=</span> <span class="st">"UNCLASSIFIED"</span>, 
+                        BASES_COVERED <span class="op">=</span> <span class="va">total_hdrr_bases</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">.</span><span class="op">$</span><span class="va">BASES_COVERED</span><span class="op">)</span>,
+                        FREQ <span class="op">=</span> <span class="op">(</span><span class="va">total_hdrr_bases</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">.</span><span class="op">$</span><span class="va">BASES_COVERED</span><span class="op">)</span><span class="op">)</span> <span class="op">/</span> <span class="va">total_hdrr_bases</span><span class="op">)</span>
+    <span class="op">}</span>
+  <span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html">bind_rows</a></span><span class="op">(</span>.id <span class="op">=</span> <span class="st">"LANE"</span><span class="op">)</span></code></pre></div>
+<p>Plot</p>
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">##Plot</span>
+<span class="va">base_cov_df</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>STATE <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">STATE</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span>,<span class="fl">2</span>, <span class="st">"UNCLASSIFIED"</span><span class="op">)</span><span class="op">)</span>,
+                STATE_RECODE <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/recode.html">recode</a></span><span class="op">(</span><span class="va">STATE</span>,
+                                             `0` <span class="op">=</span> <span class="st">"Homozygous Cab"</span>,
+                                             `1` <span class="op">=</span> <span class="st">"Heterozygous"</span>,
+                                             `2` <span class="op">=</span> <span class="st">"Homozygous Kaga"</span>,
+                                             <span class="st">"UNCLASSIFIED"</span> <span class="op">=</span> <span class="st">"Unclassified"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="co"># plot</span>
+  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span><span class="va">STATE_RECODE</span>, <span class="va">FREQ</span>, colour <span class="op">=</span> <span class="va">STATE</span>, fill <span class="op">=</span> <span class="va">STATE</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">geom_violin</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">geom_boxplot</span><span class="op">(</span>width <span class="op">=</span> <span class="fl">.3</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">ggbeeswarm</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ggbeeswarm/man/geom_quasirandom.html">geom_quasirandom</a></span><span class="op">(</span>color<span class="op">=</span><span class="st">"#7D8491"</span>, size<span class="op">=</span><span class="fl">0.4</span>, alpha<span class="op">=</span><span class="fl">0.9</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">scale_colour_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="va">pal_hom_het_2_lines</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">scale_fill_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="va">pal_hom_het_2</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">guides</span><span class="op">(</span>colour <span class="op">=</span> <span class="st">"none"</span>, fill <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">xlab</span><span class="op">(</span><span class="st">"Genotype"</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">ylab</span><span class="op">(</span><span class="st">"Proportion of reference bases covered"</span><span class="op">)</span></code></pre></div>
+<div class="inline-figure"><img src="03-F2_recombination_files/figure-html/unnamed-chunk-11-1.png" width="672"></div>
+</div>
+<div id="by-chromosome" class="section level4" number="4.5.1.3">
+<h4>
+<span class="header-section-number">4.5.1.3</span> By chromosome<a class="anchor" aria-label="anchor" href="#by-chromosome"><i class="fas fa-link"></i></a>
+</h4>
+<p>Process.</p>
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">##Set states to loop over</span>
+<span class="va">states</span> <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">2</span>
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">states</span><span class="op">)</span> <span class="op">=</span> <span class="va">states</span>
+
+<span class="co">##Run loop over each LANE</span>
+
+<span class="va">base_cov_df_chr</span> <span class="op">=</span> <span class="va">df</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://rdrr.io/r/base/split.html">split</a></span><span class="op">(</span><span class="va">.</span>, f <span class="op">=</span> <span class="va">.</span><span class="op">$</span><span class="va">LANE</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+    <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">.</span>, <span class="kw">function</span><span class="op">(</span><span class="va">LANE</span><span class="op">)</span><span class="op">{</span>
+      <span class="co"># convert to ranges object</span>
+      <span class="va">lane_ranges</span> <span class="op">=</span> <span class="fu">GenomicRanges</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/makeGRangesFromDataFrame.html">makeGRangesFromDataFrame</a></span><span class="op">(</span><span class="va">LANE</span>,
+                                                            keep.extra.columns <span class="op">=</span> <span class="cn">T</span>,
+                                                            ignore.strand <span class="op">=</span> <span class="cn">T</span>,
+                                                            seqnames.field <span class="op">=</span> <span class="st">"chr"</span>, 
+                                                            start.field <span class="op">=</span> <span class="st">"BIN_START"</span>,
+                                                            end.field <span class="op">=</span> <span class="st">"BIN_END"</span><span class="op">)</span>
+      <span class="co"># loop over each chromosome</span>
+      <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">med_chr_lens</span><span class="op">$</span><span class="va">chr</span>, <span class="kw">function</span><span class="op">(</span><span class="va">CHR</span><span class="op">)</span><span class="op">{</span>
+        <span class="co"># get total length of target chromosome</span>
+        <span class="va">target_chr_len</span> <span class="op">=</span> <span class="va">med_chr_lens</span><span class="op">$</span><span class="va">end</span><span class="op">[</span><span class="va">med_chr_lens</span><span class="op">$</span><span class="va">chr</span> <span class="op">==</span> <span class="va">CHR</span><span class="op">]</span>
+        <span class="co"># get total bases covered by each state per chromosome</span>
+        <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map_dfr</a></span><span class="op">(</span><span class="va">states</span>, <span class="kw">function</span><span class="op">(</span><span class="va">STATE</span><span class="op">)</span><span class="op">{</span>
+          <span class="va">lane_ranges</span><span class="op">[</span><span class="va">lane_ranges</span><span class="op">$</span><span class="va">state</span> <span class="op">==</span> <span class="va">STATE</span> <span class="op">&amp;</span> <span class="va">lane_ranges</span><span class="op">@</span><span class="va">seqnames</span> <span class="op">==</span> <span class="va">CHR</span><span class="op">]</span> <span class="op">%&gt;%</span> 
+            <span class="co"># merge contiguous ranges</span>
+            <span class="fu">GenomicRanges</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/inter-range-methods.html">reduce</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+            <span class="co"># get width of ranges</span>
+            <span class="fu">width</span><span class="op">(</span><span class="va">.</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+            <span class="co"># get total bases covered</span>
+            <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+            <span class="co"># coerce into data frame</span>
+            <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="st">"BASES_COVERED"</span> <span class="op">=</span> <span class="va">.</span><span class="op">)</span>
+          <span class="op">}</span>, .id <span class="op">=</span> <span class="st">"STATE"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+            <span class="co"># add FREQ column</span>
+            <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>FREQ <span class="op">=</span> <span class="va">BASES_COVERED</span> <span class="op">/</span> <span class="va">target_chr_len</span> <span class="op">)</span> <span class="op">%&gt;%</span> 
+            <span class="co"># add UNCLASSIFIED row</span>
+            <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/add_row.html">add_row</a></span><span class="op">(</span>STATE <span class="op">=</span> <span class="st">"UNCLASSIFIED"</span>, 
+                            BASES_COVERED <span class="op">=</span> <span class="va">target_chr_len</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">.</span><span class="op">$</span><span class="va">BASES_COVERED</span><span class="op">)</span>,
+                            FREQ <span class="op">=</span> <span class="op">(</span><span class="va">target_chr_len</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">.</span><span class="op">$</span><span class="va">BASES_COVERED</span><span class="op">)</span><span class="op">)</span> <span class="op">/</span> <span class="va">target_chr_len</span><span class="op">)</span>
+      <span class="op">}</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+        <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html">bind_rows</a></span><span class="op">(</span>.id <span class="op">=</span> <span class="st">"CHR"</span><span class="op">)</span>
+    <span class="op">}</span>
+  <span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html">bind_rows</a></span><span class="op">(</span>.id <span class="op">=</span> <span class="st">"LANE"</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">base_cov_df_chr</span>, <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"data/20211027_base_cov_per_chr.rds"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<p>Plot</p>
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">##Plot</span>
+<span class="va">base_cov_df_chr</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>STATE <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">STATE</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span>,<span class="fl">2</span>, <span class="st">"UNCLASSIFIED"</span><span class="op">)</span><span class="op">)</span>,
+                STATE_RECODE <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/recode.html">recode</a></span><span class="op">(</span><span class="va">STATE</span>,
+                                             `0` <span class="op">=</span> <span class="st">"Homozygous Cab"</span>,
+                                             `1` <span class="op">=</span> <span class="st">"Heterozygous"</span>,
+                                             `2` <span class="op">=</span> <span class="st">"Homozygous Kaga"</span>,
+                                             <span class="st">"UNCLASSIFIED"</span> <span class="op">=</span> <span class="st">"Unclassified"</span><span class="op">)</span>,
+                CHR <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">CHR</span>, levels <span class="op">=</span> <span class="va">med_chr_lens</span><span class="op">$</span><span class="va">chr</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="co"># plot</span>
+  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span><span class="va">STATE_RECODE</span>, <span class="va">FREQ</span>, colour <span class="op">=</span> <span class="va">STATE</span>, fill <span class="op">=</span> <span class="va">STATE</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">geom_violin</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">geom_boxplot</span><span class="op">(</span>width <span class="op">=</span> <span class="fl">.1</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">ggbeeswarm</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ggbeeswarm/man/geom_quasirandom.html">geom_quasirandom</a></span><span class="op">(</span>color<span class="op">=</span><span class="st">"#7D8491"</span>, size<span class="op">=</span><span class="fl">0.1</span>, alpha<span class="op">=</span><span class="fl">0.7</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">scale_colour_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="va">pal_hom_het_2_lines</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">scale_fill_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="va">pal_hom_het_2</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">guides</span><span class="op">(</span>colour <span class="op">=</span> <span class="st">"none"</span>, fill <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">xlab</span><span class="op">(</span><span class="st">"Genotype"</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">ylab</span><span class="op">(</span><span class="st">"Proportion of reference bases covered"</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">facet_wrap</span><span class="op">(</span><span class="op">~</span><span class="va">CHR</span>, nrow <span class="op">=</span> <span class="fl">4</span>, ncol <span class="op">=</span> <span class="fl">6</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">theme</span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">45</span>, hjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<div class="inline-figure"><img src="03-F2_recombination_files/figure-html/unnamed-chunk-15-1.png" width="1536"></div>
+</div>
+</div>
+<div id="proportion-of-sites-covered-by-each-state" class="section level3" number="4.5.2">
+<h3>
+<span class="header-section-number">4.5.2</span> Proportion of <em>sites</em> covered by each state<a class="anchor" aria-label="anchor" href="#proportion-of-sites-covered-by-each-state"><i class="fas fa-link"></i></a>
+</h3>
+<div id="genome-wide" class="section level4" number="4.5.2.1">
+<h4>
+<span class="header-section-number">4.5.2.1</span> Genome-wide<a class="anchor" aria-label="anchor" href="#genome-wide"><i class="fas fa-link"></i></a>
+</h4>
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">df</span> <span class="op">%&gt;%</span> 
+  <span class="co"># get counts of sites per LANE and state</span>
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">LANE</span>, <span class="va">state</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html">count</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="co"># spread to one row per LANE</span>
+  <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_wider.html">pivot_wider</a></span><span class="op">(</span>id_cols <span class="op">=</span> <span class="va">LANE</span>, names_from <span class="op">=</span> <span class="va">state</span>, values_from <span class="op">=</span> <span class="va">n</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="co"># calculate frequencies of states per LANE</span>
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>TOTAL <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">`0`</span>, <span class="va">`1`</span>, <span class="va">`2`</span><span class="op">)</span>,
+                FREQ_0 <span class="op">=</span> <span class="va">`0`</span> <span class="op">/</span> <span class="va">TOTAL</span>,
+                FREQ_1 <span class="op">=</span> <span class="va">`1`</span> <span class="op">/</span> <span class="va">TOTAL</span>,
+                FREQ_2 <span class="op">=</span> <span class="va">`2`</span> <span class="op">/</span> <span class="va">TOTAL</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="co"># gather</span>
+  <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer</a></span><span class="op">(</span>cols <span class="op">=</span> <span class="fu">starts_with</span><span class="op">(</span><span class="st">"FREQ_"</span><span class="op">)</span>,
+                      names_to <span class="op">=</span> <span class="st">"STATE"</span>,
+                      names_prefix <span class="op">=</span> <span class="st">"FREQ_"</span>,
+                      values_to <span class="op">=</span> <span class="st">"FREQ"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="co"># order STATE and recode with meaning</span>
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>STATE <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">STATE</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span>,
+                STATE_RECODE <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/recode.html">recode</a></span><span class="op">(</span><span class="va">STATE</span>,
+                                      `0` <span class="op">=</span> <span class="st">"Homozygous Cab"</span>,
+                                      `1` <span class="op">=</span> <span class="st">"Heterozygous"</span>,
+                                      `2` <span class="op">=</span> <span class="st">"Homozygous Kaga"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="co"># plot</span>
+  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span><span class="va">STATE_RECODE</span>, <span class="va">FREQ</span>, colour <span class="op">=</span> <span class="va">STATE</span>, fill <span class="op">=</span> <span class="va">STATE</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">geom_violin</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">geom_boxplot</span><span class="op">(</span>width <span class="op">=</span> <span class="fl">.5</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">ggbeeswarm</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ggbeeswarm/man/geom_quasirandom.html">geom_quasirandom</a></span><span class="op">(</span>color<span class="op">=</span><span class="st">"#7D8491"</span>, size<span class="op">=</span><span class="fl">0.4</span>, alpha<span class="op">=</span><span class="fl">0.9</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">scale_colour_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="va">pal_hom_het_2_lines</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">scale_fill_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="va">pal_hom_het_2</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">guides</span><span class="op">(</span>colour <span class="op">=</span> <span class="st">"none"</span>, fill <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">xlab</span><span class="op">(</span><span class="st">"Genotype"</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">ylab</span><span class="op">(</span><span class="st">"Frequency"</span><span class="op">)</span></code></pre></div>
+<div class="figure">
+<span style="display:block;" id="fig:unnamed-chunk-16"></span>
+<img src="03-F2_recombination_files/figure-html/unnamed-chunk-16-1.png" alt="Frequency based on number of sites" width="672"><p class="caption">
+Figure 4.1: Frequency based on number of sites
+</p>
+</div>
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">ggsave</span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"plots/20211027_gt_freqs_sites.png"</span><span class="op">)</span>,
+       device <span class="op">=</span> <span class="st">"png"</span>,
+       width <span class="op">=</span> <span class="fl">10</span>,
+       height <span class="op">=</span> <span class="fl">5.8</span>,
+       units <span class="op">=</span> <span class="st">"in"</span>,
+       dpi <span class="op">=</span> <span class="fl">400</span><span class="op">)</span></code></pre></div>
+</div>
+<div id="per-chromosome" class="section level4" number="4.5.2.2">
+<h4>
+<span class="header-section-number">4.5.2.2</span> Per chromosome<a class="anchor" aria-label="anchor" href="#per-chromosome"><i class="fas fa-link"></i></a>
+</h4>
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">df</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>state <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">state</span>, levels <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="co"># get counts of sites per LANE and state</span>
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">LANE</span>, <span class="va">chr</span>, <span class="va">state</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html">count</a></span><span class="op">(</span>.drop <span class="op">=</span> <span class="cn">F</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="co"># spread to one row per LANE</span>
+  <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_wider.html">pivot_wider</a></span><span class="op">(</span>id_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">LANE</span>, <span class="va">chr</span><span class="op">)</span>, names_from <span class="op">=</span> <span class="va">state</span>, values_from <span class="op">=</span> <span class="va">n</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="co"># replace NAs with 0 manually , because `.drop = F` in `count` above doesn't work </span>
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/across.html">across</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">`0`</span>, <span class="va">`1`</span>, <span class="va">`2`</span><span class="op">)</span>,
+                            <span class="op">~</span><span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/replace_na.html">replace_na</a></span><span class="op">(</span><span class="va">.x</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="co"># calculate frequencies of states per LANE</span>
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>TOTAL <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">`0`</span>, <span class="va">`1`</span>, <span class="va">`2`</span>, na.rm <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>,
+                FREQ_0 <span class="op">=</span> <span class="va">`0`</span> <span class="op">/</span> <span class="va">TOTAL</span>,
+                FREQ_1 <span class="op">=</span> <span class="va">`1`</span> <span class="op">/</span> <span class="va">TOTAL</span>,
+                FREQ_2 <span class="op">=</span> <span class="va">`2`</span> <span class="op">/</span> <span class="va">TOTAL</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="co"># gather</span>
+  <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer</a></span><span class="op">(</span>cols <span class="op">=</span> <span class="fu">starts_with</span><span class="op">(</span><span class="st">"FREQ_"</span><span class="op">)</span>,
+                      names_to <span class="op">=</span> <span class="st">"STATE"</span>,
+                      names_prefix <span class="op">=</span> <span class="st">"FREQ_"</span>,
+                      values_to <span class="op">=</span> <span class="st">"FREQ"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="co"># order STATE and recode with meaning</span>
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>STATE <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">STATE</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span>,
+                STATE_RECODE <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/recode.html">recode</a></span><span class="op">(</span><span class="va">STATE</span>,
+                                      `0` <span class="op">=</span> <span class="st">"Homozygous Cab"</span>,
+                                      `1` <span class="op">=</span> <span class="st">"Heterozygous"</span>,
+                                      `2` <span class="op">=</span> <span class="st">"Homozygous Kaga"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="co"># plot</span>
+  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span><span class="va">STATE_RECODE</span>, <span class="va">FREQ</span>, colour <span class="op">=</span> <span class="va">STATE</span>, fill <span class="op">=</span> <span class="va">STATE</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">geom_violin</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">geom_boxplot</span><span class="op">(</span>width <span class="op">=</span> <span class="fl">.1</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">ggbeeswarm</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ggbeeswarm/man/geom_quasirandom.html">geom_quasirandom</a></span><span class="op">(</span>color<span class="op">=</span><span class="st">"#7D8491"</span>, size<span class="op">=</span><span class="fl">0.1</span>, alpha<span class="op">=</span><span class="fl">0.7</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">scale_colour_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="va">pal_hom_het_2_lines</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">scale_fill_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="va">pal_hom_het_2</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">guides</span><span class="op">(</span>colour <span class="op">=</span> <span class="st">"none"</span>, fill <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">xlab</span><span class="op">(</span><span class="st">"Genotype"</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">ylab</span><span class="op">(</span><span class="st">"Frequency"</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">facet_wrap</span><span class="op">(</span><span class="op">~</span><span class="va">chr</span>, nrow <span class="op">=</span> <span class="fl">4</span>, ncol <span class="op">=</span> <span class="fl">6</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">theme</span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">45</span>, hjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<div class="figure">
+<span style="display:block;" id="fig:unnamed-chunk-18"></span>
+<img src="03-F2_recombination_files/figure-html/unnamed-chunk-18-1.png" alt="Frequency per-chromosome based on number of sites" width="1536"><p class="caption">
+Figure 4.2: Frequency per-chromosome based on number of sites
+</p>
+</div>
+</div>
+</div>
+</div>
+<div id="karyoplot-2" class="section level2" number="4.6">
+<h2>
+<span class="header-section-number">4.6</span> Karyoplot<a class="anchor" aria-label="anchor" href="#karyoplot-2"><i class="fas fa-link"></i></a>
+</h2>
+<p>Make custom chromosome scaffold</p>
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">##Create custom genome </span>
+<span class="va">med_genome</span> <span class="op">=</span> <span class="fu">regioneR</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/regioneR/man/toGRanges.html">toGRanges</a></span><span class="op">(</span><span class="va">med_chr_lens</span><span class="op">)</span></code></pre></div>
+<p>Convert data to list of block boundaries for each LANE</p>
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">bb_list</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">df_list</span>, <span class="kw">function</span><span class="op">(</span><span class="va">df</span><span class="op">)</span><span class="op">{</span>
+  <span class="co"># loop over different bin lengths</span>
+  <span class="va">block_bounds_list</span> <span class="op">=</span> <span class="va">df</span> <span class="op">%&gt;%</span> 
+    <span class="co"># loop over LANE</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/split.html">split</a></span><span class="op">(</span><span class="va">.</span>, f <span class="op">=</span> <span class="va">.</span><span class="op">$</span><span class="va">LANE</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+    <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">.</span>, <span class="kw">function</span><span class="op">(</span><span class="va">LANE</span><span class="op">)</span><span class="op">{</span>
+      <span class="co"># loop over CHR</span>
+      <span class="va">LANE</span> <span class="op">%&gt;%</span> 
+        <span class="fu"><a href="https://rdrr.io/r/base/split.html">split</a></span><span class="op">(</span><span class="va">.</span>, f <span class="op">=</span> <span class="va">.</span><span class="op">$</span><span class="va">chr</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+        <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">.</span>, <span class="kw">function</span><span class="op">(</span><span class="va">CHR</span><span class="op">)</span><span class="op">{</span>
+          <span class="co"># Get lengths of each contiguous state</span>
+          <span class="va">cont_len</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rle.html">rle</a></span><span class="op">(</span><span class="va">CHR</span><span class="op">$</span><span class="va">state</span><span class="op">)</span>
+          
+          <span class="co"># Get cumulative sum of those lengths</span>
+          <span class="va">cum_blocks</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/cumsum.html">cumsum</a></span><span class="op">(</span><span class="va">cont_len</span><span class="op">$</span><span class="va">lengths</span><span class="op">)</span>
+          
+          <span class="co"># Get rows that correspond to block changes</span>
+          <span class="va">block_bounds</span> <span class="op">=</span> <span class="va">CHR</span><span class="op">[</span><span class="va">cum_blocks</span>, <span class="op">]</span> <span class="op">%&gt;%</span> 
+            <span class="co"># Add end of previous block</span>
+            <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>END_PREV <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/lead-lag.html">lag</a></span><span class="op">(</span><span class="va">BIN_END</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+            <span class="co"># Replace the NA in the first row with `1`</span>
+            <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>END_PREV <span class="op">=</span> <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/replace_na.html">replace_na</a></span><span class="op">(</span><span class="va">END_PREV</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+            <span class="co"># Add colour</span>
+            <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>COLOUR <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/recode.html">recode</a></span><span class="op">(</span><span class="va">state</span>,
+                                                 <span class="op">!</span><span class="op">!</span><span class="op">!</span><span class="va">pal_hom_het_2</span><span class="op">[</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">pal_hom_het_2</span><span class="op">)</span> <span class="op">==</span> <span class="st">"UNCLASSIFIED"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span><span class="op">)</span> 
+          
+        <span class="op">}</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+            <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html">bind_rows</a></span><span class="op">(</span><span class="op">)</span>
+      
+  <span class="op">}</span><span class="op">)</span>
+<span class="op">}</span><span class="op">)</span></code></pre></div>
+<p>Extract y cutoff points for each lane</p>
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">lc_list</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">bb_list</span>, <span class="kw">function</span><span class="op">(</span><span class="va">block_bounds_list</span><span class="op">)</span><span class="op">{</span>
+  <span class="va">lane_cutoffs</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/cut.html">cut</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">1</span>, breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">block_bounds_list</span><span class="op">)</span>, dig.lab <span class="op">=</span> <span class="fl">7</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+    <span class="fu"><a href="https://rdrr.io/r/base/levels.html">levels</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+    <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>lower <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html">sub</a></span><span class="op">(</span><span class="st">"\\((.+),.*"</span>, <span class="st">"\\1"</span>, <span class="va">.</span><span class="op">)</span> <span class="op">)</span>,
+               upper <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html">sub</a></span><span class="op">(</span><span class="st">"[^,]*,([^]]*)\\]"</span>, <span class="st">"\\1"</span>, <span class="va">.</span><span class="op">)</span> <span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html">desc</a></span><span class="op">(</span><span class="va">lower</span><span class="op">)</span><span class="op">)</span>
+  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="va">lane_cutoffs</span><span class="op">)</span>
+<span class="op">}</span><span class="op">)</span></code></pre></div>
+<p>Plot karyoplots</p>
+<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">counter_A</span> <span class="op">=</span> <span class="fl">0</span>
+<span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">bb_list</span>, <span class="kw">function</span><span class="op">(</span><span class="va">block_bounds_list</span><span class="op">)</span><span class="op">{</span>
+  <span class="va">counter_A</span> <span class="op">&lt;&lt;-</span> <span class="va">counter_A</span> <span class="op">+</span> <span class="fl">1</span>
+  <span class="co"># set file name</span>
+  <span class="va">file_name</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"20211027_karyoplot_"</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">bb_list</span><span class="op">)</span><span class="op">[</span><span class="va">counter_A</span><span class="op">]</span>, <span class="st">".png"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span>
+  <span class="va">file_out</span> <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"book/plots"</span>, <span class="va">file_name</span><span class="op">)</span>
+  
+  <span class="co"># Get lane cutoffs</span>
+  <span class="va">lane_cutoffs</span> <span class="op">=</span> <span class="va">lc_list</span><span class="op">[[</span><span class="va">counter_A</span><span class="op">]</span><span class="op">]</span>
+  
+  <span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span>file<span class="op">=</span><span class="va">file_out</span>,
+      width<span class="op">=</span><span class="fl">13000</span>,
+      height<span class="op">=</span><span class="fl">26000</span>,
+      units <span class="op">=</span> <span class="st">"px"</span>,
+      res <span class="op">=</span> <span class="fl">300</span><span class="op">)</span>
+  
+  <span class="co"># Plot ideogram</span>
+  <span class="va">kp</span> <span class="op">=</span> <span class="fu">karyoploteR</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/karyoploteR/man/plotKaryotype.html">plotKaryotype</a></span><span class="op">(</span><span class="va">med_genome</span>, plot.type <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>
+  <span class="co"># Add data background</span>
+  <span class="co">#karyoploteR::kpDataBackground(kp, r0=0, r1 = 1, color = "white")</span>
+  
+  <span class="co"># Add rectangles in loop</span>
+  <span class="va">counter_B</span> <span class="op">=</span> <span class="fl">0</span>
+  <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">block_bounds_list</span>, <span class="kw">function</span><span class="op">(</span><span class="va">LANE</span><span class="op">)</span><span class="op">{</span>
+    <span class="co"># Add to counter_B</span>
+    <span class="va">counter_B</span> <span class="op">&lt;&lt;-</span> <span class="va">counter_B</span> <span class="op">+</span> <span class="fl">1</span>
+    <span class="co"># Add rectangles</span>
+    <span class="fu">karyoploteR</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/karyoploteR/man/kpRect.html">kpRect</a></span><span class="op">(</span><span class="va">kp</span>,
+                        chr <span class="op">=</span> <span class="va">LANE</span><span class="op">$</span><span class="va">chr</span>,
+                        x0 <span class="op">=</span> <span class="va">LANE</span><span class="op">$</span><span class="va">END_PREV</span>,
+                        x1 <span class="op">=</span> <span class="va">LANE</span><span class="op">$</span><span class="va">BIN_END</span>,
+                        y0 <span class="op">=</span> <span class="va">lane_cutoffs</span><span class="op">[</span><span class="va">counter_B</span>, <span class="op">]</span> <span class="op">%&gt;%</span> 
+                          <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html">pull</a></span><span class="op">(</span><span class="va">lower</span><span class="op">)</span>,
+                        y1 <span class="op">=</span> <span class="va">lane_cutoffs</span><span class="op">[</span><span class="va">counter_B</span>, <span class="op">]</span> <span class="op">%&gt;%</span> 
+                          <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html">pull</a></span><span class="op">(</span><span class="va">upper</span><span class="op">)</span>,
+                        col <span class="op">=</span> <span class="va">LANE</span><span class="op">$</span><span class="va">COLOUR</span>,
+                        border <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span>
+    <span class="co"># Add axis label</span>
+    <span class="fu">karyoploteR</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/karyoploteR/man/kpAddLabels.html">kpAddLabels</a></span><span class="op">(</span><span class="va">kp</span>, labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">LANE</span><span class="op">$</span><span class="va">LANE</span><span class="op">)</span>,
+                             r0 <span class="op">=</span> <span class="va">lane_cutoffs</span><span class="op">[</span><span class="va">counter_B</span>, <span class="op">]</span> <span class="op">%&gt;%</span> 
+                               <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html">pull</a></span><span class="op">(</span><span class="va">lower</span><span class="op">)</span>,
+                             r1 <span class="op">=</span> <span class="va">lane_cutoffs</span><span class="op">[</span><span class="va">counter_B</span>, <span class="op">]</span> <span class="op">%&gt;%</span> 
+                               <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html">pull</a></span><span class="op">(</span><span class="va">upper</span><span class="op">)</span>,
+                             cex <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span>
+  <span class="op">}</span><span class="op">)</span>
+  
+  
+  <span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span>  
+<span class="op">}</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"book/plots/20211027_karyoplot_5000.png"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<div class="figure">
+<span style="display:block;" id="fig:unnamed-chunk-25"></span>
+<img src="plots/20211027_karyoplot_5000.png" alt="Bin length: 5 kb" width="6500"><p class="caption">
+Figure 4.3: Bin length: 5 kb
+</p>
+</div>
+<p>Don’t show other bin lengths because they look the same.</p>
+<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"book/plots/20211027_karyoplot_10000.png"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"book/plots/20211027_karyoplot_15000.png"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"book/plots/20211027_karyoplot_20000.png"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+</div>
+<div id="realised-relationship-matrix" class="section level2" number="4.7">
+<h2>
+<span class="header-section-number">4.7</span> Realised relationship matrix<a class="anchor" aria-label="anchor" href="#realised-relationship-matrix"><i class="fas fa-link"></i></a>
+</h2>
+<div id="process-data" class="section level3" number="4.7.1">
+<h3>
+<span class="header-section-number">4.7.1</span> Process data<a class="anchor" aria-label="anchor" href="#process-data"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Process data</span>
+<span class="va">gt_mat_rc</span> <span class="op">=</span> <span class="va">df_list</span><span class="op">$</span><span class="va">`5000`</span> <span class="op">%&gt;%</span> 
+  <span class="co"># extract LANE names from sample name, and create site name by binding `chr` and `block`</span>
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>LANE <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/basename.html">basename</a></span><span class="op">(</span><span class="va">sample</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+                  <span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_remove.html">str_remove</a></span><span class="op">(</span><span class="st">".txt"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+                  <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span>,
+                SITE <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="va">chr</span>, <span class="va">bin</span>, sep <span class="op">=</span> <span class="st">":"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+<span class="co">## dplyr::filter(SITE %in% unique(SITE)[1:10]) %&gt;% </span>
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">LANE</span>, <span class="va">SITE</span>, <span class="va">state</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="co"># recode 0,1,2 to -1,0,1</span>
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>state <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/recode.html">recode</a></span><span class="op">(</span><span class="va">state</span>,
+                                      `0` <span class="op">=</span> <span class="op">-</span><span class="fl">1</span>,
+                                      `1` <span class="op">=</span> <span class="fl">0</span>,
+                                      `2` <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="co"># pivot to put sites into columns</span>
+  <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_wider.html">pivot_wider</a></span><span class="op">(</span>id_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">LANE</span>, <span class="va">SITE</span><span class="op">)</span>,
+                     names_from <span class="op">=</span> <span class="va">SITE</span>,
+                     values_from <span class="op">=</span> <span class="va">state</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="co"># remove LANE column</span>
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">LANE</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="co"># convert to matrix</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span>
+
+<span class="co">#Compute realised relationship matrix</span>
+<span class="va">rrmat</span> <span class="op">=</span> <span class="fu">sommer</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/sommer/man/A.mat.html">A.mat</a></span><span class="op">(</span><span class="va">gt_mat_rc</span><span class="op">)</span>
+
+<span class="co">#Save object</span>
+<span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">rrmat</span>, <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"data/realised_relationship_matrix.rds"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+</div>
+<div id="plot" class="section level3" number="4.7.2">
+<h3>
+<span class="header-section-number">4.7.2</span> Plot<a class="anchor" aria-label="anchor" href="#plot"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">rrmat</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"data/realised_relationship_matrix.rds"</span><span class="op">)</span><span class="op">)</span>
+
+<span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"book/plots/20211027_rrm_heatmap.png"</span><span class="op">)</span>,
+    width <span class="op">=</span> <span class="fl">20</span>,
+    height <span class="op">=</span> <span class="fl">20</span>,
+    units <span class="op">=</span> <span class="st">"in"</span>,
+    res <span class="op">=</span> <span class="fl">400</span><span class="op">)</span>
+
+<span class="va">heat_cols</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/colorRamp.html">colorRampPalette</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"#9EC5AB"</span>, <span class="st">"#0D4045"</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/stats/heatmap.html">heatmap</a></span><span class="op">(</span><span class="va">rrmat</span>, symm <span class="op">=</span> <span class="cn">T</span>, col <span class="op">=</span> <span class="fu">heat_cols</span><span class="op">(</span><span class="fl">100</span><span class="op">)</span><span class="op">)</span>
+
+<span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"book/plots/20211027_rrm_heatmap.png"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<div class="inline-figure"><img src="plots/20211027_rrm_heatmap.png" width="4000"></div>
+
+</div>
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="homozygosity-of-f0-cab-and-kaga.html"><span class="header-section-number">3</span> Homozygosity of F0 Cab and Kaga</a></div>
+<div class="next"><a href="f2-recombination-blocks-new.html"><span class="header-section-number">5</span> F2 recombination blocks (new)</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#f2-recombination-blocks-old"><span class="header-section-number">4</span> F2 recombination blocks (old)</a></li>
+<li><a class="nav-link" href="#read-in-data-2"><span class="header-section-number">4.1</span> Read in data</a></li>
+<li>
+<a class="nav-link" href="#examine-relationship-between-ratio-and-state"><span class="header-section-number">4.2</span> Examine relationship between ratio and state</a><ul class="nav navbar-nav"><li><a class="nav-link" href="#recode-state-to-put-in-correct-order"><span class="header-section-number">4.2.1</span> Recode state to put in correct order</a></li></ul>
+</li>
+<li><a class="nav-link" href="#read-counts-per-bin"><span class="header-section-number">4.3</span> Read counts per bin</a></li>
+<li><a class="nav-link" href="#read-counts-by-proportion-of-kaga"><span class="header-section-number">4.4</span> Read counts by proportion of Kaga</a></li>
+<li>
+<a class="nav-link" href="#proportion-of-genome-and-sites-called-as-a-given-state"><span class="header-section-number">4.5</span> Proportion of genome and sites called as a given state</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#proportion-of-genome-covered-by-each-state"><span class="header-section-number">4.5.1</span> Proportion of genome covered by each state</a></li>
+<li><a class="nav-link" href="#proportion-of-sites-covered-by-each-state"><span class="header-section-number">4.5.2</span> Proportion of sites covered by each state</a></li>
+</ul>
+</li>
+<li><a class="nav-link" href="#karyoplot-2"><span class="header-section-number">4.6</span> Karyoplot</a></li>
+<li>
+<a class="nav-link" href="#realised-relationship-matrix"><span class="header-section-number">4.7</span> Realised relationship matrix</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#process-data"><span class="header-section-number">4.7.1</span> Process data</a></li>
+<li><a class="nav-link" href="#plot"><span class="header-section-number">4.7.2</span> Plot</a></li>
+</ul>
+</li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+<li><a id="book-source" href="https://github.com/brettellebi/somites/blob/master/03-F2_recombination.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/brettellebi/somites/edit/master/03-F2_recombination.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Somite period F2 analysis</strong>" was written by Ian Brettell. It was last built on 2021-11-11.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer>
+</body>
+</html>

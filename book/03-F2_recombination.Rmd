@@ -2,7 +2,7 @@
 zotero: "PhD"
 ---
 
-# F2 recombination blocks
+# F2 recombination blocks (old)
 
 ```{r, message = F, warning = F}
 library(here)
