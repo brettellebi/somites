@@ -16,6 +16,6 @@ csl: chicago-fullnote-bibliography.csl
 
 # About
 
-This book sets out the analysis of somite development periods, for Ali Ahmed Seleit in Aulehla Group at EMBL Heidelberg.
+This book sets out the analysis of somite development periods, for Ali Ahmed Seleit in the Aulehla Group at EMBL Heidelberg.
 
 

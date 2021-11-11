@@ -61,8 +61,8 @@ head(df_list$`5000`) %>%
 ```
 
 ```{=html}
-<div id="htmlwidget-e5c4f76a55f226cdf1f7" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-e5c4f76a55f226cdf1f7">{"x":{"filter":"none","data":[["1","2","3","4","5","6"],["/hps/nobackup/birney/users/ian/somites/dpABs/F2/no_repeat_reads/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/F2/no_repeat_reads/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/F2/no_repeat_reads/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/F2/no_repeat_reads/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/F2/no_repeat_reads/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/F2/no_repeat_reads/1.txt"],[2,9,16,5,29,1],[2,3,30,3,32,2],[8,11,16,17,18,20],[0.5,0.75,0.347826086956522,0.625,0.475409836065574,0.333333333333333],[1,1,1,1,1,1],[1,1,1,1,1,1],[1,1,1,1,1,1],[5000,5000,5000,5000,5000,5000],[35001,50001,75001,80001,85001,95001],[40000,55000,80000,85000,90000,100000],[5,5,5,5,5,5],[4,12,46,8,61,3]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>sample<\/th>\n      <th>mat<\/th>\n      <th>pat<\/th>\n      <th>bin<\/th>\n      <th>ratio<\/th>\n      <th>chr<\/th>\n      <th>state<\/th>\n      <th>LANE<\/th>\n      <th>BIN_LENGTH<\/th>\n      <th>BIN_START<\/th>\n      <th>BIN_END<\/th>\n      <th>BIN_LENGTH_KB<\/th>\n      <th>READS_PER_BIN<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[2,3,4,5,6,7,8,9,10,11,12,13]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-f1c7bb4679b2f63df107" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-f1c7bb4679b2f63df107">{"x":{"filter":"none","data":[["1","2","3","4","5","6"],["/hps/nobackup/birney/users/ian/somites/dpABs/F2/no_repeat_reads/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/F2/no_repeat_reads/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/F2/no_repeat_reads/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/F2/no_repeat_reads/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/F2/no_repeat_reads/1.txt","/hps/nobackup/birney/users/ian/somites/dpABs/F2/no_repeat_reads/1.txt"],[2,9,16,5,29,1],[2,3,30,3,32,2],[8,11,16,17,18,20],[0.5,0.75,0.347826086956522,0.625,0.475409836065574,0.333333333333333],[1,1,1,1,1,1],[1,1,1,1,1,1],[1,1,1,1,1,1],[5000,5000,5000,5000,5000,5000],[35001,50001,75001,80001,85001,95001],[40000,55000,80000,85000,90000,100000],[5,5,5,5,5,5],[4,12,46,8,61,3]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>sample<\/th>\n      <th>mat<\/th>\n      <th>pat<\/th>\n      <th>bin<\/th>\n      <th>ratio<\/th>\n      <th>chr<\/th>\n      <th>state<\/th>\n      <th>LANE<\/th>\n      <th>BIN_LENGTH<\/th>\n      <th>BIN_START<\/th>\n      <th>BIN_END<\/th>\n      <th>BIN_LENGTH_KB<\/th>\n      <th>READS_PER_BIN<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[2,3,4,5,6,7,8,9,10,11,12,13]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 ```
 
 `ratio = mat / (mat + pat)`, where `mat` = Cab and `pat` = Kaga.
@@ -132,7 +132,7 @@ df_list %>%
     theme_bw() +
     scale_fill_manual(values = c("#778DA9", "#415A77", "#1B263B", "#0D1B2A")) +
     guides(fill = "none")
-#> Warning: Removed 77 rows containing non-finite values
+#> Warning: Removed 78 rows containing non-finite values
 #> (stat_boxplot).
 ```
 
@@ -153,7 +153,7 @@ df_list %>%
     facet_grid(cols = vars(BIN_LENGTH)) +
 ##   scale_colour_manual(values = c("#778DA9", "#415A77", "#1B263B", "#0D1B2A")) +
     guides(fill = "none")
-#> Warning: Removed 73 rows containing missing values
+#> Warning: Removed 76 rows containing missing values
 #> (geom_point).
 ```
 
@@ -174,7 +174,7 @@ df_list %>%
 ##   scale_colour_manual(values = c("#778DA9", "#415A77", "#1B263B", "#0D1B2A")) +
     guides(fill = "none") +
     xlim(0,100)
-#> Warning: Removed 20064 rows containing missing values
+#> Warning: Removed 20030 rows containing missing values
 #> (geom_point).
 ```
 
