@@ -18,7 +18,7 @@ library(DT)
 pal_hom_het_1 = c("#947EB0", "#A3A5C3", "#A9D2D5", "#E1E1DF")
 names(pal_hom_het_1) = c(0:2, "UNCLASSIFIED")
 
-pal_hom_het_2 = c("#e28413", "#000022", "#DE3C4B", "#FBF5F3")
+pal_hom_het_2 = c("#66CDAA", "#000022", "#DE3C4B", "#FBF5F3")
 names(pal_hom_het_2) = c(0:2, "UNCLASSIFIED")
 
 pal_hom_het_2_lines = c(karyoploteR::darker(pal_hom_het_2[1], 100),
