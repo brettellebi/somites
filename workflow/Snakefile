@@ -71,6 +71,8 @@ rule all:
 #        ),
 # merge_variants
 #        expand(os.path.join(config["data_store_dir"], "vcfs/F0/final/all.vcf.gz")),
+# merge_variants_F0_and_F2
+        os.path.join(config["data_store_dir"], "vcfs/F0_and_F2/final/all.vcf.gz"),
 ###############
 # 04_F2_mapping.smk
 ###############
@@ -119,17 +121,17 @@ rule all:
 #                date_of_processing = config["date_of_processing"],
 #                bin_length = config["bin_length"]
 #        ),
-###############
-# 06_F0_recomb_blocks.smk
-###############
-# run_rc_block_F0
-        expand(os.path.join(config["data_store_dir"], "recombination_blocks/F0/{site_filter}/{bin_length}.txt"),
-                site_filter = config["site_filter"],
-                bin_length = config["bin_length_F0"]
-        ),
+################
+## 06_F0_recomb_blocks.smk
+################
+## run_rc_block_F0
+#        expand(os.path.join(config["data_store_dir"], "recombination_blocks/F0/{site_filter}/{bin_length}.txt"),
+#                site_filter = config["site_filter"],
+#                bin_length = config["bin_length_F0"]
+#        ),
 ################
 ## 07_association_testing.smk
-################
+###############
 ## create_gwas_input
 #        expand(os.path.join(config["data_store_dir"], "association_testing/{date_of_assoc_test}_true/inputs/{bin_length}.rds"),
 #                date_of_assoc_test = config["date_of_assoc_test"],
@@ -141,21 +143,27 @@ rule all:
 #                target_phenotype = config["target_phenotypes"],
 #                bin_length = config["bin_length"]
 #        ),
-# run_gwls
-        expand(os.path.join(config["data_store_dir"], "association_testing/{date_of_assoc_test}_true/{site_filter}/results/{target_phenotype}/{bin_length}.rds"),
-                date_of_assoc_test = config["date_of_assoc_test"],
-                site_filter = config["site_filter"],
-                target_phenotype = config["target_phenotypes"],
-                bin_length = config["bin_length"]
-        ),
-# run permutations
-        expand(os.path.join(config["data_store_dir"], "association_testing/{date_of_assoc_test}_permutations/{site_filter}/{target_phenotype}/{bin_length}/{permutation_seed}.rds"),
-                date_of_assoc_test = config["date_of_assoc_test"],
-                site_filter = config["site_filter"],
-                target_phenotype = config["target_phenotypes"],
-                bin_length = config["bin_length"],
-                permutation_seed = PERM_SEEDS      
-        ),
+## run_gwls
+#        expand(os.path.join(config["data_store_dir"], "association_testing/{date_of_assoc_test}_true/{site_filter}/results/{target_phenotype}/{bin_length}.rds"),
+#                date_of_assoc_test = config["date_of_assoc_test"],
+#                site_filter = config["site_filter"],
+#                target_phenotype = config["target_phenotypes"],
+#                bin_length = config["bin_length"]
+#        ),
+## run permutations
+#        expand(os.path.join(config["data_store_dir"], "association_testing/{date_of_assoc_test}_permutations/{site_filter}/{target_phenotype}/{bin_length}/{permutation_seed}.rds"),
+#                date_of_assoc_test = config["date_of_assoc_test"],
+#                site_filter = config["site_filter"],
+#                target_phenotype = config["target_phenotypes"],
+#                bin_length = config["bin_length"],
+#                permutation_seed = PERM_SEEDS      
+#        ),
+#
+################
+## 08_F2_calling.smk
+###############
+## merge_variants_F2
+#        os.path.join(config["data_store_dir"], "vcfs/F2/final/all.vcf.gz"),
 
 ##### Modules #####
 
@@ -166,3 +174,4 @@ include: "rules/04_F2_mapping.smk"
 include: "rules/05_F2_recomb_blocks.smk"
 include: "rules/06_F0_recomb_blocks.smk"
 include: "rules/07_assocation_testing.smk"
+include: "rules/08_F2_calling.smk"

@@ -44,10 +44,7 @@ rule bwa_mem2_mem:
                 > {output} \
                     2> {log}
         """
-# One error for sample (LANE) 7171
-# log file here: /hps/nobackup/birney/users/ian/somites/logs/bwa_mem2_mem/2604307_sample\=7171.err
-# [mem_sam_pe_batch_post] paired reads have different names: "�0�����O&�����x�7�Z�HĻ�@�%Q�ü��", "ST-K00119:220:HKNVLBBXY:7:1101:1661:1138"
-# That sample is hashed out of `config/F2_samples.txt` until the issue is resolved.
+
 rule sort_sam_f2:
     input:
         os.path.join(config["working_dir"], "sams/F2/bwamem2/mapped/{F2_sample}.sam"),

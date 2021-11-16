@@ -25,7 +25,7 @@ rule haplotype_caller:
                 -I {input.bam} \
                 -ERC GVCF \
                 -O {output.gvcf} \
-                    > {log} 2>&1 
+                    > {log} 2>&1
         """
 
 rule combine_calls:
@@ -42,7 +42,7 @@ rule combine_calls:
     params:
         in_files = lambda wildcards, input: " -V ".join(input.gvcfs)
     resources:
-        java_mem_gb=1    
+        java_mem_gb=1
     container:
         config["gatk"]
     shell:
@@ -64,7 +64,7 @@ rule genotype_variants:
     log:
         os.path.join(config["working_dir"], "logs/genotype_variants/{contig}.log")
     resources:
-        java_mem_gb=1   
+        java_mem_gb=1
     container:
         config["gatk"]
     shell:
@@ -87,6 +87,92 @@ rule merge_variants:
         os.path.join(config["data_store_dir"], "vcfs/F0/final/all.vcf.gz"),
     log:
         os.path.join(config["working_dir"], "logs/merge_variants/all.log")
+    params:
+        in_files = lambda wildcards, input: " ".join("INPUT={}".format(f) for f in input.vcfs)
+    container:
+        config["picard"]
+    shell:
+        """
+        picard MergeVcfs \
+            {params.in_files} \
+            OUTPUT={output[0]} \
+                &> {log}
+        """
+
+###############
+# Call with F2 samples as well
+###############
+
+# Create two vectors with GEN and SAMPLE
+import numpy as np
+
+F0_gens = np.repeat("F0", len(config["F0_lines"]))
+F2_gens = np.repeat("F2", len(F2_samples['SAMPLE']))
+ALL_GENS = [y for x in [F0_gens, F2_gens] for y in x]
+ALL_SAMPLES = [y for x in [config["F0_lines"], F2_samples['SAMPLE']] for y in x]
+
+rule combine_calls_F0_and_F2:
+    input:
+        ref=config["ref_prefix"] + ".fasta",
+        gvcfs=expand(
+            os.path.join(config["working_dir"], "vcfs/{all_gens}/gvcfs/{all_samples}/{{contig}}.g.vcf"),
+            zip,
+            all_gens = ALL_GENS,
+            all_samples = ALL_SAMPLES
+        ),
+    output:
+        os.path.join(config["working_dir"], "vcfs/F0_and_F2/combined/all.{contig}.g.vcf.gz"),
+    log:
+        os.path.join(config["working_dir"], "logs/combine_calls_F0_and_F2/{contig}.log")
+    params:
+        in_files = lambda wildcards, input: " -V ".join(input.gvcfs)
+    resources:
+        java_mem_gb=4,
+        mem_mb=10000
+    container:
+        config["gatk"]
+    shell:
+        """
+        gatk --java-options \"-Xmx{resources.java_mem_gb}G\"\
+            CombineGVCFs \
+                -V {params.in_files} \
+                -R {input.ref} \
+                -O {output[0]} \
+                    > {log} 2>&1
+        """
+
+rule genotype_variants_F0_and_F2:
+    input:
+        ref=config["ref_prefix"] + ".fasta",
+        gvcf=os.path.join(config["working_dir"], "vcfs/F0_and_F2/combined/all.{contig}.g.vcf.gz"),
+    output:
+        os.path.join(config["working_dir"], "vcfs/F0_and_F2/genotyped/all.{contig}.vcf.gz"),
+    log:
+        os.path.join(config["working_dir"], "logs/genotype_variants_F0_and_F2/{contig}.log")
+    resources:
+        java_mem_gb=1   
+    container:
+        config["gatk"]
+    shell:
+        """
+        gatk --java-options \"-Xmx{resources.java_mem_gb}G\" \
+            GenotypeGVCFs \
+                -V {input.gvcf} \
+                -R {input.ref} \
+                -O {output[0]} \
+                    > {log} 2>&1
+        """
+
+rule merge_variants_F0_and_F2:
+    input:
+        vcfs=expand(
+            os.path.join(config["working_dir"], "vcfs/F0_and_F2/genotyped/all.{contig}.vcf.gz"),
+            contig=get_contigs()
+        ),
+    output:
+        os.path.join(config["data_store_dir"], "vcfs/F0_and_F2/final/all.vcf.gz"),
+    log:
+        os.path.join(config["working_dir"], "logs/merge_variants_F0_and_F2/all.log")
     params:
         in_files = lambda wildcards, input: " ".join("INPUT={}".format(f) for f in input.vcfs)
     container:

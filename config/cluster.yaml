@@ -20,6 +20,8 @@ mark_duplicates_F0:
 # 03_F0_calling.smk
 haplotype_caller:
   memory: "{resources.mem_mb}"
+combine_calls_F0_and_F2:
+  memory: "{resources.mem_mb}"
 # 04_F2_mapping.smk
 copy_f2_seq_data:
   queue: "datamover"
@@ -52,4 +54,9 @@ test_gwls:
 run_gwls:
   memory: "{resources.mem_mb}"
 run_permutations:
+  memory: "{resources.mem_mb}"
+# 08_F2_calling.smk
+haplotype_caller_F2:
+  memory: "{resources.mem_mb}"
+combine_calls_F2:
   memory: "{resources.mem_mb}"
