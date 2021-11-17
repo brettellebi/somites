@@ -15,5 +15,9 @@ rmd_files: [
   "03-F2_recombination.Rmd",
   "03-2-F2_recombination.Rmd",
   "04-Association_testing.Rmd",
-  "05-GWLS_results.Rmd"
+  "05-GWLS_results.Rmd",
+  
+  "meeting_log.Rmd",
+  
+  "07-references.Rmd"
 ]

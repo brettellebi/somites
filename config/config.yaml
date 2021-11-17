@@ -18,6 +18,8 @@ phenotypes_file:
 target_phenotypes:
     - intercept
     - mean
+ref_chr_lengths:
+    data/Oryzias_latipes.ASM223467v1.dna.toplevel.fa_chr_counts.txt
 ####################
 # Parameters
 ####################
@@ -86,5 +88,9 @@ bam-readcount:
     docker://quay.io/biocontainers/bam-readcount:0.8--py36pl526h94a8ba4_4
 R:
     /hps/software/users/birney/ian/containers/somites/R_4.1.0.sif
+java:
+    docker://openjdk:7-slim
+perl:
+    docker://perl:5.34.0-slim
 
 

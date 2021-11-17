@@ -69,10 +69,10 @@ rule all:
 #        expand(os.path.join(config["working_dir"], "vcfs/F0/genotyped/all.{contig}.vcf.gz"),
 #                contig = get_contigs(),
 #        ),
-# merge_variants
-#        expand(os.path.join(config["data_store_dir"], "vcfs/F0/final/all.vcf.gz")),
-# merge_variants_F0_and_F2
-        os.path.join(config["data_store_dir"], "vcfs/F0_and_F2/final/all.vcf.gz"),
+## merge_variants
+#        os.path.join(config["data_store_dir"], "vcfs/F0/final/all.vcf.gz"),
+## merge_variants_F0_and_F2
+#        os.path.join(config["data_store_dir"], "vcfs/F0_and_F2/final/all.vcf.gz"),
 ###############
 # 04_F2_mapping.smk
 ###############
@@ -164,6 +164,25 @@ rule all:
 ###############
 ## merge_variants_F2
 #        os.path.join(config["data_store_dir"], "vcfs/F2/final/all.vcf.gz"),
+################
+## 09_TIGER.smk
+###############
+# run_basecaller
+        expand(os.path.join(config["working_dir"], "TIGER/01_base_called/{F2_sample}.txt"),
+                F2_sample = F2_samples['SAMPLE']
+        ),
+# estimate_allele_freqs
+        expand(os.path.join(config["working_dir"], "TIGER/02_af_estimated/{F2_sample}.txt"),
+                F2_sample = F2_samples['SAMPLE']
+        ),
+# apply_beta_mixture_model
+        expand(os.path.join(config["working_dir"], "TIGER/03_beta_modelled/{F2_sample}.txt"),
+                F2_sample = F2_samples['SAMPLE']
+        ),
+# calculate_HMM_probs
+        expand(os.path.join(config["working_dir"], "TIGER/05_hmm_probs/{F2_sample}.txt"),
+                F2_sample = F2_samples['SAMPLE'][0]
+        )
 
 ##### Modules #####
 
@@ -175,3 +194,4 @@ include: "rules/05_F2_recomb_blocks.smk"
 include: "rules/06_F0_recomb_blocks.smk"
 include: "rules/07_assocation_testing.smk"
 include: "rules/08_F2_calling.smk"
+include: "rules/09_TIGER.smk"

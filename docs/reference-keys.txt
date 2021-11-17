@@ -84,3 +84,15 @@ manhattans
 excluding-reads-overlapping-repeats
 read-in-files-1
 manhattans-1
+november-2021
+september-2021
+september-2021-1
+august-2021
+location-on-embl-server
+ascli
+lftp
+august-2021-1
+july-2021
+july-2021-1
+attendees
+notes-1

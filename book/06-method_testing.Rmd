@@ -1,0 +1,13 @@
+# Test alternative site-calling methods
+
+```{r}
+library(tidyverse)
+```
+
+
+## bcftools's `roh`
+
+### Read in test data
+
+
+
