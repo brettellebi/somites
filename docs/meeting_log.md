@@ -1,7 +1,7 @@
 ---
 title: "Meeting log"
 author: "Ian Brettell"
-date: '2021-11-16'
+date: '2021-11-17'
 output:
   html_document:
     toc: true
@@ -18,15 +18,54 @@ zotero: ["PhD"]
 bibliography: references.bib
 ---
 
-# 16 November 2021
+# Notebook
+
+## 17 November 2021
+
+Other HMM genotyping by sequencing (GBS) methods:
+
+-   
+
+-   TIGER
+
+    -   
+    -   GitHub: https://github.com/betharowan/TIGER_Scripts-for-distribution
+    -   Thesis describing TIGER: <https://core.ac.uk/download/pdf/78377942.pdf>
+
+## 16 November 2021
 
 -   [https://www.ncbi.nlm.nih.gov/](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5345719/)
--   @zan2019
 
-Other methods: \* 'Genotyping by low-coverage whole-genome sequencing in
-intercross pedigrees from outbred founders: a cost-efficient approach':
-<https://gsejournal.biomedcentral.com/articles/10.1186/s12711-019-0487-1>
--
+@rowan2015 (TIGER)
+
+-   Trained Individual GenomE Reconstruction \> The number of crossovers
+    is typically limited to only one or two per chromosome pair per
+    meiosis.
+
+-   
+
+@zan2019
+
+-   Software / pipeline:
+    <https://github.com/CarlborgGenomics/Stripes/tree/master/scripts>
+
+-   Used 30x sequence data from founders, and \<0.5x sequence data on
+    intercross individuals to infer the founder mosaic genotypes of
+    intercross individuals.
+
+-   7.6M markers segregated, and 10-13.7% of these fixed for alternative
+    alleles in the founders.
+
+-   95% agreement between genotypes from low-coverage data, and those
+    obtained through SNP genotyping.
+
+-   Estimated resolution of the inferred recombination breakpoints was
+    relatively high, with 50% of them defined on regions shorter than 10
+    kb.
+
+-   Implements TIGER (referenced above)
+
+-   
 
 -   Experimenting with calling F0 and F2 together, to get:
 
@@ -51,21 +90,21 @@ intercross pedigrees from outbred founders: a cost-efficient approach':
 
     ## *bcftools*'s `roh` results:
 
-# 23 September 2021
+## 23 September 2021
 
 The following samples failed during the alignment of the second batch of
 F2 individuals: `config/20210923_f2_fails.txt`. See that file for error
 types.
 
-# 22 September 2021
+## 22 September 2021
 
 -   Ali has finished uploading the second batch of F2 sequences.
 -   Tom has given me the GridLMM code, which is saved to
     `code/association_testing/gridLMM_gwas.R`
 
-# 31 August 2021
+## 31 August 2021
 
-## Location on EMBL server:
+### Location on EMBL server:
 
 We use AnyConnect
 
@@ -81,7 +120,7 @@ seleit
 
 Location <smb://aulehla/aulehla/NGS_Data_Library/2021-08-12-AAAG3YWHV>
 
-## `ascli`
+### `ascli`
 
 They can use ascli from the terminal. All the info is at
 <https://intranet.embl.de/it_services/services/data_sharing/aspera/index.html>.
@@ -157,7 +196,7 @@ ascli faspex package recv --id=brettell@ebi.ac.uk --username=brettell@ebi.ac.uk 
 ascli faspex package recv --to-folder=. --transfer=httpgw --transfer-info=@json:'{"url":"https://faspex.embl.de/aspera/faspex/external_deliveries/4366?passcode=221f3482a4d9b2fd87da2d21a2916156c2c1870d&expiration=MjAyMS0wOS0wN1QxMjo0Mjo0NVo=#"}'
 ```
 
-## `lftp`
+### `lftp`
 
 Hi, You can use the lftp command present in datatransfer.embl.de (here
 is a tutorial)
@@ -170,7 +209,7 @@ at /g/ location. Cheers.
 Josep Manel Andrés Moscardó Systems Engineer, IT Operations EMBL
 Heidelberg T +49 6221 387-8394
 
-# 3 August 2021
+## 3 August 2021
 
 Added Cab and Kaga karyoplots.
 
@@ -180,7 +219,7 @@ from Ensembl.
 
 [NOTE]{color="red"}: Install `plotly` and `DT` in R container.
 
-# 15 July 2021
+## 15 July 2021
 
 Notes for Ali:
 
@@ -203,9 +242,9 @@ Notes for Ali:
 
 -   2.7M homozygous divergent sites.
 
-# 13 July 2021
+## 13 July 2021
 
-## Attendees:
+### Attendees:
 
 -   Ewan Birney
 -   Alexander Aulehla
@@ -213,7 +252,7 @@ Notes for Ali:
 -   Ali Seleit
 -   Ian Brettell
 
-## Notes:
+### Notes:
 
 -   Genetics:
 

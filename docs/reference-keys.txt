@@ -96,3 +96,5 @@ july-2021
 july-2021-1
 attendees
 notes-1
+notebook
+november-2021-1

@@ -2,12 +2,212 @@
 
 ```{r}
 library(tidyverse)
+library(plotly)
+```
+
+## Set parameters
+
+```{r}
+pal = c("#66cdaa", "#000022", "#de3c4b")
+names(pal) = c("Homozygous Cab", "Heterozygous", "Homozygous Kaga")
+
+pal_ck = c("#66cdaa", "#de3c4b")
+names(pal_ck) = c("Homozygous Cab", "Homozygous Kaga")
 ```
 
 
-## bcftools's `roh`
+## Marker density by chromosome
 
-### Read in test data
+```{r}
+homo_divergent_file = "/hps/nobackup/birney/users/ian/somites/data/sites_files/F0_Cab_Kaga/homo_divergent/no_repeats.txt"
 
+markers = readr::read_tsv(homo_divergent_file,
+                          col_names = c("CHROM", "START", "END", "REF", "ALT", "CAB_GT", "KAGA_GT"),
+                          col_types = c("iiicccc"))
+
+# Get counts
+marker_counts = markers %>% 
+  dplyr::group_by(CHROM) %>% 
+  dplyr::summarise(COUNT = n()) %>% 
+  dplyr::ungroup() %>% 
+  dplyr::mutate(CHROM = factor(CHROM, levels = 1:24))
+
+# Plot number of markers per chromosome
+marker_count_p = marker_counts %>% 
+  ggplot() +
+    geom_col(aes(CHROM, COUNT, fill = CHROM)) +
+    theme_bw() +
+    scale_x_discrete(breaks = sort(unique(marker_counts$CHROM))) +
+    ggtitle("")
+    
+plotly::ggplotly(marker_count_p,
+                 tooltip = c("x", "COUNT"))
+
+```
+
+## Read in HdrR chromosome lengths
+
+```{r}
+# Get chromosome lengths
+med_chr_lens = read.table(here::here("data",
+                                     "Oryzias_latipes.ASM223467v1.dna.toplevel.fa_chr_counts.txt"),
+                          col.names = c("chr", "end"))
+# Add start
+med_chr_lens$start = 1
+# Reorder
+med_chr_lens = med_chr_lens %>% 
+  dplyr::select(chr, start, end) %>% 
+  # remove MT
+  dplyr::filter(chr != "MT") %>% 
+  # convert to integer
+  dplyr::mutate(chr = as.integer(chr)) %>% 
+  # Add cumulative bases
+  dplyr::mutate(CUMSUM = cumsum(end),
+                TOT = CUMSUM - end) %>% 
+  # Add midpoint for each chr
+  dplyr::mutate(MID_TOT = TOT + (end / 2))
+```
+
+## Get breakpoints
+
+```{r}
+BIN_LENGTH = 100000
+
+test = med_chr_lens %>% 
+  split(., .$chr) %>% 
+  purrr::map(., function(CHROM){
+    tibble::tibble(START = seq(from = 1, to = CHROM$end, by = BIN_LENGTH),
+                   END = START + BIN_LENGTH -1 )
+  })
+```
+
+
+
+## Ratio of Cab:Kaga reads
+
+```{r}
+dpab_dir = "/hps/nobackup/birney/users/ian/somites/dpABs/F2/no_repeat_reads"
+
+dpab_files = list.files(dpab_dir, full.names = T)
+names(dpab_files) = dpab_files %>% 
+  basename() %>% 
+  stringr::str_remove(".txt")
+
+# reorder
+dpab_files = dpab_files[as.character(sort(as.numeric(names(dpab_files))))]
+
+# read in
+dpab_list = purrr::map(dpab_files[1], function(SAMPLE){
+  readr::read_tsv(SAMPLE,
+                  col_names = c("CHROM", "POS", "CAB_ALLELE", "CAB_READS", "KAGA_ALLELE", "KAGA_READS"),
+                  col_types = c("iicici"))
+})
+
+ratios = dpab_list$`1` %>% 
+  dplyr::mutate(TOTAL_READS = CAB_READS + KAGA_READS) %>% 
+  # filter out rows with TOTAL_READS of 0
+  dplyr::filter(TOTAL_READS > 0) %>% 
+  # get proportion of Kaga (so that 1 is on the right)
+  dplyr::mutate(PROP_KAGA = KAGA_READS / TOTAL_READS)
+
+# Plot
+ratios %>% 
+  ggplot() +
+    geom_point(aes(PROP_KAGA, log2(TOTAL_READS), colour = log2(TOTAL_READS)),
+               alpha = 0.5) +
+    theme_bw() +
+    scale_colour_viridis_c() +
+    facet_wrap(vars(CHROM), nrow = 4, ncol = 6)
+
+# Get total reads going to either Cab or Kaga by chromosome
+counts_per_chr = ratios %>% 
+  dplyr::group_by(CHROM) %>% 
+  dplyr::summarise(TOTAL_CAB_READS = sum(CAB_READS),
+                   TOTAL_KAGA_READS = sum(KAGA_READS))
+
+# Bin reads
+TARGET_CHROM = 4
+test = ratios %>% 
+  split(., .$CHROM) %>% 
+  purrr::pluck(as.character(TARGET_CHROM))
+
+TARGET_LEN = med_chr_lens$end[med_chr_lens$chr == TARGET_CHROM]
+breaks_df = tibble::tibble(BIN_START = c(seq(1, TARGET_LEN, by = BIN_LENGTH),
+                                      TARGET_LEN),
+                           BIN = 1:length(BIN_START))
+
+test2 = test %>% 
+  dplyr::mutate(BIN = cut(POS, breaks = breaks_df$BIN_START,
+                          labels = F,
+                          right = T, 
+                          include_lowest = T)) %>% 
+  dplyr::group_by(BIN) %>% 
+  dplyr::summarise(TOTAL_CAB = sum(CAB_READS),
+                   TOTAL_KAGA = sum(KAGA_READS)) %>% 
+  dplyr::ungroup() %>% 
+  # convert Kaga reads to negative for plotting
+  dplyr::mutate(TOTAL_KAGA = -TOTAL_KAGA) %>% 
+  # pivot longer
+  tidyr::pivot_longer(cols = c(TOTAL_CAB, TOTAL_KAGA), names_to = "F0", names_prefix = "TOTAL_", values_to = "READS") %>% 
+  # add bin start
+  dplyr::left_join(breaks_df, by = "BIN")
+
+# Plot
+test2 %>% 
+  ggplot() +
+    geom_col(aes(BIN_START, READS, fill = F0)) +
+    scale_fill_manual(values = pal_ck) +
+    theme_bw() +
+    ggtitle(paste("Chromosome: ", TARGET_CHROM, ""))
+```
+
+
+## TIGER
+
+### Read in final breakpoints
+
+```{r}
+in_dir = "/hps/nobackup/birney/users/ian/somites/TIGER/08_final"
+
+in_files = list.files(in_dir, full.names = T)
+names(in_files) = in_files %>% 
+  basename() %>% 
+  stringr::str_remove(".txt")
+
+# reorder
+in_files = in_files[as.character(sort(as.numeric(names(in_files))))]
+```
+
+```{r}
+# recode genotypes to 
+recode_vec = c("Homozygous Cab", "Heterozygous", "Homozygous Kaga")
+names(recode_vec) = c("CC", "CL", "LL")
+
+
+df = purrr::map(in_files, function(SAMPLE){
+  readr::read_tsv(SAMPLE,
+                  col_names = c("CHROM", "START", "END", "GT"),
+                  col_types = c("iiic-") # each line has a trailing tab, so the final dash prevents reading an empty column
+                  ) %>% 
+    # get BIN_LENGTH
+    dplyr::mutate(BIN_LENGTH = END - START + 1) %>% 
+    # get RECODE_GT
+    dplyr::mutate(RECODE_GT = dplyr::recode(GT, !!!recode_vec),
+                  RECODE_GT = factor(RECODE_GT, levels = recode_vec))
+}) %>% 
+  dplyr::bind_rows(.id = "SAMPLE")
+
+# Proportion of bases
+df %>% 
+  group_by(RECODE_GT) %>% 
+  summarise(TOTAL_COV = sum(BIN_LENGTH)) %>% 
+  ggplot() +
+    geom_col(aes(RECODE_GT, TOTAL_COV, fill = RECODE_GT)) +
+    scale_fill_manual(values = pal) +
+    theme_bw() +
+    xlab("Genotype") +
+    ylab("Total bases covered") +
+    guides(fill = "none")
+```
 
 

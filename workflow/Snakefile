@@ -180,9 +180,26 @@ rule all:
                 F2_sample = F2_samples['SAMPLE']
         ),
 # calculate_HMM_probs
-        expand(os.path.join(config["working_dir"], "TIGER/05_hmm_probs/{F2_sample}.txt"),
-                F2_sample = F2_samples['SAMPLE'][0]
-        )
+        expand(os.path.join(config["working_dir"], "TIGER/05_hmm_probs/{F2_sample}_hmm_model"),
+                F2_sample = F2_samples['SAMPLE']
+        ),
+# run_HMM
+        expand(os.path.join(config["working_dir"], "TIGER/06_hmm_out/{F2_sample}.txt"),
+                F2_sample = F2_samples['SAMPLE']
+        ),
+# estimate_breakpoints
+        expand(os.path.join(config["working_dir"], "TIGER/07_est_breakpoints/{F2_sample}.txt"),
+                F2_sample = F2_samples['SAMPLE']
+        ),
+# refine_breakpoints
+        expand(os.path.join(config["working_dir"], "TIGER/07_est_breakpoints/{F2_sample}.recomb.txt"),
+                F2_sample = F2_samples['SAMPLE']
+        ),
+# smooth_breaks
+        expand(os.path.join(config["working_dir"], "TIGER/08_final/{F2_sample}.txt"),
+                F2_sample = F2_samples['SAMPLE']
+        ),
+
 
 ##### Modules #####
 
