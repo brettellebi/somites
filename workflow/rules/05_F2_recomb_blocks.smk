@@ -55,6 +55,20 @@ rule exclude_repeat_sites_F2:
     script:
         "../scripts/exclude_repeat_sites_F2.R"
 
+# Exclude "black list" sites found to have persistent heterozygosity in the MIKK panel
+rule filter_black_list:
+    input:
+        sites_excl_repeats = rules.exclude_repeat_sites_F2.output,
+        black_list = config["het_black_list"],
+    output:
+        os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/homo_divergent/no_repeats_no_persistent_hets.txt"),
+    log:
+        os.path.join(config["working_dir"], "logs/filter_black_list/all.log")
+    container:
+        config["R"]
+    script:
+        "../scripts/filter_black_list.R"        
+
 # Create a BED file of repeat regions
 rule create_repeats_bed:
     input:
@@ -172,6 +186,32 @@ rule bam_readcount_F2_excl_repeat_reads:
         os.path.join(config["working_dir"], "dp4s/F2/no_repeat_reads/{F2_sample}.dp4.txt")
     log:
         os.path.join(config["working_dir"], "logs/bam_readcount_F2_excl_repeat_reads/{F2_sample}.log")
+    resources:
+        mem_mb = 10000
+    container:
+        config["bam-readcount"]
+    shell:
+        """
+        bam-readcount \
+            -l {input.sites_file} \
+            -f {input.ref} \
+            {input.bam} | \
+            cut -f 1,15,28,41,54,67 -d ":" | sed 's/=//g' | sed 's/\\t:/\\t/g' | sed 's/:/\\t/g' \
+                > {output} 2> {log}
+        """
+
+    ## Excluding READS overlapping repeat regions and persistent het black list
+rule bam_readcount_F2_excl_repeat_reads_and_black_list:
+    input:
+        # `bam` and `index` differ from above
+        bam = os.path.join(config["working_dir"], "bams/F2/bwamem2/no_repeat_keep/{F2_sample}.bam"),
+        index = os.path.join(config["working_dir"], "bams/F2/bwamem2/no_repeat_keep/{F2_sample}.bam.bai"),
+        sites_file = os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/homo_divergent/no_repeats_no_persistent_hets.txt"),
+        ref = config["ref_prefix"] + ".fasta",
+    output:
+        os.path.join(config["working_dir"], "dp4s/F2/no_repeat_reads_or_pers_hets/{F2_sample}.dp4.txt")
+    log:
+        os.path.join(config["working_dir"], "logs/bam_readcount_F2_excl_repeat_reads_and_black_list/{F2_sample}.log")
     resources:
         mem_mb = 10000
     container:

@@ -37,6 +37,8 @@ bam_readcount_F2_excl_repeat_sites:
   memory: "{resources.mem_mb}"
 bam_readcount_F2_excl_repeat_reads:
   memory: "{resources.mem_mb}"
+bam_readcount_F2_excl_repeat_reads_and_black_list:
+  memory: "{resources.mem_mb}"
 make_dp_AB_F2:
   memory: "{resources.mem_mb}"
 run_rc_block_F2:

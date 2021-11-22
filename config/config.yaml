@@ -20,6 +20,8 @@ target_phenotypes:
     - mean
 ref_chr_lengths:
     data/Oryzias_latipes.ASM223467v1.dna.toplevel.fa_chr_counts.txt
+het_black_list:
+    data/20200716_mikk_panel_proportion_het_across_genome.txt
 ####################
 # Parameters
 ####################
@@ -40,6 +42,7 @@ site_filter:
     - all_sites
     - no_repeat_sites
     - no_repeat_reads
+    - no_repeat_reads_or_pers_hets
 date_of_assoc_test:
     #- 20211104
     - 20211109
