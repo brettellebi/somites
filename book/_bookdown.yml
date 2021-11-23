@@ -14,6 +14,7 @@ rmd_files: [
   "02-F0_homozygosity.Rmd",
   "03-F2_recombination.Rmd",
   "03-2-F2_recombination.Rmd",
+  "03-3-F2_recombination.Rmd",
   "04-Association_testing.Rmd",
   "05-GWLS_results.Rmd",
   

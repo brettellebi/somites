@@ -2,7 +2,7 @@
 zotero: "PhD"
 ---
 
-# F2 recombination blocks (new)
+# F2 recombination blocks (no reads overlapping repeat regions)
 
 ```{r, message = F, warning = F}
 library(here)
@@ -424,12 +424,15 @@ df %>%
 
 ## Karyoplot
 
+
 Make custom chromosome scaffold
 
 ```{r}
 ##Create custom genome 
 med_genome = regioneR::toGRanges(med_chr_lens)
 ```
+
+### No gaps
 
 Convert data to list of block boundaries for each LANE
 
@@ -497,8 +500,8 @@ counter_A = 0
 purrr::map(bb_list, function(block_bounds_list){
   counter_A <<- counter_A + 1
   # set file name
-  file_name = paste("20211110_karyoplot_", names(bb_list)[counter_A], ".png", sep = "")
-  file_out = here::here("book/plots", file_name)
+  file_name = paste(names(bb_list)[counter_A], ".png", sep = "")
+  file_out = here::here("book/plots/20211123_karyoplot_no_repeats/no_gaps", file_name)
   
   # Get lane cutoffs
   lane_cutoffs = lc_list[[counter_A]]
@@ -547,19 +550,122 @@ purrr::map(bb_list, function(block_bounds_list){
 ```
 
 ```{r, fig.cap = "Bin length: 5 kb"}
-knitr::include_graphics(here::here("book/plots/20211110_karyoplot_5000.png"))
+knitr::include_graphics(here::here("book/plots/20211123_karyoplot_no_repeats/no_gaps/5000.png"))
 ```
 
 Don't show other bin lengths because they look the same.
 
-```{r, eval = F, fig.cap = "Bin length: 10 kb"}
-knitr::include_graphics(here::here("book/plots/20211110_karyoplot_10000.png"))
+### With gaps
+
+```{r}
+counter = 0
+bb_list_wunc = purrr::map(df_list, function(df){
+  counter <<- counter + 1
+  
+  BIN_LENGTH = names(df_list)[counter] %>% 
+    as.numeric()
+  # loop over different bin lengths
+  block_bounds_list = df %>% 
+    # loop over LANE
+    split(., f = .$LANE) %>% 
+    purrr::map(., function(LANE){
+    
+      STRAIN = unique(LANE$LANE)
+      # Create list of possible bins
+      poss_bins = purrr::map(med_chr_lens$chr, function(CHR){
+        # Get chr end
+        CHR_END = med_chr_lens %>% 
+          dplyr::filter(chr == CHR) %>% 
+          dplyr::pull(end) %>% 
+          as.numeric()
+        # Get bin starts
+        out = tibble::tibble(chr = as.numeric(CHR),
+                             BIN_START = seq(from = 1, to = CHR_END, by = BIN_LENGTH),
+                             BIN_END = BIN_START + BIN_LENGTH - 1
+        )
+        # Adjust final bin end 
+        out[nrow(out), "BIN_END"] = CHR_END
+        
+        return(out)
+      }) %>% 
+        dplyr::bind_rows()
+    
+      
+      # Bind DF
+      new_df = dplyr::left_join(poss_bins,
+                                LANE %>% 
+                                  dplyr::select(chr, BIN_START, BIN_END, state),
+                                by = c("chr", "BIN_START", "BIN_END")) %>% 
+        # replace NAs with `UNCLASSIFIED`
+        dplyr::mutate(state = state %>% 
+                        tidyr::replace_na("UNCLASSIFIED"),
+                      # add STRAIN
+                      LANE = STRAIN) %>% 
+        # add COLOUR
+        dplyr::mutate(COLOUR = dplyr::recode(state,
+                                             !!!pal_hom_het_2))
+    
+              
+    })
+})
+
 ```
 
-```{r, eval = F, fig.cap = "Bin length: 15 kb"}
-knitr::include_graphics(here::here("book/plots/20211110_karyoplot_15000.png"))
+Plot Karyoplots
+
+```{r, eval = F}
+counter_A = 0
+purrr::map(bb_list_wunc[1], function(block_bounds_list){
+  counter_A <<- counter_A + 1
+  # set file name
+  file_name = paste(names(bb_list_wunc)[counter_A], ".png", sep = "")
+  file_out = here::here("book/plots/20211123_karyoplot_no_repeats/wi_gaps", file_name)
+  
+  # Get lane cutoffs
+  lane_cutoffs = lc_list[[counter_A]]
+  
+  png(file=file_out,
+      width=13000,
+      height=26000,
+      units = "px",
+      res = 300)
+  
+  # Plot ideogram
+  kp = karyoploteR::plotKaryotype(med_genome, plot.type = 5)
+  # Add data background
+  #karyoploteR::kpDataBackground(kp, r0=0, r1 = 1, color = "white")
+  
+  # Add rectangles in loop
+  counter_B = 0
+  purrr::map(block_bounds_list, function(LANE){
+    # Add to counter_B
+    counter_B <<- counter_B + 1
+    # Add rectangles
+    karyoploteR::kpRect(kp,
+                        chr = LANE$chr,
+                        x0 = LANE$BIN_START,
+                        x1 = LANE$BIN_END,
+                        y0 = lane_cutoffs[counter_B, ] %>% 
+                          dplyr::pull(lower),
+                        y1 = lane_cutoffs[counter_B, ] %>% 
+                          dplyr::pull(upper),
+                        col = LANE$COLOUR,
+                        border = NA)
+    # Add axis label
+    karyoploteR::kpAddLabels(kp, labels = unique(LANE$LANE),
+                             r0 = lane_cutoffs[counter_B, ] %>% 
+                               dplyr::pull(lower),
+                             r1 = lane_cutoffs[counter_B, ] %>% 
+                               dplyr::pull(upper),
+                             cex = 0.5)
+  })
+  
+  
+  dev.off()  
+})
 ```
 
-```{r, eval = F, fig.cap = "Bin length: 20 kb"}
-knitr::include_graphics(here::here("book/plots/20211110_karyoplot_20000.png"))
+```{r, fig.cap = "Bin length: 5 kb"}
+knitr::include_graphics(here::here("book/plots/20211123_karyoplot_no_repeats/wi_gaps/5000.png"))
 ```
+

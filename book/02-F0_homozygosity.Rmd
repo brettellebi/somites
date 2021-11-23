@@ -136,18 +136,19 @@ Plot
 # Plot
 ck_prop_plot = base_cov_df %>% 
   dplyr::mutate(STATE = factor(STATE, levels = c(0,1,2, "UNCLASSIFIED")),
-                STATE_RECODE = dplyr::recode(STATE,
-                                             `0` = "HOM REF (HdrR)",
-                                             `1` = "HET",
-                                             `2` = "HOM ALT",
-                                             "UNCLASSIFIED" = "Unclassified")) %>% 
+                #STATE_RECODE = dplyr::recode(STATE,
+                #                             `0` = "HOM REF (HdrR)",
+                #                             `1` = "HET",
+                #                             `2` = "HOM ALT",
+                #                             "UNCLASSIFIED" = "Unclassified")
+                ) %>% 
   # plot
-  ggplot(aes(STATE_RECODE, FREQ, colour = STATE, fill = STATE)) +
+  ggplot(aes(STATE, FREQ, colour = STATE, fill = STATE)) +
     geom_col() +
     facet_grid(cols = vars(LANE)) +
     theme_bw() +
-    scale_colour_manual(values = pal_ck_1_lines) +
-    scale_fill_manual(values = pal_ck_1) +
+    scale_colour_manual(values = pal_hom_het_2_lines) +
+    scale_fill_manual(values = pal_hom_het_2) +
     guides(colour = "none", fill = "none") +
     xlab("Genotype") +
     ylab("Proportion of reference bases covered")
@@ -185,7 +186,7 @@ bb_list_ck = purrr::map(ck_list, function(df){
             dplyr::mutate(END_PREV = tidyr::replace_na(END_PREV, 1)) %>% 
             # Add colour
             dplyr::mutate(COLOUR = dplyr::recode(state,
-                                                 !!!pal_ck_1[-which(names(pal_ck_1) == "UNCLASSIFIED")])) 
+                                                 !!!pal_hom_het_2[-which(names(pal_hom_het_2) == "UNCLASSIFIED")])) 
           
         }) %>% 
             dplyr::bind_rows()
@@ -214,7 +215,7 @@ counter_A = 0
 purrr::map(bb_list_ck, function(block_bounds_list){
   counter_A <<- counter_A + 1
   # set file name
-  file_name = paste("20210803_ck_karyoplot_", names(bb_list)[counter_A], ".png", sep = "")
+  file_name = paste("20210803_ck_karyoplot_", names(bb_list_ck)[counter_A], ".png", sep = "")
   file_out = here::here("docs/plots", file_name)
   
   # Get lane cutoffs
@@ -368,19 +369,14 @@ Plot
 ```{r, out.width='100%'}
 # Plot
 ck_prop_plot = base_cov_df %>% 
-  dplyr::mutate(STATE = factor(STATE, levels = c(0,1,2, "UNCLASSIFIED")),
-                STATE_RECODE = dplyr::recode(STATE,
-                                             `0` = "Homozygous Cab",
-                                             `1` = "Heterozygous",
-                                             `2` = "Homozygous Kaga",
-                                             "UNCLASSIFIED" = "Unclassified")) %>% 
+  dplyr::mutate(STATE = factor(STATE, levels = c(0,1,2, "UNCLASSIFIED"))) %>% 
   # plot
-  ggplot(aes(STATE_RECODE, FREQ, colour = STATE, fill = STATE)) +
+  ggplot(aes(STATE, FREQ, colour = STATE, fill = STATE)) +
     geom_col() +
     facet_grid(cols = vars(LANE)) +
     theme_bw(base_size = 9) +
-    scale_colour_manual(values = pal_ck_1_lines) +
-    scale_fill_manual(values = pal_ck_1) +
+    scale_colour_manual(values = pal_hom_het_2_lines) +
+    scale_fill_manual(values = pal_hom_het_2) +
     guides(colour = "none", fill = "none") +
     xlab("Genotype") +
     ylab("Proportion of reference bases covered")
@@ -418,7 +414,7 @@ bb_list_ck = purrr::map(ck_list, function(df){
             dplyr::mutate(END_PREV = tidyr::replace_na(END_PREV, 1)) %>% 
             # Add colour
             dplyr::mutate(COLOUR = dplyr::recode(state,
-                                                 !!!pal_ck_1[-which(names(pal_ck_1) == "UNCLASSIFIED")])) 
+                                                 !!!pal_hom_het_2[-which(names(pal_hom_het_2) == "UNCLASSIFIED")])) 
           
         }) %>% 
             dplyr::bind_rows()
@@ -519,7 +515,7 @@ bb_list_ck_wunc = purrr::map(ck_list, function(df){
         # Get chr end
         CHR_END = med_chr_lens %>% 
           dplyr::filter(chr == CHR) %>% 
-          dplyr::pull(end)
+          dplyr::pull(end) %>% 
           as.numeric()
         # Get bin starts
         out = tibble::tibble(chr = as.numeric(CHR),
@@ -546,7 +542,7 @@ bb_list_ck_wunc = purrr::map(ck_list, function(df){
                       LANE = STRAIN) %>% 
         # add COLOUR
         dplyr::mutate(COLOUR = dplyr::recode(state,
-                                             !!!pal_ck_1))
+                                             !!!pal_hom_het_2))
     
               
     })

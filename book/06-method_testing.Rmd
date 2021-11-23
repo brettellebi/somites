@@ -18,32 +18,45 @@ names(pal_ck) = c("Homozygous Cab", "Homozygous Kaga")
 
 ## Marker density by chromosome
 
-```{r}
-homo_divergent_file = "/hps/nobackup/birney/users/ian/somites/data/sites_files/F0_Cab_Kaga/homo_divergent/no_repeats.txt"
+### All sites
 
-markers = readr::read_tsv(homo_divergent_file,
-                          col_names = c("CHROM", "START", "END", "REF", "ALT", "CAB_GT", "KAGA_GT"),
-                          col_types = c("iiicccc"))
+```{r, fig.dim=c(6, 34.9)}
+homo_divergent_files = c("/hps/nobackup/birney/users/ian/somites/data/sites_files/F0_Cab_Kaga/homo_divergent/all.txt",
+                         "/hps/nobackup/birney/users/ian/somites/data/sites_files/F0_Cab_Kaga/homo_divergent/no_repeats.txt",
+                         "/hps/nobackup/birney/users/ian/somites/data/sites_files/F0_Cab_Kaga/homo_divergent/no_repeats_no_persistent_hets.txt")
+names(homo_divergent_files) = c("All sites",
+                                "Excluding sites overlapping repeats",
+                                "Excluding sites overlapping repeats and persistent het regions")
+
+markers = purrr::map(homo_divergent_files, function(FILE){
+  readr::read_tsv(FILE,
+                  col_names = c("CHROM", "START", "END", "REF", "ALT", "CAB_GT", "KAGA_GT"),
+                  col_types = c("iiicccc"))
+})
 
 # Get counts
-marker_counts = markers %>% 
-  dplyr::group_by(CHROM) %>% 
-  dplyr::summarise(COUNT = n()) %>% 
-  dplyr::ungroup() %>% 
-  dplyr::mutate(CHROM = factor(CHROM, levels = 1:24))
-
+marker_counts_all = purrr::map(markers, function(FILTER){
+  FILTER %>% 
+    dplyr::group_by(CHROM) %>% 
+    dplyr::summarise(COUNT = n()) %>% 
+    dplyr::ungroup() %>% 
+    dplyr::mutate(CHROM = factor(CHROM, levels = 1:24))
+}) %>% 
+  dplyr::bind_rows(.id = "FILTER")
+  
 # Plot number of markers per chromosome
-marker_count_p = marker_counts %>% 
+marker_count_p = marker_counts_all %>% 
   ggplot() +
     geom_col(aes(CHROM, COUNT, fill = CHROM)) +
     theme_bw() +
     scale_x_discrete(breaks = sort(unique(marker_counts$CHROM))) +
-    ggtitle("")
-    
-plotly::ggplotly(marker_count_p,
-                 tooltip = c("x", "COUNT"))
+    ggtitle("") +
+    facet_wrap(vars(FILTER), nrow = 1) +
+    guides(fill = "none")
 
+marker_count_p
 ```
+
 
 ## Read in HdrR chromosome lengths
 
