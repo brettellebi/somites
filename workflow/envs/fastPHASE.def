@@ -1,0 +1,13 @@
+Bootstrap: docker
+From: debian:stable-20211115-slim
+
+%post
+    # Update
+    apt update
+    apt install -y wget
+
+    #  Install fastPHASE
+    wget http://scheet.org/code/Linuxfp.tar.gz
+    gunzip Linuxfp.tar.gz
+    tar -xvf Linuxfp.tar
+    chmod +x fastPHASE

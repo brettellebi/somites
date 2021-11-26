@@ -91,6 +91,8 @@ bam-readcount:
     docker://quay.io/biocontainers/bam-readcount:0.8--py36pl526h94a8ba4_4
 R:
     /hps/software/users/birney/ian/containers/somites/R_4.1.0.sif
+tidyverse_4:
+    /hps/software/users/birney/ian/containers/somites/rocker_tidyverse_4.1.2.sif
 java:
     docker://openjdk:7-slim
 perl:

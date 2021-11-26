@@ -1,0 +1,8 @@
+Bootstrap: docker
+From: rocker/tidyverse:4.1.2
+
+%post
+    # Install dev version of vectrs to prevent error:
+    # Error: Internal error in `dict_hash_with()`: Dictionary is full.
+    # See https://github.com/therkildsen-lab/data-processing/issues/7
+    R -e 'devtools::install_github("r-lib/vctrs")'

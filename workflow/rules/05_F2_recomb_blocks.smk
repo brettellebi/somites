@@ -259,3 +259,35 @@ rule run_rc_block_F2:
         config["R"]
     script:
         "../scripts/run_rc_block.R"
+
+rule consolidate_dbABs_Ewan:
+    input:
+        dp_files = expand(os.path.join(config["working_dir"], "dpABs/F2/{{site_filter}}/{F2_sample}.txt"),
+            F2_sample = F2_samples['SAMPLE']
+        ),
+    output:
+        os.path.join(config["data_store_dir"], "dpABs/F2_consolidated/{site_filter}.txt"),
+    log:
+        os.path.join(config["working_dir"], "logs/consolidate_dbABs_Ewan/{site_filter}.log")
+    resources:
+        mem_mb = 350000
+    container:
+        config["tidyverse_4"]
+    script:
+        "../scripts/consolidate_dbABs_Ewan.R"
+
+rule consolidate_dbABs:
+    input:
+        dp_files = expand(os.path.join(config["working_dir"], "dpABs/F2/{{site_filter}}/{F2_sample}.txt"),
+            F2_sample = F2_samples['SAMPLE']
+        ),
+    output:
+        os.path.join(config["data_store_dir"], "dpABs/F2_consolidated_real/{site_filter}.txt"),
+    log:
+        os.path.join(config["working_dir"], "logs/consolidate_dbABs/{site_filter}.log")
+    resources:
+        mem_mb = 20000
+    container:
+        config["R"]
+    script:
+        "../scripts/consolidate_dbABs.R"

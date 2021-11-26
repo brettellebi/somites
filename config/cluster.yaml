@@ -43,6 +43,11 @@ make_dp_AB_F2:
   memory: "{resources.mem_mb}"
 run_rc_block_F2:
   memory: "{resources.mem_mb}"
+consolidate_dbABs_Ewan:
+  memory: "{resources.mem_mb}"
+  queue: bigmem
+consolidate_dbABs:
+  memory: "{resources.mem_mb}"
 # 06_F0_recomb_blocks.smk
 make_dp_AB_F0:
   memory: "{resources.mem_mb}"  

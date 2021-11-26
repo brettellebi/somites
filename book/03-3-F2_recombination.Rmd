@@ -521,7 +521,7 @@ Plot Karyoplots
 
 ```{r, eval = F}
 counter_A = 0
-purrr::map(bb_list_wunc[1], function(block_bounds_list){
+purrr::map(bb_list_wunc, function(block_bounds_list){
   counter_A <<- counter_A + 1
   # set file name
   file_name = paste(names(bb_list_wunc)[counter_A], ".png", sep = "")
