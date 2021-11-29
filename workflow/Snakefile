@@ -100,15 +100,15 @@ rule all:
 ################
 ## 05_F2_recomb_blocks.smk
 ################
-## run_rc_block_F2
-#        expand(os.path.join(config["data_store_dir"], "recombination_blocks/F2/{site_filter}/{bin_length}.txt"),
-#                site_filter = config["site_filter"],
-#                bin_length = config["bin_length"]
-#        ),
-# consolidate_dbABs_Ewan
-        expand(os.path.join(config["data_store_dir"], "dpABs/F2_consolidated/{site_filter}.txt"),
+# run_rc_block_F2
+        expand(os.path.join(config["data_store_dir"], "recombination_blocks/F2/{site_filter}/{bin_length}.txt"),
                 site_filter = config["site_filter"],
-        )
+                bin_length = config["bin_length"]
+        ),
+## consolidate_dbABs_Ewan
+#        expand(os.path.join(config["data_store_dir"], "dpABs/F2_consolidated/{site_filter}.txt"),
+#                site_filter = config["site_filter"],
+#        )
 ################
 ## 06_F0_recomb_blocks.smk
 ################

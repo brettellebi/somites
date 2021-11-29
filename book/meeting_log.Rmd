@@ -20,6 +20,14 @@ bibliography: references.bib
 
 # Notebook
 
+## 26 November 2021
+
+Suggestions from EB:
+
+-   Set up guardrails -- e.g. the site must have at least 0.2 to 0.8 iCab vs Total
+-   Limit to >= 100 and <= 10000
+-   Plot chromosomes before filtering
+
 ## 17 November 2021
 
 Other HMM genotyping by sequencing (GBS) methods:
@@ -56,6 +64,10 @@ Other HMM genotyping by sequencing (GBS) methods:
     -   Imputes missing alleles with an HMM.
     -   Paper: https://www.genetics.org/content/202/2/487
     -   GitHub: https://github.com/dellaporta-laboratory/LB-Impute 
+    
+-   fastPHASE
+
+    -   estimates missing genotypes and reconstructing haplotypes from unphased SNP genotype data of *unrelated* individuals.
 
 ## 16 November 2021
 

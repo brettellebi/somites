@@ -225,6 +225,31 @@ rule bam_readcount_F2_excl_repeat_reads_and_black_list:
             cut -f 1,15,28,41,54,67 -d ":" | sed 's/=//g' | sed 's/\\t:/\\t/g' | sed 's/:/\\t/g' \
                 > {output} 2> {log}
         """
+    ## Excluding READS overlapping repeat regions and persistent het black list, and excluding sites with extreme F2-wide read counts and proportion of Cab
+rule bam_readcount_F2_excl_repeat_reads_and_black_list_and_extreme_read_count_and_cab_prop:
+    input:
+        # `bam` and `index` differ from above
+        bam = os.path.join(config["working_dir"], "bams/F2/bwamem2/no_repeat_keep/{F2_sample}.bam"),
+        index = os.path.join(config["working_dir"], "bams/F2/bwamem2/no_repeat_keep/{F2_sample}.bam.bai"),
+        sites_file = os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/homo_divergent/no_repeats_no_persistent_hets_filtered_for_read_count_and_cab_prop.txt"),
+        ref = config["ref_prefix"] + ".fasta",
+    output:
+        os.path.join(config["working_dir"], "dp4s/F2/no_repeat_reads_or_pers_hets_filtered_for_read_count_and_cab_prop/{F2_sample}.dp4.txt")
+    log:
+        os.path.join(config["working_dir"], "logs/bam_readcount_F2_excl_repeat_reads_and_black_list/{F2_sample}.log")
+    resources:
+        mem_mb = 10000
+    container:
+        config["bam-readcount"]
+    shell:
+        """
+        bam-readcount \
+            -l {input.sites_file} \
+            -f {input.ref} \
+            {input.bam} | \
+            cut -f 1,15,28,41,54,67 -d ":" | sed 's/=//g' | sed 's/\\t:/\\t/g' | sed 's/:/\\t/g' \
+                > {output} 2> {log}
+        """
 
 # Make dpAB files
 rule make_dp_AB_F2:
@@ -276,18 +301,32 @@ rule consolidate_dbABs_Ewan:
     script:
         "../scripts/consolidate_dbABs_Ewan.R"
 
-rule consolidate_dbABs:
+rule filter_sites_for_read_count_and_cab_prop:
     input:
-        dp_files = expand(os.path.join(config["working_dir"], "dpABs/F2/{{site_filter}}/{F2_sample}.txt"),
+        dp_files = expand(os.path.join(config["working_dir"], "dpABs/F2/no_repeat_reads_or_pers_hets/{F2_sample}.txt"),
             F2_sample = F2_samples['SAMPLE']
         ),
+        sites_file = os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/homo_divergent/no_repeats_no_persistent_hets.txt"),
     output:
-        os.path.join(config["data_store_dir"], "dpABs/F2_consolidated_real/{site_filter}.txt"),
+        counts_pre_filter  = os.path.join(config["data_store_dir"], "dpABs/F2_total_read_counts/pre_filter.txt.gz"),
+        counts_post_filter = os.path.join(config["data_store_dir"], "dpABs/F2_total_read_counts/post_filter.txt.gz"),
+        filtered_sites = os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/homo_divergent/no_repeats_no_persistent_hets_filtered_for_read_count_and_cab_prop.txt"),
     log:
-        os.path.join(config["working_dir"], "logs/consolidate_dbABs/{site_filter}.log")
+        os.path.join(config["working_dir"], "logs/filter_sites_for_read_count_and_cab_prop/all.log")
+    params:
+        min_reads = config["min_reads"],
+        max_reads = config["max_reads"],
+        min_prop_cab = config["min_prop_cab"],
+        max_prop_cab = config["max_prop_cab"]
     resources:
-        mem_mb = 20000
+        mem_mb = 80000
     container:
         config["R"]
     script:
-        "../scripts/consolidate_dbABs.R"
+        "../scripts/filter_sites_for_read_count_and_cab_prop.R"
+
+rule plot_recombination_blocks:
+    input:
+        os.path.join(config["data_store_dir"], "recombination_blocks/F2/{site_filter}/{bin_length}.txt"),
+    output:
+        "book"

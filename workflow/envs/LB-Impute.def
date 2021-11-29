@@ -1,0 +1,9 @@
+Bootstrap: docker
+From: openjdk:7-slim
+
+%post
+    # Update
+    apt update
+    apt install -y git
+
+    git clone https://github.com/dellaporta-laboratory/LB-Impute.git

@@ -38,11 +38,20 @@ ref:
     release: 104
     # genome build
     build: ASM223467v1
+min_reads:
+    100
+max_reads:
+    10000
+min_prop_cab:
+    0.2
+max_prop_cab:
+    0.8
 site_filter:
     - all_sites
     - no_repeat_sites
     - no_repeat_reads
     - no_repeat_reads_or_pers_hets
+    - no_repeat_reads_or_pers_hets_filtered_for_read_count_and_cab_prop
 date_of_assoc_test:
     #- 20211104
     - 20211109
