@@ -1,4 +1,5 @@
 # Get variables
+
 IN_FILE = "/nfs/research/birney/users/ian/somites/recombination_blocks/F2/no_repeat_reads_or_pers_hets/20000.txt"
 BIN_LENGTH = "20000"
 
@@ -9,8 +10,8 @@ BASE_COV_TOT = snakemake@output[["base_cov_total"]]
 BASE_COV_BY_CHROM = snakemake@output[["base_cov_by_chrom"]]
 PROP_SITES_TOT = snakemake@output[["prop_sites_total"]]
 PROP_SITES_BY_CHROM = snakemake@output[["prop_sites_by_chrom"]]
-KARYOPLOT_WIMISS = snakemake@output[["karyoplot_with_missing"]]
 KARYOPLOT_NOMISS = snakemake@output[["karyoplot_no_missing"]]
+KARYOPLOT_WIMISS = snakemake@output[["karyoplot_with_missing"]]
 
 # Send output to log
 
@@ -443,52 +444,41 @@ block_bounds_list = df %>%
 
 # Plot karyoplot
 
-counter_A = 0
-purrr::map(bb_list_wunc, function(block_bounds_list){
-  counter_A <<- counter_A + 1
-  # set file name
-  file_name = paste(names(bb_list_wunc)[counter_A], ".png", sep = "")
-  file_out = here::here("book/plots/20211123_karyoplot_no_repeats_no_pers_hets/wi_gaps", file_name)
-  
-  # Get lane cutoffs
-  lane_cutoffs = lc_list[[counter_A]]
-  
-  png(file=file_out,
-      width=13000,
-      height=26000,
-      units = "px",
-      res = 300)
-  
-  # Plot ideogram
-  kp = karyoploteR::plotKaryotype(med_genome, plot.type = 5)
-  # Add data background
-  #karyoploteR::kpDataBackground(kp, r0=0, r1 = 1, color = "white")
-  
-  # Add rectangles in loop
-  counter_B = 0
-  purrr::map(block_bounds_list, function(LANE){
-    # Add to counter_B
-    counter_B <<- counter_B + 1
-    # Add rectangles
-    karyoploteR::kpRect(kp,
-                        chr = LANE$chr,
-                        x0 = LANE$BIN_START,
-                        x1 = LANE$BIN_END,
-                        y0 = lane_cutoffs[counter_B, ] %>% 
-                          dplyr::pull(lower),
-                        y1 = lane_cutoffs[counter_B, ] %>% 
-                          dplyr::pull(upper),
-                        col = LANE$COLOUR,
-                        border = NA)
-    # Add axis label
-    karyoploteR::kpAddLabels(kp, labels = unique(LANE$LANE),
-                             r0 = lane_cutoffs[counter_B, ] %>% 
-                               dplyr::pull(lower),
-                             r1 = lane_cutoffs[counter_B, ] %>% 
-                               dplyr::pull(upper),
-                             cex = 0.5)
-  })
-  
-  
-  dev.off()  
+png(file=KARYOPLOT_WIMISS,
+    width=13000,
+    height=26000,
+    units = "px",
+    res = 300)
+
+# Plot ideogram
+kp = karyoploteR::plotKaryotype(med_genome, plot.type = 5)
+# Add data background
+#karyoploteR::kpDataBackground(kp, r0=0, r1 = 1, color = "white")
+
+# Add rectangles in loop
+counter_B = 0
+purrr::map(block_bounds_list, function(LANE){
+  # Add to counter_B
+  counter_B <<- counter_B + 1
+  # Add rectangles
+  karyoploteR::kpRect(kp,
+                      chr = LANE$chr,
+                      x0 = LANE$BIN_START,
+                      x1 = LANE$BIN_END,
+                      y0 = lane_cutoffs[counter_B, ] %>% 
+                        dplyr::pull(lower),
+                      y1 = lane_cutoffs[counter_B, ] %>% 
+                        dplyr::pull(upper),
+                      col = LANE$COLOUR,
+                      border = NA)
+  # Add axis label
+  karyoploteR::kpAddLabels(kp, labels = unique(LANE$LANE),
+                           r0 = lane_cutoffs[counter_B, ] %>% 
+                             dplyr::pull(lower),
+                           r1 = lane_cutoffs[counter_B, ] %>% 
+                             dplyr::pull(upper),
+                           cex = 0.5)
 })
+
+
+dev.off()  
