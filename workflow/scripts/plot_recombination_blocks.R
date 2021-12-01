@@ -2,6 +2,7 @@
 
 IN_FILE = "/nfs/research/birney/users/ian/somites/recombination_blocks/F2/no_repeat_reads_or_pers_hets/20000.txt"
 BIN_LENGTH = "20000"
+BASE_COV_TOT = 
 
 IN_FILE = snakemake@input[[1]]
 BIN_LENGTH = snakemake@params[["bin_length"]]
@@ -22,8 +23,8 @@ sink(log, type = "message")
 # Load libraries
 
 library(tidyverse)
-library(here)
-source(here::here("book/source/03-F2_recombination.R"))
+#library(here)
+source("book/source/03-F2_recombination.R")
 
 # Read in data
 
@@ -47,8 +48,7 @@ df = readr::read_tsv(IN_FILE,
 # Read in total medaka genome count
 
 ## Get chromosome lengths
-med_chr_lens = read.table(here::here("data",
-                                     "Oryzias_latipes.ASM223467v1.dna.toplevel.fa_chr_counts.txt"),
+med_chr_lens = read.table("data/Oryzias_latipes.ASM223467v1.dna.toplevel.fa_chr_counts.txt",
                           col.names = c("chr", "end"))
 ## Add start
 med_chr_lens$start = 1
@@ -343,8 +343,6 @@ block_bounds_list = df %>%
       dplyr::bind_rows()
     
   })
-
-
 
 # Extract y cutoff points for each lane
 

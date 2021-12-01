@@ -329,4 +329,19 @@ rule plot_recombination_blocks:
     input:
         os.path.join(config["data_store_dir"], "recombination_blocks/F2/{site_filter}/{bin_length}.txt"),
     output:
-        "book"
+        base_cov_total = "book/plots/{site_filter}/{bin_length}/base_cov_total.png",
+        base_cov_by_chrom = "book/plots/{site_filter}/{bin_length}/base_cov_by_chrom.png",
+        prop_sites_total = "book/plots/{site_filter}/{bin_length}/prop_sites_total.png",
+        prop_sites_by_chrom = "book/plots/{site_filter}/{bin_length}/prop_sites_by_chrom.png",
+        karyoplot_no_missing = "book/plots/{site_filter}/{bin_length}/karyoplot_no_missing.png",
+        karyoplot_with_missing = "book/plots/{site_filter}/{bin_length}/karyoplot_with_missing.png",
+    log:
+        os.path.join(config["working_dir"], "logs/plot_recombination_blocks/{site_filter}/{bin_length}.log")
+    params:
+        bin_length = "{bin_length}"
+    resources:
+        mem_mb = 20000
+    container:
+        config["R"]
+    script:
+        "../scripts/plot_recombination_blocks.R"
