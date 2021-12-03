@@ -1,7 +1,7 @@
 ---
 title: "Meeting log"
 author: "Ian Brettell"
-date: '2021-11-17'
+date: '2021-12-03'
 output:
   html_document:
     toc: true
@@ -20,17 +20,60 @@ bibliography: references.bib
 
 # Notebook
 
+## 2 December 2021
+
+Ali has sent the third batch of F2 data.
+
+Sample 323 is missing the first pair. 
+
+## 26 November 2021
+
+Suggestions from EB:
+
+-   Set up guardrails -- e.g. the site must have at least 0.2 to 0.8 iCab vs Total
+-   Limit to >= 100 and <= 10000
+-   Plot chromosomes before filtering
+
 ## 17 November 2021
 
 Other HMM genotyping by sequencing (GBS) methods:
 
--   
+-   Slides explaining HMM: https://alphagenes.roslin.ed.ac.uk/wp/wp-content/uploads/2019/05/05-JohnHickeyHMMIceCreamfastPHASEValenciaMay2018.pdf
+
+-   magicImpute
+
+    -   Paper: https://academic.oup.com/genetics/article/210/1/71/6088020?login=true
+    -   Implemented in RABBIT: https://github.com/chaozhi/RABBIT
+
+-   R/qtl2
+
+    -   https://kbroman.org/qtl2/assets/vignettes/user_guide.htmlparalel
+    -   Requires genotype file
 
 -   TIGER
 
-    -   
+    -   Paper: https://www.g3journal.org/content/5/3/385
     -   GitHub: https://github.com/betharowan/TIGER_Scripts-for-distribution
     -   Thesis describing TIGER: <https://core.ac.uk/download/pdf/78377942.pdf>
+    -   Paper using TIGER for outbred founders: https://gsejournal.biomedcentral.com/articles/10.1186/s12711-019-0487-1
+
+-   FSFHap
+
+    -   Paper: https://acsess.onlinelibrary.wiley.com/doi/full/10.3835/plantgenome2014.05.0023
+    -   Implemented in TASSEL 5.0: https://tassel.bitbucket.io/
+    -   Appears specific to plants, as it infers parental sequence from the progency seqeunce bcause "the plants that were sequenced are usually not the same ones that were used to make the full sib population and may have somewhat different genotypes" (https://bitbucket.org/tasseladmin/tassel-5-source/wiki/UserManual/FSFHapImputation/FSFHapImputation). 
+    -   "Also, the progeny taken together generally provide very high coverage for the parental sequence and are often a better source for inferring the parent sequence than the parents themselves. FSFHap has a few different algorithms for inferring the parent haplotype. The default is the most robust and should be tried first for populations derived from F1's."
+    -   "The windowLD method works well for highly inbred parents, but has problems if one of the parents has residual heterozygosity. Additional options exist for backcross populations."
+
+-   LB-Impute
+
+    -   Imputes missing alleles with an HMM.
+    -   Paper: https://www.genetics.org/content/202/2/487
+    -   GitHub: https://github.com/dellaporta-laboratory/LB-Impute 
+    
+-   fastPHASE
+
+    -   estimates missing genotypes and reconstructing haplotypes from unphased SNP genotype data of *unrelated* individuals.
 
 ## 16 November 2021
 

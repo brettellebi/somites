@@ -1,4 +1,5 @@
-include: "rules/00_common.smk"
+include: "rules/00_1_common.smk"
+include: "rules/00_2_common.smk"
 
 ##### Target rules #####
 
@@ -110,9 +111,9 @@ rule all:
 #                site_filter = config["site_filter"],
 #        ),
 # plot_recombination_blocks
-        expand("book/plots/{site_filter}/{bin_length}/base_cov_by_chrom.png",
-                site_filter = config["site_filter"][0],
-                bin_length = config["bin_length"][3],
+        expand("book/plots/snakemake/{site_filter}/{bin_length}/karyoplot_with_missing.png",
+                site_filter = config["site_filter"],
+                bin_length = config["bin_length"],
         ),
 ################
 ## 06_F0_recomb_blocks.smk

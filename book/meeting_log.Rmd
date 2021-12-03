@@ -20,6 +20,12 @@ bibliography: references.bib
 
 # Notebook
 
+## 2 December 2021
+
+Ali has sent the third batch of F2 data.
+
+Sample 323 is missing the first pair. 
+
 ## 26 November 2021
 
 Suggestions from EB:

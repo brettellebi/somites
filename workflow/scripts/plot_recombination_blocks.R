@@ -1,11 +1,19 @@
 # Get variables
 
-IN_FILE = "/nfs/research/birney/users/ian/somites/recombination_blocks/F2/no_repeat_reads_or_pers_hets/20000.txt"
-BIN_LENGTH = "20000"
-BASE_COV_TOT = 
+#IN_FILE = "/nfs/research/birney/users/ian/somites/recombination_blocks/F2/no_repeat_reads_or_pers_hets/20000.txt"
+#SITE_FILTER = "no_repeat_sites"
+#BIN_LENGTH = as.numeric("20000")
+#BASE_COV_TOT = "/hps/software/users/birney/ian/repos/somites/book/plots/no_repeat_sites/20000/base_cov_total.png"
+#BASE_COV_BY_CHROM = "/hps/software/users/birney/ian/repos/somites/book/plots/no_repeat_sites/20000/base_cov_by_chrom.png"
+#PROP_SITES_TOT = "/hps/software/users/birney/ian/repos/somites/book/plots/no_repeat_sites/20000/prop_sites_total.png"
+#PROP_SITES_BY_CHROM = "/hps/software/users/birney/ian/repos/somites/book/plots/no_repeat_sites/20000/prop_sites_by_chrom.png"
+#KARYOPLOT_NOMISS = "/hps/software/users/birney/ian/repos/somites/book/plots/no_repeat_sites/20000/karyoplot_no_missing.png"
+#KARYOPLOT_WIMISS = "/hps/software/users/birney/ian/repos/somites/book/plots/no_repeat_sites/20000/karyoplot_with_missing.png"
+
 
 IN_FILE = snakemake@input[[1]]
-BIN_LENGTH = snakemake@params[["bin_length"]]
+SITE_FILTER = snakemake@params[["site_filter"]]
+BIN_LENGTH = as.numeric(snakemake@params[["bin_length"]])
 LOG_FILE = snakemake@log[[1]]
 BASE_COV_TOT = snakemake@output[["base_cov_total"]]
 BASE_COV_BY_CHROM = snakemake@output[["base_cov_by_chrom"]]
@@ -124,10 +132,17 @@ base_cov_tot = base_cov_df %>%
   scale_fill_manual(values = pal_hom_het_2) +
   guides(colour = "none", fill = "none") +
   xlab("Genotype") +
-  ylab("Proportion of reference bases covered")
+  ylab("Proportion of reference bases covered") +
+  ggtitle(paste("Site filter: ", 
+                SITE_FILTER %>% 
+                  stringr::str_replace_all("_", " "),
+                "\nBin length: ",
+                BIN_LENGTH,
+                sep = ""))
 
 ## Save
 ggsave(BASE_COV_TOT,
+       base_cov_tot,
        device = "png",
        width = 10,
        height = 5.8,
@@ -176,7 +191,7 @@ base_cov_df_chr = df %>%
   dplyr::bind_rows(.id = "LANE")
 
 ## Plot
-base_cov_df_chr %>% 
+base_cov_chr = base_cov_df_chr %>% 
   dplyr::mutate(STATE = factor(STATE, levels = c(0,1,2, "UNCLASSIFIED")),
                 STATE_RECODE = dplyr::recode(STATE,
                                              `0` = "Homozygous Cab",
@@ -196,11 +211,17 @@ base_cov_df_chr %>%
   xlab("Genotype") +
   ylab("Proportion of reference bases covered") +
   facet_wrap(~CHR, nrow = 4, ncol = 6) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  ggtitle(paste("Site filter: ", 
+                SITE_FILTER %>% 
+                  stringr::str_replace_all("_", " "),
+                "\nBin length: ",
+                BIN_LENGTH,
+                sep = ""))
 
 ## Save
 ggsave(BASE_COV_BY_CHROM,
-       prop_sites_by_chrom,
+       base_cov_chr,
        device = "png",
        width = 16,
        height = 13,
@@ -245,7 +266,13 @@ prop_sites_tot = df %>%
   scale_fill_manual(values = pal_hom_het_2) +
   guides(colour = "none", fill = "none") +
   xlab("Genotype") +
-  ylab("Frequency")
+  ylab("Frequency") +
+  ggtitle(paste("Site filter: ", 
+                SITE_FILTER %>% 
+                  stringr::str_replace_all("_", " "),
+                "\nBin length: ",
+                BIN_LENGTH,
+                sep = ""))
 
 ggsave(PROP_SITES_TOT,
        prop_sites_tot,
@@ -295,7 +322,13 @@ prop_sites_by_chrom = df %>%
   xlab("Genotype") +
   ylab("Frequency") +
   facet_wrap(~chr, nrow = 4, ncol = 6) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  ggtitle(paste("Site filter: ", 
+                SITE_FILTER %>% 
+                  stringr::str_replace_all("_", " "),
+                "\nBin length: ",
+                BIN_LENGTH,
+                sep = ""))
 
 ggsave(PROP_SITES_BY_CHROM,
        prop_sites_by_chrom,
@@ -351,19 +384,27 @@ lane_cutoffs = cut(0:1, breaks = length(block_bounds_list), dig.lab = 7) %>%
   data.frame(lower = as.numeric( sub("\\((.+),.*", "\\1", .) ),
              upper = as.numeric( sub("[^,]*,([^]]*)\\]", "\\1", .) )) %>% 
   dplyr::arrange(dplyr::desc(lower))
-return(lane_cutoffs)
-
 
 # Plot karyoplot WITH NO missing blocks
 
 png(file=KARYOPLOT_NOMISS,
-    width=13000,
-    height=26000,
+    width=7800,
+    height=23400,
     units = "px",
-    res = 300)
+    res = 400)
 
 # Plot ideogram
 kp = karyoploteR::plotKaryotype(med_genome, plot.type = 5)
+
+# Plot title
+karyoploteR::kpAddMainTitle(kp,
+                            paste("Site filter: ", 
+                                  SITE_FILTER %>% 
+                                    stringr::str_replace_all("_", " "),
+                                  "\nBin length: ",
+                                  BIN_LENGTH,
+                                  sep = ""),
+                            cex=4)
 
 # Add rectangles in loop
 counter = 0
@@ -443,37 +484,45 @@ block_bounds_list = df %>%
 # Plot karyoplot
 
 png(file=KARYOPLOT_WIMISS,
-    width=13000,
-    height=26000,
+    width=7800,
+    height=23400,
     units = "px",
-    res = 300)
+    res = 400)
 
 # Plot ideogram
 kp = karyoploteR::plotKaryotype(med_genome, plot.type = 5)
-# Add data background
-#karyoploteR::kpDataBackground(kp, r0=0, r1 = 1, color = "white")
+
+# Plot title
+karyoploteR::kpAddMainTitle(kp,
+                            paste("Site filter: ", 
+                                  SITE_FILTER %>% 
+                                    stringr::str_replace_all("_", " "),
+                                  "\nBin length: ",
+                                  BIN_LENGTH,
+                                  sep = ""),
+                            cex=4)
 
 # Add rectangles in loop
-counter_B = 0
+counter = 0
 purrr::map(block_bounds_list, function(LANE){
-  # Add to counter_B
-  counter_B <<- counter_B + 1
+  # Add to counter
+  counter <<- counter + 1
   # Add rectangles
   karyoploteR::kpRect(kp,
                       chr = LANE$chr,
                       x0 = LANE$BIN_START,
                       x1 = LANE$BIN_END,
-                      y0 = lane_cutoffs[counter_B, ] %>% 
+                      y0 = lane_cutoffs[counter, ] %>% 
                         dplyr::pull(lower),
-                      y1 = lane_cutoffs[counter_B, ] %>% 
+                      y1 = lane_cutoffs[counter, ] %>% 
                         dplyr::pull(upper),
                       col = LANE$COLOUR,
                       border = NA)
   # Add axis label
   karyoploteR::kpAddLabels(kp, labels = unique(LANE$LANE),
-                           r0 = lane_cutoffs[counter_B, ] %>% 
+                           r0 = lane_cutoffs[counter, ] %>% 
                              dplyr::pull(lower),
-                           r1 = lane_cutoffs[counter_B, ] %>% 
+                           r1 = lane_cutoffs[counter, ] %>% 
                              dplyr::pull(upper),
                            cex = 0.5)
 })

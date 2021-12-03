@@ -4,15 +4,15 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Chapter 2 Alignment of F0 and F2 generations | Somite period F2 analysis</title>
+<title>Chapter 2 Alignment of F0 and F2 generations | Meeting log</title>
 <meta name="author" content="Ian Brettell">
 <meta name="description" content="All the code used to process the data using Snakemake1 can be found here: Config:https://github.com/brettellebi/somites/tree/master/config...">
 <meta name="generator" content="bookdown 0.24.2 with bs4_book()">
-<meta property="og:title" content="Chapter 2 Alignment of F0 and F2 generations | Somite period F2 analysis">
+<meta property="og:title" content="Chapter 2 Alignment of F0 and F2 generations | Meeting log">
 <meta property="og:type" content="book">
 <meta property="og:description" content="All the code used to process the data using Snakemake1 can be found here: Config:https://github.com/brettellebi/somites/tree/master/config...">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Chapter 2 Alignment of F0 and F2 generations | Somite period F2 analysis">
+<meta name="twitter:title" content="Chapter 2 Alignment of F0 and F2 generations | Meeting log">
 <meta name="twitter:description" content="All the code used to process the data using Snakemake1 can be found here: Config:https://github.com/brettellebi/somites/tree/master/config...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/header-attrs-2.10/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
@@ -32,7 +32,7 @@
 
     <div class="d-flex align-items-start justify-content-between">
       <h1>
-        <a href="index.html" title="">Somite period F2 analysis</a>
+        <a href="index.html" title="">Meeting log</a>
       </h1>
       <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
     </div>
@@ -47,10 +47,15 @@
 <li><a class="" href="index.html"><span class="header-section-number">1</span> About</a></li>
 <li><a class="active" href="alignment-of-f0-and-f2-generations.html"><span class="header-section-number">2</span> Alignment of F0 and F2 generations</a></li>
 <li><a class="" href="homozygosity-of-f0-cab-and-kaga.html"><span class="header-section-number">3</span> Homozygosity of F0 Cab and Kaga</a></li>
-<li><a class="" href="f2-recombination-blocks-old.html"><span class="header-section-number">4</span> F2 recombination blocks (old)</a></li>
-<li><a class="" href="f2-recombination-blocks-new.html"><span class="header-section-number">5</span> F2 recombination blocks (new)</a></li>
-<li><a class="" href="association-testing-with-simulated-phenotypes.html"><span class="header-section-number">6</span> Association testing with simulated phenotypes</a></li>
-<li><a class="" href="gwls-results.html"><span class="header-section-number">7</span> GWLS results</a></li>
+<li><a class="" href="f2-recombination-blocks-all-homozygous-divergent-sites.html"><span class="header-section-number">4</span> F2 recombination blocks (all homozygous-divergent sites)</a></li>
+<li><a class="" href="f2-recombination-blocks-excluding-sites-overlapping-hdrr-repeat-regions.html"><span class="header-section-number">5</span> F2 recombination blocks (excluding SITES overlapping HdrR repeat regions)</a></li>
+<li><a class="" href="f2-recombination-blocks-excluding-reads-overlapping-hdrr-repeat-regions.html"><span class="header-section-number">6</span> F2 recombination blocks (excluding READS overlapping HdrR repeat regions)</a></li>
+<li><a class="" href="f2-recombination-blocks-excluding-reads-overlapping-hdrr-repeat-regions-and-regions-of-persistent-heterozygosity-in-the-mikk-panel.html"><span class="header-section-number">7</span> F2 recombination blocks (excluding READS overlapping HdrR repeat regions AND regions of persistent heterozygosity in the MIKK panel)</a></li>
+<li><a class="" href="f2-recombination-blocks-excluding-reads-overlapping-hdrr-repeat-regions-and-regions-of-persistent-heterozygosity-in-the-mikk-panel-and-filtered-based-on-read-count-and-proportion-of-cab.html"><span class="header-section-number">8</span> F2 recombination blocks (excluding READS overlapping HdrR repeat regions AND regions of persistent heterozygosity in the MIKK panel AND filtered based on read count and proportion of Cab)</a></li>
+<li><a class="" href="association-testing-with-simulated-phenotypes.html"><span class="header-section-number">9</span> Association testing with simulated phenotypes</a></li>
+<li><a class="" href="gwls-results.html"><span class="header-section-number">10</span> GWLS results</a></li>
+<li><a class="" href="notebook.html"><span class="header-section-number">11</span> Notebook</a></li>
+<li><a class="" href="references.html">References</a></li>
 </ul>
 
         <div class="book-extra">
@@ -62,7 +67,7 @@
 <h1>
 <span class="header-section-number">2</span> Alignment of F0 and F2 generations<a class="anchor" aria-label="anchor" href="#alignment-of-f0-and-f2-generations"><i class="fas fa-link"></i></a>
 </h1>
-<p>All the code used to process the data using Snakemake<span class="citation"><a class="footnote-ref" tabindex="0" data-toggle="popover" data-content='&lt;p&gt;Felix Mölder et al., &lt;span&gt;“Sustainable Data Analysis with Snakemake,”&lt;/span&gt; &lt;em&gt;F1000Research&lt;/em&gt; 10 (April 19, 2021): 33, &lt;a href="https://doi.org/10.12688/f1000research.29032.2" role="doc-biblioref"&gt;https://doi.org/10.12688/f1000research.29032.2&lt;/a&gt;.&lt;/p&gt;'><sup>1</sup></a></span> can be found here:</p>
+<p>All the code used to process the data using Snakemake<span class="citation"><a class="footnote-ref" tabindex="0" data-toggle="popover" data-content="&lt;p&gt;&lt;strong&gt;Mölder2021?&lt;/strong&gt;&lt;/p&gt;"><sup>1</sup></a></span> can be found here:</p>
 <ul>
 <li><p>Config:<a href="https://github.com/brettellebi/somites/tree/master/config" class="uri">https://github.com/brettellebi/somites/tree/master/config</a></p></li>
 <li><p>Workflow:<a href="https://github.com/brettellebi/somites/tree/master/workflow" class="uri">https://github.com/brettellebi/somites/tree/master/workflow</a></p></li>
@@ -91,7 +96,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Somite period F2 analysis</strong>" was written by Ian Brettell. It was last built on 2021-11-11.</p>
+    <p>"<strong>Meeting log</strong>" was written by Ian Brettell. It was last built on 2021-12-03.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

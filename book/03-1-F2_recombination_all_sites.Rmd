@@ -1,0 +1,103 @@
+---
+zotero: "PhD"
+---
+
+# F2 recombination blocks (all homozygous-divergent sites)
+
+Snakefile for generating figures: https://github.com/brettellebi/somites/blob/master/workflow/rules/05_F2_recomb_blocks.smk
+
+```{r}
+library(here)
+site_filter = "all_sites"
+```
+
+## Base coverage
+
+### Total
+
+#### Bin size: 5000 bp
+
+```{r}
+knitr::include_graphics(here::here("book/plots/snakemake", site_filter, "5000/base_cov_total.png"))
+```
+
+#### Bin size: 20000 bp
+
+```{r}
+knitr::include_graphics(here::here("book/plots/snakemake", site_filter, "20000/base_cov_total.png"))
+```
+
+### By chromosome
+
+#### Bin size: 5000 bp
+
+```{r}
+knitr::include_graphics(here::here("book/plots/snakemake", site_filter, "5000/base_cov_by_chrom.png"))
+```
+
+#### Bin size: 20000 bp
+
+```{r}
+knitr::include_graphics(here::here("book/plots/snakemake", site_filter, "20000/base_cov_by_chrom.png"))
+```
+
+## Proportion of sites
+
+### Total
+
+#### Bin size: 5000 bp
+
+```{r}
+knitr::include_graphics(here::here("book/plots/snakemake", site_filter, "5000/prop_sites_total.png"))
+```
+
+#### Bin size: 20000 bp
+
+```{r}
+knitr::include_graphics(here::here("book/plots/snakemake", site_filter, "20000/prop_sites_total.png"))
+```
+
+### By chromosome
+
+#### Bin size: 5000 bp
+
+```{r}
+knitr::include_graphics(here::here("book/plots/snakemake", site_filter, "5000/prop_sites_by_chrom.png"))
+```
+
+#### Bin size: 20000 bp
+
+```{r}
+knitr::include_graphics(here::here("book/plots/snakemake", site_filter, "20000/prop_sites_by_chrom.png"))
+```
+
+## Karyoplots
+
+### No missing blocks
+
+#### Bin size: 5000 bp
+
+```{r}
+knitr::include_graphics(here::here("book/plots/snakemake", site_filter, "5000/karyoplot_no_missing.png"))
+```
+
+#### Bin size: 20000 bp
+
+```{r}
+knitr::include_graphics(here::here("book/plots/snakemake", site_filter, "20000/karyoplot_no_missing.png"))
+```
+
+### With missing blocks
+
+#### Bin size: 5000 bp
+
+```{r}
+knitr::include_graphics(here::here("book/plots/snakemake", site_filter, "5000/karyoplot_with_missing.png"))
+```
+
+#### Bin size: 20000 bp
+
+```{r}
+knitr::include_graphics(here::here("book/plots/snakemake", site_filter, "20000/karyoplot_with_missing.png"))
+```
+

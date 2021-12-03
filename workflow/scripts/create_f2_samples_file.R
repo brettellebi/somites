@@ -1,8 +1,16 @@
-#!/usr/bin/env Rscript
+# Get variables
+
+IN_DIRS = c("/nfs/ftp/private/indigene_ftp/upload/Ali/Kaga-Cab_F2_First200WGS",
+            "/nfs/ftp/private/indigene_ftp/upload/Ali/Kaga-Cab_F2_Fish201-400_WGS",
+            "/nfs/ftp/private/indigene_ftp/upload/Ali/Kaga-Cab_F2_Fish401-595_WGS")
+
+IN_DIRS = snakemake@input[["input_dirs"]]
+OUT_FILE = snakemake@output[[1]]
+LOG_FILE = snakemake@log[[1]]
 
 # Send output to log
 
-log <- file(snakemake@log[[1]], open="wt")
+log <- file(LOG_FILE, open="wt")
 sink(log)
 sink(log, type = "message")
 
@@ -10,33 +18,36 @@ sink(log, type = "message")
 
 library(tidyverse)
 
+# Print variables
+
+print("IN_DIRS:")
+print(IN_DIRS)
+
 # Get list of files
-files = list.files(snakemake@input[["input_dirs"]],
+files = list.files(IN_DIRS,
                    full.names = T,
                    pattern = "sequence.txt.gz$")
 
 # Process and output samples file
-data.frame("PATH" = files) %>%
+out = data.frame("PATH" = files) %>%
     # Get basenames
     dplyr::mutate(BASENAME = basename(PATH)) %>% 
-    # Get pool numbers
-    dplyr::mutate(POOL = stringr::str_split(BASENAME, "_", simplify = T) %>% 
-                      subset(select = 3),
-                  SAMPLE = stringr::str_split(BASENAME, "_", simplify = T) %>% 
-                      subset(select = 6) %>% 
+    # Split to get POOL, SAMPLE, and PAIR variables
+    tidyr::separate(col = BASENAME,
+                    into = c(NA, NA, "POOL", NA, NA, "SAMPLE", "PAIR", NA),
+                    sep = "_") %>% 
+    # Tidy up SAMPLE variable
+    dplyr::mutate(SAMPLE = SAMPLE %>% 
                       # remove "lane" prefix
-                      stringr::str_remove(., "lane") %>% 
-                      # remove first digit, which is the same as POOL
-                      sub(".", "", .) %>% 
-                      # conver to integer
-                      as.integer(.),
-                  PAIR = stringr::str_split(BASENAME, "_", simplify = T) %>% 
-                      subset(select = 7)) %>% 
+                      stringr::str_remove(., "lane.") %>% 
+                      as.integer(.)) %>% 
     dplyr::arrange(SAMPLE) %>% 
     # pivot wider to put fq paths into same row
     tidyr::pivot_wider(id_cols = c(SAMPLE, POOL),
                         names_from = PAIR,
                         names_prefix = "fq",
-                        values_from = PATH) %>% 
-    # write to file
-    readr::write_tsv(snakemake@output[[1]])
+                        values_from = PATH)
+
+
+# Write to file
+readr::write_tsv(out, OUT_FILE)

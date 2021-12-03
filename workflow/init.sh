@@ -11,8 +11,9 @@
 ssh codon
 module load singularity-3.7.0-gcc-9.3.0-dp5ffrp
 bsub -M 20000 -Is bash
+#bsub -q datamover -M 20000 -Is bash # when needing to copy raw data from FTP
 cd /hps/software/users/birney/ian/repos/somites
-conda activate snakemake_6.7.0
+conda activate snakemake_6.10.0
 snakemake \
   --jobs 5000 \
   --latency-wait 100 \
@@ -32,7 +33,7 @@ snakemake \
 
 # Build container
 # Set container path
-CONT=/hps/software/users/birney/ian/containers/somites/R_4.1.0.sif
+CONT=/hps/nobackup/birney/users/ian/containers/somites/R_4.1.0.sif
 
 singularity build --remote \
     $CONT \
@@ -42,6 +43,7 @@ ssh proxy-codon
 bsub -M 50000 -Is bash
 module load singularity-3.7.0-gcc-9.3.0-dp5ffrp
 CONT=/hps/software/users/birney/ian/containers/somites/R_4.1.0.sif
+CONT=/hps/nobackup/birney/users/ian/containers/somites/R_4.1.0.sif
 singularity shell --bind /hps/software/users/birney/ian/rstudio_db:/var/lib/rstudio-server \
                   --bind /hps/software/users/birney/ian/tmp:/tmp \
                   --bind /hps/software/users/birney/ian/run:/run \
