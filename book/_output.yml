@@ -3,11 +3,14 @@ bookdown::bs4_book:
   theme:
     primary: "#3C1642"
     font_scale: 0.8
-  repo: https://github.com/brettellebi/somites
-bookdown::pdf_book:
-  includes:
-    in_header: preamble.tex
-  latex_engine: xelatex
-  citation_package: natbib
-  keep_tex: yes
-bookdown::epub_book: default
+  repo:
+    base: https://github.com/brettellebi/somites
+    branch: main
+    subdir: book
+#bookdown::pdf_book:
+#  includes:
+#    in_header: preamble.tex
+#  latex_engine: xelatex
+#  citation_package: natbib
+#  keep_tex: yes
+#bookdown::epub_book: default

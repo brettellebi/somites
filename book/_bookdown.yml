@@ -2,10 +2,6 @@ book_filename: "book"
 new_session: true
 before_chapter_script: _common.R
 delete_merged_file: true
-repo:
-  base: https://github.com/brettellebi/somites
-  branch: main
-  subdir: book
 language:
   ui:
     chapter_name: "Chapter "
