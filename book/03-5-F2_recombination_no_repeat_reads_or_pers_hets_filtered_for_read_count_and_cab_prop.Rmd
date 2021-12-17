@@ -2,7 +2,12 @@
 zotero: "PhD"
 ---
 
-# F2 recombination blocks (excluding READS overlapping HdrR repeat regions AND regions of persistent heterozygosity in the MIKK panel AND filtered based on read count and proportion of Cab)
+# F2 recombination blocks
+
+Exclusions:
+-   reads overlapping *HdrR* repeat regions
+-   regions of persistent heterozygosity in the MIKK panel
+-   filtered based on read count and proportion of Cab)
 
 Snakefile for generating figures: https://github.com/brettellebi/somites/blob/master/workflow/rules/05_F2_recomb_blocks.smk
 
@@ -15,89 +20,42 @@ site_filter = "no_repeat_reads_or_pers_hets_filtered_for_read_count_and_cab_prop
 
 ### Total
 
-#### Bin size: 5000 bp
-
-```{r}
+```{r, out.width="100%"}
 knitr::include_graphics(here::here("book/plots/snakemake", site_filter, "5000/base_cov_total.png"))
-```
-
-#### Bin size: 20000 bp
-
-```{r}
-knitr::include_graphics(here::here("book/plots/snakemake", site_filter, "20000/base_cov_total.png"))
 ```
 
 ### By chromosome
 
-#### Bin size: 5000 bp
-
-```{r}
+```{r, out.width="100%"}
 knitr::include_graphics(here::here("book/plots/snakemake", site_filter, "5000/base_cov_by_chrom.png"))
-```
-
-#### Bin size: 20000 bp
-
-```{r}
-knitr::include_graphics(here::here("book/plots/snakemake", site_filter, "20000/base_cov_by_chrom.png"))
 ```
 
 ## Proportion of sites
 
 ### Total
 
-#### Bin size: 5000 bp
-
-```{r}
+```{r, out.width="100%"}
 knitr::include_graphics(here::here("book/plots/snakemake", site_filter, "5000/prop_sites_total.png"))
-```
-
-#### Bin size: 20000 bp
-
-```{r}
-knitr::include_graphics(here::here("book/plots/snakemake", site_filter, "20000/prop_sites_total.png"))
 ```
 
 ### By chromosome
 
-#### Bin size: 5000 bp
-
-```{r}
+```{r, out.width="100%"}
 knitr::include_graphics(here::here("book/plots/snakemake", site_filter, "5000/prop_sites_by_chrom.png"))
-```
-
-#### Bin size: 20000 bp
-
-```{r}
-knitr::include_graphics(here::here("book/plots/snakemake", site_filter, "20000/prop_sites_by_chrom.png"))
 ```
 
 ## Karyoplots
 
 ### No missing blocks
 
-#### Bin size: 5000 bp
-
-```{r}
+```{r, out.width="100%"}
 knitr::include_graphics(here::here("book/plots/snakemake", site_filter, "5000/karyoplot_no_missing.png"))
-```
-
-#### Bin size: 20000 bp
-
-```{r}
-knitr::include_graphics(here::here("book/plots/snakemake", site_filter, "20000/karyoplot_no_missing.png"))
 ```
 
 ### With missing blocks
 
-#### Bin size: 5000 bp
-
-```{r}
+```{r, out.width="100%"}
 knitr::include_graphics(here::here("book/plots/snakemake", site_filter, "5000/karyoplot_with_missing.png"))
 ```
 
-#### Bin size: 20000 bp
-
-```{r}
-knitr::include_graphics(here::here("book/plots/snakemake", site_filter, "20000/karyoplot_with_missing.png"))
-```
 
