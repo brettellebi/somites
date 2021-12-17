@@ -6,7 +6,7 @@ zotero: PhD
 
 Code for generating simulated phenotypes is set out below.
 
-Those simulated phenotypes are then used in this Snakefile for testing GWLS code, specifically rule `test_gwls`: https://github.com/brettellebi/somites/blob/master/workflow/rules/07_assocation_testing.smk
+The simulated phenotypes are then used in this Snakefile for testing GWLS code, specifically rule `test_gwls`: https://github.com/brettellebi/somites/blob/master/workflow/rules/07_assocation_testing.smk
 
 ```{r, message = F, warning = F}
 library(here)

@@ -5,11 +5,12 @@ zotero: "PhD"
 # F2 recombination blocks (filtered sites)
 
 Exclusions:
--   reads overlapping *HdrR* repeat regions
--   regions of persistent heterozygosity in the MIKK panel
--   filtered based on read count and proportion of Cab)
+*   reads overlapping *HdrR* repeat regions
+*   regions of persistent heterozygosity in the MIKK panel
+*   filtered based on read count and proportion of Cab)
 
 Snakefile for aligning F2 samples: https://github.com/brettellebi/somites/blob/master/workflow/rules/04_F2_mapping.smk
+
 Snakefile for running HMM and generating figures: https://github.com/brettellebi/somites/blob/master/workflow/rules/05_F2_recomb_blocks.smk
 
 ```{r}

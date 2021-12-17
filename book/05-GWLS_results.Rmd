@@ -4,8 +4,6 @@ zotero: PhD
 
 # GWLS results
 
-Snakefile for running genome-wide linkage study (GWLS): https://github.com/brettellebi/somites/blob/master/workflow/rules/07_assocation_testing.smk
-
 ```{r, message = F, warning = F}
 library(here)
 source(here::here("book/source/04-Association_testing.R"))
