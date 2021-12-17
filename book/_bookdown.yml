@@ -10,17 +10,17 @@ output_dir: "../docs"
 rmd_files: [
   "index.Rmd",
   
-  #"01-Data_processing_with_Snakemake.Rmd",
-  #"02-F0_homozygosity.Rmd",
-  #"03-1-F2_recombination_all_sites.Rmd",
+  "01-Data_processing_with_Snakemake.Rmd",
+  "02-F0_homozygosity.Rmd",
+  "03-1-F2_recombination_all_sites.Rmd",
   #"03-2-F2_recombination_no_repeat_sites.Rmd",
   #"03-3-F2_recombination_no_repeat_reads.Rmd",
   #"03-4-F2_recombination_no_repeat_reads_or_pers_hets.Rmd",
-  #"03-5-F2_recombination_no_repeat_reads_or_pers_hets_filtered_for_read_count_and_cab_prop.Rmd",
-  #"04-Association_testing.Rmd",
-  #"05-GWLS_results.Rmd",
+  "03-5-F2_recombination_no_repeat_reads_or_pers_hets_filtered_for_read_count_and_cab_prop.Rmd",
+  "04-Association_testing.Rmd",
+  "05-GWLS_results.Rmd",
   
-  #"meeting_log.Rmd",
+  "Notes.Rmd",
   
   "07-references.Rmd"
 ]

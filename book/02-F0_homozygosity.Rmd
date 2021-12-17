@@ -4,6 +4,10 @@ zotero: "PhD"
 
 # Homozygosity of F0 Cab and Kaga
 
+Snakefile for aligning F0 samples: https://github.com/brettellebi/somites/blob/master/workflow/rules/02_F0_mapping.smk
+
+Snakefile for calling F0 samples: https://github.com/brettellebi/somites/blob/master/workflow/rules/03_F0_calling.smk
+
 ```{r, include = F}
 library(here)
 source(here::here("book/source/02-F0_homozygosity.R"))
@@ -262,7 +266,7 @@ purrr::map(bb_list_ck, function(block_bounds_list){
 })
 ```
 
-```{r, fig.cap = "Bin length: 5 kb"}
+```{r, fig.cap = "Bin length: 5 kb", out.width="100%"}
 knitr::include_graphics(here::here("book/plots/20210803_ck_karyoplot_5000.png"))
 ```
 
@@ -490,7 +494,7 @@ purrr::map(bb_list_ck, function(block_bounds_list){
 })
 ```
 
-```{r, fig.cap = "Bin length: 5 kb"}
+```{r, fig.cap = "Bin length: 5 kb", out.width="100%"}
 knitr::include_graphics(here::here("book/plots/20211110_ck_karyoplot_5000.png"))
 ```
 
@@ -604,6 +608,6 @@ purrr::map(bb_list_ck_wunc, function(block_bounds_list){
 })
 ```
 
-```{r, fig.cap = "Bin length: 5 kb"}
+```{r, fig.cap = "Bin length: 5 kb", out.width="100%"}
 knitr::include_graphics(here::here("book/plots/20211110_ck_karyoplot_wimiss_5000.png"))
 ```

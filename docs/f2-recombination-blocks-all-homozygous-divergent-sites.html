@@ -4,16 +4,16 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Chapter 4 F2 recombination blocks (all homozygous-divergent sites) | Meeting log</title>
+<title>Chapter 4 F2 recombination blocks (all homozygous-divergent sites) | Somite period F2 analysis</title>
 <meta name="author" content="Ian Brettell">
-<meta name="description" content="Snakefile for generating figures: https://github.com/brettellebi/somites/blob/master/workflow/rules/05_F2_recomb_blocks.smk library(here) #&gt; here() starts at...">
+<meta name="description" content="Snakefile for aligning F2 samples: https://github.com/brettellebi/somites/blob/master/workflow/rules/04_F2_mapping.smk Snakefile for running HMM and generating figures:...">
 <meta name="generator" content="bookdown 0.24.2 with bs4_book()">
-<meta property="og:title" content="Chapter 4 F2 recombination blocks (all homozygous-divergent sites) | Meeting log">
+<meta property="og:title" content="Chapter 4 F2 recombination blocks (all homozygous-divergent sites) | Somite period F2 analysis">
 <meta property="og:type" content="book">
-<meta property="og:description" content="Snakefile for generating figures: https://github.com/brettellebi/somites/blob/master/workflow/rules/05_F2_recomb_blocks.smk library(here) #&gt; here() starts at...">
+<meta property="og:description" content="Snakefile for aligning F2 samples: https://github.com/brettellebi/somites/blob/master/workflow/rules/04_F2_mapping.smk Snakefile for running HMM and generating figures:...">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Chapter 4 F2 recombination blocks (all homozygous-divergent sites) | Meeting log">
-<meta name="twitter:description" content="Snakefile for generating figures: https://github.com/brettellebi/somites/blob/master/workflow/rules/05_F2_recomb_blocks.smk library(here) #&gt; here() starts at...">
+<meta name="twitter:title" content="Chapter 4 F2 recombination blocks (all homozygous-divergent sites) | Somite period F2 analysis">
+<meta name="twitter:description" content="Snakefile for aligning F2 samples: https://github.com/brettellebi/somites/blob/master/workflow/rules/04_F2_mapping.smk Snakefile for running HMM and generating figures:...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/header-attrs-2.10/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.2.5.1/tabs.js"></script><script src="libs/bs3compat-0.2.5.1/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
@@ -32,7 +32,7 @@
 
     <div class="d-flex align-items-start justify-content-between">
       <h1>
-        <a href="index.html" title="">Meeting log</a>
+        <a href="index.html" title="">Somite period F2 analysis</a>
       </h1>
       <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
     </div>
@@ -48,13 +48,10 @@
 <li><a class="" href="alignment-of-f0-and-f2-generations.html"><span class="header-section-number">2</span> Alignment of F0 and F2 generations</a></li>
 <li><a class="" href="homozygosity-of-f0-cab-and-kaga.html"><span class="header-section-number">3</span> Homozygosity of F0 Cab and Kaga</a></li>
 <li><a class="active" href="f2-recombination-blocks-all-homozygous-divergent-sites.html"><span class="header-section-number">4</span> F2 recombination blocks (all homozygous-divergent sites)</a></li>
-<li><a class="" href="f2-recombination-blocks-excluding-sites-overlapping-hdrr-repeat-regions.html"><span class="header-section-number">5</span> F2 recombination blocks (excluding SITES overlapping HdrR repeat regions)</a></li>
-<li><a class="" href="f2-recombination-blocks-excluding-reads-overlapping-hdrr-repeat-regions.html"><span class="header-section-number">6</span> F2 recombination blocks (excluding READS overlapping HdrR repeat regions)</a></li>
-<li><a class="" href="f2-recombination-blocks-excluding-reads-overlapping-hdrr-repeat-regions-and-regions-of-persistent-heterozygosity-in-the-mikk-panel.html"><span class="header-section-number">7</span> F2 recombination blocks (excluding READS overlapping HdrR repeat regions AND regions of persistent heterozygosity in the MIKK panel)</a></li>
-<li><a class="" href="f2-recombination-blocks-excluding-reads-overlapping-hdrr-repeat-regions-and-regions-of-persistent-heterozygosity-in-the-mikk-panel-and-filtered-based-on-read-count-and-proportion-of-cab.html"><span class="header-section-number">8</span> F2 recombination blocks (excluding READS overlapping HdrR repeat regions AND regions of persistent heterozygosity in the MIKK panel AND filtered based on read count and proportion of Cab)</a></li>
-<li><a class="" href="association-testing-with-simulated-phenotypes.html"><span class="header-section-number">9</span> Association testing with simulated phenotypes</a></li>
-<li><a class="" href="gwls-results.html"><span class="header-section-number">10</span> GWLS results</a></li>
-<li><a class="" href="notebook.html"><span class="header-section-number">11</span> Notebook</a></li>
+<li><a class="" href="f2-recombination-blocks-filtered-sites.html"><span class="header-section-number">5</span> F2 recombination blocks (filtered sites)</a></li>
+<li><a class="" href="association-testing-with-simulated-phenotypes.html"><span class="header-section-number">6</span> Association testing with simulated phenotypes</a></li>
+<li><a class="" href="gwls-results.html"><span class="header-section-number">7</span> GWLS results</a></li>
+<li><a class="" href="notes-1.html"><span class="header-section-number">8</span> Notes</a></li>
 <li><a class="" href="references.html">References</a></li>
 </ul>
 
@@ -67,7 +64,8 @@
 <h1>
 <span class="header-section-number">4</span> F2 recombination blocks (all homozygous-divergent sites)<a class="anchor" aria-label="anchor" href="#f2-recombination-blocks-all-homozygous-divergent-sites"><i class="fas fa-link"></i></a>
 </h1>
-<p>Snakefile for generating figures: <a href="https://github.com/brettellebi/somites/blob/master/workflow/rules/05_F2_recomb_blocks.smk" class="uri">https://github.com/brettellebi/somites/blob/master/workflow/rules/05_F2_recomb_blocks.smk</a></p>
+<p>Snakefile for aligning F2 samples: <a href="https://github.com/brettellebi/somites/blob/master/workflow/rules/04_F2_mapping.smk" class="uri">https://github.com/brettellebi/somites/blob/master/workflow/rules/04_F2_mapping.smk</a>
+Snakefile for running HMM and generating figures: <a href="https://github.com/brettellebi/somites/blob/master/workflow/rules/05_F2_recomb_blocks.smk" class="uri">https://github.com/brettellebi/somites/blob/master/workflow/rules/05_F2_recomb_blocks.smk</a></p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://here.r-lib.org/">here</a></span><span class="op">)</span>
 <span class="co">#&gt; here() starts at /hps/software/users/birney/ian/repos/somites</span>
@@ -80,43 +78,17 @@
 <h3>
 <span class="header-section-number">4.1.1</span> Total<a class="anchor" aria-label="anchor" href="#total"><i class="fas fa-link"></i></a>
 </h3>
-<div id="bin-size-5000-bp" class="section level4" number="4.1.1.1">
-<h4>
-<span class="header-section-number">4.1.1.1</span> Bin size: 5000 bp<a class="anchor" aria-label="anchor" href="#bin-size-5000-bp"><i class="fas fa-link"></i></a>
-</h4>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"book/plots/snakemake"</span>, <span class="va">site_filter</span>, <span class="st">"5000/base_cov_total.png"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="plots/snakemake/all_sites/5000/base_cov_total.png" width="2000"></div>
-</div>
-<div id="bin-size-20000-bp" class="section level4" number="4.1.1.2">
-<h4>
-<span class="header-section-number">4.1.1.2</span> Bin size: 20000 bp<a class="anchor" aria-label="anchor" href="#bin-size-20000-bp"><i class="fas fa-link"></i></a>
-</h4>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"book/plots/snakemake"</span>, <span class="va">site_filter</span>, <span class="st">"20000/base_cov_total.png"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="plots/snakemake/all_sites/20000/base_cov_total.png" width="2000"></div>
-</div>
+<div class="inline-figure"><img src="plots/snakemake/all_sites/5000/base_cov_total.png" width="100%"></div>
 </div>
 <div id="by-chromosome" class="section level3" number="4.1.2">
 <h3>
 <span class="header-section-number">4.1.2</span> By chromosome<a class="anchor" aria-label="anchor" href="#by-chromosome"><i class="fas fa-link"></i></a>
 </h3>
-<div id="bin-size-5000-bp-1" class="section level4" number="4.1.2.1">
-<h4>
-<span class="header-section-number">4.1.2.1</span> Bin size: 5000 bp<a class="anchor" aria-label="anchor" href="#bin-size-5000-bp-1"><i class="fas fa-link"></i></a>
-</h4>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"book/plots/snakemake"</span>, <span class="va">site_filter</span>, <span class="st">"5000/base_cov_by_chrom.png"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="plots/snakemake/all_sites/5000/base_cov_by_chrom.png" width="3200"></div>
-</div>
-<div id="bin-size-20000-bp-1" class="section level4" number="4.1.2.2">
-<h4>
-<span class="header-section-number">4.1.2.2</span> Bin size: 20000 bp<a class="anchor" aria-label="anchor" href="#bin-size-20000-bp-1"><i class="fas fa-link"></i></a>
-</h4>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"book/plots/snakemake"</span>, <span class="va">site_filter</span>, <span class="st">"20000/base_cov_by_chrom.png"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="plots/snakemake/all_sites/20000/base_cov_by_chrom.png" width="3200"></div>
-</div>
+<div class="inline-figure"><img src="plots/snakemake/all_sites/5000/base_cov_by_chrom.png" width="100%"></div>
 </div>
 </div>
 <div id="proportion-of-sites" class="section level2" number="4.2">
@@ -127,43 +99,17 @@
 <h3>
 <span class="header-section-number">4.2.1</span> Total<a class="anchor" aria-label="anchor" href="#total-1"><i class="fas fa-link"></i></a>
 </h3>
-<div id="bin-size-5000-bp-2" class="section level4" number="4.2.1.1">
-<h4>
-<span class="header-section-number">4.2.1.1</span> Bin size: 5000 bp<a class="anchor" aria-label="anchor" href="#bin-size-5000-bp-2"><i class="fas fa-link"></i></a>
-</h4>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"book/plots/snakemake"</span>, <span class="va">site_filter</span>, <span class="st">"5000/prop_sites_total.png"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="plots/snakemake/all_sites/5000/prop_sites_total.png" width="2000"></div>
-</div>
-<div id="bin-size-20000-bp-2" class="section level4" number="4.2.1.2">
-<h4>
-<span class="header-section-number">4.2.1.2</span> Bin size: 20000 bp<a class="anchor" aria-label="anchor" href="#bin-size-20000-bp-2"><i class="fas fa-link"></i></a>
-</h4>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"book/plots/snakemake"</span>, <span class="va">site_filter</span>, <span class="st">"20000/prop_sites_total.png"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="plots/snakemake/all_sites/20000/prop_sites_total.png" width="2000"></div>
-</div>
+<div class="inline-figure"><img src="plots/snakemake/all_sites/5000/prop_sites_total.png" width="100%"></div>
 </div>
 <div id="by-chromosome-1" class="section level3" number="4.2.2">
 <h3>
 <span class="header-section-number">4.2.2</span> By chromosome<a class="anchor" aria-label="anchor" href="#by-chromosome-1"><i class="fas fa-link"></i></a>
 </h3>
-<div id="bin-size-5000-bp-3" class="section level4" number="4.2.2.1">
-<h4>
-<span class="header-section-number">4.2.2.1</span> Bin size: 5000 bp<a class="anchor" aria-label="anchor" href="#bin-size-5000-bp-3"><i class="fas fa-link"></i></a>
-</h4>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"book/plots/snakemake"</span>, <span class="va">site_filter</span>, <span class="st">"5000/prop_sites_by_chrom.png"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="plots/snakemake/all_sites/5000/prop_sites_by_chrom.png" width="3200"></div>
-</div>
-<div id="bin-size-20000-bp-3" class="section level4" number="4.2.2.2">
-<h4>
-<span class="header-section-number">4.2.2.2</span> Bin size: 20000 bp<a class="anchor" aria-label="anchor" href="#bin-size-20000-bp-3"><i class="fas fa-link"></i></a>
-</h4>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"book/plots/snakemake"</span>, <span class="va">site_filter</span>, <span class="st">"20000/prop_sites_by_chrom.png"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="plots/snakemake/all_sites/20000/prop_sites_by_chrom.png" width="3200"></div>
-</div>
+<div class="inline-figure"><img src="plots/snakemake/all_sites/5000/prop_sites_by_chrom.png" width="100%"></div>
 </div>
 </div>
 <div id="karyoplots" class="section level2" number="4.3">
@@ -174,50 +120,24 @@
 <h3>
 <span class="header-section-number">4.3.1</span> No missing blocks<a class="anchor" aria-label="anchor" href="#no-missing-blocks"><i class="fas fa-link"></i></a>
 </h3>
-<div id="bin-size-5000-bp-4" class="section level4" number="4.3.1.1">
-<h4>
-<span class="header-section-number">4.3.1.1</span> Bin size: 5000 bp<a class="anchor" aria-label="anchor" href="#bin-size-5000-bp-4"><i class="fas fa-link"></i></a>
-</h4>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"book/plots/snakemake"</span>, <span class="va">site_filter</span>, <span class="st">"5000/karyoplot_no_missing.png"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="plots/snakemake/all_sites/5000/karyoplot_no_missing.png" width="3900"></div>
-</div>
-<div id="bin-size-20000-bp-4" class="section level4" number="4.3.1.2">
-<h4>
-<span class="header-section-number">4.3.1.2</span> Bin size: 20000 bp<a class="anchor" aria-label="anchor" href="#bin-size-20000-bp-4"><i class="fas fa-link"></i></a>
-</h4>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"book/plots/snakemake"</span>, <span class="va">site_filter</span>, <span class="st">"20000/karyoplot_no_missing.png"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="plots/snakemake/all_sites/20000/karyoplot_no_missing.png" width="3900"></div>
-</div>
+<div class="inline-figure"><img src="plots/snakemake/all_sites/5000/karyoplot_no_missing.png" width="100%"></div>
 </div>
 <div id="with-missing-blocks" class="section level3" number="4.3.2">
 <h3>
 <span class="header-section-number">4.3.2</span> With missing blocks<a class="anchor" aria-label="anchor" href="#with-missing-blocks"><i class="fas fa-link"></i></a>
 </h3>
-<div id="bin-size-5000-bp-5" class="section level4" number="4.3.2.1">
-<h4>
-<span class="header-section-number">4.3.2.1</span> Bin size: 5000 bp<a class="anchor" aria-label="anchor" href="#bin-size-5000-bp-5"><i class="fas fa-link"></i></a>
-</h4>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"book/plots/snakemake"</span>, <span class="va">site_filter</span>, <span class="st">"5000/karyoplot_with_missing.png"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="plots/snakemake/all_sites/5000/karyoplot_with_missing.png" width="3900"></div>
-</div>
-<div id="bin-size-20000-bp-5" class="section level4" number="4.3.2.2">
-<h4>
-<span class="header-section-number">4.3.2.2</span> Bin size: 20000 bp<a class="anchor" aria-label="anchor" href="#bin-size-20000-bp-5"><i class="fas fa-link"></i></a>
-</h4>
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"book/plots/snakemake"</span>, <span class="va">site_filter</span>, <span class="st">"20000/karyoplot_with_missing.png"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="plots/snakemake/all_sites/20000/karyoplot_with_missing.png" width="3900"></div>
+<div class="inline-figure"><img src="plots/snakemake/all_sites/5000/karyoplot_with_missing.png" width="100%"></div>
 
-</div>
 </div>
 </div>
 </div>
   <div class="chapter-nav">
 <div class="prev"><a href="homozygosity-of-f0-cab-and-kaga.html"><span class="header-section-number">3</span> Homozygosity of F0 Cab and Kaga</a></div>
-<div class="next"><a href="f2-recombination-blocks-excluding-sites-overlapping-hdrr-repeat-regions.html"><span class="header-section-number">5</span> F2 recombination blocks (excluding SITES overlapping HdrR repeat regions)</a></div>
+<div class="next"><a href="f2-recombination-blocks-filtered-sites.html"><span class="header-section-number">5</span> F2 recombination blocks (filtered sites)</a></div>
 </div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
     <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
@@ -257,7 +177,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Meeting log</strong>" was written by Ian Brettell. It was last built on 2021-12-03.</p>
+    <p>"<strong>Somite period F2 analysis</strong>" was written by Ian Brettell. It was last built on 2021-12-17.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
