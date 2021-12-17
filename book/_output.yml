@@ -5,7 +5,7 @@ bookdown::bs4_book:
     font_scale: 0.8
   repo:
     base: https://github.com/brettellebi/somites
-    branch: main
+    branch: master
     subdir: book
 #bookdown::pdf_book:
 #  includes:
