@@ -5,6 +5,7 @@ zotero: "PhD"
 # F2 recombination blocks (all homozygous-divergent sites)
 
 Snakefile for aligning F2 samples: https://github.com/brettellebi/somites/blob/master/workflow/rules/04_F2_mapping.smk
+
 Snakefile for running HMM and generating figures: https://github.com/brettellebi/somites/blob/master/workflow/rules/05_F2_recomb_blocks.smk
 
 
