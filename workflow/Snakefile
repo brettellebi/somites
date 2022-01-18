@@ -126,33 +126,35 @@ rule all:
 ################
 ## 07_association_testing.smk
 ###############
-## create_gwas_input
-#        expand(os.path.join(config["data_store_dir"], "association_testing/{date_of_assoc_test}_true/inputs/{bin_length}.rds"),
-#                date_of_assoc_test = config["date_of_assoc_test"],
-#                bin_length = config["bin_length"]
-#        ),
-## test_gwls
-#        expand(os.path.join(config["data_store_dir"], "association_testing/{date_of_assoc_test}_test/test_results/{bin_length}.rds"),
-#                date_of_assoc_test = config["date_of_assoc_test"],
-#                target_phenotype = config["target_phenotypes"],
-#                bin_length = config["bin_length"]
-#        ),
-## run_gwls
-#        expand(os.path.join(config["data_store_dir"], "association_testing/{date_of_assoc_test}_true/{site_filter}/results/{target_phenotype}/{bin_length}.rds"),
-#                date_of_assoc_test = config["date_of_assoc_test"],
-#                site_filter = config["site_filter"],
-#                target_phenotype = config["target_phenotypes"],
-#                bin_length = config["bin_length"]
-#        ),
-## run permutations
-#        expand(os.path.join(config["data_store_dir"], "association_testing/{date_of_assoc_test}_permutations/{site_filter}/{target_phenotype}/{bin_length}/{permutation_seed}.rds"),
-#                date_of_assoc_test = config["date_of_assoc_test"],
-#                site_filter = config["site_filter"],
-#                target_phenotype = config["target_phenotypes"],
-#                bin_length = config["bin_length"],
-#                permutation_seed = PERM_SEEDS      
-#        ),
-#
+# create_gwas_input
+        expand(os.path.join(config["data_store_dir"], "association_testing/{date_of_assoc_test}_true/{site_filter}/inputs/{bin_length}.rds"),
+                date_of_assoc_test = config["date_of_assoc_test"],
+                site_filter = config["site_filter"],
+                bin_length = config["bin_length"]
+        ),
+# test_gwls
+        expand(os.path.join(config["data_store_dir"], "association_testing/{date_of_assoc_test}_test/{site_filter}/test_results/{bin_length}.rds"),
+                date_of_assoc_test = config["date_of_assoc_test"],
+                site_filter = config["site_filter"],
+                target_phenotype = config["target_phenotypes"],
+                bin_length = config["bin_length"]
+        ),
+# run_gwls
+        expand(os.path.join(config["data_store_dir"], "association_testing/{date_of_assoc_test}_true/{site_filter}/results/{target_phenotype}/{bin_length}.rds"),
+                date_of_assoc_test = config["date_of_assoc_test"],
+                site_filter = config["site_filter"],
+                target_phenotype = config["target_phenotypes"],
+                bin_length = config["bin_length"]
+        ),
+# run permutations
+        expand(os.path.join(config["data_store_dir"], "association_testing/{date_of_assoc_test}_permutations/{site_filter}/{target_phenotype}/{bin_length}/{permutation_seed}.rds"),
+                date_of_assoc_test = config["date_of_assoc_test"],
+                site_filter = config["site_filter"],
+                target_phenotype = config["target_phenotypes"],
+                bin_length = config["bin_length"],
+                permutation_seed = PERM_SEEDS      
+        ),
+
 ################
 ## 08_F2_calling.smk
 ###############

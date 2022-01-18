@@ -54,7 +54,8 @@ site_filter:
     - no_repeat_reads_or_pers_hets_filtered_for_read_count_and_cab_prop
 date_of_assoc_test:
     #- 20211104
-    - 20211109
+    #- 20211109
+    - 20220118
 bin_length:
     - 5000
     - 10000

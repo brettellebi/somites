@@ -61,6 +61,7 @@ run_rc_block_F0:
 # 07_association_testing.smk
 create_gwas_input:
   memory: "{resources.mem_mb}"
+  queue: "bigmem"
 test_gwls:
   memory: "{resources.mem_mb}"
 run_gwls:

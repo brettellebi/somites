@@ -13,7 +13,7 @@ module load singularity-3.7.0-gcc-9.3.0-dp5ffrp
 bsub -M 20000 -Is bash
 #bsub -q datamover -M 20000 -Is bash # when needing to copy raw data from FTP
 cd /hps/software/users/birney/ian/repos/somites
-conda activate snakemake_6.10.0
+conda activate snakemake_6.12.1
 snakemake \
   --jobs 5000 \
   --latency-wait 100 \
