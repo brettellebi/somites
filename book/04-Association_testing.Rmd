@@ -4,9 +4,7 @@ zotero: PhD
 
 # Association testing with simulated phenotypes
 
-Code for generating simulated phenotypes is set out below.
-
-The simulated phenotypes are then used in this Snakefile for testing GWLS code, specifically rule `test_gwls`: https://github.com/brettellebi/somites/blob/master/workflow/rules/07_assocation_testing.smk
+The code for simulating phenotypes and using them to test the GWLS code is set out in this Snakefile, specifically rules `simulate_phenotypes` and `test_gwls`: https://github.com/brettellebi/somites/blob/master/workflow/rules/07_assocation_testing.smk
 
 ```{r, message = F, warning = F}
 library(here)
@@ -18,9 +16,9 @@ source(here::here("book/source/04-Association_testing.R"))
 ### Read data
 
 ```{r}
-in_dir = "/nfs/research/birney/users/ian/somites/recombination_blocks/20211027"
+in_dir = "/nfs/research/birney/users/ian/somites/recombination_blocks/F2/all_sites"
 
-in_files = list.files(in_dir, pattern = "F2_", full.names = T)
+in_files = list.files(in_dir, full.names = T)
 
 # Read into list
 data_list = purrr::map(in_files, function(FILE){
@@ -29,8 +27,6 @@ data_list = purrr::map(in_files, function(FILE){
 })
 # Set names as bin length
 names(data_list) = basename(in_files) %>% 
-  stringr::str_split("_", simplify = T) %>% 
-  subset(select = 2) %>% 
   stringr::str_remove(".txt")
 # Reorder
 data_list = data_list[order(as.numeric(names(data_list)))]
@@ -116,7 +112,6 @@ n_bins_df = purrr::map_dfr(1:length(df_list), function(COUNTER){
 
 DT::datatable(n_bins_df)
 ```
-
 
 ### Merge recombination blocks
 
@@ -358,6 +353,144 @@ final_wimiss = purrr::map(seq_along(gt_list), function(COUNTER){
 names(final_wimiss) = names(gt_list)
 ```
 
+## Read in sampled genotypes
+
+```{r}
+SAMPLE_GTS_DIR = "/nfs/research/birney/users/ian/somites/association_testing/20220118"
+
+# List files
+TARGET_DIRS = list.files(RESULTS_DIR, pattern = "sample_genos", full.names = T, recursive = T, include.dirs = T)
+TARGET_FILES = list.files(TARGET_DIRS, full.names = T, recursive = T); names(TARGET_FILES) = TARGET_FILES
+
+sample_genos_list = purrr::map_dfr(TARGET_FILES, function(FILE){
+  readr::read_csv(FILE)
+}, .id = "FILENAME")
+```
+
+
+## Read in GWLS results
+
+```{r}
+RESULTS_DIR = "/nfs/research/birney/users/ian/somites/association_testing/20220118"
+
+# List files
+TARGET_DIRS = list.files(RESULTS_DIR, pattern = "test_results", full.names = T, recursive = T, include.dirs = T)
+TARGET_FILES = list.files(TARGET_DIRS, full.names = T, recursive = T); names(TARGET_FILES) = TARGET_FILES
+
+# Create DF to separate file name into variables
+meta_df = tibble::tibble(FILENAME = TARGET_FILES) %>% 
+  tidyr::separate(col = FILENAME,
+                  sep = "/",
+                  into = c(rep(NA, 9), "SITE_FILTER", NA, "BIN_LENGTH")) %>% 
+  # remove extension from BIN_LENGTH
+  dplyr::mutate(BIN_LENGTH = stringr::str_remove(BIN_LENGTH, ".rds"))
+
+# Get indexes of target combinations
+TARGET_INDEXES = which(meta_df$SITE_FILTER %in% c("all_sites", "no_repeat_reads_or_pers_hets_filtered_for_read_count_and_cab_prop") & meta_df$BIN_LENGTH %in% c(5000, 20000))
+
+# Read into list
+results_list = purrr::map(seq_along(TARGET_FILES), function(INDEX){
+  OUT = list()
+  
+  # Add metadata info
+  OUT[["SITE_FILTER"]] = meta_df %>% 
+    dplyr::slice(INDEX) %>% 
+    dplyr::pull("SITE_FILTER")
+  OUT[["BIN_LENGTH"]] = meta_df %>% 
+    dplyr::slice(INDEX) %>% 
+    dplyr::pull("BIN_LENGTH")
+  
+  # Read in results
+  results = readRDS(TARGET_FILES[INDEX])
+  ## Add to list
+  OUT[["RESULTS"]] = results$results
+  
+  return(OUT)
+})
+
+# Filter for desired extreme combinations
+list_to_plot = results_list[TARGET_INDEXES]
+```
+
+## Plot
+
+```{r}
+lapply(seq_along(list_to_plot[1]), function(RES){
+  # Get bin length
+  BIN_LENGTH = RES[["BIN_LENGTH"]]
+  
+  # Clean data frame
+  test_results = RES[["RESULTS"]] %>% 
+    dplyr::left_join(med_chr_lens, by = c("Chr" = "chr")) %>% 
+    # add x-coord
+    dplyr::mutate(X_COORD = pos + TOT) %>% 
+    # change column names
+    dplyr::rename(CHROM = Chr, BIN_START = pos) %>% 
+    # add BIN_END
+    dplyr::mutate(BIN_END = BIN_START + BIN_LENGTH - 1) %>% 
+    # add locus
+    dplyr::mutate(LOCUS = paste(CHROM, BIN_START, sep = ":")) %>%
+    # target or not
+    dplyr::mutate(TARGET = dplyr::if_else(LOCUS %in% sample_gts[[COUNTER]]$LOCUS,
+                                          "yes",
+                                          "no"),
+                  TARGET = factor(TARGET, levels = c("yes", "no"))) %>% 
+    # create vector of colours
+    dplyr::mutate(COLOUR = dplyr::case_when(TARGET == "yes" ~ names(gwas_pal)[1],
+                                            gtools::even(CHROM) ~ names(gwas_pal)[2],
+                                            gtools::odd(CHROM) ~ names(gwas_pal)[3]),
+                  # order so that `target` is plotted last, at the front
+                  COLOUR = factor(COLOUR, levels = rev(names(gwas_pal))),
+                  SHAPE = dplyr::if_else(TARGET == "yes",
+                                         18,
+                                         20),
+                  SIZE = dplyr::if_else(TARGET == "yes",
+                                         1,
+                                         0.5),
+                  ALPHA = dplyr::if_else(TARGET == "yes",
+                                         1,
+                                         0.5)
+                  )
+  
+  # Plot
+  p1 = test_results %>% 
+    ggplot(aes(x = X_COORD,
+               y = -log10(p_value_REML),
+               colour = COLOUR,
+               shape = SHAPE,
+               size = SIZE,
+               alpha = ALPHA,
+               label = CHROM,
+               label2 = BIN_START,
+               label3 = BIN_END)) + 
+    geom_point() +
+    aes(group = rev(TARGET)) +
+    scale_color_manual(values = gwas_pal) +
+    scale_shape_identity() +
+    scale_size_identity() +
+    scale_alpha_identity() +
+    scale_x_continuous(breaks = med_chr_lens$MID_TOT, 
+                       labels = med_chr_lens$chr) +
+    theme_bw() +
+    theme(panel.grid.major.x = element_blank(),
+          panel.grid.minor.x = element_blank()
+    ) +
+    guides(colour = "none") + 
+    ggtitle(paste("Bin length:", BIN_LENGTH)) +
+    xlab("Chromosome") +
+    ylab("-log10(p-value)") + 
+    geom_hline(yintercept = significance_line, colour = "#AAF683", linetype = "dashed") +
+    geom_hline(yintercept = suggestive_line, colour = "#60D394", linetype = "dashed")
+  
+  out = ggplotly(p1, tooltip = c("CHROM", "BIN_START", "BIN_END"))
+  
+  return(out)
+})
+```
+
+
+
+
 ## Test GridLMM
 
 ### No missing
@@ -487,7 +620,7 @@ gwas_tests_wimiss = readRDS(test_out_wimiss)
 
 ```{r}
 gwas_tests_wimiss = purrr::map(bin_lengths, function(BIN_LENGTH){
-  readRDS(file.path(lts_dir, "association_testing/20211104_test/test_results", paste(BIN_LENGTH, ".rds", sep = "")))
+  readRDS(file.path(lts_dir, "association_testing/20220118_test/test_results", paste(BIN_LENGTH, ".rds", sep = "")))
 })
 ```
 
@@ -583,47 +716,52 @@ test_man_wimiss[[4]]
 ## Get significance levels from permutations
 
 ```{r}
-perm_file = here::here("data/20211109_permutation_mins.csv")
+perm_file = here::here("data/20220118_permutation_mins.csv")
 ```
 
 
 ```{r, eval = F}
-PERMUTATIONS_DIR = file.path(lts_dir, "association_testing/20211109_permutations")
-SITE_FILTERS = c("all_sites", "no_repeat_sites", "no_repeat_reads"); names(SITE_FILTERS) = SITE_FILTERS
-TARGET_PHENOS = c("mean", "intercept"); names(TARGET_PHENOS) = TARGET_PHENOS
-BIN_LENGTHS = c(5000, 10000, 15000, 20000); names(BIN_LENGTHS) = BIN_LENGTHS
-N_PERMUTATIONS = 1:10
+PERMUTATIONS_DIR = file.path(lts_dir, "association_testing/20220118")
+TARGET_DIRS = list.files(PERMUTATIONS_DIR, pattern = "permutations", full.names = T, recursive = T, include.dirs = T)
+PERM_FILES = list.files(TARGET_DIRS, full.names = T, recursive = T); names(PERM_FILES) = PERM_FILES
 
-perms_df = purrr::map_dfr(SITE_FILTERS, function(SITE_FILTER){
-  purrr::map_dfr(TARGET_PHENOS, function(TARGET_PHENO){
-    purrr::map_dfr(BIN_LENGTHS, function(BIN_LENGTH){
-      purrr::map_dfr(N_PERMUTATIONS, function(N_PERM){
-        in_list = readRDS(file.path(PERMUTATIONS_DIR, SITE_FILTER, TARGET_PHENO, BIN_LENGTH, paste(N_PERM, ".rds", sep = "")))
-        # Pull out minimum
-        out_df = tibble::tibble(MIN_P = in_list$results$p_value_REML %>%
-                                  min()
-        )
-      }, .id = "PERMUTATION")
-    }, .id = "BIN_LENGTH")
-  }, .id = "TARGET_PHENO")
-}, .id = "SITE_FILTER")
+perm_df = purrr::map_dfr(PERM_FILES, function(PERM_FILE){
+  IN = readRDS(PERM_FILE)
+  OUT = tibble::tibble(MIN_P = IN$results$p_value_REML %>%
+                         min(., na.rm = T)
+  )
+}, .id = "FILENAME")
+
+perm_df_clean = perm_df %>% 
+  # extract variables from file names
+  tidyr::separate(col = FILENAME, sep = "/",
+                  into = c(rep(NA, 9), "SITE_FILTER", NA, "TARGET_PHENO", "BIN_LENGTH", "PERMUTATION")) %>% 
+  # remove .rds extension from PERMUTATION
+  dplyr::mutate(PERMUTATION = stringr::str_remove(PERMUTATION, ".rds"))
 
 # Get minimum
-perms_df_mins = perms_df %>% 
+perm_df_mins = perm_df_clean %>% 
   dplyr::group_by(SITE_FILTER, TARGET_PHENO, BIN_LENGTH) %>% 
   dplyr::summarise(MIN_P = min(MIN_P))
 
-readr::write_csv(perms_df_mins,
+# Write to file
+readr::write_csv(perm_df_mins,
                  perm_file)
 ```
 
 ```{r, include = F}
-perms_df_mins = readr::read_csv(perm_file,
-                                col_types = c("ccid"))
+# vector for ordering
+SITE_FILTER_VEC = c("all_sites", "no_repeat_sites", "no_repeat_reads", "no_repeat_reads_or_pers_hets", "no_repeat_reads_or_pers_hets_filtered_for_read_count_and_cab_prop")
+
+perm_df_mins = readr::read_csv(perm_file,
+                               col_types = c("ccid")) %>% 
+  # order
+  dplyr::mutate(SITE_FILTER = factor(SITE_FILTER, levels = SITE_FILTER_VEC)) %>% 
+  dplyr::arrange(SITE_FILTER, TARGET_PHENO, BIN_LENGTH)
 ```
 
 ```{r}
-perms_df_mins %>% 
+perm_df_mins %>% 
   DT::datatable()
 ```
 

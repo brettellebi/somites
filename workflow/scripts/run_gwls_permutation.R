@@ -4,13 +4,13 @@ log <- file(snakemake@log[[1]], open="wt")
 sink(log)
 sink(log, type = "message")
 
-# Load libraries
+# Load libraries
 
 library(tidyverse)
 library(GridLMM)
 library(KRLS)
 
-# Get variables
+# Get variables
 
 GENO_FILE = snakemake@input[["gt_pos_list"]]
 PHENO_FILE = snakemake@input[["phenotypes_file"]]
@@ -22,11 +22,11 @@ PERM_SEED = snakemake@params[["permutation_seed"]] %>%
     as.numeric()
 OUT_FILE = snakemake@output[[1]]
 
-# Get GWAS functions
+# Get GWAS functions
 
 source(SOURCE_FILE)
 
-# Load genotypes and positions
+# Load genotypes and positions
 
 in_list = readRDS(GENO_FILE)
 
@@ -73,7 +73,7 @@ out = run_gwas(d = in_list[["genotypes"]],
                p = in_list[["phenotypes"]]
               )
 
-# Write results to file
+# Write results to file
 
 out = saveRDS(out, OUT_FILE)
 

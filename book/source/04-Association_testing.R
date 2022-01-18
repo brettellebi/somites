@@ -98,7 +98,7 @@ clean_gwas_res = function(gwas_results, bin_length, chr_lens){
     dplyr::mutate(LOCUS = paste(CHROM, BIN_START, sep = ":"))
 } 
 
-plot_man = function(df, phenotype, bin_length, gwas_pal, size = 0.5, alpha = 0.5, med_chr_lens, sig_line = 3.6){
+plot_man = function(df, site_filter, phenotype, bin_length, gwas_pal, size = 0.5, alpha = 0.5, med_chr_lens, sig_line = 3.6){
   # Create palette
   pal = rep_len(gwas_pal, length.out = nrow(med_chr_lens))
   names(pal) = med_chr_lens$chr
@@ -121,7 +121,7 @@ plot_man = function(df, phenotype, bin_length, gwas_pal, size = 0.5, alpha = 0.5
           panel.grid.minor.x = element_blank()
     ) +
     guides(colour = "none") +
-    ggtitle(paste("Phenotype: ", phenotype, "\nBin length: ",  bin_length, sep = "")) +
+    ggtitle(paste("Site filter: ", site_filter, "\nPhenotype: ", phenotype, "\nBin length: ",  bin_length, sep = "")) +
     xlab("Chromosome") +
     ylab("-log10(p-value)") + 
     geom_hline(yintercept = sig_line, colour = "#60D394", linetype = "dashed")

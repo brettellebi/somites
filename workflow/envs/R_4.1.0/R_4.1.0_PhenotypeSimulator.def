@@ -1,0 +1,19 @@
+Bootstrap: docker
+From: rocker/tidyverse:4.1.0
+
+%post
+    # Install packages required for R packages
+    apt update
+    apt install -y libbz2-dev liblzma-dev libglpk40
+
+    # Install BiocManager
+    install2.r --error \
+        BiocManager \
+        data.table \
+        openxlsx
+
+    # Install snpStats
+    R -e 'BiocManager::install(c("snpStats"))'
+
+    install2.r --error \
+        PhenotypeSimulator

@@ -46,6 +46,29 @@ min_prop_cab:
     0.2
 max_prop_cab:
     0.8
+low_cov_samples:
+    - 26
+    - 89
+    - 166
+    - 178
+    - 189
+    - 227
+    - 239
+    - 470
+    - 472
+    - 473
+    - 490
+    - 501
+    - 502
+    - 503
+    - 504
+    - 505
+    - 506
+    - 507
+    - 508
+    - 509
+    - 510
+    - 511
 site_filter:
     - all_sites
     - no_repeat_sites
@@ -64,6 +87,8 @@ bin_length:
 bin_length_F0:
     - 5000
     - 100000
+n_sample_gts:
+    - 10
 n_permutations:
     - 10
 ####################
@@ -102,6 +127,8 @@ bam-readcount:
     docker://quay.io/biocontainers/bam-readcount:0.8--py36pl526h94a8ba4_4
 R:
     /hps/nobackup/birney/users/ian/containers/somites/R_4.1.0.sif
+PhenotypeSimulator:
+    /hps/nobackup/birney/users/ian/containers/somites/R_4.1.0_PhenotypeSimulator.sif
 tidyverse_4:
     /hps/nobackup/birney/users/ian/containers/somites/rocker_tidyverse_4.1.2.sif
 java:

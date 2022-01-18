@@ -31,14 +31,21 @@ snakemake \
 # RStudio Server
 ####################
 
-# Build container
-# Set container path
+# Build general R container
 CONT=/hps/nobackup/birney/users/ian/containers/somites/R_4.1.0.sif
-
+module load singularity-3.7.0-gcc-9.3.0-dp5ffrp
 singularity build --remote \
     $CONT \
     workflow/envs/R_4.1.0/R_4.1.0.def
 
+# Build R container for PhenotypeSimulator
+CONT=/hps/nobackup/birney/users/ian/containers/somites/R_4.1.0_PhenotypeSimulator.sif
+module load singularity-3.7.0-gcc-9.3.0-dp5ffrp
+singularity build --remote \
+    $CONT \
+    workflow/envs/R_4.1.0/R_4.1.0_PhenotypeSimulator.def
+
+# Run container
 ssh proxy-codon
 bsub -M 50000 -Is bash
 module load singularity-3.7.0-gcc-9.3.0-dp5ffrp

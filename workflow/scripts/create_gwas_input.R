@@ -4,15 +4,22 @@ log <- file(snakemake@log[[1]], open="wt")
 sink(log)
 sink(log, type = "message")
 
-# Load libraries
+# Load libraries
 
 library(tidyverse)
 
-# Get variables
+# Get variables
 
+## Debugging
+GENO_FILE = "/nfs/research/birney/users/ian/somites/recombination_blocks/F2/all_sites/15000.txt"
+BIN_LENGTH = 15000
+LOW_COV_SAMPLES = c(26, 89)
+
+## True
 GENO_FILE = snakemake@input[["genotypes"]]
-PHENO_FILE = snakemake@input[["phenotypes"]]
 BIN_LENGTH = snakemake@params[["bin_length"]] %>%
+    as.numeric()
+LOW_COV_SAMPLES = snakemake@params[["low_cov_samples"]] %>% 
     as.numeric()
 OUT_FILE = snakemake@output[[1]]
 
@@ -26,6 +33,8 @@ df = readr::read_tsv(GENO_FILE,
                     as.numeric(.),
                   BIN_START = (bin - 1) * BIN_LENGTH + 1,
                   BIN_END = bin * BIN_LENGTH) %>% 
+    # Filter out low-coverage samples
+    dplyr::filter(!SAMPLE %in% LOW_COV_SAMPLES) %>% 
     # recode state to make 0 == "Cab"
     dplyr::mutate(STATE = dplyr::recode(state,
                                         `0` = 2,
