@@ -1,5 +1,13 @@
 # Notes
 
+## 22 January 2022
+
+Email from Ali:
+
+-   F1 sequences are still being processed at Genecore
+-   Have an additional 55 embryos from the F2 cross that were phenotyped and sent to sequencing – will be uploaded to the FTP shortly
+-   Finishing up the second phenotype measures from the same F2 fish: morphology and size of presomitic mesoderm and forming somites. Initial plots show they look normally distributed between the F0s and there is no correlation with period(!)
+
 ## 2 December 2021
 
 Ali has sent the third batch of F2 data.
