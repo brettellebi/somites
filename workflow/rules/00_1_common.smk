@@ -17,7 +17,7 @@ F0_samples = pd.read_table(config["F0_samples"], comment = '#', dtype = str).set
 )
 
 ## Note: THIS RULE WAS RUN BEFORE ANYTHING ELSE,
-## WHILE HASHING OUT THE TWO `F2_samples = pd....` lines below
+## WHILE HASHING OUT all modules other than this one
 ## Run again when config["F2_sequence_dirs"] changes,
 ## e.g. when this pipeline is run on a new HPC.
 rule create_f2_samples_file:

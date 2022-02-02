@@ -16,14 +16,56 @@ source(here::here("book/source/04-Association_testing.R"))
 
 ## Phenotype data
 
-First 400 phenotype data: <https://github.com/brettellebi/somites/tree/master/data/20210917_First400_F2_DF.xlsx>.
-
->I also attach here the DataFrame of the phenotyping of the first 400 F2s (First400_F2_DF.xlsx)...
+First 595 F2 phenotype data: <https://github.com/brettellebi/somites/tree/master/data/data/First595-F2_DF_removed393-389-121_outliers.xlsx>.
 
 >Of interest for us for the association testing are the:
  intercept period -> intercept in the table
  mean period -> mean in the table
  
+Read in 
+```{r}
+PHENO_FILE = here::here("data/First595-F2_DF_removed393-389-121_outliers.xlsx")
+TARGET_PHENOS = c("mean", "intercept")
+pheno_df = readxl::read_xlsx(PHENO_FILE) %>%
+  # adjust sample names
+  dplyr::mutate(SAMPLE = fish %>% stringr::str_remove("KC")) %>%
+  # select key columns
+  dplyr::select(SAMPLE, all_of(TARGET_PHENOS)) %>%
+  # ensure that the phenotype column is numeric
+  dplyr::mutate(dplyr::across(all_of(TARGET_PHENOS),
+                              ~ as.numeric(.x))) %>% 
+  # widen to enable faceting
+  tidyr::pivot_longer(cols = all_of(TARGET_PHENOS), names_to = "PHENOTYPE", values_to = "VALUE")
+
+  
+```
+
+Plot
+```{r}
+pheno_df %>% 
+  ggplot() +
+    geom_histogram(aes(VALUE, fill = PHENOTYPE), bins = 40) +
+    facet_grid(rows = vars(PHENOTYPE)) +
+    scale_fill_manual(values = c("#FF6D00", "#240046")) +
+    guides(fill = "none") +
+    theme_bw() +
+    ggtitle(paste("N samples: ", length(unique(pheno_df$SAMPLE))))
+```
+
+qqplot
+```{r}
+pheno_df %>% 
+  ggplot() +
+    stat_qq(aes(sample = VALUE, colour = PHENOTYPE)) +
+    facet_grid(rows = vars(PHENOTYPE)) +
+    scale_colour_manual(values = c("#FF6D00", "#240046")) +
+    guides(colour = "none") +
+    theme_bw() +
+    ggtitle(paste("N samples: ", length(unique(pheno_df$SAMPLE)))) +
+    theme(aspect.ratio=1)
+```
+
+
 ## Snakemake rules
 
 Snakemake rules for running the GWAS over these phenotypes: <https://github.com/brettellebi/somites/blob/master/workflow/rules/07_assocation_testing.smk>
@@ -243,3 +285,82 @@ knitr::include_graphics(here::here("book/plots/20220118/gwls_results/no_repeat_r
 knitr::include_graphics(here::here("book/plots/20220118/gwls_results/no_repeat_reads_or_pers_hets_filtered_for_read_count_and_cab_prop/mean_5000.png"))
 knitr::include_graphics(here::here("book/plots/20220118/gwls_results/no_repeat_reads_or_pers_hets_filtered_for_read_count_and_cab_prop/mean_20000.png"))
 ```
+
+## Create Manhattan plots for the permutations
+
+### Read in permutation results
+
+```{r}
+PERM_DIR = "/nfs/research/birney/users/ian/somites/association_testing/20220118/no_repeat_reads_or_pers_hets_filtered_for_read_count_and_cab_prop/permutations/mean/5000"
+TARGET_FILES = list.files(PERM_DIR, full.names = T)
+BIN_LENGTH = 5000
+filter_type = "no_repeat_reads_or_pers_hets_filtered_for_read_count_and_cab_prop"
+TARGET_PHENO = "mean"
+
+# Read into list
+perm_list = lapply(TARGET_FILES, function(FILE){
+  readRDS(FILE)
+})
+names(perm_list) = basename(TARGET_FILES) %>% 
+  stringr::str_remove(".rds")
+```
+
+Clean data
+```{r}
+perm_plot_dat = purrr::map(perm_list, function(PERM){
+
+    out = clean_gwas_res(PERM,
+                         bin_length = 5000,
+                         chr_lens = med_chr_lens)
+    
+    return(out)
+
+})
+
+```
+
+Plot
+```{r, eval = F}
+plot_dir = here::here(file.path("book/plots/20220118/permutation_results", filter_type))
+# Plot
+counter = 0
+lapply(perm_plot_dat, function(PERM){
+  counter <<- counter + 1
+  # Get pheno
+  PHENO = TARGET_PHENO
+  # Get bin length
+  BINL = BIN_LENGTH
+  # Get significant level
+  SIG_LEVEL = perms_df_mins %>%
+    dplyr::filter(SITE_FILTER == filter_type, TARGET_PHENO == PHENO, BIN_LENGTH == BINL) %>% 
+    dplyr::pull(MIN_P) %>% 
+    -log10(.)
+  
+  # Plot
+  out = plot_man(PERM,
+           site_filter = filter_type,
+           phenotype = PHENO,
+           bin_length = BINL,
+           gwas_pal = gwas_pal[2:3],
+           med_chr_lens = med_chr_lens,
+           sig_line = SIG_LEVEL) +
+    ylim(0,7)
+  
+  ggsave(file.path(plot_dir, paste(counter, ".png", sep = "")),
+         out,
+         device = "png",
+         width = 9.6,
+         height = 6,
+         units = "in",
+         dpi = 400)
+  
+})
+
+
+```
+
+```{r}
+plot_files = list.files(plot_dir, full.names = T)
+knitr::include_graphics(plot_files)
+```
+

@@ -1,18 +1,19 @@
+# Send output to log
+
+log <- file(snakemake@log[[1]], open="wt")
+sink(log)
+sink(log, type = "message")
+
 # Get variables
 
+## Debug
 IN_DIRS = c("/nfs/ftp/private/indigene_ftp/upload/Ali/Kaga-Cab_F2_First200WGS",
             "/nfs/ftp/private/indigene_ftp/upload/Ali/Kaga-Cab_F2_Fish201-400_WGS",
             "/nfs/ftp/private/indigene_ftp/upload/Ali/Kaga-Cab_F2_Fish401-595_WGS")
 
+## True
 IN_DIRS = snakemake@input[["input_dirs"]]
 OUT_FILE = snakemake@output[[1]]
-LOG_FILE = snakemake@log[[1]]
-
-# Send output to log
-
-log <- file(LOG_FILE, open="wt")
-sink(log)
-sink(log, type = "message")
 
 # Script
 

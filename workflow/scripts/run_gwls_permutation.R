@@ -14,7 +14,7 @@ library(KRLS)
 
 ## Debugging
 GENO_FILE = "/nfs/research/birney/users/ian/somites/association_testing/20220118/no_repeat_reads_or_pers_hets_filtered_for_read_count_and_cab_prop/inputs/20000.rds"
-PHENO_FILE = "data/20210917_First400_F2_DF.xlsx"
+PHENO_FILE = "data/First595-F2_DF_removed393-389-121_outliers.xlsx"
 SOURCE_FILE = "workflow/scripts/run_gwls_source.R"
 BIN_LENGTH = 20000
 TARGET_PHENO = "intercept"

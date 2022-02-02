@@ -14,7 +14,7 @@ F2_valid_lanes:
 hdrr_repeats_gff:
     /nfs/research/birney/users/ian/mikk_genome/repeats/medaka_hdrr_repeats.fixed.gff
 phenotypes_file:
-    data/20210917_First400_F2_DF.xlsx
+    data/First595-F2_DF_removed393-389-121_outliers.xlsx
 target_phenotypes:
     - intercept
     - mean
@@ -100,6 +100,7 @@ F2_sequence_dirs:
     - /nfs/ftp/private/indigene_ftp/upload/Ali/Kaga-Cab_F2_First200WGS
     - /nfs/ftp/private/indigene_ftp/upload/Ali/Kaga-Cab_F2_Fish201-400_WGS
     - /nfs/ftp/private/indigene_ftp/upload/Ali/Kaga-Cab_F2_Fish401-595_WGS
+    - /nfs/ftp/private/indigene_ftp/upload/Ali/Kaga-Cab_F2_Fish596-648_WGS
 tmp_dir:
     /hps/nobackup/birney/users/ian/somites/tmp
 working_dir:
