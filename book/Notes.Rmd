@@ -1,5 +1,44 @@
 # Notes
 
+## 3 February
+
+Ali uploaded the deep sequencing of the F1 Kaga/Cab generation: `/nfs/ftp/private/indigene_ftp/upload/Ali/F1_Kaga-Cab_DeepSeq/`
+
+## 29 January
+
+Ali sent 2 excel files:
+
+* One with a new phenotype (unsegmented PSM): `data/UnsegmentedPSM_F2s_MASTER.xlsx`
+* One with updated period measurements: `data/First648_F2_DF_FINAL.xlsx/`
+
+Consolidate into single file:
+
+```{r, eval = F}
+in1 = here::here("data/UnsegmentedPSM_F2s_MASTER.xlsx")
+in2 = here::here("data/First648_F2_DF_FINAL.xlsx")
+
+# read
+df1 = readxl::read_xlsx(in1)
+df2 = readxl::read_xlsx(in2)
+
+# bind
+out = dplyr::full_join(df2, df1, by = c("fish", "strain" = "population"))
+
+# reorder
+out = out %>% 
+    # put unsegmented column first
+    dplyr::select("fish", "strain", "unsegmented_psm_area", everything()) %>% 
+    # reorder rows based on sample number
+    dplyr::mutate("SAMPLE" = fish %>% 
+                      stringr::str_remove("KC") %>% 
+                      as.integer(.)) %>% 
+    dplyr::arrange(SAMPLE) %>% 
+    dplyr::select(-SAMPLE)
+
+# write
+writexl::write_xlsx(out, here::here("data/20220214_phenotypes.xlsx"))
+```
+
 ## 22 January 2022
 
 Email from Ali:

@@ -51,6 +51,7 @@ consolidate_dbABs_Ewan:
   queue: bigmem
 filter_sites_for_read_count_and_cab_prop:
   memory: "{resources.mem_mb}"
+  queue: bigmem
 plot_recombination_blocks:
   memory: "{resources.mem_mb}"
 # 06_F0_recomb_blocks.smk

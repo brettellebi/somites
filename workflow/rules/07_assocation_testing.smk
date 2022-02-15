@@ -35,8 +35,8 @@ rule simulate_phenotypes:
 
 rule test_gwls:
     input:
-        gt_pos_list = os.path.join(config["data_store_dir"], "association_testing/{date_of_assoc_test}/{site_filter}/inputs/{bin_length}.rds"),
-        phenotypes_file = os.path.join(config["data_store_dir"], "association_testing/{date_of_assoc_test}/{site_filter}/sim_phenos/{bin_length}.xlsx"),
+        gt_pos_list = rules.create_gwas_input.output,
+        phenotypes_file = rules.simulate_phenotypes.output.sim_phenos,
         source_file = "workflow/scripts/run_gwls_source.R"
     output:
         os.path.join(config["data_store_dir"], "association_testing/{date_of_assoc_test}/{site_filter}/test_results/{bin_length}.rds"),
@@ -54,7 +54,7 @@ rule test_gwls:
 
 rule run_gwls:
     input:
-        gt_pos_list = os.path.join(config["data_store_dir"], "association_testing/{date_of_assoc_test}/{site_filter}/inputs/{bin_length}.rds"),
+        gt_pos_list = rules.create_gwas_input.output,
         phenotypes_file = config["phenotypes_file"],
         source_file = "workflow/scripts/run_gwls_source.R"
     output:
@@ -71,10 +71,25 @@ rule run_gwls:
     script:
         "../scripts/run_gwls.R"
 
+rule create_permuted_phenotypes:
+    input:
+        config["phenotypes_file"]
+    output:
+        os.path.join(config["data_store_dir"], "permuted_phenos/{date_of_assoc_test}/{target_phenotype}/{permutation_seed}.xlsx")
+    log:
+        os.path.join(config["working_dir"], "logs/create_permuted_phenotypes/{date_of_assoc_test}/{target_phenotype}/{permutation_seed}.log")
+    params:
+        target_phenotype = "{target_phenotype}",
+        permutation_seed = "{permutation_seed}"
+    container:
+        config["R"]
+    script:
+        "../scripts/create_permuted_phenotypes.R"
+
 rule run_permutations:
     input:
-        gt_pos_list = os.path.join(config["data_store_dir"], "association_testing/{date_of_assoc_test}/{site_filter}/inputs/{bin_length}.rds"),
-        phenotypes_file = config["phenotypes_file"],
+        gt_pos_list = rules.create_gwas_input.output,
+        phenotypes_file = rules.create_permuted_phenotypes.output,
         source_file = "workflow/scripts/run_gwls_source.R"
     output:
         os.path.join(config["data_store_dir"], "association_testing/{date_of_assoc_test}/{site_filter}/permutations/{target_phenotype}/{bin_length}/{permutation_seed}.rds"),
@@ -89,5 +104,5 @@ rule run_permutations:
     container:
         config["R"]
     script:
-        "../scripts/run_gwls_permutation.R"
+        "../scripts/run_gwls.R"
 

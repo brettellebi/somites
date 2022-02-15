@@ -11,8 +11,8 @@ library(tidyverse)
 # Get variables
 
 ## Debugging
-GENO_FILE = "/nfs/research/birney/users/ian/somites/recombination_blocks/F2/all_sites/15000.txt"
-BIN_LENGTH = 15000
+GENO_FILE = "/nfs/research/birney/users/ian/somites/recombination_blocks/F2/all_sites/5000.txt"
+BIN_LENGTH = 5000
 LOW_COV_SAMPLES = c(26, 89)
 
 ## True

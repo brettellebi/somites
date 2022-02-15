@@ -14,10 +14,12 @@ F2_valid_lanes:
 hdrr_repeats_gff:
     /nfs/research/birney/users/ian/mikk_genome/repeats/medaka_hdrr_repeats.fixed.gff
 phenotypes_file:
-    data/First595-F2_DF_removed393-389-121_outliers.xlsx
+    #data/First595-F2_DF_removed393-389-121_outliers.xlsx
+    data/20220214_phenotypes.xlsx
 target_phenotypes:
     - intercept
     - mean
+    - unsegmented_psm_area
 ref_chr_lengths:
     data/Oryzias_latipes.ASM223467v1.dna.toplevel.fa_chr_counts.txt
 het_black_list:
@@ -78,7 +80,8 @@ site_filter:
 date_of_assoc_test:
     #- 20211104
     #- 20211109
-    - 20220118
+    #- 20220118
+    - 20220214
 bin_length:
     - 5000
     - 10000

@@ -16,7 +16,8 @@ From: rocker/tidyverse:4.1.0
         KRLS \
         here \
         ggbeeswarm \
-        DT
+        DT \
+        writexl
     
     # Install correct version of `matrixStats`
     R -e 'devtools::install_version("matrixStats", ">= 0.60.1", repos = "https://cloud.r-project.org/")'

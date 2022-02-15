@@ -12,6 +12,15 @@ library(KRLS)
 
 # Get variables
 
+## Debug
+GENO_FILE = "/nfs/research/birney/users/ian/somites/association_testing/20220214/no_repeat_reads_or_pers_hets/inputs/10000.rds"
+PHENO_FILE = "data/20220214_phenotypes.xlsx" # True phenotypes
+PHENO_FILE = "/nfs/research/birney/users/ian/somites/permuted_phenos/20220214/unsegmented_psm_area/1.xlsx" # permuted phenotypes
+SOURCE_FILE = "workflow/scripts/run_gwls_source.R"
+BIN_LENGTH = 5000
+TARGET_PHENO = "unsegmented_psm_area"
+
+## True
 GENO_FILE = snakemake@input[["gt_pos_list"]]
 PHENO_FILE = snakemake@input[["phenotypes_file"]]
 SOURCE_FILE = snakemake@input[["source_file"]]
@@ -40,10 +49,6 @@ phenos = readxl::read_xlsx(PHENO_FILE) %>%
     dplyr::mutate(dplyr::across(all_of(TARGET_PHENO),
                                 ~ as.numeric(.x)))
 
-## Filter genotypes for those that have phenotypes
-in_list[["genotypes"]] = in_list[["genotypes"]] %>%
-    dplyr::filter(in_list[["sample_order"]] %in% phenos$SAMPLE)
-
 ## Filter and order phenotypes
 in_list[["phenotypes"]] = phenos %>%
     # filter phenotypes for those with genotypes
@@ -56,6 +61,13 @@ in_list[["phenotypes"]] = phenos %>%
     tidyr::drop_na() %>%
     # the GridLMM code doesn't work with tibbles
     as.data.frame()
+
+## Filter genotypes for those that have phenotypes
+in_list[["genotypes"]] = in_list[["genotypes"]] %>%
+    dplyr::filter(in_list[["sample_order"]] %in% in_list[["phenotypes"]]$SAMPLE)
+
+## Filter sample_order for those that have phenotypes
+in_list[["sample_order"]] = in_list[["phenotypes"]]$SAMPLE
             
 # Run GWAS
 

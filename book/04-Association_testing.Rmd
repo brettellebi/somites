@@ -6,6 +6,11 @@ zotero: PhD
 
 The code for simulating phenotypes and using them to test the GWLS code is set out in this Snakefile, specifically rules `simulate_phenotypes` and `test_gwls`: https://github.com/brettellebi/somites/blob/master/workflow/rules/07_assocation_testing.smk
 
+```{r}
+date_of_assoc_test = "20220214"
+```
+
+
 ```{r, message = F, warning = F}
 library(here)
 source(here::here("book/source/04-Association_testing.R"))
@@ -371,7 +376,7 @@ sample_genos_list = purrr::map_dfr(TARGET_FILES, function(FILE){
 ## Read in GWLS results
 
 ```{r}
-RESULTS_DIR = "/nfs/research/birney/users/ian/somites/association_testing/20220118"
+RESULTS_DIR = "/nfs/research/birney/users/ian/somites/association_testing/20220214"
 
 # List files
 TARGET_DIRS = list.files(RESULTS_DIR, pattern = "test_results", full.names = T, recursive = T, include.dirs = T)
@@ -620,7 +625,7 @@ gwas_tests_wimiss = readRDS(test_out_wimiss)
 
 ```{r}
 gwas_tests_wimiss = purrr::map(bin_lengths, function(BIN_LENGTH){
-  readRDS(file.path(lts_dir, "association_testing/20220118_test/test_results", paste(BIN_LENGTH, ".rds", sep = "")))
+  readRDS(file.path(lts_dir, "association_testing/20220214_test/test_results", paste(BIN_LENGTH, ".rds", sep = "")))
 })
 ```
 
@@ -716,12 +721,12 @@ test_man_wimiss[[4]]
 ## Get significance levels from permutations
 
 ```{r}
-perm_file = here::here("data/20220118_permutation_mins.csv")
+perm_file = here::here("data", paste(date_of_assoc_test, "_permutation_mins.csv", sep = ""))
 ```
 
 
 ```{r, eval = F}
-PERMUTATIONS_DIR = file.path(lts_dir, "association_testing/20220118")
+PERMUTATIONS_DIR = file.path(lts_dir, "association_testing", date_of_assoc_test)
 TARGET_DIRS = list.files(PERMUTATIONS_DIR, pattern = "permutations", full.names = T, recursive = T, include.dirs = T)
 PERM_FILES = list.files(TARGET_DIRS, full.names = T, recursive = T); names(PERM_FILES) = PERM_FILES
 
