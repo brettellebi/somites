@@ -1,10 +1,22 @@
 # Notes
 
+## 23 February
+
+* Confirm with Ali that the microsc
+
 ## 3 February
 
 Ali uploaded the deep sequencing of the F1 Kaga/Cab generation: `/nfs/ftp/private/indigene_ftp/upload/Ali/F1_Kaga-Cab_DeepSeq/`
 
+## 2 February
+
+Ali's explanation of PSM:
+
+>The PSM is the presomitic mesoderm and it is the undifferentiated tissue that gives rise to the somites. The size of the PSM varies in different species. Ive done some measurements on the size (area) of the PSM of the pure Kaga and Cab strains and found that the Kagas have a smaller PSM at the same somite stage than the Cab PSM. The interesting thing is that the Kaga somites are also smaller than Cab somites, meaning everything scales. So essentially the size of the PSM is interesting to us from a morphology perspective and from a scaling perspective.
+
 ## 29 January
+
+### New phenotypes
 
 Ali sent 2 excel files:
 
@@ -13,7 +25,7 @@ Ali sent 2 excel files:
 
 Consolidate into single file:
 
-```{r, eval = F}
+```r
 in1 = here::here("data/UnsegmentedPSM_F2s_MASTER.xlsx")
 in2 = here::here("data/First648_F2_DF_FINAL.xlsx")
 
@@ -38,6 +50,15 @@ out = out %>%
 # write
 writexl::write_xlsx(out, here::here("data/20220214_phenotypes.xlsx"))
 ```
+
+### Microscope size
+
+>We discovered that there is about 3.5 minute difference in the mean when comparing F2 embryos imaged on the AU scope vs the DB scope (DB being higher, plot attached), based on other experiments we have done this translates to an effective temperature difference of 0.7 degrees celsius between the two scopes. And although i measured the temperature inside the microscope box with a regular thermometer and it was 30 degrees on the DB scope, the internal temperature sensor is placed in different places on the AU and DB scope and they are also from a different manufacturer, so that might explain the difference.
+
+>Since all the F0s and F1s were imaged on the AU scope and since the majority of F2s were imaged on the AU scope and since we have extensively calibrated the temperature on the AU scope due to other projects in the lab we are more confident of the correctness of the temp measurements on the AU scope. 
+
+>So i was wondering if we can do something like 'batch correction' on the F2s imaged on the DB scope. Essentially the easiest i thought of was just to subtract the 3.5 minutes difference from the DB scope measurements. But probably you and Tom are more experienced in this type of thing.
+
 
 ## 22 January 2022
 

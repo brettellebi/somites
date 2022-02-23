@@ -13,6 +13,7 @@ source(here::here("book/source/04-Association_testing.R"))
 
 * 20211104 association test performed on full sites file. Results here: `/nfs/research/birney/users/ian/somites/association_testing/20211104_true/results`
 * 20211109 association test performed on sites excluding those overlapping repeat regions. Results here: `/nfs/research/birney/users/ian/somites/association_testing/20211109_true/results`
+* 20220214 association tests performed on all filter types and including PSM size as a third phenotype.
 
 ## Phenotype data
 
@@ -72,16 +73,21 @@ Snakemake rules for running the GWAS over these phenotypes: <https://github.com/
 
 ## Results
 
+```{r}
+date_of_assoc_test = 20220214
+```
+
+
 ### All sites
 
 #### Read in files
 
 ```{r}
-target_phenos = c("mean", "intercept")
+target_phenos = c("mean", "intercept", "unsegmented_psm_area")
 names(target_phenos) = target_phenos
 bin_lengths = c(5000, 10000, 15000, 20000)
 names(bin_lengths) = bin_lengths
-results_dir = "/nfs/research/birney/users/ian/somites/association_testing/20220118/all_sites/true_results/"
+results_dir = file.path("/nfs/research/birney/users/ian/somites/association_testing", date_of_assoc_test, "all_sites/true_results")
 
 gwas_true = purrr::map(target_phenos, function(PHENO){
   purrr::map(bin_lengths, function(BIN_LENGTH){
@@ -114,7 +120,7 @@ names(plot_dat) = names(gwas_true)
 Read in significance levels from permutations
 
 ```{r}
-perm_file = here::here("data/20220118_permutation_mins.csv")
+perm_file = here::here("data", paste(date_of_assoc_test, "_permutation_mins.csv", sep = ""))
 perms_df_mins = readr::read_csv(perm_file,
                                 col_types = c("ccid"))
 ```
@@ -122,7 +128,8 @@ perms_df_mins = readr::read_csv(perm_file,
 Plot
 
 ```{r, eval = F}
-plot_dir = here::here("book/plots/20220118/gwls_results/all_sites")
+plot_dir = here::here("book/plots", date_of_assoc_test, "gwls_results/all_sites")
+dir.create(plot_dir, recursive = T)
 # Plot
 all_sites_plots = purrr::map(seq_along(plot_dat), function(COUNTER_PHENO){
   bins_out = purrr::map(seq_along(plot_dat[[COUNTER_PHENO]]), function(COUNTER_BINL){
@@ -145,7 +152,7 @@ all_sites_plots = purrr::map(seq_along(plot_dat), function(COUNTER_PHENO){
              gwas_pal = gwas_pal[2:3],
              med_chr_lens = med_chr_lens,
              sig_line = SIG_LEVEL) +
-      ylim(0,7)
+          ylim(0,7)
     
     ggsave(file.path(plot_dir, paste(PHENO, "_", BINL, ".png", sep = "")),
            out,
@@ -167,13 +174,18 @@ names(all_sites_plots) = names(plot_dat)
 Show
 
 ```{r, fig.cap = "intercept"}
-knitr::include_graphics(here::here("book/plots/20220118/gwls_results/all_sites/intercept_5000.png"))
-knitr::include_graphics(here::here("book/plots/20220118/gwls_results/all_sites/intercept_20000.png"))
+knitr::include_graphics(here::here("book/plots", date_of_assoc_test, "gwls_results/all_sites/intercept_5000.png"))
+knitr::include_graphics(here::here("book/plots", date_of_assoc_test, "gwls_results/all_sites/intercept_20000.png"))
 ```
 
 ```{r, fig.cap = "mean"}
-knitr::include_graphics(here::here("book/plots/20220118/gwls_results/all_sites/mean_5000.png"))
-knitr::include_graphics(here::here("book/plots/20220118/gwls_results/all_sites/mean_20000.png"))
+knitr::include_graphics(here::here("book/plots", date_of_assoc_test, "gwls_results/all_sites/mean_5000.png"))
+knitr::include_graphics(here::here("book/plots", date_of_assoc_test, "gwls_results/all_sites/mean_20000.png"))
+```
+
+```{r, fig.cap = "mean"}
+knitr::include_graphics(here::here("book/plots", date_of_assoc_test, "gwls_results/all_sites/unsegmented_psm_area_5000.png"))
+knitr::include_graphics(here::here("book/plots", date_of_assoc_test, "gwls_results/all_sites/unsegmented_psm_area_20000.png"))
 ```
 
 ### Strongest filter
@@ -192,11 +204,11 @@ Excluding:
 
 ```{r}
 filter_type = "no_repeat_reads_or_pers_hets_filtered_for_read_count_and_cab_prop"
-target_phenos = c("mean", "intercept")
+target_phenos = c("mean", "intercept", "unsegmented_psm_area")
 names(target_phenos) = target_phenos
 bin_lengths = c(5000, 10000, 15000, 20000)
 names(bin_lengths) = bin_lengths
-results_dir = file.path("/nfs/research/birney/users/ian/somites/association_testing/20220118", filter_type, "true_results")
+results_dir = file.path("/nfs/research/birney/users/ian/somites/association_testing", date_of_assoc_test, filter_type, "true_results")
 
 gwas_true = purrr::map(target_phenos, function(PHENO){
   purrr::map(bin_lengths, function(BIN_LENGTH){
@@ -229,14 +241,15 @@ names(plot_dat) = names(gwas_true)
 Read in significance levels from permutations
 
 ```{r}
-perm_file = here::here("data/20220118_permutation_mins.csv")
+perm_file = here::here("data", paste(date_of_assoc_test, "_permutation_mins.csv", sep = ""))
 perms_df_mins = readr::read_csv(perm_file,
                                 col_types = c("ccid"))
 ```
 
 Plot
 ```{r, eval = F}
-plot_dir = here::here(file.path("book/plots/20220118/gwls_results", filter_type))
+plot_dir = here::here(file.path("book/plots", date_of_assoc_test, "gwls_results", filter_type))
+dir.create(plot_dir, recursive = T)
 # Plot
 lapply(seq_along(plot_dat), function(COUNTER_PHENO){
   lapply(seq_along(plot_dat[[COUNTER_PHENO]]), function(COUNTER_BINL){
@@ -277,13 +290,18 @@ lapply(seq_along(plot_dat), function(COUNTER_PHENO){
 Show
 
 ```{r, fig.cap = "intercept"}
-knitr::include_graphics(here::here("book/plots/20220118/gwls_results/no_repeat_reads_or_pers_hets_filtered_for_read_count_and_cab_prop/intercept_5000.png"))
-knitr::include_graphics(here::here("book/plots/20220118/gwls_results/no_repeat_reads_or_pers_hets_filtered_for_read_count_and_cab_prop/intercept_20000.png"))
+knitr::include_graphics(here::here("book/plots", date_of_assoc_test, "gwls_results/no_repeat_reads_or_pers_hets_filtered_for_read_count_and_cab_prop/intercept_5000.png"))
+knitr::include_graphics(here::here("book/plots", date_of_assoc_test, "gwls_results/no_repeat_reads_or_pers_hets_filtered_for_read_count_and_cab_prop/intercept_20000.png"))
 ```
 
 ```{r, fig.cap = "mean"}
-knitr::include_graphics(here::here("book/plots/20220118/gwls_results/no_repeat_reads_or_pers_hets_filtered_for_read_count_and_cab_prop/mean_5000.png"))
-knitr::include_graphics(here::here("book/plots/20220118/gwls_results/no_repeat_reads_or_pers_hets_filtered_for_read_count_and_cab_prop/mean_20000.png"))
+knitr::include_graphics(here::here("book/plots", date_of_assoc_test, "gwls_results/no_repeat_reads_or_pers_hets_filtered_for_read_count_and_cab_prop/mean_5000.png"))
+knitr::include_graphics(here::here("book/plots", date_of_assoc_test, "gwls_results/no_repeat_reads_or_pers_hets_filtered_for_read_count_and_cab_prop/mean_20000.png"))
+```
+
+```{r, fig.cap = "mean"}
+knitr::include_graphics(here::here("book/plots", date_of_assoc_test, "gwls_results/no_repeat_reads_or_pers_hets_filtered_for_read_count_and_cab_prop/unsegmented_psm_area_5000.png"))
+knitr::include_graphics(here::here("book/plots", date_of_assoc_test, "gwls_results/no_repeat_reads_or_pers_hets_filtered_for_read_count_and_cab_prop/unsegmented_psm_area_20000.png"))
 ```
 
 ## Create Manhattan plots for the permutations

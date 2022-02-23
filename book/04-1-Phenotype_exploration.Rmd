@@ -1,0 +1,168 @@
+# Phenotypes
+
+```{r}
+library(tidyverse)
+# Get lighter/darker functions
+source("https://gist.githubusercontent.com/brettellebi/c5015ee666cdf8d9f7e25fa3c8063c99/raw/91e601f82da6c614b4983d8afc4ef399fa58ed4b/karyoploteR_lighter_darker.R")
+```
+
+## Read in phenotype data
+
+```{r}
+pheno_file = here::here("data/20220214_phenotypes.xlsx")
+
+df = readxl::read_xlsx(pheno_file) %>% 
+  # remove "KC" from sample name
+  dplyr::mutate(sample = fish %>% 
+                  stringr::str_remove("KC"))
+
+# How many samples?
+length(unique(df$sample))
+```
+
+## Period 
+
+Note that all F0s and F1s were imaged on the AU scope. 
+
+DB tends to have a higher temperature than AU, by 0.7°C. 
+
+AU has been extensively calibrated, which may cause the differences in the phenotype measurements.
+
+### Mean
+
+Difference between means of two microscopes:
+
+```{r}
+micr_mean = df %>% 
+  dplyr::filter(!is.na(Microscope)) %>% 
+  dplyr::group_by(Microscope) %>% 
+  dplyr::summarise(mean_pheno = mean(mean))
+
+micr_mean
+
+# Difference
+diff_mean = abs(micr_mean$mean_pheno[1] - micr_mean$mean_pheno[2])
+diff_mean
+```
+
+#### Historgram
+
+```{r}
+mean_pal = c("#177e89", "#084c61")
+
+df %>% 
+  # remove NAs in `Microscope` column
+  dplyr::filter(!is.na(Microscope)) %>% 
+  dplyr::group_by(Microscope) %>% 
+  ggplot() +
+    geom_histogram(aes(x = mean, fill = Microscope),
+                   bins = 50) +
+    scale_fill_manual(values = mean_pal) +
+    geom_vline(data=micr_mean, aes(xintercept=mean_pheno), colour = darker(mean_pal, amount = 50)) +
+    #stat_summary(fun=mean, geom="line") +
+    facet_grid(rows = vars(Microscope)) +
+    theme_bw() +
+    xlab("period mean") +
+    ggtitle(paste("Period mean\n", "Difference between means: ", diff_mean, sep = ""))
+  
+```
+
+#### Q-Q plot
+
+```{r}
+df %>% 
+  # remove NAs in `Microscope` column
+  dplyr::filter(!is.na(Microscope)) %>% 
+  ggplot() +
+    stat_qq(aes(sample = mean, colour = Microscope)) +
+    stat_qq_line(aes(sample = mean, colour = Microscope)) +
+    scale_colour_manual(values = c("#177e89", "#084c61")) +
+    facet_grid(rows = vars(Microscope)) +
+    theme_bw() +
+    xlab("period mean") +
+    ggtitle("Period mean") +
+    theme(aspect.ratio=1)
+  
+```
+
+## Intercept
+
+Difference between means of two microscopes:
+
+```{r}
+micr_intercept = df %>% 
+  dplyr::filter(!is.na(Microscope)) %>% 
+  dplyr::group_by(Microscope) %>% 
+  dplyr::summarise(mean_pheno = mean(intercept))
+
+micr_intercept
+
+# Difference
+diff_intercept = abs(micr_intercept$mean_pheno[1] - micr_intercept$mean_pheno[2])
+diff_intercept
+```
+
+#### Histogram 
+
+```{r}
+intercept_pal = c("#8D99AE", "#2b2d42")
+
+df %>% 
+  # remove NAs in `Microscope` column
+  dplyr::filter(!is.na(Microscope)) %>% 
+  ggplot() +
+    geom_histogram(aes(intercept, fill = Microscope),
+                   bins = 50) +
+    geom_vline(data=micr_intercept, aes(xintercept=mean_pheno), colour = darker(intercept_pal, amount = 50)) +
+    scale_fill_manual(values = intercept_pal) +
+    facet_grid(rows = vars(Microscope)) +
+    xlab("period intercept") +
+    theme_bw() +
+    ggtitle(paste("Period intercept\n", "Difference between means: ", diff_intercept, sep = ""))
+  
+```
+
+#### Q-Q plot
+
+```{r}
+df %>% 
+  # remove NAs in `Microscope` column
+  dplyr::filter(!is.na(Microscope)) %>% 
+  ggplot() +
+    stat_qq(aes(sample = intercept, colour = Microscope)) +
+    stat_qq_line(aes(sample = intercept, colour = Microscope)) +
+    scale_colour_manual(values = c("#8D99AE", "#2b2d42")) +
+    facet_grid(rows = vars(Microscope)) +
+    theme_bw() +
+    xlab("period intercept") +
+    ggtitle("Period intercept") +
+    theme(aspect.ratio=1)
+```
+
+
+## Presomitic mesoderm size
+
+### Histogram 
+
+```{r}
+df %>% 
+  ggplot() +
+    geom_histogram(aes(unsegmented_psm_area),
+                   fill = "#401f3e",
+                   bins = 50) +
+    theme_bw() +
+    ggtitle("Presomitic mesoderm size")
+```
+
+### Q-Q plot
+
+```{r}
+df %>% 
+  ggplot(aes(sample = intercept)) +
+    stat_qq(colour = "#401f3e") +
+    stat_qq_line(colour = darker("#401f3e")) +
+    theme_bw() +
+    xlab("presomitic mesoderm area") +
+    ggtitle("Presomitic mesoderm area") +
+    theme(aspect.ratio=1)
+```
