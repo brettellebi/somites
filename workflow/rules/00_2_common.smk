@@ -7,8 +7,12 @@ import numpy as np
 import os
 
 ######################
-# Get F2 samples
+# Get F1 and F2 samples
 ######################
+
+F1_samples = pd.read_table(config["F1_samples"], comment = '#', dtype = str).set_index(
+    ["SAMPLE"], drop=False
+)
 
 F2_samples = pd.read_table(config["F2_samples"], comment = '#', dtype = str).set_index(
     ["SAMPLE"], drop=False

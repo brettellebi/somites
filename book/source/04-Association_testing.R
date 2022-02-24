@@ -95,25 +95,30 @@ clean_gwas_res = function(gwas_results, bin_length, chr_lens){
     # add BIN_END
     dplyr::mutate(BIN_END = BIN_START + bin_length - 1) %>% 
     # add locus
-    dplyr::mutate(LOCUS = paste(CHROM, BIN_START, sep = ":"))
-} 
+    dplyr::mutate(LOCUS = paste(CHROM, BIN_START, sep = ":")) 
+}
 
-plot_man = function(df, site_filter, phenotype, bin_length, gwas_pal, size = 0.5, alpha = 0.5, med_chr_lens, sig_line = 3.6){
+plot_man = function(df, site_filter, phenotype, bin_length, gwas_pal, size = 0.5, alpha = 0.5, med_chr_lens, sig_level = NULL){
   # Create palette
   pal = rep_len(gwas_pal, length.out = nrow(med_chr_lens))
   names(pal) = med_chr_lens$chr
   
-  # Create plot
-  p = df %>% 
-    dplyr::mutate(CHROM = factor(CHROM, levels = med_chr_lens$chr)) %>% 
+  df = df %>% 
+    # create `COLOUR` vector
+    dplyr::mutate(COLOUR = dplyr::case_when(!is.null(sig_level) & p_value_REML < sig_level ~ gwas_pal[1],
+                                            gtools::even(CHROM) ~ gwas_pal[2],
+                                            gtools::odd(CHROM) ~ gwas_pal[3])) %>% 
+    dplyr::mutate(CHROM = factor(CHROM, levels = med_chr_lens$chr)) 
+  
+  out_plot = df %>% 
     ggplot(aes(x = X_COORD,
                y = -log10(p_value_REML),
-               colour = CHROM,
                label = BIN_START,
                label2 = BIN_END)) + 
-    geom_point(size = size,
+    geom_point(colour = df$COLOUR,
+               size = size,
                alpha = alpha) +
-    scale_color_manual(values = pal) +
+    #scale_color_manual(values = gwas_pal) +
     scale_x_continuous(breaks = med_chr_lens$MID_TOT, 
                        labels = med_chr_lens$chr) +
     theme_bw() +
@@ -124,9 +129,9 @@ plot_man = function(df, site_filter, phenotype, bin_length, gwas_pal, size = 0.5
     ggtitle(paste("Site filter: ", site_filter, "\nPhenotype: ", phenotype, "\nBin length: ",  bin_length, sep = "")) +
     xlab("Chromosome") +
     ylab("-log10(p-value)") + 
-    geom_hline(yintercept = sig_line, colour = "#60D394", linetype = "dashed")
+    geom_hline(yintercept = -log10(sig_level), colour = "#60D394", linetype = "dashed")
   
-  return(p)
+  return(out_plot)
   
 }
 
@@ -170,6 +175,17 @@ names(gwas_pal) = c("target", "even chr", "odd chr")
 significance_line = 3.6
 suggestive_line = 2.9
 
+# Intercept
+intercept_pal = c("#EF476F", "#8D99AE", "#2b2d42")
+names(intercept_pal) = c("target", "even chr", "odd chr")
+
+# Mean
+mean_pal = c("#D81E5B", "#8AA399", "#084C61")
+names(mean_pal) = c("target", "even chr", "odd chr")
+
+# PSM
+unsegmented_psm_area_pal = c("#E59500", "#D9D0DE", "#401F3E")
+names(mean_pal) = c("target", "even chr", "odd chr")
 
 ########################
 # HdrR chromosome data

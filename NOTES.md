@@ -2,7 +2,7 @@
 
 ## 23 February
 
-* Confirm with Ali that the microsc
+* Run association test with just AU microscope: `book/Association_testing_with_AU.Rmd`
 
 ## 3 February
 

@@ -7,6 +7,8 @@ F0_samples:
 F0_lines: 
     - Cab
     - Kaga
+F1_samples:
+    config/F1_samples.txt
 F2_samples:
     config/F2_samples.txt
 F2_valid_lanes:
@@ -99,6 +101,8 @@ n_permutations:
 ####################
 ref_prefix:
     /hps/nobackup/birney/users/ian/somites/refs/hdrr
+F1_sequence_dirs:
+    - /nfs/ftp/private/indigene_ftp/upload/Ali/F1_Kaga-Cab_DeepSeq
 F2_sequence_dirs:
     - /nfs/ftp/private/indigene_ftp/upload/Ali/Kaga-Cab_F2_First200WGS
     - /nfs/ftp/private/indigene_ftp/upload/Ali/Kaga-Cab_F2_Fish201-400_WGS

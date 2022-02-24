@@ -15,58 +15,6 @@ source(here::here("book/source/04-Association_testing.R"))
 * 20211109 association test performed on sites excluding those overlapping repeat regions. Results here: `/nfs/research/birney/users/ian/somites/association_testing/20211109_true/results`
 * 20220214 association tests performed on all filter types and including PSM size as a third phenotype.
 
-## Phenotype data
-
-First 595 F2 phenotype data: <https://github.com/brettellebi/somites/tree/master/data/data/First595-F2_DF_removed393-389-121_outliers.xlsx>.
-
->Of interest for us for the association testing are the:
- intercept period -> intercept in the table
- mean period -> mean in the table
- 
-Read in 
-```{r}
-PHENO_FILE = here::here("data/First595-F2_DF_removed393-389-121_outliers.xlsx")
-TARGET_PHENOS = c("mean", "intercept")
-pheno_df = readxl::read_xlsx(PHENO_FILE) %>%
-  # adjust sample names
-  dplyr::mutate(SAMPLE = fish %>% stringr::str_remove("KC")) %>%
-  # select key columns
-  dplyr::select(SAMPLE, all_of(TARGET_PHENOS)) %>%
-  # ensure that the phenotype column is numeric
-  dplyr::mutate(dplyr::across(all_of(TARGET_PHENOS),
-                              ~ as.numeric(.x))) %>% 
-  # widen to enable faceting
-  tidyr::pivot_longer(cols = all_of(TARGET_PHENOS), names_to = "PHENOTYPE", values_to = "VALUE")
-
-  
-```
-
-Plot
-```{r}
-pheno_df %>% 
-  ggplot() +
-    geom_histogram(aes(VALUE, fill = PHENOTYPE), bins = 40) +
-    facet_grid(rows = vars(PHENOTYPE)) +
-    scale_fill_manual(values = c("#FF6D00", "#240046")) +
-    guides(fill = "none") +
-    theme_bw() +
-    ggtitle(paste("N samples: ", length(unique(pheno_df$SAMPLE))))
-```
-
-qqplot
-```{r}
-pheno_df %>% 
-  ggplot() +
-    stat_qq(aes(sample = VALUE, colour = PHENOTYPE)) +
-    facet_grid(rows = vars(PHENOTYPE)) +
-    scale_colour_manual(values = c("#FF6D00", "#240046")) +
-    guides(colour = "none") +
-    theme_bw() +
-    ggtitle(paste("N samples: ", length(unique(pheno_df$SAMPLE)))) +
-    theme(aspect.ratio=1)
-```
-
-
 ## Snakemake rules
 
 Snakemake rules for running the GWAS over these phenotypes: <https://github.com/brettellebi/somites/blob/master/workflow/rules/07_assocation_testing.smk>
@@ -76,7 +24,6 @@ Snakemake rules for running the GWAS over these phenotypes: <https://github.com/
 ```{r}
 date_of_assoc_test = 20220214
 ```
-
 
 ### All sites
 
@@ -100,21 +47,20 @@ gwas_true = purrr::map(target_phenos, function(PHENO){
 
 Process data
 ```{r}
-plot_dat = purrr::map(seq_along(gwas_true), function(COUNTER_1){
-  bin_list = purrr::map(seq_along(gwas_true[[COUNTER_1]]), function(COUNTER_2){
-    BIN_LENGTH = names(gwas_true[[COUNTER_1]])[COUNTER_2] %>% 
-      as.numeric()
-    out = clean_gwas_res(gwas_true[[COUNTER_1]][[COUNTER_2]],
+plot_dat = purrr::map(target_phenos, function(PHENO){
+  bin_list = purrr::map(bin_lengths, function(BIN_LENGTH){
+    # clean GWAS results for plotting
+    out = clean_gwas_res(gwas_true[[PHENO]][[as.character(BIN_LENGTH)]],
                          bin_length = BIN_LENGTH,
                          chr_lens = med_chr_lens)
     
     return(out)
   })
-  names(bin_list) = names(gwas_true[[COUNTER_1]])
+  names(bin_list) = bin_lengths
   
   return(bin_list)
 })
-names(plot_dat) = names(gwas_true)
+names(plot_dat) = target_phenos
 ```
 
 Read in significance levels from permutations
@@ -131,30 +77,30 @@ Plot
 plot_dir = here::here("book/plots", date_of_assoc_test, "gwls_results/all_sites")
 dir.create(plot_dir, recursive = T)
 # Plot
-all_sites_plots = purrr::map(seq_along(plot_dat), function(COUNTER_PHENO){
-  bins_out = purrr::map(seq_along(plot_dat[[COUNTER_PHENO]]), function(COUNTER_BINL){
-    # Get pheno
-    PHENO = names(plot_dat)[COUNTER_PHENO]
-    # Get bin length
-    BINL = names(plot_dat[[COUNTER_PHENO]])[COUNTER_BINL] %>% 
-      as.numeric()
+all_sites_plots = purrr::map(target_phenos, function(PHENO){
+  bins_out = purrr::map(bin_lengths, function(BIN_LENGTH){
+    
+    BIN_L = BIN_LENGTH
+    
     # Get significant level
     SIG_LEVEL = perms_df_mins %>%
-      dplyr::filter(SITE_FILTER == "all_sites", TARGET_PHENO == PHENO, BIN_LENGTH == BINL) %>% 
+      dplyr::filter(SITE_FILTER == "all_sites",
+                    TARGET_PHENO == PHENO,
+                    BIN_LENGTH == BIN_L) %>% 
       dplyr::pull(MIN_P) %>% 
       -log10(.)
     
     # Plot
-    out = plot_man(plot_dat[[COUNTER_PHENO]][[COUNTER_BINL]],
+    out = plot_man(plot_dat[[PHENO]][[as.character(BIN_LENGTH)]],
              site_filter = "all_sites",
              phenotype = PHENO,
-             bin_length = BINL, 
+             bin_length = BIN_L, 
              gwas_pal = gwas_pal[2:3],
              med_chr_lens = med_chr_lens,
              sig_line = SIG_LEVEL) +
           ylim(0,7)
     
-    ggsave(file.path(plot_dir, paste(PHENO, "_", BINL, ".png", sep = "")),
+    ggsave(file.path(plot_dir, paste(PHENO, "_", BIN_L, ".png", sep = "")),
            out,
            device = "png",
            width = 9.6,
@@ -165,10 +111,10 @@ all_sites_plots = purrr::map(seq_along(plot_dat), function(COUNTER_PHENO){
     return(out)
   })
   
-  names(bins_out) = plot_dat[[COUNTER_PHENO]]
+  names(bins_out) = bin_lengths
 })
 
-names(all_sites_plots) = names(plot_dat)
+names(all_sites_plots) = target_phenos
 ```
 
 Show
@@ -221,21 +167,20 @@ gwas_true = purrr::map(target_phenos, function(PHENO){
 
 Process data
 ```{r}
-plot_dat = purrr::map(seq_along(gwas_true), function(COUNTER_1){
-  bin_list = purrr::map(seq_along(gwas_true[[COUNTER_1]]), function(COUNTER_2){
-    BIN_LENGTH = names(gwas_true[[COUNTER_1]])[COUNTER_2] %>% 
-      as.numeric()
-    out = clean_gwas_res(gwas_true[[COUNTER_1]][[COUNTER_2]],
+plot_dat = purrr::map(target_phenos, function(PHENO){
+  bin_list = purrr::map(bin_lengths, function(BIN_LENGTH){
+    # clean GWAS results for plotting
+    out = clean_gwas_res(gwas_true[[PHENO]][[as.character(BIN_LENGTH)]],
                          bin_length = BIN_LENGTH,
                          chr_lens = med_chr_lens)
     
     return(out)
   })
-  names(bin_list) = names(gwas_true[[COUNTER_1]])
+  names(bin_list) = bin_lengths
   
   return(bin_list)
 })
-names(plot_dat) = names(gwas_true)
+names(plot_dat) = target_phenos
 ```
 
 Read in significance levels from permutations

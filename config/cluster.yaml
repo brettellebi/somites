@@ -4,8 +4,10 @@ __default__:
   name: "{rule}.{wildcards}"
   queue: "standard"
   outfile: "{log}"
-# 00_common.smk
-create_f2_samples_file:
+# 00_1_common.smk
+create_F1_samples_file:
+  queue: datamover
+create_F2_samples_file:
   queue: datamover
 # 01_ref.smk
 bwa_mem2_index:

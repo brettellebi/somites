@@ -106,3 +106,27 @@ rule run_permutations:
     script:
         "../scripts/run_gwls.R"
 
+rule get_permutations_min_p:
+    input:
+        expand(os.path.join(
+                config["data_store_dir"],
+                "association_testing/{date_of_assoc_test}/{site_filter}/permutations/{target_phenotype}/{bin_length}/{permutation_seed}.rds"
+                ),
+            date_of_assoc_test = config["date_of_assoc_test"],
+            site_filter = config["site_filter"],
+            bin_length = config["bin_length"]
+        ),
+    output:
+        csv = "data/{date_of_assoc_test}_permutation_mins.csv",
+    log:
+        os.path.join(
+            config["working_dir"],
+            "logs/run_permutations/{date_of_assoc_test}/{site_filter}/{target_phenotype}/{bin_length}/{permutation_seed}.log"
+        ),
+    resources: 
+        mem_mb = 10000
+    container:
+        config["R"]
+    script:
+        "../get_permutations_min_p.R"
+

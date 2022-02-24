@@ -3,7 +3,15 @@ rule map_reads_F0:
         target = config["ref_prefix"] + ".fasta",
         query = lambda wildcards: F0_samples.loc[(wildcards.F0_sample, wildcards.unit), ["fq1", "fq2"]].dropna().tolist(),
     output:
-        os.path.join(config["working_dir"], "sams/F0/mapped/{F0_sample}-{unit}.sam")
+        os.path.join(
+            config["working_dir"],
+            "sams/F0/mapped/{F0_sample}-{unit}.sam"
+        ),
+    log:
+        os.path.join(
+            config["working_dir"],
+            "logs/map_reads_F0/{F0_sample}/{unit}.log"
+        ),
     params:
         extra="-ax sr",
     resources:
@@ -24,11 +32,20 @@ rule map_reads_F0:
 
 rule replace_rg_F0:
     input:
-        os.path.join(config["working_dir"], "sams/F0/mapped/{F0_sample}-{unit}.sam")
+        os.path.join(
+            config["working_dir"],
+            "sams/F0/mapped/{F0_sample}-{unit}.sam"
+        ),
     output:
-        os.path.join(config["working_dir"], "sams/F0/grouped/{F0_sample}-{unit}.sam")
+        os.path.join(
+            config["working_dir"],
+            "sams/F0/grouped/{F0_sample}-{unit}.sam"
+        ),
     log:
-        os.path.join(config["working_dir"], "logs/replace_rg_F0/{F0_sample}_{unit}.log")
+        os.path.join(
+            config["working_dir"],
+            "logs/replace_rg_F0/{F0_sample}_{unit}.log"
+        ),
     params:
         "RGLB=lib1 RGPL=ILLUMINA RGPU={unit} RGSM={F0_sample}"
     resources:
@@ -47,11 +64,20 @@ rule replace_rg_F0:
 
 rule sort_sam_F0:
     input:
-        os.path.join(config["working_dir"], "sams/F0/grouped/{F0_sample}-{unit}.sam")
+        os.path.join(
+            config["working_dir"],
+            "sams/F0/grouped/{F0_sample}-{unit}.sam"
+        ),
     output:
-        os.path.join(config["working_dir"], "bams/F0/sorted/{F0_sample}-{unit}.bam")
+        os.path.join(
+            config["working_dir"],
+            "bams/F0/sorted/{F0_sample}-{unit}.bam"
+        ),
     log:
-        os.path.join(config["working_dir"], "logs/sort_sam_F0/{F0_sample}_{unit}.log")
+        os.path.join(
+            config["working_dir"],
+            "logs/sort_sam_F0/{F0_sample}_{unit}.log"
+        ),
     params:
         sort_order="coordinate",
         extra=lambda wildcards: "VALIDATION_STRINGENCY=LENIENT TMP_DIR=" + config["tmp_dir"]
@@ -132,6 +158,8 @@ rule samtools_index_F0:
         os.path.join(config["working_dir"], "logs/samtools_index_F0/{F0_sample}.log")
     container:
         config["samtools"]
+    resources:
+        mem_mb = 5000
     shell:
         """
         samtools index \

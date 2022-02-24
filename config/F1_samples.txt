@@ -1,0 +1,2 @@
+SAMPLE	fq1	fq2
+F1	/nfs/ftp/private/indigene_ftp/upload/Ali/F1_Kaga-Cab_DeepSeq/HGMH7AFX3_f1_kagacab_deepseq_21s005205-1-1_Seleit_lane121s005205_1_sequence.txt.gz	/nfs/ftp/private/indigene_ftp/upload/Ali/F1_Kaga-Cab_DeepSeq/HGMH7AFX3_f1_kagacab_deepseq_21s005205-1-1_Seleit_lane121s005205_2_sequence.txt.gz
