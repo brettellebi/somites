@@ -8,7 +8,13 @@ source("https://gist.githubusercontent.com/brettellebi/c5015ee666cdf8d9f7e25fa3c
 source(here::here("book/source/04-Association_testing.R"))
 mean_pal = mean_pal[2:3]
 intercept_pal = intercept_pal[2:3]
-unsegmented_psm_pal = unsegmented_psm_pal[2:3]
+unsegmented_psm_pal = unsegmented_psm_area_pal[2:3]
+
+DATE_OF_ASSOC_TEST = 20220214
+
+
+PLOT_DIR = here::here("book/plots", DATE_OF_ASSOC_TEST, "phenotypes")
+dir.create(PLOT_DIR, recursive = T, showWarnings = F)
 ```
 
 ## Read in phenotype data
@@ -68,6 +74,17 @@ df %>%
     theme_bw() +
     xlab("period mean") +
     ggtitle(paste("Period mean\n", "Difference between means: ", diff_mean, sep = ""))
+
+# Make output directory and save
+OUT_DIR = here::here(PLOT_DIR, "mean")
+dir.create(OUT_DIR, recursive = T, showWarnings = F)
+
+ggsave(file.path(OUT_DIR, paste("histogram", ".png", sep = "")),
+ device = "png",
+ width = 9.6,
+ height = 6,
+ units = "in",
+ dpi = 400)
   
 ```
 
@@ -86,6 +103,17 @@ df %>%
     xlab("period mean") +
     ggtitle("Period mean") +
     theme(aspect.ratio=1)
+
+# Make output directory and save
+OUT_DIR = here::here(PLOT_DIR, "mean")
+dir.create(OUT_DIR, recursive = T, showWarnings = F)
+
+ggsave(file.path(OUT_DIR, paste("qqplot", ".png", sep = "")),
+ device = "png",
+ width = 9.6,
+ height = 6,
+ units = "in",
+ dpi = 400)
   
 ```
 
@@ -122,6 +150,17 @@ df %>%
     xlab("period intercept") +
     theme_bw() +
     ggtitle(paste("Period intercept\n", "Difference between means: ", diff_intercept, sep = ""))
+
+# Make output directory and save
+OUT_DIR = here::here(PLOT_DIR, "intercept")
+dir.create(OUT_DIR, recursive = T, showWarnings = F)
+
+ggsave(file.path(OUT_DIR, paste("histogram", ".png", sep = "")),
+ device = "png",
+ width = 9.6,
+ height = 6,
+ units = "in",
+ dpi = 400)
   
 ```
 
@@ -140,6 +179,17 @@ df %>%
     xlab("period intercept") +
     ggtitle("Period intercept") +
     theme(aspect.ratio=1)
+
+# Make output directory and save
+OUT_DIR = here::here(PLOT_DIR, "intercept")
+dir.create(OUT_DIR, recursive = T, showWarnings = F)
+
+ggsave(file.path(OUT_DIR, paste("qqplot", ".png", sep = "")),
+ device = "png",
+ width = 9.6,
+ height = 6,
+ units = "in",
+ dpi = 400)
 ```
 
 
@@ -155,6 +205,17 @@ df %>%
                    bins = 50) +
     theme_bw() +
     ggtitle("Presomitic mesoderm size")
+
+# Make output directory and save
+OUT_DIR = here::here(PLOT_DIR, "unsegmented_psm_area")
+dir.create(OUT_DIR, recursive = T, showWarnings = F)
+
+ggsave(file.path(OUT_DIR, paste("histogram", ".png", sep = "")),
+ device = "png",
+ width = 9.6,
+ height = 6,
+ units = "in",
+ dpi = 400)
 ```
 
 ### Q-Q plot
@@ -168,4 +229,15 @@ df %>%
     xlab("presomitic mesoderm area") +
     ggtitle("Presomitic mesoderm area") +
     theme(aspect.ratio=1)
+
+# Make output directory and save
+OUT_DIR = here::here(PLOT_DIR, "unsegmented_psm_area")
+dir.create(OUT_DIR, recursive = T, showWarnings = F)
+
+ggsave(file.path(OUT_DIR, paste("qqplot", ".png", sep = "")),
+ device = "png",
+ width = 9.6,
+ height = 6,
+ units = "in",
+ dpi = 400)
 ```
