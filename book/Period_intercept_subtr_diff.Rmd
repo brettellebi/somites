@@ -1,0 +1,238 @@
+# Association testing deducting difference between microscope means
+
+## Run GWLS
+
+```{r}
+library(tidyverse)
+library(GridLMM)
+library(KRLS)
+
+# Get lighter/darker functions
+source("https://gist.githubusercontent.com/brettellebi/c5015ee666cdf8d9f7e25fa3c8063c99/raw/91e601f82da6c614b4983d8afc4ef399fa58ed4b/karyoploteR_lighter_darker.R")
+
+GENO_FILE = "/nfs/research/birney/users/ian/somites/association_testing/20220214/all_sites/inputs/5000.rds"
+PHENO_FILE = here::here("data/20220214_phenotypes.xlsx") # True phenotypes
+GWLS_SOURCE_FILE = here::here("workflow/scripts/run_gwls_source.R")
+MANHAT_SOURCE_FILE = here::here("book/source/04-Association_testing.R")
+BIN_LENGTH = 5000
+TARGET_PHENO = "intercept"
+MICROSCOPE = "subtracted_diff"
+PLOT_DIR = here::here("book/plots/20220214/microscope_test")
+
+# Get GWAS functions
+
+source(GWLS_SOURCE_FILE)
+source(MANHAT_SOURCE_FILE)
+```
+
+
+```{r}
+
+# Load genotypes and positions
+
+in_list = readRDS(GENO_FILE)
+
+```
+
+```{r}
+# Read in phenotypes
+
+## Read in file and wrangle
+phenos = readxl::read_xlsx(PHENO_FILE) %>%
+    # adjust sample names
+    dplyr::mutate(SAMPLE = fish %>% stringr::str_remove("KC")) %>%
+    # select key columns
+    dplyr::select(SAMPLE, all_of(TARGET_PHENO), Microscope) %>%
+    # ensure that the phenotype column is numeric
+    dplyr::mutate(dplyr::across(all_of(TARGET_PHENO),
+                                ~ as.numeric(.x))) 
+
+## Get number of samples
+N_SAMPLES = nrow(phenos)
+
+# Get difference between means
+micr_intercept = phenos %>% 
+  dplyr::filter(!is.na(Microscope)) %>% 
+  dplyr::group_by(Microscope) %>% 
+  dplyr::summarise(mean_pheno = mean(intercept))
+
+# Difference
+diff_intercept = abs(micr_intercept$mean_pheno[1] - micr_intercept$mean_pheno[2])
+
+# Subtract `diff_intercept` from DB
+phenos = phenos %>% 
+  dplyr::mutate(intercept = dplyr::if_else(Microscope == "DB",
+                                           intercept - diff_intercept,
+                                           intercept))
+
+# New means
+new_means = phenos %>% 
+  dplyr::filter(!is.na(Microscope)) %>% 
+  dplyr::group_by(Microscope) %>% 
+  dplyr::summarise(mean_pheno = mean(intercept))
+
+
+micr_comp_pal = intercept_pal[2:3]
+names(micr_comp_pal) = NULL
+
+# Check with plot
+phenos %>% 
+  # remove NAs in `Microscope` column
+  dplyr::filter(!is.na(Microscope)) %>% 
+  ggplot() +
+    geom_histogram(aes(intercept, fill = Microscope),
+                   bins = 50) +
+    geom_vline(data=new_means, aes(xintercept=mean_pheno), colour = darker(micr_comp_pal, amount = 50)) +
+    scale_fill_manual(values = micr_comp_pal) +
+    facet_grid(rows = vars(Microscope)) +
+    xlab("period intercept") +
+    theme_bw() +
+    ggtitle("Period intercept")
+
+```
+
+```{r, eval = F}
+
+## Filter and order phenotypes
+in_list[["phenotypes"]] = phenos %>%
+    # filter phenotypes for those with genotypes
+    dplyr::filter(SAMPLE %in% in_list[["sample_order"]]) %>%
+    # join to `sample_order` to ensure phenotypes are in the correct order   
+    dplyr::left_join(tibble::tibble(SAMPLE = in_list[["sample_order"]]),
+                     .,
+                     by = "SAMPLE") %>%
+    # remove NAs (created by the samples that have genotypes but not phenotypes)
+    tidyr::drop_na() %>%
+    # the GridLMM code doesn't work with tibbles
+    as.data.frame()
+
+## Filter genotypes for those that have phenotypes
+in_list[["genotypes"]] = in_list[["genotypes"]] %>%
+    dplyr::filter(in_list[["sample_order"]] %in% in_list[["phenotypes"]]$SAMPLE)
+
+## Filter sample_order for those that have phenotypes
+in_list[["sample_order"]] = in_list[["phenotypes"]]$SAMPLE
+            
+# Run GWAS
+
+out = run_gwas(d = in_list[["genotypes"]],
+               m = in_list[["positions"]],
+               p = in_list[["phenotypes"]]
+              )
+
+saveRDS(out, paste("/hps/nobackup/birney/users/ian/somites/microscope_test/gwas_results/", MICROSCOPE, ".rds", sep = ""))
+```
+
+```{r}
+out = readRDS(paste("/hps/nobackup/birney/users/ian/somites/microscope_test/gwas_results/", MICROSCOPE, ".rds", sep = ""))
+```
+
+## Run permutations
+
+### Permute phenos
+
+```{r}
+seeds = 1:10
+
+counter = 0
+perm_phenos = purrr::map(seeds, function(SEED){
+  counter <<- counter + 1
+  # set seed
+  set.seed(seeds[counter])
+  # randomise
+  phenos = phenos %>% 
+      # randomise phenotype
+      dplyr::mutate(dplyr::across(all_of(TARGET_PHENO),
+                                  ~ sample(.x)))
+})
+```
+
+### Run GWLS
+
+```{r, eval = F}
+perm_out = purrr::map(perm_phenos, function(PERM_PHENO){
+  
+  ## Filter and order phenotypes
+  in_list[["phenotypes"]] = PERM_PHENO %>%
+      # filter phenotypes for those with genotypes
+      dplyr::filter(SAMPLE %in% in_list[["sample_order"]]) %>%
+      # join to `sample_order` to ensure phenotypes are in the correct order   
+      dplyr::left_join(tibble::tibble(SAMPLE = in_list[["sample_order"]]),
+                       .,
+                       by = "SAMPLE") %>%
+      # remove NAs (created by the samples that have genotypes but not phenotypes)
+      tidyr::drop_na() %>%
+      # the GridLMM code doesn't work with tibbles
+      as.data.frame()
+  
+  ## Filter genotypes for those that have phenotypes
+  in_list[["genotypes"]] = in_list[["genotypes"]] %>%
+      dplyr::filter(in_list[["sample_order"]] %in% in_list[["phenotypes"]]$SAMPLE)
+  
+  ## Filter sample_order for those that have phenotypes
+  in_list[["sample_order"]] = in_list[["phenotypes"]]$SAMPLE
+              
+  # Run GWAS
+  
+  out = run_gwas(d = in_list[["genotypes"]],
+                 m = in_list[["positions"]],
+                 p = in_list[["phenotypes"]]
+                )
+  
+  return(out)
+})
+
+names(perm_out) = seeds
+
+saveRDS(perm_out, paste("/hps/nobackup/birney/users/ian/somites/microscope_test/perms/", MICROSCOPE, ".rds", sep = ""))
+```
+
+```{r}
+perm_out = readRDS(paste("/hps/nobackup/birney/users/ian/somites/microscope_test/perms/", MICROSCOPE, ".rds", sep = ""))
+```
+
+### Get minimum
+
+```{r}
+perm_df = purrr::map_dfr(perm_out, function(PERM){
+  OUT = tibble::tibble(MIN_P = PERM$results$p_value_REML %>%
+                         min(., na.rm = T)
+  )
+}, .id = "SEED")
+
+# Get minimum
+SIG_LEVEL = min(perm_df$MIN_P)
+```
+
+## Generate Manhattan plot
+
+```{r}
+out_clean = clean_gwas_res(out,
+                           bin_length = BIN_LENGTH,
+                           chr_lens = med_chr_lens)
+
+# Plot
+out_plot = plot_man(out_clean,
+                    site_filter = "all_sites",
+                    phenotype = TARGET_PHENO,
+                    bin_length = BIN_LENGTH, 
+                    gwas_pal = intercept_pal,
+                    med_chr_lens = med_chr_lens,
+                    sig_level = SIG_LEVEL) +
+                 ylim(0,7) + 
+                 labs(subtitle = paste("Both microscopes, having subtrated the difference in means\nn samples: ", N_SAMPLES, sep = ""))
+
+out_plot
+
+```
+
+```{r}
+ggsave(file.path(PLOT_DIR, paste(MICROSCOPE, "_manhattan.png", sep = "")),
+       out_plot,
+       device = "png",
+       width = 9.6,
+       height = 6,
+       units = "in",
+       dpi = 400)
+```
+
