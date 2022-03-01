@@ -1,0 +1,517 @@
+# Experiment with adding covariates
+
+```{r}
+library(tidyverse)
+library(GridLMM)
+library(KRLS)
+```
+
+## No covariates
+
+### Read in data
+
+```{r}
+GENO_FILE = "/nfs/research/birney/users/ian/somites/association_testing/20220214/all_sites/inputs/5000.rds"
+PHENO_FILE = here::here("data/20220214_phenotypes.xlsx") # True phenotypes
+#GWLS_SOURCE_FILE = here::here("workflow/scripts/run_gwls_source.R")
+MANHAT_SOURCE_FILE = here::here("book/source/04-Association_testing_with_covariates.R")
+BIN_LENGTH = 5000
+TARGET_PHENO = "unsegmented_psm_area"
+COVARIATES = "none"
+PLOT_DIR = here::here("book/plots/20220214/covariate_test")
+
+# Read in source files
+source(MANHAT_SOURCE_FILE)
+
+invers_norm=F
+```
+
+#### Genotypes and positions
+
+```{r}
+# Load genotypes and positions
+in_list = readRDS(GENO_FILE)
+```
+
+#### Phenotypes
+
+```{r}
+## Read in file and wrangle
+phenos = readxl::read_xlsx(PHENO_FILE) %>%
+    # adjust sample names
+    dplyr::mutate(SAMPLE = fish %>% stringr::str_remove("KC")) %>%
+    # select key columns
+    dplyr::select(SAMPLE, all_of(TARGET_PHENO), Microscope, Date_of_imaging) %>%
+    # ensure that the phenotype column is numeric
+    dplyr::mutate(dplyr::across(all_of(TARGET_PHENO),
+                                ~ as.numeric(.x))) 
+
+```
+
+#### Filter for samples with both genotypes and phenotypes
+
+```{r}
+## Filter and order phenotypes
+in_list[["phenotypes"]] = phenos %>%
+    # filter phenotypes for those with genotypes
+    dplyr::filter(SAMPLE %in% in_list[["sample_order"]]) %>%
+    # join to `sample_order` to ensure phenotypes are in the correct order   
+    dplyr::left_join(tibble::tibble(SAMPLE = in_list[["sample_order"]]),
+                     .,
+                     by = "SAMPLE") %>%
+    # remove NAs (created by the samples that have genotypes but not phenotypes)
+    tidyr::drop_na() %>%
+    # the GridLMM code doesn't work with tibbles
+    as.data.frame()
+
+## Filter genotypes for those that have phenotypes
+in_list[["genotypes"]] = in_list[["genotypes"]] %>%
+    dplyr::filter(in_list[["sample_order"]] %in% in_list[["phenotypes"]]$SAMPLE)
+
+## Filter sample_order for those that have phenotypes
+in_list[["sample_order"]] = in_list[["phenotypes"]]$SAMPLE
+
+## Get number of samples
+N_SAMPLES = nrow(in_list[["phenotypes"]])
+```
+
+### Run GWLS
+
+#### Prepare data
+
+```{r}
+# Rename key data
+d = in_list[["genotypes"]]
+m = in_list[["positions"]]
+p = in_list[["phenotypes"]]
+
+# Creates a vector of the prefix "snp" combined with the row number of positions
+ids = paste("snp", 1:nrow(m), sep="")
+# Adds this vector as first column of the DF of positions: now comprising `ids`, `CHROM`, `BIN_START`, `BIN_END`
+mm = data.frame(ids, m)
+# Also add these ids as column names to the sample x locus DF of genotypes 
+colnames(d) = ids
+# Rename columns of positions DF
+colnames(mm) = c("snp", "Chr", "pos")
+# Then pull just the first three columns
+mm = mm[,1:3]
+# Rename it as `map`
+map = mm
+# Get number of samples (rows) from genotype DF
+n_geno=nrow(d)
+# Create matrix of 1200 elements from 1 to 1200, with 10 columns
+Plots = matrix(1:1200,nc = 10)
+# Create matrix of row numbers for each element of the `Plots` matrix (1:1200)
+Plot_Row = row(Plots)
+# Create matrix of col numbers for each element of the `Plots` matrix (1:10)
+Plot_Col = col(Plots)
+# Create a data frame with "Genox" for each sample in the first column
+# And randomly sample `n_geno` times from `Plots`
+data = data.frame(Geno = paste0('Geno',1: n_geno), Plot = sample(Plots)[1:nrow(d)])
+# Add a column `Row` with the row number of each randomly-sampled element
+data$Row = Plot_Row[data$Plot]
+# Add a column `Col` with the row number of each randomly-sampled element
+data$Col = Plot_Col[data$Plot]
+# Add phenotype
+if(invers_norm) {
+  ## Inverse-normalise
+  data$y = my.invnorm(p[,2])
+} else {
+  data$y = p[,2]
+}
+# Convert genotypes DF to matrix
+X = as.matrix(d)
+# Convert NAs to 0
+X[is.na(X)]=0
+# Add sample names to `X` as row names
+row.names(X) = data[,1]
+# Center genotypes by subtracting the mean for each marker (column) from the genotype value
+X_centered = sweep(X,2,colMeans(X),'-') # center marker genotypes
+# Use centered genotypes to create `K` kinship matrix
+K = tcrossprod(X_centered) / ncol(X_centered)
+# Make rownames and colnames of `K` the randomly sampled elements from `Plots`
+rownames(K) = colnames(K) = data$Plot
+# Calculate the spatial kernel
+field = data[,c('Row','Col')] # Pull out `Row` and `Col` columns
+dists = as.matrix(dist(field)) # Compute the distances 
+h = median(dists) # Calculate default tuning parameter `h`
+K_plot = KRLS::gausskernel(field,h^2/2); diag(K_plot)=1 # Compute the NxN distance matrix with pairwise with pairwise differences between rows as measured by a Gaussian Kernel
+rownames(K_plot) = colnames(K_plot) = data$Plot
+
+```
+
+
+#### Run regular GWAS 
+
+```{r, eval = F}
+gwas_original = GridLMM::GridLMM_GWAS(
+  formula = y~1 + (1|Geno) + (1|Plot), # the same error model is used for each marker. It is specified similarly to lmer
+  test_formula = ~1, # this is the model for each marker. ~1 means an intercept for the marker. ~1 + cov means an intercept plus a slope on `cov` for each marker
+  reduced_formula = ~0, # This is the null model for each test. ~0 means just the error model. ~1 means the null includes the intercept of the marker, but not anything additional
+  data = data, # The dataframe to look for terms from the 3 models
+  weights = NULL, # optional observation-specific weights
+  X = X, # The matrix of markers. Note: This can be of dimension n_g x p, where n_g is the number of unique genotypes.
+  X_ID = 'Geno', # The column of the data that identifies each genotype. Each level of data$Geno should match a rowname of X
+  h2_start = NULL, # An optional vector of h2s to use as starting values for each random effect in the model. If NULL, will be calculated from the error model using GridLMM_ML
+  h2_step = 0.01, # step size per random effect for testing alternate values of h2
+  max_steps = 100, # maximum number of steps of size h2_step to take from h2_start
+  X_map = map, # Optional. The marker positions.
+  relmat = list(Plot = K), # A list of Kernel matrices for the random effects. If X_ID (here Geno) is not included in this list, then it is calculated as tcrossprod(Xc)/ncol(Xc) where Xc is the centered (and optionally scaled) X. If any random effects are described in `error_model` but not provided here, the Kernel is assumed to be the identity matrix
+  centerX = TRUE, # Should the markers be centered when calculating the GRM (only will be done if needed for calculating the GRM),
+  scaleX = FALSE, # Should the markers be scaled to have constant variance when calculating the GRM?
+  fillNAX = FALSE, # Should missing marker data be filled in with the mean allele frequency?
+  method = 'REML', # REML = Wald test, ML = LRT, BF = calculate Bayes factors
+  mc.cores = my_detectCores(), # How many cores should be used for parallel processing. Unless X is large, tends to actually be faster with mc.cores = 1
+  verbose = FALSE # Should progress be printed to the screen?
+)
+
+saveRDS(gwas_original, paste("/hps/nobackup/birney/users/ian/somites/covariate_test/gwas_results/", COVARIATES, ".rds", sep = ""))
+```
+
+```{r}
+gwas_original = readRDS(paste("/hps/nobackup/birney/users/ian/somites/covariate_test/gwas_results/", COVARIATES, ".rds", sep = ""))
+```
+
+### Run permutations
+
+#### Permute phenos
+
+```{r}
+seeds = 1:10
+
+counter = 0
+perm_phenos = purrr::map(seeds, function(SEED){
+  counter <<- counter + 1
+  # set seed
+  set.seed(seeds[counter])
+  # randomise
+  phenos = phenos %>% 
+      # randomise phenotype
+      dplyr::mutate(dplyr::across(all_of(TARGET_PHENO),
+                                  ~ sample(.x)))
+})
+```
+
+#### Run GWLS
+
+```{r, eval = F}
+perm_out = purrr::map(perm_phenos, function(PERM_PHENO){
+  
+  ## Filter and order phenotypes
+  in_list[["phenotypes"]] = PERM_PHENO %>%
+      # filter phenotypes for those with genotypes
+      dplyr::filter(SAMPLE %in% in_list[["sample_order"]]) %>%
+      # join to `sample_order` to ensure phenotypes are in the correct order   
+      dplyr::left_join(tibble::tibble(SAMPLE = in_list[["sample_order"]]),
+                       .,
+                       by = "SAMPLE") %>%
+      # remove NAs (created by the samples that have genotypes but not phenotypes)
+      tidyr::drop_na() %>%
+      # the GridLMM code doesn't work with tibbles
+      as.data.frame()
+  
+  ## Filter genotypes for those that have phenotypes
+  in_list[["genotypes"]] = in_list[["genotypes"]] %>%
+      dplyr::filter(in_list[["sample_order"]] %in% in_list[["phenotypes"]]$SAMPLE)
+  
+  ## Filter sample_order for those that have phenotypes
+  in_list[["sample_order"]] = in_list[["phenotypes"]]$SAMPLE
+              
+  # Run GWAS
+  
+  out = run_gwas(d = in_list[["genotypes"]],
+                 m = in_list[["positions"]],
+                 p = in_list[["phenotypes"]]
+                )
+  
+  return(out)
+})
+
+names(perm_out) = seeds
+
+saveRDS(perm_out, paste("/hps/nobackup/birney/users/ian/somites/covariate_test/perms/", COVARIATES, ".rds", sep = ""))
+```
+
+```{r}
+perm_out = readRDS(paste("/hps/nobackup/birney/users/ian/somites/covariate_test/perms/", COVARIATES, ".rds", sep = ""))
+```
+
+### Get minimum
+
+```{r}
+perm_df = purrr::map_dfr(perm_out, function(PERM){
+  OUT = tibble::tibble(MIN_P = PERM$results$p_value_REML %>%
+                         min(., na.rm = T)
+  )
+}, .id = "SEED")
+
+# Get minimum
+SIG_LEVEL = min(perm_df$MIN_P)
+```
+
+### Generate Manhattan plot
+
+```{r}
+out_clean = clean_gwas_res(gwas_original,
+                           bin_length = BIN_LENGTH,
+                           chr_lens = med_chr_lens)
+
+# Plot
+out_plot = plot_man(out_clean,
+                    site_filter = "all_sites",
+                    phenotype = TARGET_PHENO,
+                    bin_length = BIN_LENGTH, 
+                    gwas_pal = eval(as.name(paste(TARGET_PHENO, "_pal", sep = ""))),
+                    med_chr_lens = med_chr_lens,
+                    sig_level = SIG_LEVEL) +
+                 ylim(0,7) + 
+                 labs(subtitle = paste("No covariates\nn samples: ", N_SAMPLES, sep = ""))
+
+out_plot
+
+```
+
+```{r}
+ggsave(file.path(PLOT_DIR, paste(COVARIATES, ".png", sep = "")),
+       out_plot,
+       device = "png",
+       width = 9.6,
+       height = 6,
+       units = "in",
+       dpi = 400)
+```
+
+
+## With Microscope as a covariate
+
+```{r}
+COVARIATES = "Microscope"
+```
+
+
+### GWAS
+
+```{r, eval = F}
+gwas_microscope = run_gwas_with_covariates(d = in_list[["genotypes"]],
+                                           m = in_list[["positions"]],
+                                           p = in_list[["phenotypes"]],
+                                           covariates = COVARIATES)
+
+saveRDS(gwas_microscope, paste("/hps/nobackup/birney/users/ian/somites/covariate_test/gwas_results/",
+                               paste(COVARIATES, collapse = "-"),
+                               ".rds",
+                               sep = ""))
+```
+
+```{r}
+gwas_microscope = readRDS(paste("/hps/nobackup/birney/users/ian/somites/covariate_test/gwas_results/",
+                                paste(COVARIATES, collapse = "-"),
+                                ".rds",
+                                sep = ""))
+```
+
+
+### Permutations
+
+```{r, eval = F}
+perm_out_microscope = purrr::map(perm_phenos, function(PERM_PHENO){
+  
+  ## Filter and order phenotypes
+  in_list[["phenotypes"]] = PERM_PHENO %>%
+      # filter phenotypes for those with genotypes
+      dplyr::filter(SAMPLE %in% in_list[["sample_order"]]) %>%
+      # join to `sample_order` to ensure phenotypes are in the correct order   
+      dplyr::left_join(tibble::tibble(SAMPLE = in_list[["sample_order"]]),
+                       .,
+                       by = "SAMPLE") %>%
+      # remove NAs (created by the samples that have genotypes but not phenotypes)
+      tidyr::drop_na() %>%
+      # the GridLMM code doesn't work with tibbles
+      as.data.frame()
+  
+  ## Filter genotypes for those that have phenotypes
+  in_list[["genotypes"]] = in_list[["genotypes"]] %>%
+      dplyr::filter(in_list[["sample_order"]] %in% in_list[["phenotypes"]]$SAMPLE)
+  
+  ## Filter sample_order for those that have phenotypes
+  in_list[["sample_order"]] = in_list[["phenotypes"]]$SAMPLE
+              
+  # Run GWAS
+  
+  out = run_gwas_with_covariates(d = in_list[["genotypes"]],
+                                 m = in_list[["positions"]],
+                                 p = in_list[["phenotypes"]],
+                                 covariates = COVARIATES)
+  
+  return(out)
+})
+
+names(perm_out_microscope) = seeds
+
+saveRDS(perm_out_microscope, paste("/hps/nobackup/birney/users/ian/somites/covariate_test/perms/", paste(COVARIATES, collapse = "-"), ".rds", sep = ""))
+```
+
+```{r}
+perm_out_microscope = readRDS(paste("/hps/nobackup/birney/users/ian/somites/covariate_test/perms/",
+                              paste(COVARIATES, collapse = "-"),
+                              ".rds",
+                              sep = ""))
+```
+
+### Get minimum
+
+```{r}
+perm_df = purrr::map_dfr(perm_out_microscope, function(PERM){
+  OUT = tibble::tibble(MIN_P = PERM$results$p_value_REML.1 %>%
+                         min(., na.rm = T)
+  )
+}, .id = "SEED")
+
+# Get minimum
+SIG_LEVEL = min(perm_df$MIN_P)
+```
+
+### Generate Manhattan plot
+
+```{r}
+out_clean = clean_gwas_res(gwas_microscope,
+                           bin_length = BIN_LENGTH,
+                           chr_lens = med_chr_lens) %>% 
+  # There are now 2 p_value_REML columns: p_value_REML.1 and p_value_REML.2
+  dplyr::rename(p_value_REML = p_value_REML.1)
+
+# Plot
+out_plot = plot_man(out_clean,
+                    site_filter = "all_sites",
+                    phenotype = TARGET_PHENO,
+                    bin_length = BIN_LENGTH, 
+                    gwas_pal = eval(as.name(paste(TARGET_PHENO, "_pal", sep = ""))),
+                    med_chr_lens = med_chr_lens,
+                    sig_level = SIG_LEVEL) +
+                 ylim(0,7) + 
+                 labs(subtitle = paste("Covariates: ",
+                                       paste(COVARIATES, collapse = " & "),
+                                       "\nn samples: ",
+                                       N_SAMPLES,
+                                       sep = ""))
+
+out_plot
+
+```
+
+## With Microscope and Date_of_imaging as covariates
+
+```{r}
+COVARIATES = c("Microscope", "Date_of_imaging")
+```
+
+
+### GWAS
+
+```{r}
+gwas_mic-tod = run_gwas_with_covariates(d = in_list[["genotypes"]],
+                                        m = in_list[["positions"]],
+                                        p = in_list[["phenotypes"]],
+                                        covariates = COVARIATES)
+
+saveRDS(gwas_mic-tod, paste("/hps/nobackup/birney/users/ian/somites/covariate_test/gwas_results/",
+                               paste(COVARIATES, collapse = "-"),
+                               ".rds",
+                               sep = ""))
+```
+
+```{r}
+gwas_mic-tod = readRDS(paste("/hps/nobackup/birney/users/ian/somites/covariate_test/gwas_results/",
+                                paste(COVARIATES, collapse = "-"),
+                                ".rds",
+                                sep = ""))
+```
+
+
+### Permutations
+
+```{r}
+perm_out_mic-tod = purrr::map(perm_phenos, function(PERM_PHENO){
+  
+  ## Filter and order phenotypes
+  in_list[["phenotypes"]] = PERM_PHENO %>%
+      # filter phenotypes for those with genotypes
+      dplyr::filter(SAMPLE %in% in_list[["sample_order"]]) %>%
+      # join to `sample_order` to ensure phenotypes are in the correct order   
+      dplyr::left_join(tibble::tibble(SAMPLE = in_list[["sample_order"]]),
+                       .,
+                       by = "SAMPLE") %>%
+      # remove NAs (created by the samples that have genotypes but not phenotypes)
+      tidyr::drop_na() %>%
+      # the GridLMM code doesn't work with tibbles
+      as.data.frame()
+  
+  ## Filter genotypes for those that have phenotypes
+  in_list[["genotypes"]] = in_list[["genotypes"]] %>%
+      dplyr::filter(in_list[["sample_order"]] %in% in_list[["phenotypes"]]$SAMPLE)
+  
+  ## Filter sample_order for those that have phenotypes
+  in_list[["sample_order"]] = in_list[["phenotypes"]]$SAMPLE
+              
+  # Run GWAS
+  
+  out = run_gwas_with_covariates(d = in_list[["genotypes"]],
+                                 m = in_list[["positions"]],
+                                 p = in_list[["phenotypes"]],
+                                 covariates = COVARIATES)
+  
+  return(out)
+})
+
+names(perm_out_mic-tod) = seeds
+
+saveRDS(perm_out_mic-tod, paste("/hps/nobackup/birney/users/ian/somites/covariate_test/perms/", paste(COVARIATES, collapse = "-"), ".rds", sep = ""))
+```
+
+```{r}
+perm_out_microscope = readRDS(paste("/hps/nobackup/birney/users/ian/somites/covariate_test/perms/",
+                              paste(COVARIATES, collapse = "-"),
+                              ".rds",
+                              sep = ""))
+```
+
+### Get minimum
+
+```{r}
+perm_df = purrr::map_dfr(perm_out_microscope, function(PERM){
+  OUT = tibble::tibble(MIN_P = PERM$results$p_value_REML.1 %>%
+                         min(., na.rm = T)
+  )
+}, .id = "SEED")
+
+# Get minimum
+SIG_LEVEL = min(perm_df$MIN_P)
+```
+
+### Generate Manhattan plot
+
+```{r}
+out_clean = clean_gwas_res(gwas_mic-tod,
+                           bin_length = BIN_LENGTH,
+                           chr_lens = med_chr_lens) %>% 
+  # There are now 2 p_value_REML columns: p_value_REML.1 and p_value_REML.2
+  dplyr::rename(p_value_REML = p_value_REML.1)
+
+# Plot
+out_plot = plot_man(out_clean,
+                    site_filter = "all_sites",
+                    phenotype = TARGET_PHENO,
+                    bin_length = BIN_LENGTH, 
+                    gwas_pal = eval(as.name(paste(TARGET_PHENO, "_pal", sep = ""))),
+                    med_chr_lens = med_chr_lens,
+                    sig_level = SIG_LEVEL) +
+                 ylim(0,7) + 
+                 labs(subtitle = paste("Covariates: ",
+                                       paste(COVARIATES, collapse = " & "),
+                                       "\nn samples: ",
+                                       N_SAMPLES,
+                                       sep = ""))
+
+out_plot
+
+```

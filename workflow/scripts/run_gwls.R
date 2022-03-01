@@ -15,10 +15,12 @@ library(KRLS)
 ## Debug
 GENO_FILE = "/nfs/research/birney/users/ian/somites/association_testing/20220214/no_repeat_reads_or_pers_hets/inputs/10000.rds"
 PHENO_FILE = "data/20220214_phenotypes.xlsx" # True phenotypes
-PHENO_FILE = "/nfs/research/birney/users/ian/somites/permuted_phenos/20220214/unsegmented_psm_area/1.xlsx" # permuted phenotypes
+#PHENO_FILE = "/nfs/research/birney/users/ian/somites/permuted_phenos/20220214/unsegmented_psm_area/1.xlsx" # permuted phenotypes
 SOURCE_FILE = "workflow/scripts/run_gwls_source.R"
 BIN_LENGTH = 5000
 TARGET_PHENO = "unsegmented_psm_area"
+COVARIATES = c("None")
+INVERSE_NORM = TRUE
 
 ## True
 GENO_FILE = snakemake@input[["gt_pos_list"]]
@@ -27,6 +29,9 @@ SOURCE_FILE = snakemake@input[["source_file"]]
 BIN_LENGTH = snakemake@params[["bin_length"]] %>%
     as.numeric()
 TARGET_PHENO = snakemake@params[["target_phenotype"]]
+COVARIATES = snakemake@params[["covariates"]]
+INVERSE_NORM = snakemake@params["inverse_norm"] %>% 
+    as.logical()
 OUT_FILE = snakemake@output[[1]]
 
 # Get GWAS functions
@@ -39,12 +44,22 @@ in_list = readRDS(GENO_FILE)
 
 # Read in phenotypes
 
+## Get covariates
+if (COVARIATES == "None"){
+    COVARIATES = NULL
+    # if there are multiple covariates (separated by "-")
+} else if (stringr::str_detect(COVARIATES, "-")){
+    COVARIATES = COVARIATES %>% 
+        stringr::str_split("-") %>% 
+        unlist()
+}
+
 ## Read in file and wrangle
 phenos = readxl::read_xlsx(PHENO_FILE) %>%
     # adjust sample names
     dplyr::mutate(SAMPLE = fish %>% stringr::str_remove("KC")) %>%
     # select key columns
-    dplyr::select(SAMPLE, all_of(TARGET_PHENO)) %>%
+    dplyr::select(SAMPLE, all_of(TARGET_PHENO), all_of(COVARIATES)) %>%
     # ensure that the phenotype column is numeric
     dplyr::mutate(dplyr::across(all_of(TARGET_PHENO),
                                 ~ as.numeric(.x)))
@@ -73,7 +88,8 @@ in_list[["sample_order"]] = in_list[["phenotypes"]]$SAMPLE
 
 out = run_gwas(d = in_list[["genotypes"]],
                m = in_list[["positions"]],
-               p = in_list[["phenotypes"]]
+               p = in_list[["phenotypes"]],
+               covariates = COVARIATES
               )
 
 # Write results to file

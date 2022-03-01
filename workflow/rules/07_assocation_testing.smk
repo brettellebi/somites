@@ -28,6 +28,8 @@ rule simulate_phenotypes:
         os.path.join(config["working_dir"], "logs/simulate_phenotypes/{date_of_assoc_test}/{site_filter}/{bin_length}.log"),
     params:
         n_sample_gts = config["n_sample_gts"]
+    resources:
+        mem_mb = 2000
     container:
         config["PhenotypeSimulator"]
     script:
@@ -52,20 +54,25 @@ rule test_gwls:
     script:
         "../scripts/run_gwls.R"   
 
+def get_mem_mb(wildcards, attempt):
+    return attempt * 20000
+
 rule run_gwls:
     input:
         gt_pos_list = rules.create_gwas_input.output,
         phenotypes_file = config["phenotypes_file"],
         source_file = "workflow/scripts/run_gwls_source.R"
     output:
-        os.path.join(config["data_store_dir"], "association_testing/{date_of_assoc_test}/{site_filter}/true_results/{target_phenotype}/{bin_length}.rds"),
+        os.path.join(config["working_dir"], "association_testing/{date_of_assoc_test}/{site_filter}/true_results/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.rds"),
     log:
-        os.path.join(config["working_dir"], "logs/run_gwls/{date_of_assoc_test}/{site_filter}/{target_phenotype}/{bin_length}.log")
+        os.path.join(config["working_dir"], "logs/run_gwls/{date_of_assoc_test}/{site_filter}/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.log")
     params:
         bin_length = "{bin_length}",
-        target_phenotype = "{target_phenotype}"
+        target_phenotype = "{target_phenotype}",
+        covariates = "{covariates}",
+        inverse_norm = "{inverse_norm}"
     resources:
-        mem_mb = 20000
+        mem_mb = get_mem_mb
     container:
         config["R"]
     script:
@@ -80,7 +87,10 @@ rule create_permuted_phenotypes:
         os.path.join(config["working_dir"], "logs/create_permuted_phenotypes/{date_of_assoc_test}/{target_phenotype}/{permutation_seed}.log")
     params:
         target_phenotype = "{target_phenotype}",
-        permutation_seed = "{permutation_seed}"
+        permutation_seed = "{permutation_seed}",
+        covariates = "{covariates}"
+    resources:
+        mem_mb = 5000
     container:
         config["R"]
     script:
@@ -98,7 +108,8 @@ rule run_permutations:
     params:
         bin_length = "{bin_length}",
         target_phenotype = "{target_phenotype}",
-        permutation_seed = "{permutation_seed}"
+        permutation_seed = "{permutation_seed}",
+        covariates = "{covariates}"
     resources:
         mem_mb = 10000
     container:
@@ -114,14 +125,16 @@ rule get_permutations_min_p:
                 ),
             date_of_assoc_test = config["date_of_assoc_test"],
             site_filter = config["site_filter"],
-            bin_length = config["bin_length"]
+            target_phenotype = config["target_phenotypes"],
+            bin_length = config["bin_length"],
+            permutation_seed = PERM_SEEDS,
         ),
     output:
         csv = "data/{date_of_assoc_test}_permutation_mins.csv",
     log:
         os.path.join(
             config["working_dir"],
-            "logs/run_permutations/{date_of_assoc_test}/{site_filter}/{target_phenotype}/{bin_length}/{permutation_seed}.log"
+            "logs/get_permutations_min_p/{date_of_assoc_test}/get_permutations_min_p.log"
         ),
     resources: 
         mem_mb = 10000
@@ -130,3 +143,28 @@ rule get_permutations_min_p:
     script:
         "../get_permutations_min_p.R"
 
+rule get_manhattan:
+    input:
+        gwas_results = rules.run_gwls.output,
+        sig_levels = rules.get_permutations_min_p.output.csv,
+        source_file = "workflow/scripts/get_manhattan_source.R"
+    output:
+        fig = "book/plots/manhattans/{date_of_assoc_test}/{site_filter}/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.png"
+    log:
+        os.path.join(
+            config["working_dir"],
+            "logs/get_manhattan/{date_of_assoc_test}/{site_filter}/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.log"
+        ),
+    params:
+        site_filter = "{site_filter}",
+        target_phenotype = "{target_phenotype}",
+        covariates = "{covariates}",
+        inverse_norm = "{inverse_norm}",
+        bin_length = "{bin_length}",
+    container:
+        config["R"]
+    resources:
+        mem_mb = 5000
+    script:
+        "../workflow/scripts/get_manhattan.R"
+                

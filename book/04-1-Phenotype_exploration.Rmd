@@ -21,14 +21,27 @@ dir.create(PLOT_DIR, recursive = T, showWarnings = F)
 
 ```{r}
 pheno_file = here::here("data/20220214_phenotypes.xlsx")
+F01_pheno_file = here::here("data/F0_F1_period.xlsx")
 
+# Read in F2 data
 df = readxl::read_xlsx(pheno_file) %>% 
   # remove "KC" from sample name
   dplyr::mutate(sample = fish %>% 
-                  stringr::str_remove("KC"))
+                  stringr::str_remove("KC")) %>% 
+  # add `GEN` column
+  dplyr::mutate(GEN = "F2")
 
-# How many samples?
+# How many F2 samples?
 length(unique(df$sample))
+
+# Read in F0 and F1 data
+df_f01 = readxl::read_xlsx(F01_pheno_file) %>% 
+  dplyr::mutate(sample = fish) %>% 
+  dplyr::mutate(GEN = dplyr::case_when(str_detect(fish, "^C") ~ "F0",
+                                       str_detect(fish, "^K") ~ "F1"))
+
+# Bind two data frames
+df_all = dplyr::bind_rows(df_f01, df)
 ```
 
 ## Period 
@@ -55,7 +68,7 @@ micr_mean
 diff_mean = abs(micr_mean$mean_pheno[1] - micr_mean$mean_pheno[2])
 ```
 
-#### Historgram
+#### Histogram
 
 ```{r}
 mean_pal = c("#177e89", "#084c61")
@@ -88,6 +101,7 @@ ggsave(file.path(OUT_DIR, paste("histogram", ".png", sep = "")),
   
 ```
 
+
 #### Q-Q plot
 
 ```{r}
@@ -116,6 +130,39 @@ ggsave(file.path(OUT_DIR, paste("qqplot", ".png", sep = "")),
  dpi = 400)
   
 ```
+
+#### Boxplot
+
+Kruskal-Wallis test
+
+```{r}
+mean_kw = kruskal.test(list(df_all %>% 
+                             dplyr::filter(Microscope == "AU") %>% 
+                             dplyr::pull(mean),
+                           df_all %>% 
+                             dplyr::filter(Microscope == "DB") %>% 
+                             dplyr::pull(mean)))
+
+mean_kw$p.value
+```
+
+
+```{r}
+df_all %>% 
+  # remove NAs
+  dplyr::filter(!is.na(Microscope)) %>% 
+  ggplot(aes(GEN, mean, fill = Microscope)) +
+    geom_violin() + 
+    geom_boxplot(width = 0.3) +
+    ggbeeswarm::geom_beeswarm(aes(GEN, mean, colour = Microscope), size = 0.4, alpha = 0.5) +
+    facet_grid(cols = vars(Microscope)) + 
+    scale_colour_manual(values = lighter(c("#177e89", "#084c61"), amount = 50)) +
+    scale_fill_manual(values = darker(c("#177e89", "#084c61"), amount = 50)) +
+    theme_bw() +
+    xlab("generation") +
+    ggtitle(paste("Kruskal-Wallis p-value comparing AB and DB (F2 only):", mean_kw$p.value))
+```
+
 
 ## Intercept
 
@@ -192,6 +239,37 @@ ggsave(file.path(OUT_DIR, paste("qqplot", ".png", sep = "")),
  dpi = 400)
 ```
 
+#### Boxplot
+
+Kruskal-Wallis test
+
+```{r}
+intercept_kw = kruskal.test(list(df_all %>% 
+                             dplyr::filter(Microscope == "AU") %>% 
+                             dplyr::pull(intercept),
+                           df_all %>% 
+                             dplyr::filter(Microscope == "DB") %>% 
+                             dplyr::pull(intercept)))
+
+intercept_kw$p.value
+```
+
+
+```{r}
+df_all %>% 
+  # remove NAs
+  dplyr::filter(!is.na(Microscope)) %>% 
+  ggplot(aes(GEN, mean, fill = Microscope)) +
+    geom_violin() + 
+    geom_boxplot(width = 0.3) +
+    ggbeeswarm::geom_beeswarm(aes(GEN, mean, colour = Microscope), size = 0.4, alpha = 0.5) +
+    facet_grid(cols = vars(Microscope)) + 
+    scale_colour_manual(values = lighter(c("#8D99AE", "#2b2d42"), amount = 50)) +
+    scale_fill_manual(values = darker(c("#8D99AE", "#2b2d42"), amount = 50)) +
+    theme_bw() +
+    xlab("generation") +
+    ggtitle(paste("Kruskal-Wallis p-value comparing AB and DB (F2 only):", intercept_kw$p.value))
+```
 
 ## Presomitic mesoderm size
 

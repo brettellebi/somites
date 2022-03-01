@@ -1,5 +1,5 @@
 __default__:
-  memory: 5000
+  memory: "{resources.mem_mb}"
   n: 1
   name: "{rule}.{wildcards}"
   queue: "standard"
@@ -9,70 +9,24 @@ create_F1_samples_file:
   queue: datamover
 create_F2_samples_file:
   queue: datamover
-# 01_ref.smk
-bwa_mem2_index:
-  memory: "{resources.mem_mb}"
 # 02_F0_mapping.smk
 map_reads_F0:
-  memory: "{resources.mem_mb}"
   n: "{threads}"
-replace_rg_F0:
-  memory: "{resources.mem_mb}"
-sort_sam_F0:
-  memory: "{resources.mem_mb}"
-mark_duplicates_F0:
-  memory: "{resources.mem_mb}"
-# 03_F0_calling.smk
-haplotype_caller:
-  memory: "{resources.mem_mb}"
-combine_calls_F0_and_F2:
-  memory: "{resources.mem_mb}"
+# 03_1_F1_mapping.smk
+copy_F1_seq_data:
+  queue: datamover
+bwa_mem2_mem_F1:
+  n: "{threads}"
 # 04_F2_mapping.smk
 copy_f2_seq_data:
-  queue: "datamover"
+  queue: datamover
 bwa_mem2_mem:
-  memory: "{resources.mem_mb}"
   n: "{threads}"
-sort_sam_f2:
-  memory: "{resources.mem_mb}"
 # 05_F2_recomb_blocks.smk
-bam_readcount_F2_all:
-  memory: "{resources.mem_mb}"
-bam_readcount_F2_excl_repeat_sites:
-  memory: "{resources.mem_mb}"
-bam_readcount_F2_excl_repeat_reads:
-  memory: "{resources.mem_mb}"
-bam_readcount_F2_excl_repeat_reads_and_black_list:
-  memory: "{resources.mem_mb}"
-make_dp_AB_F2:
-  memory: "{resources.mem_mb}"
-run_rc_block_F2:
-  memory: "{resources.mem_mb}"
 consolidate_dbABs_Ewan:
-  memory: "{resources.mem_mb}"
   queue: bigmem
 filter_sites_for_read_count_and_cab_prop:
-  memory: "{resources.mem_mb}"
   queue: bigmem
-plot_recombination_blocks:
-  memory: "{resources.mem_mb}"
-# 06_F0_recomb_blocks.smk
-make_dp_AB_F0:
-  memory: "{resources.mem_mb}"  
-run_rc_block_F0:
-  memory: "{resources.mem_mb}"
 # 07_association_testing.smk
 create_gwas_input:
-  memory: "{resources.mem_mb}"
-  queue: "bigmem"
-test_gwls:
-  memory: "{resources.mem_mb}"
-run_gwls:
-  memory: "{resources.mem_mb}"
-run_permutations:
-  memory: "{resources.mem_mb}"
-# 08_F2_calling.smk
-haplotype_caller_F2:
-  memory: "{resources.mem_mb}"
-combine_calls_F2:
-  memory: "{resources.mem_mb}"
+  queue: bigmem

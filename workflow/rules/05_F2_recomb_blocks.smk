@@ -8,6 +8,8 @@ rule get_homozygous_sites:
         os.path.join(config["working_dir"], "logs/get_homozygous_sites/{F0_sample}.log")
     params:
         sample = "{F0_sample}"
+    resources:
+        mem_mb = 5000
     container:
         config["bcftools"]
     shell:
@@ -36,6 +38,8 @@ rule get_divergent_sites:
         os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/homo_divergent/all.txt")
     log:
         os.path.join(config["working_dir"], "logs/get_divergent_sites/all.log")
+    resources:
+        mem_mb = 5000
     container:
         config["pandas"]
     script:
@@ -50,6 +54,8 @@ rule exclude_repeat_sites_F2:
         os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/homo_divergent/no_repeats.txt")
     log:
         os.path.join(config["working_dir"], "logs/exclude_repeat_sites_F2/all.log")
+    resources:
+        mem_mb = 5000
     container:
         config["R"]
     script:
@@ -64,6 +70,8 @@ rule filter_black_list:
         os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/homo_divergent/no_repeats_no_persistent_hets.txt"),
     log:
         os.path.join(config["working_dir"], "logs/filter_black_list/all.log")
+    resources:
+        mem_mb = 5000
     container:
         config["R"]
     script:
@@ -77,6 +85,8 @@ rule create_repeats_bed:
         os.path.join(config["data_store_dir"], "repeats/hdrr_repeats.bed")
     log:
         os.path.join(config["working_dir"], "logs/create_repeats_bed/all.log")
+    resources:
+        mem_mb = 5000
     container:
         config["R"]
     script:
@@ -92,6 +102,8 @@ rule filter_repeats_from_bams_F2:
         throw = os.path.join(config["working_dir"], "bams/F2/bwamem2/no_repeat_throw/{F2_sample}.bam"),
     log:
         os.path.join(config["working_dir"], "logs/filter_repeats_from_bams_F2/{F2_sample}.log"),
+    resources:
+        mem_mb = 5000
     container:
         config["samtools"]
     shell:
@@ -112,6 +124,8 @@ rule samtools_index_f2_filtered_bams:
         os.path.join(config["working_dir"], "bams/F2/bwamem2/no_repeat_keep/{F2_sample}.bam.bai")
     log:
         os.path.join(config["working_dir"], "logs/samtools_index_f2_filtered_bams/{F2_sample}.log") 
+    resources:
+        mem_mb = 5000
     container:
         config["samtools"]
     shell:

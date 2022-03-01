@@ -14,6 +14,7 @@ bsub -M 20000 -Is bash
 #bsub -q datamover -M 20000 -Is bash # when needing to copy raw data from FTP
 cd /hps/software/users/birney/ian/repos/somites
 conda activate snakemake_6.12.1
+# 
 snakemake \
   --jobs 5000 \
   --latency-wait 100 \
@@ -23,6 +24,20 @@ snakemake \
   --rerun-incomplete \
   --use-conda \
   --use-singularity \
+  -s workflow/Snakefile \
+  -p
+
+# To restart jobs with more memory (e.g. for rule run_gwls)
+snakemake \
+  --jobs 5000 \
+  --latency-wait 100 \
+  --cluster-config config/cluster.yaml \
+  --cluster 'bsub -g /snakemake_bgenie -J {cluster.name} -q {cluster.queue} -n {cluster.n} -M {cluster.memory} -o {cluster.outfile}' \
+  --keep-going \
+  --rerun-incomplete \
+  --use-conda \
+  --use-singularity \
+  --restart-times 2 \
   -s workflow/Snakefile \
   -p
 

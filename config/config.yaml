@@ -94,6 +94,14 @@ bin_length_F0:
     - 100000
 n_sample_gts:
     - 10
+covariates:
+    - None
+    - Microscope
+    - Date_of_imaging
+    - Microscope-Date_of_imaging
+inverse_norm:
+    - "TRUE"
+    - "FALSE"
 n_permutations:
     - 10
 ####################

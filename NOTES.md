@@ -1,5 +1,24 @@
 # Notes
 
+## 26 February 2022
+
+Ali provided F0 and F1 phenotypes: `data/F0_F1_period.xlsx`
+
+Testing GWAS with covariates. 
+
+```r
+# This doesn't work
+Plots = matrix(1:n_geno,nc = 10)
+# But this does?
+Plots = matrix(1:1200,nc = 10)
+```
+
+Error message:
+```r
+Error in `levels<-`(`*tmp*`, value = as.character(levels)) : 
+  factor level [445] is duplicated
+```
+
 ## 23 February
 
 * Run association test with just AU microscope: `book/Association_testing_with_AU.Rmd`

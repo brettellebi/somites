@@ -76,30 +76,30 @@ rule all:
 #        os.path.join(config["data_store_dir"], "vcfs/F0/final/all.vcf.gz"),
 ## merge_variants_F0_and_F2
 #        os.path.join(config["data_store_dir"], "vcfs/F0_and_F2/final/all.vcf.gz"),
-###############
-# 03_1_F1_mapping.smk
-###############
-# copy_f2_seq_data
-        expand(os.path.join(config["working_dir"], "fastqs/F1/{F1_sample}_{pair}.txt.gz"),
-                F1_sample = F1_samples['SAMPLE'],
-                pair = config["pairs"]
-        ),
-# bwa_mem2_mem
-        expand(os.path.join(config["working_dir"], "sams/F1/bwamem2/mapped/{F1_sample}.sam"),
-                F1_sample = F1_samples['SAMPLE']
-        ),
-# sort_sam_f2
-        expand(os.path.join(config["working_dir"], "bams/F1/bwamem2/sorted/{F1_sample}.bam"),
-                F1_sample = F1_samples['SAMPLE']
-        ),
-# mark_duplicates_f2
-        expand(os.path.join(config["working_dir"], "bams/F1/bwamem2/marked/{F1_sample}.bam"),
-                F1_sample = F1_samples['SAMPLE']
-        ),
-# samtools_index_f2
-        expand(os.path.join(config["working_dir"], "bams/F1/bwamem2/marked/{F1_sample}.bam.bai"),
-                F1_sample = F1_samples['SAMPLE']
-        ),
+################
+## 03_1_F1_mapping.smk
+################
+## copy_f2_seq_data
+#        expand(os.path.join(config["working_dir"], "fastqs/F1/{F1_sample}_{pair}.txt.gz"),
+#                F1_sample = F1_samples['SAMPLE'],
+#                pair = config["pairs"]
+#        ),
+## bwa_mem2_mem
+#        expand(os.path.join(config["working_dir"], "sams/F1/bwamem2/mapped/{F1_sample}.sam"),
+#                F1_sample = F1_samples['SAMPLE']
+#        ),
+## sort_sam_f2
+#        expand(os.path.join(config["working_dir"], "bams/F1/bwamem2/sorted/{F1_sample}.bam"),
+#                F1_sample = F1_samples['SAMPLE']
+#        ),
+## mark_duplicates_f2
+#        expand(os.path.join(config["working_dir"], "bams/F1/bwamem2/marked/{F1_sample}.bam"),
+#                F1_sample = F1_samples['SAMPLE']
+#        ),
+## samtools_index_f2
+#        expand(os.path.join(config["working_dir"], "bams/F1/bwamem2/marked/{F1_sample}.bam.bai"),
+#                F1_sample = F1_samples['SAMPLE']
+#        ),
 ###############
 # 04_F2_mapping.smk
 ###############
@@ -176,14 +176,18 @@ rule all:
 #                target_phenotype = config["target_phenotypes"],
 #                bin_length = config["bin_length"]
 #        ),
-## run_gwls
-#        expand(os.path.join(config["data_store_dir"], "association_testing/{date_of_assoc_test}/{site_filter}/true_results/{target_phenotype}/{bin_length}.rds"),
-#                date_of_assoc_test = config["date_of_assoc_test"],
-#                site_filter = config["site_filter"],
-#                target_phenotype = config["target_phenotypes"],
-#                bin_length = config["bin_length"]
-#        ),
-## run permutations
+# run_gwls
+        expand(os.path.join(
+                config["working_dir"],
+                "association_testing/{date_of_assoc_test}/{site_filter}/true_results/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.rds"),
+                        date_of_assoc_test = config["date_of_assoc_test"][0],
+                        site_filter = config["site_filter"][0],
+                        target_phenotype = config["target_phenotypes"][0],
+                        covariates = config["covariates"][0],
+                        inverse_norm = config["inverse_norm"][0],
+                        bin_length = config["bin_length"][0]
+        ),
+## run_permutations
 #        expand(os.path.join(config["data_store_dir"], "association_testing/{date_of_assoc_test}/{site_filter}/permutations/{target_phenotype}/{bin_length}/{permutation_seed}.rds"),
 #                date_of_assoc_test = config["date_of_assoc_test"],
 #                site_filter = config["site_filter"],
@@ -191,48 +195,13 @@ rule all:
 #                bin_length = config["bin_length"],
 #                permutation_seed = PERM_SEEDS      
 #        ),
-
+## get_permutations_min_p
+#        "data/{date_of_assoc_test}_permutation_mins.csv"
 ################
 ## 08_F2_calling.smk
 ###############
 ## merge_variants_F2
 #        os.path.join(config["data_store_dir"], "vcfs/F2/final/all.vcf.gz"),
-################
-## 09_TIGER.smk
-###############
-## run_basecaller
-#        expand(os.path.join(config["working_dir"], "TIGER/01_base_called/{F2_sample}.txt"),
-#                F2_sample = F2_samples['SAMPLE']
-#        ),
-## estimate_allele_freqs
-#        expand(os.path.join(config["working_dir"], "TIGER/02_af_estimated/{F2_sample}.txt"),
-#                F2_sample = F2_samples['SAMPLE']
-#        ),
-## apply_beta_mixture_model
-#        expand(os.path.join(config["working_dir"], "TIGER/03_beta_modelled/{F2_sample}.txt"),
-#                F2_sample = F2_samples['SAMPLE']
-#        ),
-## calculate_HMM_probs
-#        expand(os.path.join(config["working_dir"], "TIGER/05_hmm_probs/{F2_sample}_hmm_model"),
-#                F2_sample = F2_samples['SAMPLE']
-#        ),
-## run_HMM
-#        expand(os.path.join(config["working_dir"], "TIGER/06_hmm_out/{F2_sample}.txt"),
-#                F2_sample = F2_samples['SAMPLE']
-#        ),
-## estimate_breakpoints
-#        expand(os.path.join(config["working_dir"], "TIGER/07_est_breakpoints/{F2_sample}.txt"),
-#                F2_sample = F2_samples['SAMPLE']
-#        ),
-## refine_breakpoints
-#        expand(os.path.join(config["working_dir"], "TIGER/07_est_breakpoints/{F2_sample}.recomb.txt"),
-#                F2_sample = F2_samples['SAMPLE']
-#        ),
-## smooth_breaks
-#        expand(os.path.join(config["working_dir"], "TIGER/08_final/{F2_sample}.txt"),
-#                F2_sample = F2_samples['SAMPLE']
-#        ),
-
 
 ##### Modules #####
 

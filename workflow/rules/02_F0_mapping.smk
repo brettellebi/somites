@@ -136,7 +136,8 @@ rule merge_bams_F0:
         extra = lambda wildcards: "VALIDATION_STRINGENCY=LENIENT TMP_DIR=" + config["tmp_dir"],
         in_files = lambda wildcards, input: " I=".join(input)
     resources:
-        java_mem_mb=1024
+        java_mem_mb=1024,
+        mem_mb = 5000
     container:
         config["picard"]
     shell:

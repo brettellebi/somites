@@ -207,7 +207,7 @@ out_plot
 ```
 
 ```{r}
-ggsave(file.path(PLOT_DIR, paste(MICROSCOPE, "_manhattan.png")),
+ggsave(file.path(PLOT_DIR, paste(MICROSCOPE, "_manhattan.png", sep = "")),
        out_plot,
        device = "png",
        width = 9.6,

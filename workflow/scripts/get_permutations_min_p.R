@@ -32,13 +32,13 @@ perm_df = purrr::map_dfr(IN_FILES, function(IN_FILE){
 perm_df_clean = perm_df %>% 
   # extract variables from file names
   tidyr::separate(col = FILENAME, sep = "/",
-                  into = c(rep(NA, 9), "SITE_FILTER", NA, "TARGET_PHENO", "BIN_LENGTH", "PERMUTATION")) %>% 
+                  into = c(rep(NA, 8), "SITE_FILTER", NA, "TARGET_PHENO", "COVARIATES", "INVERSE_NORM", "BIN_LENGTH", "PERMUTATION")) %>% 
   # remove .rds extension from PERMUTATION
   dplyr::mutate(PERMUTATION = stringr::str_remove(PERMUTATION, ".rds"))
 
 # Get minimum
 perm_df_mins = perm_df_clean %>% 
-  dplyr::group_by(SITE_FILTER, TARGET_PHENO, BIN_LENGTH) %>% 
+  dplyr::group_by(SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, BIN_LENGTH) %>% 
   dplyr::summarise(MIN_P = min(MIN_P))
 
 # Write to file

@@ -8,6 +8,8 @@ rule filter_repeats_from_bams_F0:
         throw = os.path.join(config["working_dir"], "bams/F0/no_repeat_throw/{F0_sample}.bam"),
     log:
         os.path.join(config["working_dir"], "logs/filter_repeats_from_bams_F0/{F0_sample}.log"),
+    resources:
+        mem_mb = 5000
     container:
         config["samtools"]
     shell:
@@ -28,6 +30,8 @@ rule samtools_index_F0_filtered_bams:
         os.path.join(config["working_dir"], "bams/F0/no_repeat_keep/{F0_sample}.bam.bai")
     log:
         os.path.join(config["working_dir"], "logs/samtools_index_F0_filtered_bams/{F0_sample}.log") 
+    resources:
+        mem_mb = 5000
     container:
         config["samtools"]
     shell:
@@ -50,6 +54,8 @@ rule bam_readcount_F0_all_sites:
         os.path.join(config["working_dir"], "dp4s/F0/all_sites/{F0_sample}.dp4.txt"),
     log:
         os.path.join(config["working_dir"], "logs/bam_readcount_F0_all_sites/{F0_sample}.log")
+    resources:
+        mem_mb = 5000
     container:
         config["bam-readcount"]
     shell:
@@ -102,6 +108,8 @@ rule bam_readcount_F0_excl_repeat_reads:
         os.path.join(config["working_dir"], "dp4s/F0/no_repeat_reads/{F0_sample}.dp4.txt"),
     log:
         os.path.join(config["working_dir"], "logs/bam_readcount_F0_excl_repeat_reads/{F0_sample}.log")
+    resources:
+        mem_mb = 5000
     container:
         config["bam-readcount"]
     shell:

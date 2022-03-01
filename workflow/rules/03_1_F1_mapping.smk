@@ -10,6 +10,8 @@ rule copy_F1_seq_data:
         os.path.join(
             config["working_dir"],
             "logs/copy_F1_seq_data/{F1_sample}.log")
+    resources:
+        mem_mb = 1000
     shell:
         """
         cp {input[0]} {output[0]} ;
@@ -24,7 +26,10 @@ rule bwa_mem2_mem_F1:
         ),
         idx=rules.bwa_mem2_index.output,
     output:
-        os.path.join(config["working_dir"], "sams/F1/bwamem2/mapped/{F1_sample}.sam"),
+        os.path.join(
+            config["working_dir"],
+            "sams/F1/bwamem2/mapped/{F1_sample}.sam"
+        ),
     log:
         os.path.join(config["working_dir"], "logs/bwa_mem2_mem/{F1_sample}.log")
     params:
@@ -33,7 +38,7 @@ rule bwa_mem2_mem_F1:
     container:
         config["bwa-mem2"]
     resources:
-        mem_mb = 15000
+        mem_mb = 10000
     threads:
         8
     shell:

@@ -42,7 +42,8 @@ rule combine_calls:
     params:
         in_files = lambda wildcards, input: " -V ".join(input.gvcfs)
     resources:
-        java_mem_gb=1
+        java_mem_gb=1,
+        mem_mb = 5000
     container:
         config["gatk"]
     shell:
@@ -64,7 +65,8 @@ rule genotype_variants:
     log:
         os.path.join(config["working_dir"], "logs/genotype_variants/{contig}.log")
     resources:
-        java_mem_gb=1
+        java_mem_gb=1,
+        mem_mb = 5000
     container:
         config["gatk"]
     shell:
@@ -89,6 +91,8 @@ rule merge_variants:
         os.path.join(config["working_dir"], "logs/merge_variants/all.log")
     params:
         in_files = lambda wildcards, input: " ".join("INPUT={}".format(f) for f in input.vcfs)
+    resources:
+        mem_mb = 5000
     container:
         config["picard"]
     shell:
@@ -150,7 +154,8 @@ rule genotype_variants_F0_and_F2:
     log:
         os.path.join(config["working_dir"], "logs/genotype_variants_F0_and_F2/{contig}.log")
     resources:
-        java_mem_gb=1   
+        java_mem_gb=1,
+        mem_mb = 5000
     container:
         config["gatk"]
     shell:
@@ -176,7 +181,8 @@ rule merge_variants_F0_and_F2:
     params:
         in_files = lambda wildcards, input: " ".join("INPUT={}".format(f) for f in input.vcfs)
     container:
-        config["picard"]
+        config["picard"],
+        mem_mb = 5000
     shell:
         """
         picard MergeVcfs \

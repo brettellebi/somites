@@ -6,6 +6,8 @@ rule copy_f2_seq_data:
             F2_sample = F2_samples['SAMPLE'],
             pair = config["pairs"]
         ),
+    resources:
+        mem_mb = 1000
     log:
         os.path.join(config["working_dir"], "logs/copy_f2_seq_data/{F2_sample}.log")
     shell:
@@ -102,6 +104,8 @@ rule samtools_index_f2:
         os.path.join(config["working_dir"], "bams/F2/bwamem2/marked/{F2_sample}.bam.bai")
     log:
         os.path.join(config["working_dir"], "logs/samtools_index_f2/{F2_sample}.log") 
+    resources:
+        mem_mb = 5000
     container:
         config["samtools"]
     shell:
