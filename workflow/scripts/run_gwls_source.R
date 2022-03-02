@@ -39,11 +39,16 @@ run_gwas <- function(d,m,p,invers_norm=F, covariates = NULL) {
   # Add phenotype
   if(invers_norm) {
     ## Inverse-normalise
-    data = cbind(data, my.invnorm(p[,c(2, which(colnames(p) %in% covariates))])) # pull sample name and covariates
-    colnames(data)[5] = "y" # rename phenotype as `y`
+    data = cbind(data,
+                 my.invnorm(p %>% 
+                              dplyr::select(y = dplyr::all_of(TARGET_PHENO))), # inverse-normalise phenotype
+                 p %>% 
+                   dplyr::select(dplyr::all_of(covariates))) # pull covariates
   } else {
-    data = cbind(data, p[,c(2, which(colnames(p) %in% covariates))]) # pull sample name and covariates
-    colnames(data)[5] = "y" # rename phenotype as `y`
+    data = cbind(data,
+                 p %>% 
+                   dplyr::select(y = dplyr::all_of(TARGET_PHENO), # pull phenotype
+                                 dplyr::all_of(covariates))) # and covariates
   }
   # Convert genotypes DF to matrix
   X = as.matrix(d)
@@ -72,7 +77,7 @@ run_gwas <- function(d,m,p,invers_norm=F, covariates = NULL) {
   TEST_FORMULA = as.formula(TEST_FORMULA)
   # Run gwas
   gwas = GridLMM::GridLMM_GWAS(
-    formula = y~1 + (1|Geno) + (1|Plot), # the same error model is used for each marker. It is specified similarly to lmer
+    formula = y~1 + (1|Geno), # the same error model is used for each marker. It is specified similarly to lmer
     test_formula = TEST_FORMULA, # this is the model for each marker. ~1 means an intercept for the marker. ~1 + cov means an intercept plus a slope on `cov` for each marker
     reduced_formula = ~0, # This is the null model for each test. ~0 means just the error model. ~1 means the null includes the intercept of the marker, but not anything additional
     data = data, # The dataframe to look for terms from the 3 models

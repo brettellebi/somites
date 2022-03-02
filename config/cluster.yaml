@@ -30,3 +30,5 @@ filter_sites_for_read_count_and_cab_prop:
 # 07_association_testing.smk
 create_gwas_input:
   queue: bigmem
+run_gwls:
+  queue: short

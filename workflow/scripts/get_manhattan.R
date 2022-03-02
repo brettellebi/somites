@@ -21,17 +21,18 @@ COVARIATES = "None"
 INVERSE_NORM = "FALSE"
 
 ## True
+### Input
 GWAS_RESULTS = snakemake@input[["gwas_results"]]
 SIG_LEVELS = snakemake@input[["sig_levels"]]
-
 SOURCE_FILE = snakemake@input[["source_file"]]
+### Parameters
 SITE_FILTER = snakemake@params[["site_filter"]]
 TARGET_PHENO = snakemake@params[["target_phenotype"]]
 COVARIATES = snakemake@params[["covariates"]]
 INVERSE_NORM = snakemake@params["inverse_norm"]
 BIN_LENGTH = snakemake@params[["bin_length"]] %>%
   as.numeric()
-
+### Output
 OUT_FILE = snakemake@output[["fig"]]
 
 # Read in source file

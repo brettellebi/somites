@@ -75,9 +75,9 @@ low_cov_samples:
     - 511
 site_filter:
     - all_sites
-    - no_repeat_sites
-    - no_repeat_reads
-    - no_repeat_reads_or_pers_hets
+    #- no_repeat_sites
+    #- no_repeat_reads
+    #- no_repeat_reads_or_pers_hets
     - no_repeat_reads_or_pers_hets_filtered_for_read_count_and_cab_prop
 date_of_assoc_test:
     #- 20211104
@@ -86,8 +86,8 @@ date_of_assoc_test:
     - 20220214
 bin_length:
     - 5000
-    - 10000
-    - 15000
+    #- 10000
+    #- 15000
     - 20000
 bin_length_F0:
     - 5000
@@ -97,7 +97,7 @@ n_sample_gts:
 covariates:
     - None
     - Microscope
-    - Date_of_imaging
+    #- Date_of_imaging
     - Microscope-Date_of_imaging
 inverse_norm:
     - "TRUE"

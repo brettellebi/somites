@@ -55,7 +55,7 @@ rule test_gwls:
         "../scripts/run_gwls.R"   
 
 def get_mem_mb(wildcards, attempt):
-    return attempt * 20000
+    return attempt * 50000
 
 rule run_gwls:
     input:
@@ -67,10 +67,10 @@ rule run_gwls:
     log:
         os.path.join(config["working_dir"], "logs/run_gwls/{date_of_assoc_test}/{site_filter}/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.log")
     params:
-        bin_length = "{bin_length}",
         target_phenotype = "{target_phenotype}",
         covariates = "{covariates}",
-        inverse_norm = "{inverse_norm}"
+        inverse_norm = "{inverse_norm}",
+        bin_length = "{bin_length}"
     resources:
         mem_mb = get_mem_mb
     container:
@@ -82,13 +82,12 @@ rule create_permuted_phenotypes:
     input:
         config["phenotypes_file"]
     output:
-        os.path.join(config["data_store_dir"], "permuted_phenos/{date_of_assoc_test}/{target_phenotype}/{permutation_seed}.xlsx")
+        os.path.join(config["working_dir"], "permuted_phenos/{date_of_assoc_test}/{target_phenotype}/{permutation_seed}.xlsx")
     log:
         os.path.join(config["working_dir"], "logs/create_permuted_phenotypes/{date_of_assoc_test}/{target_phenotype}/{permutation_seed}.log")
     params:
         target_phenotype = "{target_phenotype}",
-        permutation_seed = "{permutation_seed}",
-        covariates = "{covariates}"
+        permutation_seed = "{permutation_seed}"
     resources:
         mem_mb = 5000
     container:
@@ -102,14 +101,14 @@ rule run_permutations:
         phenotypes_file = rules.create_permuted_phenotypes.output,
         source_file = "workflow/scripts/run_gwls_source.R"
     output:
-        os.path.join(config["data_store_dir"], "association_testing/{date_of_assoc_test}/{site_filter}/permutations/{target_phenotype}/{bin_length}/{permutation_seed}.rds"),
+        os.path.join(config["working_dir"], "association_testing/{date_of_assoc_test}/{site_filter}/permutations/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}/{permutation_seed}.rds"),
     log:
-        os.path.join(config["working_dir"], "logs/run_permutations/{date_of_assoc_test}/{site_filter}/{target_phenotype}/{bin_length}/{permutation_seed}.log")
+        os.path.join(config["working_dir"], "logs/run_permutations/{date_of_assoc_test}/{site_filter}/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}/{permutation_seed}.log")
     params:
-        bin_length = "{bin_length}",
         target_phenotype = "{target_phenotype}",
-        permutation_seed = "{permutation_seed}",
-        covariates = "{covariates}"
+        covariates = "{covariates}",
+        inverse_norm = "{inverse_norm}",
+        bin_length = "{bin_length}"
     resources:
         mem_mb = 10000
     container:
@@ -120,7 +119,7 @@ rule run_permutations:
 rule get_permutations_min_p:
     input:
         expand(os.path.join(
-                config["data_store_dir"],
+                config["working_dir"],
                 "association_testing/{date_of_assoc_test}/{site_filter}/permutations/{target_phenotype}/{bin_length}/{permutation_seed}.rds"
                 ),
             date_of_assoc_test = config["date_of_assoc_test"],
