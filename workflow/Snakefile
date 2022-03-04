@@ -79,27 +79,27 @@ rule all:
 ################
 ## 03_1_F1_mapping.smk
 ################
-# copy_f2_seq_data
-        expand(os.path.join(config["working_dir"], "fastqs/F1/{F1_sample}_{pair}.txt.gz"),
-                F1_sample = F1_samples['SAMPLE'],
-                pair = config["pairs"]
-        ),
-# bwa_mem2_mem
-        expand(os.path.join(config["working_dir"], "sams/F1/bwamem2/mapped/{F1_sample}.sam"),
-                F1_sample = F1_samples['SAMPLE']
-        ),
-# sort_sam_f2
-        expand(os.path.join(config["working_dir"], "bams/F1/bwamem2/sorted/{F1_sample}.bam"),
-                F1_sample = F1_samples['SAMPLE']
-        ),
-# mark_duplicates_f2
-        expand(os.path.join(config["working_dir"], "bams/F1/bwamem2/marked/{F1_sample}.bam"),
-                F1_sample = F1_samples['SAMPLE']
-        ),
-# samtools_index_f2
-        expand(os.path.join(config["working_dir"], "bams/F1/bwamem2/marked/{F1_sample}.bam.bai"),
-                F1_sample = F1_samples['SAMPLE']
-        ),
+## copy_f2_seq_data
+#        expand(os.path.join(config["working_dir"], "fastqs/F1/{F1_sample}_{pair}.txt.gz"),
+#                F1_sample = F1_samples['SAMPLE'],
+#                pair = config["pairs"]
+#        ),
+## bwa_mem2_mem
+#        expand(os.path.join(config["working_dir"], "sams/F1/bwamem2/mapped/{F1_sample}.sam"),
+#                F1_sample = F1_samples['SAMPLE']
+#        ),
+## sort_sam_f2
+#        expand(os.path.join(config["working_dir"], "bams/F1/bwamem2/sorted/{F1_sample}.bam"),
+#                F1_sample = F1_samples['SAMPLE']
+#        ),
+## mark_duplicates_f2
+#        expand(os.path.join(config["working_dir"], "bams/F1/bwamem2/marked/{F1_sample}.bam"),
+#                F1_sample = F1_samples['SAMPLE']
+#        ),
+## samtools_index_f2
+#        expand(os.path.join(config["working_dir"], "bams/F1/bwamem2/marked/{F1_sample}.bam.bai"),
+#                F1_sample = F1_samples['SAMPLE']
+#        ),
 ###############
 # 04_F2_mapping.smk
 ###############
@@ -176,17 +176,17 @@ rule all:
 #                target_phenotype = config["target_phenotypes"],
 #                bin_length = config["bin_length"]
 #        ),
-# run_gwls
-        expand(os.path.join(
-                config["working_dir"],
-                "association_testing/{date_of_assoc_test}/{site_filter}/true_results/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.rds"),
-                        date_of_assoc_test = config["date_of_assoc_test"],
-                        site_filter = config["site_filter"],
-                        target_phenotype = config["target_phenotypes"],
-                        covariates = config["covariates"],
-                        inverse_norm = config["inverse_norm"],
-                        bin_length = config["bin_length"]
-        ),
+## run_gwls
+#        expand(os.path.join(
+#                config["working_dir"],
+#                "association_testing/{date_of_assoc_test}/{site_filter}/true_results/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.rds"),
+#                        date_of_assoc_test = config["date_of_assoc_test"],
+#                        site_filter = config["site_filter"],
+#                        target_phenotype = config["target_phenotypes"],
+#                        covariates = config["covariates"],
+#                        inverse_norm = config["inverse_norm"],
+#                        bin_length = config["bin_length"]
+#        ),
 # run_permutations
         expand(os.path.join(
                 config["working_dir"], 
@@ -197,7 +197,7 @@ rule all:
                         covariates = config["covariates"],
                         inverse_norm = config["inverse_norm"],                        
                         bin_length = config["bin_length"],
-                        permutation_seed = PERM_SEEDS      
+                        permutation_seed = PERM_SEEDS   
         ),
 ## get_permutations_min_p
 #        "data/{date_of_assoc_test}_permutation_mins.csv"

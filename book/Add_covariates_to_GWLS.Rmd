@@ -18,7 +18,7 @@ covariates = NULL
 ```{r}
 GENO_FILE = "/nfs/research/birney/users/ian/somites/association_testing/20220214/all_sites/inputs/5000.rds"
 PHENO_FILE = here::here("data/20220214_phenotypes.xlsx") # True phenotypes
-#GWLS_SOURCE_FILE = here::here("workflow/scripts/run_gwls_source.R")
+GWLS_SOURCE_FILE = here::here("workflow/scripts/run_gwls_source.R")
 MANHAT_SOURCE_FILE = here::here("book/source/04-Association_testing_with_covariates.R")
 BIN_LENGTH = 5000
 TARGET_PHENO = "unsegmented_psm_area"
@@ -213,7 +213,7 @@ perm_phenos = purrr::map(seeds, function(SEED){
 #### Run GWLS
 
 ```{r, eval = F}
-perm_out = purrr::map(perm_phenos, function(PERM_PHENO){
+perm_out = purrr::map(perm_phenos[1], function(PERM_PHENO){
   
   ## Filter and order phenotypes
   in_list[["phenotypes"]] = PERM_PHENO %>%
@@ -355,10 +355,10 @@ perm_out_microscope = purrr::map(perm_phenos, function(PERM_PHENO){
               
   # Run GWAS
   
-  out = run_gwas_with_covariates(d = in_list[["genotypes"]],
-                                 m = in_list[["positions"]],
-                                 p = in_list[["phenotypes"]],
-                                 covariates = COVARIATES)
+  out = run_gwas(d = in_list[["genotypes"]],
+                 m = in_list[["positions"]],
+                 p = in_list[["phenotypes"]],
+                 covariates = COVARIATES)
   
   return(out)
 })

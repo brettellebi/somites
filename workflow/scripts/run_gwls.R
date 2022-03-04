@@ -94,5 +94,8 @@ out = run_gwas(d = in_list[["genotypes"]],
 
 # Write results to file
 
+## Make sure the directory exists
+dir.create(dirname(OUT_FILE), recursive = T, showWarnings = F)
+## Write
 out = saveRDS(out, OUT_FILE)
 

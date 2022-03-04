@@ -55,7 +55,22 @@ rule test_gwls:
         "../scripts/run_gwls.R"   
 
 def get_mem_mb(wildcards, attempt):
-    return attempt * 50000
+    if wildcards.covariates == "None":
+        multiplier = 5000
+    elif wildcards.covariates == "Microscope":
+        multiplier = 5000
+    elif wildcards.covariates == "Microscope-Date_of_imaging":
+        multiplier = 150000
+    return attempt * multiplier
+
+def get_queue(wildcards, attempt):
+    if wildcards.covariates == "None":
+        queue = "short"
+    elif wildcards.covariates == "Microscope":
+        queue = "short"
+    elif wildcards.covariates == "Microscope-Date_of_imaging":
+        queue = "bigmem"
+    return queue
 
 rule run_gwls:
     input:
@@ -72,7 +87,8 @@ rule run_gwls:
         inverse_norm = "{inverse_norm}",
         bin_length = "{bin_length}"
     resources:
-        mem_mb = get_mem_mb
+        mem_mb = get_mem_mb,
+        queue = get_queue
     container:
         config["R"]
     script:
@@ -89,7 +105,7 @@ rule create_permuted_phenotypes:
         target_phenotype = "{target_phenotype}",
         permutation_seed = "{permutation_seed}"
     resources:
-        mem_mb = 5000
+        mem_mb = 200
     container:
         config["R"]
     script:
@@ -110,7 +126,8 @@ rule run_permutations:
         inverse_norm = "{inverse_norm}",
         bin_length = "{bin_length}"
     resources:
-        mem_mb = 10000
+        mem_mb = get_mem_mb,
+        queue = get_queue
     container:
         config["R"]
     script:
@@ -118,15 +135,14 @@ rule run_permutations:
 
 rule get_permutations_min_p:
     input:
-        expand(os.path.join(
-                config["working_dir"],
-                "association_testing/{date_of_assoc_test}/{site_filter}/permutations/{target_phenotype}/{bin_length}/{permutation_seed}.rds"
-                ),
-            date_of_assoc_test = config["date_of_assoc_test"],
-            site_filter = config["site_filter"],
-            target_phenotype = config["target_phenotypes"],
-            bin_length = config["bin_length"],
-            permutation_seed = PERM_SEEDS,
+        expand(rules.run_permutations.output,
+                    date_of_assoc_test = config["date_of_assoc_test"],
+                    site_filter = config["site_filter"],
+                    target_phenotype = config["target_phenotypes"],
+                    covariates = config["covariates"],
+                    inverse_norm = config["inverse_norm"],                        
+                    bin_length = config["bin_length"],
+                    permutation_seed = PERM_SEEDS   
         ),
     output:
         csv = "data/{date_of_assoc_test}_permutation_mins.csv",

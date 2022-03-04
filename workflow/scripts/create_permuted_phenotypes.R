@@ -28,8 +28,6 @@ set.seed(PERM_SEED)
 
 ## Read in file and wrangle
 phenos = readxl::read_xlsx(IN_FILE) %>%
-    # select key columns
-    dplyr::select(fish, all_of(TARGET_PHENO)) %>%
     # ensure that the phenotype column is numeric
     dplyr::mutate(dplyr::across(all_of(TARGET_PHENO),
                                 ~ as.numeric(.x))) %>%

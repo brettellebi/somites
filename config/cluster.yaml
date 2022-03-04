@@ -31,4 +31,7 @@ filter_sites_for_read_count_and_cab_prop:
 create_gwas_input:
   queue: bigmem
 run_gwls:
-  queue: short
+  queue: "{resources.queue}"
+run_permutations:
+  queue: "{resources.queue}"
+
