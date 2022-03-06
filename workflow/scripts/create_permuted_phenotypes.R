@@ -14,7 +14,7 @@ library(tidyverse)
 IN_FILE = "/hps/software/users/birney/ian/repos/somites/data/20220214_phenotypes.xlsx"
 TARGET_PHENO = "unsegmented_psm_area"
 PERM_SEED = 1
-OUT_FILE = "/nfs/research/birney/users/ian/somites/permuted_phenos/unsegmented_psm_area/1.xlsx"
+OUT_FILE = "/hps/nobackup/birney/users/ian/somites/permuted_phenos/20220214/unsegmented_psm_area/1.xlsx"
 
 ## True
 IN_FILE = snakemake@input[[1]]

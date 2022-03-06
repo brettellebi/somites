@@ -10,7 +10,7 @@
 
 ssh codon
 module load singularity-3.7.0-gcc-9.3.0-dp5ffrp
-bsub -M 20000 -Is bash
+bsub -M 20000 -q short -Is bash
 #bsub -q datamover -M 20000 -Is bash # when needing to copy raw data from FTP
 cd /hps/software/users/birney/ian/repos/somites
 conda activate snakemake_6.12.1
@@ -37,7 +37,7 @@ snakemake \
   --rerun-incomplete \
   --use-conda \
   --use-singularity \
-  --restart-times 2 \
+  --restart-times 4 \
   -s workflow/Snakefile \
   -p
 
@@ -47,6 +47,9 @@ snakemake \
 ####################
 
 # Build general R container
+module load singularity-3.7.0-gcc-9.3.0-dp5ffrp
+bsub -M 20000 -q short -Is bash
+cd /hps/software/users/birney/ian/repos/somites
 CONT=/hps/nobackup/birney/users/ian/containers/somites/R_4.1.0.sif
 module load singularity-3.7.0-gcc-9.3.0-dp5ffrp
 singularity build --remote \

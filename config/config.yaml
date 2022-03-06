@@ -1,4 +1,22 @@
 ####################
+# Locations
+####################
+ref_prefix:
+    /hps/nobackup/birney/users/ian/somites/refs/hdrr
+F1_sequence_dirs:
+    - /nfs/ftp/private/indigene_ftp/upload/Ali/F1_Kaga-Cab_DeepSeq
+F2_sequence_dirs:
+    - /nfs/ftp/private/indigene_ftp/upload/Ali/Kaga-Cab_F2_First200WGS
+    - /nfs/ftp/private/indigene_ftp/upload/Ali/Kaga-Cab_F2_Fish201-400_WGS
+    - /nfs/ftp/private/indigene_ftp/upload/Ali/Kaga-Cab_F2_Fish401-595_WGS
+    - /nfs/ftp/private/indigene_ftp/upload/Ali/Kaga-Cab_F2_Fish596-648_WGS
+tmp_dir:
+    /hps/nobackup/birney/users/ian/somites/tmp
+working_dir:
+    /hps/nobackup/birney/users/ian/somites
+data_store_dir:
+    /nfs/research/birney/users/ian/somites
+####################
 # Config files
 ####################
 F0_samples:
@@ -104,24 +122,6 @@ inverse_norm:
     - "FALSE"
 n_permutations:
     - 10
-####################
-# Locations
-####################
-ref_prefix:
-    /hps/nobackup/birney/users/ian/somites/refs/hdrr
-F1_sequence_dirs:
-    - /nfs/ftp/private/indigene_ftp/upload/Ali/F1_Kaga-Cab_DeepSeq
-F2_sequence_dirs:
-    - /nfs/ftp/private/indigene_ftp/upload/Ali/Kaga-Cab_F2_First200WGS
-    - /nfs/ftp/private/indigene_ftp/upload/Ali/Kaga-Cab_F2_Fish201-400_WGS
-    - /nfs/ftp/private/indigene_ftp/upload/Ali/Kaga-Cab_F2_Fish401-595_WGS
-    - /nfs/ftp/private/indigene_ftp/upload/Ali/Kaga-Cab_F2_Fish596-648_WGS
-tmp_dir:
-    /hps/nobackup/birney/users/ian/somites/tmp
-working_dir:
-    /hps/nobackup/birney/users/ian/somites
-data_store_dir:
-    /nfs/research/birney/users/ian/somites
 ####################
 # Containers
 ####################

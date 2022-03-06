@@ -11,19 +11,20 @@ library(tidyverse)
 # Get variables
 
 ## Debug
-GWAS_RESULTS = "/hps/nobackup/birney/users/ian/somites/association_testing/20220214/all_sites/true_results/unsegmented_psm_area/None/FALSE/5000.rds"
-SIG_LEVELS = "data/20220214_permutation_mins.csv" # True phenotypes
+GWAS_RESULTS = "/hps/nobackup/birney/users/ian/somites/association_testing/20220214/all_sites/true_results/intercept/Microscope/TRUE/20000.rds"
+PERM_RESULTS = list("/hps/nobackup/birney/users/ian/somites/association_testing/20220214/all_sites/permutations/intercept/Microscope/TRUE/20000/2.rds",
+                    "/hps/nobackup/birney/users/ian/somites/association_testing/20220214/all_sites/permutations/intercept/Microscope/TRUE/20000/8.rds")
 SOURCE_FILE = "workflow/scripts/get_manhattan_source.R"
 SITE_FILTER = "all_sites"
-BIN_LENGTH = 5000
-TARGET_PHENO = "unsegmented_psm_area"
-COVARIATES = "None"
-INVERSE_NORM = "FALSE"
+BIN_LENGTH = 20000
+TARGET_PHENO = "intercept"
+COVARIATES = "Microscope"
+INVERSE_NORM = "TRUE"
 
 ## True
 ### Input
 GWAS_RESULTS = snakemake@input[["gwas_results"]]
-SIG_LEVELS = snakemake@input[["sig_levels"]]
+PERM_RESULTS = snakemake@input[["perm_results"]]
 SOURCE_FILE = snakemake@input[["source_file"]]
 ### Parameters
 SITE_FILTER = snakemake@params[["site_filter"]]
@@ -43,16 +44,41 @@ source(SOURCE_FILE)
 
 RESULTS = readRDS(GWAS_RESULTS)
 
-# Read in permutation minimums
+# Get relevant p-value column (if no covariates are specified, it's `p_value_REML`)
+# Otherwise it's `p_value_REML.1`
 
-SIG_LEVEL = readr::read_csv(SIG_LEVELS,
-                            col_types = c("ccccid")) %>% 
-  dplyr::filter(SITE_FILTER = SITE_FILTER,
-                TARGET_PHENO = TARGET_PHENO,
-                COVARIATES = COVARIATES,
-                INVERSE_NORM = INVERSE_NORM,
-                BIN_LENGTH = BIN_LENGTH) %>% 
-  dplyr::pull(MIN_P)
+if ("p_value_REML" %in% colnames(RESULTS$results)){
+  P_COL = "p_value_REML"
+} else {
+  P_COL = "p_value_REML.1"
+}
+
+# Rename column in results
+
+if (P_COL == "p_value_REML.1"){
+  RESULTS$results = RESULTS$results %>% 
+    dplyr::rename(p_value_REML = p_value_REML.1)
+}
+
+# Read in permutation results and get `SIG_LEVEL`
+
+PERM_LIST = purrr::map(PERM_RESULTS, function(PERM){
+  readRDS(PERM)
+})
+names(PERM_LIST) = PERM_RESULTS %>% 
+  unlist() %>% 
+  basename() %>% 
+  stringr::str_remove(".rds")
+
+perm_df = purrr::map_dfr(PERM_LIST, function(PERM){
+  OUT = tibble::tibble(MIN_P = PERM$results %>% 
+                         dplyr::select(dplyr::all_of(P_COL)) %>%
+                         min(., na.rm = T)
+  )
+}, .id = "SEED")
+
+# Get minimum
+SIG_LEVEL = min(perm_df$MIN_P)
 
 # Choose palette
 
@@ -72,14 +98,14 @@ out_plot = plot_man(out_clean,
                     gwas_pal = pal,
                     med_chr_lens = med_chr_lens,
                     sig_level = SIG_LEVEL) +
-  ylim(0,7) + 
   labs(subtitle = paste("Covariates: ", COVARIATES,
-                        "\nInverse normalised: ", INVERSE_NORM,
-                        "\nn samples: ", N_SAMPLES,
+                        "\nInverse-normalised: ", INVERSE_NORM,
                         sep = ""))
 
 # Save
-
+## Make sure the directory exists
+dir.create(dirname(OUT_FILE), recursive = T, showWarnings = F)
+## Write
 ggsave(OUT_FILE,
        out_plot,
        device = "png",

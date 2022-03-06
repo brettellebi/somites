@@ -54,13 +54,15 @@ rule test_gwls:
     script:
         "../scripts/run_gwls.R"   
 
+# Create functions to assign different memory and queue requirements for different
+# types of GWAS (no covariates require little memory; two covariates require a lot)
 def get_mem_mb(wildcards, attempt):
     if wildcards.covariates == "None":
-        multiplier = 5000
+        multiplier = 2000
     elif wildcards.covariates == "Microscope":
-        multiplier = 5000
+        multiplier = 3000
     elif wildcards.covariates == "Microscope-Date_of_imaging":
-        multiplier = 150000
+        multiplier = 50000
     return attempt * multiplier
 
 def get_queue(wildcards, attempt):
@@ -69,7 +71,7 @@ def get_queue(wildcards, attempt):
     elif wildcards.covariates == "Microscope":
         queue = "short"
     elif wildcards.covariates == "Microscope-Date_of_imaging":
-        queue = "bigmem"
+        queue = "short"
     return queue
 
 rule run_gwls:
@@ -133,35 +135,14 @@ rule run_permutations:
     script:
         "../scripts/run_gwls.R"
 
-rule get_permutations_min_p:
-    input:
-        expand(rules.run_permutations.output,
-                    date_of_assoc_test = config["date_of_assoc_test"],
-                    site_filter = config["site_filter"],
-                    target_phenotype = config["target_phenotypes"],
-                    covariates = config["covariates"],
-                    inverse_norm = config["inverse_norm"],                        
-                    bin_length = config["bin_length"],
-                    permutation_seed = PERM_SEEDS   
-        ),
-    output:
-        csv = "data/{date_of_assoc_test}_permutation_mins.csv",
-    log:
-        os.path.join(
-            config["working_dir"],
-            "logs/get_permutations_min_p/{date_of_assoc_test}/get_permutations_min_p.log"
-        ),
-    resources: 
-        mem_mb = 10000
-    container:
-        config["R"]
-    script:
-        "../get_permutations_min_p.R"
-
 rule get_manhattan:
     input:
         gwas_results = rules.run_gwls.output,
-        sig_levels = rules.get_permutations_min_p.output.csv,
+        perm_results = expand(os.path.join(
+            config["working_dir"],
+            "association_testing/{{date_of_assoc_test}}/{{site_filter}}/permutations/{{target_phenotype}}/{{covariates}}/{{inverse_norm}}/{{bin_length}}/{permutation_seed}.rds"),
+                permutation_seed = PERM_SEEDS
+        ),
         source_file = "workflow/scripts/get_manhattan_source.R"
     output:
         fig = "book/plots/manhattans/{date_of_assoc_test}/{site_filter}/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.png"
@@ -181,5 +162,5 @@ rule get_manhattan:
     resources:
         mem_mb = 5000
     script:
-        "../workflow/scripts/get_manhattan.R"
+        "../scripts/get_manhattan.R"
                 

@@ -40,7 +40,7 @@ run_gwas <- function(d,m,p,invers_norm=F, covariates = NULL) {
   if(invers_norm) {
     ## Inverse-normalise
     data = cbind(data,
-                 my.invnorm(p %>% 
+                 y = my.invnorm(p %>% 
                               dplyr::select(y = dplyr::all_of(TARGET_PHENO))), # inverse-normalise phenotype
                  p %>% 
                    dplyr::select(dplyr::all_of(covariates))) # pull covariates

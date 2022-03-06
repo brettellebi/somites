@@ -187,20 +187,28 @@ rule all:
 #                        inverse_norm = config["inverse_norm"],
 #                        bin_length = config["bin_length"]
 #        ),
-# run_permutations
-        expand(os.path.join(
-                config["working_dir"], 
-                "association_testing/{date_of_assoc_test}/{site_filter}/permutations/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}/{permutation_seed}.rds"),
+## run_permutations
+#        expand(os.path.join(
+#                config["working_dir"], 
+#                "association_testing/{date_of_assoc_test}/{site_filter}/permutations/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}/{permutation_seed}.rds"),
+#                        date_of_assoc_test = config["date_of_assoc_test"],
+#                        site_filter = config["site_filter"],
+#                        target_phenotype = config["target_phenotypes"],
+#                        covariates = config["covariates"],
+#                        inverse_norm = config["inverse_norm"],                        
+#                        bin_length = config["bin_length"],
+#                        permutation_seed = PERM_SEEDS   
+#        ),
+# get_manhattan
+        expand("book/plots/manhattans/{date_of_assoc_test}/{site_filter}/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.png",
                         date_of_assoc_test = config["date_of_assoc_test"],
                         site_filter = config["site_filter"],
                         target_phenotype = config["target_phenotypes"],
                         covariates = config["covariates"],
                         inverse_norm = config["inverse_norm"],                        
                         bin_length = config["bin_length"],
-                        permutation_seed = PERM_SEEDS   
+                        permutation_seed = PERM_SEEDS
         ),
-## get_permutations_min_p
-#        "data/{date_of_assoc_test}_permutation_mins.csv"
 ################
 ## 08_F2_calling.smk
 ###############

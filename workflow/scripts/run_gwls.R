@@ -4,23 +4,23 @@ log <- file(snakemake@log[[1]], open="wt")
 sink(log)
 sink(log, type = "message")
 
-# Load libraries
+# Load libraries
 
 library(tidyverse)
 library(GridLMM)
 library(KRLS)
 
-# Get variables
+# Get variables
 
 ## Debug
-GENO_FILE = "/nfs/research/birney/users/ian/somites/association_testing/20220214/no_repeat_reads_or_pers_hets/inputs/10000.rds"
+GENO_FILE = "/nfs/research/birney/users/ian/somites/association_testing/20220214/all_sites/inputs/5000.rds"
 PHENO_FILE = "data/20220214_phenotypes.xlsx" # True phenotypes
 #PHENO_FILE = "/nfs/research/birney/users/ian/somites/permuted_phenos/20220214/unsegmented_psm_area/1.xlsx" # permuted phenotypes
 SOURCE_FILE = "workflow/scripts/run_gwls_source.R"
 BIN_LENGTH = 5000
 TARGET_PHENO = "unsegmented_psm_area"
-COVARIATES = c("None")
-INVERSE_NORM = TRUE
+COVARIATES = "Microscope-Date_of_imaging"
+INVERSE_NORM = FALSE
 
 ## True
 GENO_FILE = snakemake@input[["gt_pos_list"]]
@@ -34,11 +34,11 @@ INVERSE_NORM = snakemake@params["inverse_norm"] %>%
     as.logical()
 OUT_FILE = snakemake@output[[1]]
 
-# Get GWAS functions
+# Get GWAS functions
 
 source(SOURCE_FILE)
 
-# Load genotypes and positions
+# Load genotypes and positions
 
 in_list = readRDS(GENO_FILE)
 
@@ -89,10 +89,11 @@ in_list[["sample_order"]] = in_list[["phenotypes"]]$SAMPLE
 out = run_gwas(d = in_list[["genotypes"]],
                m = in_list[["positions"]],
                p = in_list[["phenotypes"]],
+               invers_norm = INVERSE_NORM,
                covariates = COVARIATES
               )
 
-# Write results to file
+# Write results to file
 
 ## Make sure the directory exists
 dir.create(dirname(OUT_FILE), recursive = T, showWarnings = F)
