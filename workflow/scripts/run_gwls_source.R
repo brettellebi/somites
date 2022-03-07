@@ -94,7 +94,7 @@ run_gwas <- function(d,m,p,invers_norm=F, covariates = NULL) {
     fillNAX = FALSE, # Should missing marker data be filled in with the mean allele frequency?
     method = 'REML', # REML = Wald test, ML = LRT, BF = calculate Bayes factors
     mc.cores = my_detectCores(), # How many cores should be used for parallel processing. Unless X is large, tends to actually be faster with mc.cores = 1
-    verbose = FALSE # Should progress be printed to the screen?
+    verbose = TRUE # Should progress be printed to the screen?
   )
   return(gwas)
 }

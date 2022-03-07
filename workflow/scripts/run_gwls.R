@@ -14,13 +14,13 @@ library(KRLS)
 
 ## Debug
 GENO_FILE = "/nfs/research/birney/users/ian/somites/association_testing/20220214/all_sites/inputs/5000.rds"
-PHENO_FILE = "data/20220214_phenotypes.xlsx" # True phenotypes
-#PHENO_FILE = "/nfs/research/birney/users/ian/somites/permuted_phenos/20220214/unsegmented_psm_area/1.xlsx" # permuted phenotypes
+#PHENO_FILE = "data/20220214_phenotypes.xlsx" # True phenotypes
+PHENO_FILE = "/nfs/research/birney/users/ian/somites/permuted_phenos/20220214/unsegmented_psm_area/2.xlsx" # permuted phenotypes
 SOURCE_FILE = "workflow/scripts/run_gwls_source.R"
 BIN_LENGTH = 5000
 TARGET_PHENO = "unsegmented_psm_area"
-COVARIATES = "Microscope-Date_of_imaging"
-INVERSE_NORM = FALSE
+COVARIATES = "None"
+INVERSE_NORM = TRUE
 
 ## True
 GENO_FILE = snakemake@input[["gt_pos_list"]]

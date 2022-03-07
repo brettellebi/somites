@@ -58,11 +58,11 @@ rule test_gwls:
 # types of GWAS (no covariates require little memory; two covariates require a lot)
 def get_mem_mb(wildcards, attempt):
     if wildcards.covariates == "None":
-        multiplier = 2000
+        multiplier = 5000
     elif wildcards.covariates == "Microscope":
-        multiplier = 3000
+        multiplier = 8000
     elif wildcards.covariates == "Microscope-Date_of_imaging":
-        multiplier = 50000
+        multiplier = 70000
     return attempt * multiplier
 
 def get_queue(wildcards, attempt):
@@ -119,9 +119,15 @@ rule run_permutations:
         phenotypes_file = rules.create_permuted_phenotypes.output,
         source_file = "workflow/scripts/run_gwls_source.R"
     output:
-        os.path.join(config["working_dir"], "association_testing/{date_of_assoc_test}/{site_filter}/permutations/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}/{permutation_seed}.rds"),
+        os.path.join(
+            config["working_dir"],
+            "association_testing/{date_of_assoc_test}/{site_filter}/permutations/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}/{permutation_seed}.rds"
+        ),
     log:
-        os.path.join(config["working_dir"], "logs/run_permutations/{date_of_assoc_test}/{site_filter}/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}/{permutation_seed}.log")
+        os.path.join(
+            config["working_dir"],
+            "logs/run_permutations/{date_of_assoc_test}/{site_filter}/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}/{permutation_seed}.log"
+        ),
     params:
         target_phenotype = "{target_phenotype}",
         covariates = "{covariates}",

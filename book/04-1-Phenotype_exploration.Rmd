@@ -6,6 +6,9 @@ library(tidyverse)
 source("https://gist.githubusercontent.com/brettellebi/c5015ee666cdf8d9f7e25fa3c8063c99/raw/91e601f82da6c614b4983d8afc4ef399fa58ed4b/karyoploteR_lighter_darker.R")
 # Get palettes for phenotypes
 source(here::here("book/source/04-Association_testing.R"))
+# Get GWAS code
+source("workflow/scripts/run_gwls_source.R")
+# Adjust palettes
 mean_pal = mean_pal[2:3]
 intercept_pal = intercept_pal[2:3]
 unsegmented_psm_pal = unsegmented_psm_area_pal[2:3]
