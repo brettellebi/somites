@@ -20,8 +20,9 @@ rmd_files: [
   "04-1-Phenotype_exploration.Rmd",
   "04-2-Test_GWAS_code.Rmd",
   "05-GWLS_results.Rmd",
-#  "Period_intercept_with_AU.Rmd",
-#  "Period_intercept_with_DB.Rmd",
+  "Period_intercept_with_AU.Rmd",
+  "Period_intercept_with_DB.Rmd",
+  "Invsere_normalise_by_microscope.Rmd",
 #  "Notes.Rmd",
   "08-Annotations.Rmd",
   "07-references.Rmd"

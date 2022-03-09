@@ -1,8 +1,6 @@
-# Association testing with only AU microscope
+## Run GWAS
 
-## Run GWLS
-
-```{r}
+```{r, message=F, warning = F}
 library(tidyverse)
 library(GridLMM)
 library(KRLS)
@@ -13,8 +11,9 @@ GWLS_SOURCE_FILE = here::here("workflow/scripts/run_gwls_source.R")
 MANHAT_SOURCE_FILE = here::here("workflow/scripts/get_manhattan_source.R")
 BIN_LENGTH = 5000
 TARGET_PHENO = "intercept"
-MICROSCOPE = "DB"
+MICROSCOPE = "split_invnorm"
 PLOT_DIR = here::here("book/plots/20220214/microscope_test")
+ALPHA = 0.05
 
 # Get GWAS functions
 
@@ -23,12 +22,9 @@ source(MANHAT_SOURCE_FILE)
 ```
 
 
-```{r, eval = F}
-
+```{r}
 # Load genotypes and positions
-
 in_list = readRDS(GENO_FILE)
-
 ```
 
 ```{r}
@@ -37,21 +33,63 @@ in_list = readRDS(GENO_FILE)
 ## Read in file and wrangle
 phenos = readxl::read_xlsx(PHENO_FILE) %>%
     # adjust sample names
-    dplyr::mutate(SAMPLE = fish %>% stringr::str_remove("KC")) %>%
+    dplyr::mutate(SAMPLE = fish %>% stringr::str_remove("KC") %>% 
+                    as.numeric()) %>%
     # select key columns
     dplyr::select(SAMPLE, all_of(TARGET_PHENO), Microscope) %>%
     # ensure that the phenotype column is numeric
     dplyr::mutate(dplyr::across(all_of(TARGET_PHENO),
-                                ~ as.numeric(.x))) %>% 
-    # THIS IS THE (big) CHANGE: filter for microscope
-    dplyr::filter(Microscope == MICROSCOPE)
+                                ~ as.numeric(.x)))
 
-## Get number of samples
-N_SAMPLES = nrow(phenos)
+## Split into two DFs by microscope and inverse-normalise
+phenos_au = phenos %>% 
+  dplyr::filter(Microscope == "AU") %>% 
+  dplyr::mutate(dplyr::across(dplyr::all_of(TARGET_PHENO),
+                              ~my.invnorm(.)))
+
+phenos_db = phenos %>% 
+  dplyr::filter(Microscope == "DB") %>% 
+  dplyr::mutate(dplyr::across(dplyr::all_of(TARGET_PHENO),
+                              ~my.invnorm(.)))
+
+## Combine
+phenos = dplyr::bind_rows(phenos_au,
+                              phenos_db) %>% 
+  dplyr::arrange(SAMPLE) %>% 
+  dplyr::mutate(SAMPLE = SAMPLE %>% 
+                  as.character())
+
+# Plot
+micr_pal = c("#8D99AE", "#2b2d42")
+
+pheno_hist = phenos %>% 
+  # remove NAs in `Microscope` column
+  dplyr::filter(!is.na(Microscope)) %>% 
+  ggplot() +
+    geom_histogram(aes(intercept, fill = Microscope),
+                   bins = 50) +
+    scale_fill_manual(values = micr_pal) +
+    facet_grid(rows = vars(Microscope)) +
+    xlab("period intercept") +
+    theme_bw() +
+    ggtitle("Inverse-normalised period intercept split by microscope") +
+    guides(fill = "none")
+
+pheno_hist
+
+ggsave(file.path(PLOT_DIR, paste(MICROSCOPE, "_intercept_hist.png", sep = "")),
+       pheno_hist,
+       device = "png",
+       width = 9.6,
+       height = 6,
+       units = "in",
+       dpi = 400)
 
 ```
 
-```{r, eval = F}
+### Prepare input
+
+```{r}
 
 ## Filter and order phenotypes
 in_list[["phenotypes"]] = phenos %>%
@@ -68,21 +106,29 @@ in_list[["phenotypes"]] = phenos %>%
 
 ## Filter genotypes for those that have phenotypes
 in_list[["genotypes"]] = in_list[["genotypes"]] %>%
-    dplyr::filter(in_list[["sample_order"]] %in% in_list[["phenotypes"]]$SAMPLE)
+    dplyr::slice(in_list[["sample_order"]] %in% in_list[["phenotypes"]]$SAMPLE %>% 
+                   which())
 
 ## Filter sample_order for those that have phenotypes
 in_list[["sample_order"]] = in_list[["phenotypes"]]$SAMPLE
-            
-# Run GWAS
 
+## Get number of samples
+N_SAMPLES = in_list[["sample_order"]] %>% 
+  length()
+```
+
+
+### Run 
+```{r, eval = F}
+# Run GWAS
 out = run_gwas(d = in_list[["genotypes"]],
                m = in_list[["positions"]],
-               p = in_list[["phenotypes"]],
-               invers_norm = T
+               p = in_list[["phenotypes"]]
               )
 
 saveRDS(out, paste("/hps/nobackup/birney/users/ian/somites/microscope_test/gwas_results/", MICROSCOPE, ".rds", sep = ""))
 ```
+
 
 ```{r}
 out = readRDS(paste("/hps/nobackup/birney/users/ian/somites/microscope_test/gwas_results/", MICROSCOPE, ".rds", sep = ""))
@@ -99,14 +145,9 @@ counter = 0
 perm_phenos = purrr::map(seeds, function(SEED){
   counter <<- counter + 1
   # set seed
-  set.seed(SEED)
+  set.seed(seeds[counter])
   # randomise
-  phenos = readxl::read_xlsx(PHENO_FILE) %>%
-      # select key columns
-      dplyr::select(fish, all_of(TARGET_PHENO), Microscope) %>%
-      # ensure that the phenotype column is numeric
-      dplyr::mutate(dplyr::across(all_of(TARGET_PHENO),
-                                  ~ as.numeric(.x))) %>%
+  phenos = phenos %>% 
       # randomise phenotype
       dplyr::mutate(dplyr::across(all_of(TARGET_PHENO),
                                   ~ sample(.x)))
@@ -118,16 +159,7 @@ perm_phenos = purrr::map(seeds, function(SEED){
 ```{r, eval = F}
 perm_out = purrr::map(perm_phenos, function(PERM_PHENO){
   ## Read in file and wrangle
-  phenos = PERM_PHENO %>%
-      # adjust sample names
-      dplyr::mutate(SAMPLE = fish %>% stringr::str_remove("KC")) %>%
-      # select key columns
-      dplyr::select(SAMPLE, all_of(TARGET_PHENO), Microscope) %>%
-      # ensure that the phenotype column is numeric
-      dplyr::mutate(dplyr::across(all_of(TARGET_PHENO),
-                                  ~ as.numeric(.x))) %>% 
-      # THIS IS THE (big) CHANGE: filter for microscope
-      dplyr::filter(Microscope == MICROSCOPE)
+  phenos = PERM_PHENO
   
   ## Filter and order phenotypes
   in_list[["phenotypes"]] = phenos %>%
@@ -144,7 +176,8 @@ perm_out = purrr::map(perm_phenos, function(PERM_PHENO){
   
   ## Filter genotypes for those that have phenotypes
   in_list[["genotypes"]] = in_list[["genotypes"]] %>%
-      dplyr::filter(in_list[["sample_order"]] %in% in_list[["phenotypes"]]$SAMPLE)
+      dplyr::slice(in_list[["sample_order"]] %in% in_list[["phenotypes"]]$SAMPLE %>% 
+                     which())
   
   ## Filter sample_order for those that have phenotypes
   in_list[["sample_order"]] = in_list[["phenotypes"]]$SAMPLE
@@ -153,8 +186,7 @@ perm_out = purrr::map(perm_phenos, function(PERM_PHENO){
   
   out = run_gwas(d = in_list[["genotypes"]],
                  m = in_list[["positions"]],
-                 p = in_list[["phenotypes"]],
-                 invers_norm = T
+                 p = in_list[["phenotypes"]]
                 )
   
   return(out)
@@ -180,6 +212,9 @@ perm_df = purrr::map_dfr(perm_out, function(PERM){
 
 # Get minimum
 SIG_LEVEL = min(perm_df$MIN_P)
+
+# Get bonferroni correction
+SIG_BONF = ALPHA / nrow(out$results)
 ```
 
 ## Generate Manhattan plot
@@ -189,9 +224,9 @@ out_clean = clean_gwas_res(out,
                            bin_length = BIN_LENGTH,
                            chr_lens = med_chr_lens)
 
-# Get significant level
-#SIG_LEVEL = SIG_LEVEL %>% 
-#  -log10(.)
+
+# Get bonferroni significance level
+BONFERRONI = ALPHA / nrow(out_clean)
 
 # Plot
 out_plot = plot_man(out_clean,
@@ -200,7 +235,8 @@ out_plot = plot_man(out_clean,
                     bin_length = BIN_LENGTH, 
                     gwas_pal = intercept_pal,
                     med_chr_lens = med_chr_lens,
-                    sig_level = SIG_LEVEL) +
+                    sig_level = SIG_LEVEL,
+                    bonferroni = BONFERRONI) +
                  #ylim(0,7) + 
                  labs(subtitle = paste("Microscope: ", MICROSCOPE, "\nCovariates: None\nn samples: ", N_SAMPLES, sep = ""))
 
@@ -217,4 +253,3 @@ ggsave(file.path(PLOT_DIR, paste(MICROSCOPE, "_manhattan.png", sep = "")),
        units = "in",
        dpi = 400)
 ```
-

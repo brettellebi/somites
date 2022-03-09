@@ -116,10 +116,10 @@ covariates:
     - None
     - Microscope
     #- Date_of_imaging
-    - Microscope-Date_of_imaging
+    #- Microscope-Date_of_imaging
 inverse_norm:
     - "TRUE"
-    - "FALSE"
+    #- "FALSE"
 n_permutations:
     - 10
 ####################

@@ -58,11 +58,11 @@ rule test_gwls:
 # types of GWAS (no covariates require little memory; two covariates require a lot)
 def get_mem_mb(wildcards, attempt):
     if wildcards.covariates == "None":
-        multiplier = 5000
+        multiplier = 4000
     elif wildcards.covariates == "Microscope":
-        multiplier = 8000
+        multiplier = 6000
     elif wildcards.covariates == "Microscope-Date_of_imaging":
-        multiplier = 70000
+        multiplier = 80000
     return attempt * multiplier
 
 def get_queue(wildcards, attempt):
@@ -78,7 +78,6 @@ rule run_gwls:
     input:
         gt_pos_list = rules.create_gwas_input.output,
         phenotypes_file = config["phenotypes_file"],
-        source_file = "workflow/scripts/run_gwls_source.R"
     output:
         os.path.join(config["working_dir"], "association_testing/{date_of_assoc_test}/{site_filter}/true_results/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.rds"),
     log:
@@ -87,7 +86,8 @@ rule run_gwls:
         target_phenotype = "{target_phenotype}",
         covariates = "{covariates}",
         inverse_norm = "{inverse_norm}",
-        bin_length = "{bin_length}"
+        bin_length = "{bin_length}",
+        source_file = "workflow/scripts/run_gwls_source.R"
     resources:
         mem_mb = get_mem_mb,
         queue = get_queue
@@ -100,14 +100,13 @@ rule create_permuted_phenotypes:
     input:
         config["phenotypes_file"]
     output:
-        os.path.join(config["working_dir"], "permuted_phenos/{date_of_assoc_test}/{target_phenotype}/{permutation_seed}.xlsx")
+        os.path.join(config["working_dir"], "permuted_phenos/{date_of_assoc_test}/{permutation_seed}.xlsx")
     log:
-        os.path.join(config["working_dir"], "logs/create_permuted_phenotypes/{date_of_assoc_test}/{target_phenotype}/{permutation_seed}.log")
+        os.path.join(config["working_dir"], "logs/create_permuted_phenotypes/{date_of_assoc_test}/{permutation_seed}.log")
     params:
-        target_phenotype = "{target_phenotype}",
-        permutation_seed = "{permutation_seed}"
+        permutation_seed = "{permutation_seed}",
     resources:
-        mem_mb = 200
+        mem_mb = 100
     container:
         config["R"]
     script:
@@ -117,7 +116,6 @@ rule run_permutations:
     input:
         gt_pos_list = rules.create_gwas_input.output,
         phenotypes_file = rules.create_permuted_phenotypes.output,
-        source_file = "workflow/scripts/run_gwls_source.R"
     output:
         os.path.join(
             config["working_dir"],
@@ -132,7 +130,8 @@ rule run_permutations:
         target_phenotype = "{target_phenotype}",
         covariates = "{covariates}",
         inverse_norm = "{inverse_norm}",
-        bin_length = "{bin_length}"
+        bin_length = "{bin_length}",
+        source_file = "workflow/scripts/run_gwls_source.R"
     resources:
         mem_mb = get_mem_mb,
         queue = get_queue
@@ -166,7 +165,7 @@ rule get_manhattan:
     container:
         config["R"]
     resources:
-        mem_mb = 5000
+        mem_mb = 2500
     script:
         "../scripts/get_manhattan.R"
                 

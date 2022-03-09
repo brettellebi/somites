@@ -22,308 +22,216 @@ Snakemake rules for running the GWAS over these phenotypes: <https://github.com/
 ## Results
 
 ```{r}
-date_of_assoc_test = 20220214
+DATE_OF_ASSOC_TEST = 20220214
 ```
 
 ### All sites
 
-#### Read in files
+```{r}
+SITE_FILTER = "all_sites"
+INVERSE_NORM = "TRUE"
+```
+
+#### Intercept
 
 ```{r}
-target_phenos = c("mean", "intercept", "unsegmented_psm_area")
-names(target_phenos) = target_phenos
-bin_lengths = c(5000, 10000, 15000, 20000)
-names(bin_lengths) = bin_lengths
-results_dir = file.path("/nfs/research/birney/users/ian/somites/association_testing", date_of_assoc_test, "all_sites/true_results")
-
-gwas_true = purrr::map(target_phenos, function(PHENO){
-  purrr::map(bin_lengths, function(BIN_LENGTH){
-    readRDS(file.path(results_dir, PHENO, paste(BIN_LENGTH, ".rds", sep = "")))
-  })
-})
+TARGET_PHENO = "intercept"
 ```
-
-#### Manhattans
-
-Process data
-```{r}
-plot_dat = purrr::map(target_phenos, function(PHENO){
-  bin_list = purrr::map(bin_lengths, function(BIN_LENGTH){
-    # clean GWAS results for plotting
-    out = clean_gwas_res(gwas_true[[PHENO]][[as.character(BIN_LENGTH)]],
-                         bin_length = BIN_LENGTH,
-                         chr_lens = med_chr_lens)
-    
-    return(out)
-  })
-  names(bin_list) = bin_lengths
-  
-  return(bin_list)
-})
-names(plot_dat) = target_phenos
-```
-
-Read in significance levels from permutations
 
 ```{r}
-perm_file = here::here("data", paste(date_of_assoc_test, "_permutation_mins.csv", sep = ""))
-perms_df_mins = readr::read_csv(perm_file,
-                                col_types = c("ccid"))
+COVARIATES = "None"
 ```
 
-Plot
-
-```{r, eval = F}
-plot_dir = here::here("book/plots", date_of_assoc_test, "gwls_results/all_sites")
-dir.create(plot_dir, recursive = T)
-# Plot
-all_sites_plots = purrr::map(target_phenos, function(PHENO){
-  bins_out = purrr::map(bin_lengths, function(BIN_LENGTH){
-    
-    BIN_L = BIN_LENGTH
-    
-    # Get significant level
-    SIG_LEVEL = perms_df_mins %>%
-      dplyr::filter(SITE_FILTER == "all_sites",
-                    TARGET_PHENO == PHENO,
-                    BIN_LENGTH == BIN_L) %>% 
-      dplyr::pull(MIN_P) %>% 
-      -log10(.)
-    
-    # Plot
-    out = plot_man(plot_dat[[PHENO]][[as.character(BIN_LENGTH)]],
-             site_filter = "all_sites",
-             phenotype = PHENO,
-             bin_length = BIN_L, 
-             gwas_pal = gwas_pal[2:3],
-             med_chr_lens = med_chr_lens,
-             sig_line = SIG_LEVEL) +
-          ylim(0,7)
-    
-    ggsave(file.path(plot_dir, paste(PHENO, "_", BIN_L, ".png", sep = "")),
-           out,
-           device = "png",
-           width = 9.6,
-           height = 6,
-           units = "in",
-           dpi = 400)
-    
-    return(out)
-  })
-  
-  names(bins_out) = bin_lengths
-})
-
-names(all_sites_plots) = target_phenos
+```{r, out.width="100%"}
+knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "5000.png"))
+knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "20000.png"))
 ```
-
-Show
-
-```{r, fig.cap = "intercept"}
-knitr::include_graphics(here::here("book/plots", date_of_assoc_test, "gwls_results/all_sites/intercept_5000.png"))
-knitr::include_graphics(here::here("book/plots", date_of_assoc_test, "gwls_results/all_sites/intercept_20000.png"))
-```
-
-```{r, fig.cap = "mean"}
-knitr::include_graphics(here::here("book/plots", date_of_assoc_test, "gwls_results/all_sites/mean_5000.png"))
-knitr::include_graphics(here::here("book/plots", date_of_assoc_test, "gwls_results/all_sites/mean_20000.png"))
-```
-
-```{r, fig.cap = "mean"}
-knitr::include_graphics(here::here("book/plots", date_of_assoc_test, "gwls_results/all_sites/unsegmented_psm_area_5000.png"))
-knitr::include_graphics(here::here("book/plots", date_of_assoc_test, "gwls_results/all_sites/unsegmented_psm_area_20000.png"))
-```
-
-### Strongest filter
-
-Excluding:
-
-  -   reads overlapping repeats
-  
-  -   persistently-heterozygous sites in the MIKK panel
-  
-  -   bins with < 100 or > 10000 reads
-  
-  -   bins with a proportion of Cab genotypes < 0.2 or > 0.8
-
-#### Read in files
 
 ```{r}
-filter_type = "no_repeat_reads_or_pers_hets_filtered_for_read_count_and_cab_prop"
-target_phenos = c("mean", "intercept", "unsegmented_psm_area")
-names(target_phenos) = target_phenos
-bin_lengths = c(5000, 10000, 15000, 20000)
-names(bin_lengths) = bin_lengths
-results_dir = file.path("/nfs/research/birney/users/ian/somites/association_testing", date_of_assoc_test, filter_type, "true_results")
-
-gwas_true = purrr::map(target_phenos, function(PHENO){
-  purrr::map(bin_lengths, function(BIN_LENGTH){
-    readRDS(file.path(results_dir, PHENO, paste(BIN_LENGTH, ".rds", sep = "")))
-  })
-})
+COVARIATES = "Microscope"
 ```
 
-#### Manhattans
-
-Process data
-```{r}
-plot_dat = purrr::map(target_phenos, function(PHENO){
-  bin_list = purrr::map(bin_lengths, function(BIN_LENGTH){
-    # clean GWAS results for plotting
-    out = clean_gwas_res(gwas_true[[PHENO]][[as.character(BIN_LENGTH)]],
-                         bin_length = BIN_LENGTH,
-                         chr_lens = med_chr_lens)
-    
-    return(out)
-  })
-  names(bin_list) = bin_lengths
-  
-  return(bin_list)
-})
-names(plot_dat) = target_phenos
+```{r, out.width="100%"}
+knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "5000.png"))
+knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "20000.png"))
 ```
-
-Read in significance levels from permutations
 
 ```{r}
-perm_file = here::here("data", paste(date_of_assoc_test, "_permutation_mins.csv", sep = ""))
-perms_df_mins = readr::read_csv(perm_file,
-                                col_types = c("ccid"))
+COVARIATES = "Microscope-Date_of_imaging"
 ```
 
-Plot
-```{r, eval = F}
-plot_dir = here::here(file.path("book/plots", date_of_assoc_test, "gwls_results", filter_type))
-dir.create(plot_dir, recursive = T)
-# Plot
-lapply(seq_along(plot_dat), function(COUNTER_PHENO){
-  lapply(seq_along(plot_dat[[COUNTER_PHENO]]), function(COUNTER_BINL){
-    # Get pheno
-    PHENO = names(plot_dat)[COUNTER_PHENO]
-    # Get bin length
-    BINL = names(plot_dat[[COUNTER_PHENO]])[COUNTER_BINL] %>% 
-      as.numeric()
-    # Get significant level
-    SIG_LEVEL = perms_df_mins %>%
-      dplyr::filter(SITE_FILTER == filter_type, TARGET_PHENO == PHENO, BIN_LENGTH == BINL) %>% 
-      dplyr::pull(MIN_P) %>% 
-      -log10(.)
-    
-    # Plot
-    out = plot_man(plot_dat[[COUNTER_PHENO]][[COUNTER_BINL]],
-             site_filter = filter_type,
-             phenotype = PHENO,
-             bin_length = BINL,
-             gwas_pal = gwas_pal[2:3],
-             med_chr_lens = med_chr_lens,
-             sig_line = SIG_LEVEL) +
-      ylim(0,7)
-    
-    ggsave(file.path(plot_dir, paste(PHENO, "_", BINL, ".png", sep = "")),
-           out,
-           device = "png",
-           width = 9.6,
-           height = 6,
-           units = "in",
-           dpi = 400)
-    
-  })
-})
-
+```{r, out.width="100%"}
+knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "5000.png"))
+knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "20000.png"))
 ```
 
-Show
-
-```{r, fig.cap = "intercept"}
-knitr::include_graphics(here::here("book/plots", date_of_assoc_test, "gwls_results/no_repeat_reads_or_pers_hets_filtered_for_read_count_and_cab_prop/intercept_5000.png"))
-knitr::include_graphics(here::here("book/plots", date_of_assoc_test, "gwls_results/no_repeat_reads_or_pers_hets_filtered_for_read_count_and_cab_prop/intercept_20000.png"))
-```
-
-```{r, fig.cap = "mean"}
-knitr::include_graphics(here::here("book/plots", date_of_assoc_test, "gwls_results/no_repeat_reads_or_pers_hets_filtered_for_read_count_and_cab_prop/mean_5000.png"))
-knitr::include_graphics(here::here("book/plots", date_of_assoc_test, "gwls_results/no_repeat_reads_or_pers_hets_filtered_for_read_count_and_cab_prop/mean_20000.png"))
-```
-
-```{r, fig.cap = "mean"}
-knitr::include_graphics(here::here("book/plots", date_of_assoc_test, "gwls_results/no_repeat_reads_or_pers_hets_filtered_for_read_count_and_cab_prop/unsegmented_psm_area_5000.png"))
-knitr::include_graphics(here::here("book/plots", date_of_assoc_test, "gwls_results/no_repeat_reads_or_pers_hets_filtered_for_read_count_and_cab_prop/unsegmented_psm_area_20000.png"))
-```
-
-## Create Manhattan plots for the permutations
-
-### Read in permutation results
+#### Mean
 
 ```{r}
-PERM_DIR = "/nfs/research/birney/users/ian/somites/association_testing/20220118/no_repeat_reads_or_pers_hets_filtered_for_read_count_and_cab_prop/permutations/mean/5000"
-TARGET_FILES = list.files(PERM_DIR, full.names = T)
-BIN_LENGTH = 5000
-filter_type = "no_repeat_reads_or_pers_hets_filtered_for_read_count_and_cab_prop"
 TARGET_PHENO = "mean"
-
-# Read into list
-perm_list = lapply(TARGET_FILES, function(FILE){
-  readRDS(FILE)
-})
-names(perm_list) = basename(TARGET_FILES) %>% 
-  stringr::str_remove(".rds")
-```
-
-Clean data
-```{r}
-perm_plot_dat = purrr::map(perm_list, function(PERM){
-
-    out = clean_gwas_res(PERM,
-                         bin_length = 5000,
-                         chr_lens = med_chr_lens)
-    
-    return(out)
-
-})
-
-```
-
-Plot
-```{r, eval = F}
-plot_dir = here::here(file.path("book/plots/20220118/permutation_results", filter_type))
-# Plot
-counter = 0
-lapply(perm_plot_dat, function(PERM){
-  counter <<- counter + 1
-  # Get pheno
-  PHENO = TARGET_PHENO
-  # Get bin length
-  BINL = BIN_LENGTH
-  # Get significant level
-  SIG_LEVEL = perms_df_mins %>%
-    dplyr::filter(SITE_FILTER == filter_type, TARGET_PHENO == PHENO, BIN_LENGTH == BINL) %>% 
-    dplyr::pull(MIN_P) %>% 
-    -log10(.)
-  
-  # Plot
-  out = plot_man(PERM,
-           site_filter = filter_type,
-           phenotype = PHENO,
-           bin_length = BINL,
-           gwas_pal = gwas_pal[2:3],
-           med_chr_lens = med_chr_lens,
-           sig_line = SIG_LEVEL) +
-    ylim(0,7)
-  
-  ggsave(file.path(plot_dir, paste(counter, ".png", sep = "")),
-         out,
-         device = "png",
-         width = 9.6,
-         height = 6,
-         units = "in",
-         dpi = 400)
-  
-})
-
-
 ```
 
 ```{r}
-plot_files = list.files(plot_dir, full.names = T)
-knitr::include_graphics(plot_files)
+COVARIATES = "None"
 ```
 
+```{r, out.width="100%"}
+knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "5000.png"))
+knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "20000.png"))
+```
+
+```{r}
+COVARIATES = "Microscope"
+```
+
+```{r, out.width="100%"}
+knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "5000.png"))
+knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "20000.png"))
+```
+
+```{r}
+COVARIATES = "Microscope-Date_of_imaging"
+```
+
+```{r, out.width="100%"}
+knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "5000.png"))
+knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "20000.png"))
+```
+
+#### PSM
+
+```{r}
+TARGET_PHENO = "unsegmented_psm_area"
+```
+
+```{r}
+COVARIATES = "None"
+```
+
+```{r, out.width="100%"}
+knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "5000.png"))
+knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "20000.png"))
+```
+
+```{r}
+COVARIATES = "Microscope"
+```
+
+```{r, out.width="100%"}
+knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "5000.png"))
+knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "20000.png"))
+```
+
+```{r}
+COVARIATES = "Microscope-Date_of_imaging"
+```
+
+```{r, out.width="100%"}
+knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "5000.png"))
+knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "20000.png"))
+```
+### All filters
+
+```{r}
+SITE_FILTER = "no_repeat_reads_or_pers_hets_filtered_for_read_count_and_cab_prop"
+INVERSE_NORM = "TRUE"
+```
+
+#### Intercept
+
+```{r}
+TARGET_PHENO = "intercept"
+```
+
+```{r}
+COVARIATES = "None"
+```
+
+```{r, out.width="100%"}
+knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "5000.png"))
+knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "20000.png"))
+```
+
+```{r}
+COVARIATES = "Microscope"
+```
+
+```{r, out.width="100%"}
+knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "5000.png"))
+knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "20000.png"))
+```
+
+```{r}
+COVARIATES = "Microscope-Date_of_imaging"
+```
+
+```{r, out.width="100%"}
+knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "5000.png"))
+knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "20000.png"))
+```
+
+#### Mean
+
+```{r}
+TARGET_PHENO = "mean"
+```
+
+```{r}
+COVARIATES = "None"
+```
+
+```{r, out.width="100%"}
+knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "5000.png"))
+knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "20000.png"))
+```
+
+```{r}
+COVARIATES = "Microscope"
+```
+
+```{r, out.width="100%"}
+knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "5000.png"))
+knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "20000.png"))
+```
+
+```{r}
+COVARIATES = "Microscope-Date_of_imaging"
+```
+
+```{r, out.width="100%"}
+knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "5000.png"))
+knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "20000.png"))
+```
+
+#### PSM
+
+```{r}
+TARGET_PHENO = "unsegmented_psm_area"
+```
+
+```{r}
+COVARIATES = "None"
+```
+
+```{r, out.width="100%"}
+knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "5000.png"))
+knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "20000.png"))
+```
+
+```{r}
+COVARIATES = "Microscope"
+```
+
+```{r, out.width="100%"}
+knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "5000.png"))
+knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "20000.png"))
+```
+
+```{r}
+COVARIATES = "Microscope-Date_of_imaging"
+```
+
+```{r, out.width="100%"}
+knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "5000.png"))
+knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "20000.png"))
+```

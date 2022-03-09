@@ -18,7 +18,7 @@ clean_gwas_res = function(gwas_results, bin_length, chr_lens){
     dplyr::mutate(LOCUS = paste(CHROM, BIN_START, sep = ":")) 
 }
 
-plot_man = function(df, site_filter, phenotype, bin_length, gwas_pal, size = 0.5, alpha = 0.5, med_chr_lens, sig_level = NULL){
+plot_man = function(df, site_filter, phenotype, bin_length, gwas_pal, size = 0.5, alpha = 0.5, med_chr_lens, sig_level = NULL, bonferroni = NULL){
   # Create palette
   pal = rep_len(gwas_pal, length.out = nrow(med_chr_lens))
   names(pal) = med_chr_lens$chr
@@ -49,7 +49,12 @@ plot_man = function(df, site_filter, phenotype, bin_length, gwas_pal, size = 0.5
     ggtitle(paste("Site filter: ", site_filter, "\nPhenotype: ", phenotype, "\nBin length: ",  bin_length, sep = "")) +
     xlab("Chromosome") +
     ylab("-log10(p-value)") + 
-    geom_hline(yintercept = -log10(sig_level), colour = "#60D394", linetype = "dashed")
+    # permutations significance level
+    geom_hline(yintercept = -log10(sig_level), colour = "#60D394", linetype = "dashed") +
+    geom_text(aes(out_clean$MID_TOT[1], -log10(sig_level), label = "permutations", vjust = 1), size = 3, colour = "#60D394") + 
+    # bonferroni significance level
+    geom_hline(yintercept = -log10(bonferroni), colour = "#F06449", linetype = "dashed") +
+    geom_text(aes(out_clean$MID_TOT[1], -log10(bonferroni), label = "bonferroni", vjust = 1), size = 3, colour = "#F06449")
   
   return(out_plot)
   

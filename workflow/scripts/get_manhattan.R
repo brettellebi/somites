@@ -11,15 +11,15 @@ library(tidyverse)
 # Get variables
 
 ## Debug
-GWAS_RESULTS = "/hps/nobackup/birney/users/ian/somites/association_testing/20220214/all_sites/true_results/intercept/Microscope/TRUE/20000.rds"
-PERM_RESULTS = list("/hps/nobackup/birney/users/ian/somites/association_testing/20220214/all_sites/permutations/intercept/Microscope/TRUE/20000/2.rds",
-                    "/hps/nobackup/birney/users/ian/somites/association_testing/20220214/all_sites/permutations/intercept/Microscope/TRUE/20000/8.rds")
-SOURCE_FILE = "workflow/scripts/get_manhattan_source.R"
-SITE_FILTER = "all_sites"
-BIN_LENGTH = 20000
-TARGET_PHENO = "intercept"
-COVARIATES = "Microscope"
-INVERSE_NORM = "TRUE"
+#GWAS_RESULTS = "/hps/nobackup/birney/users/ian/somites/association_testing/20220214/all_sites/true_results/intercept/Microscope/TRUE/20000.rds"
+#PERM_RESULTS = list("/hps/nobackup/birney/users/ian/somites/association_testing/20220214/all_sites/permutations/intercept/Microscope/TRUE/20000/2.rds",
+#                    "/hps/nobackup/birney/users/ian/somites/association_testing/20220214/all_sites/permutations/intercept/Microscope/TRUE/20000/8.rds")
+#SOURCE_FILE = "workflow/scripts/get_manhattan_source.R"
+#SITE_FILTER = "all_sites"
+#BIN_LENGTH = 20000
+#TARGET_PHENO = "intercept"
+#COVARIATES = "Microscope"
+#INVERSE_NORM = "TRUE"
 
 ## True
 ### Input
@@ -35,6 +35,10 @@ BIN_LENGTH = snakemake@params[["bin_length"]] %>%
   as.numeric()
 ### Output
 OUT_FILE = snakemake@output[["fig"]]
+
+# Get signficance level for bonferroni correction
+
+ALPHA = 0.05
 
 # Read in source file
 
@@ -86,9 +90,13 @@ pal = eval(as.name(paste(TARGET_PHENO, "_pal", sep = "")))
 
 # Generate Manhattan plot
 
+## Prepare data
 out_clean = clean_gwas_res(RESULTS,
                            bin_length = BIN_LENGTH,
                            chr_lens = med_chr_lens)
+
+## Get bonferroni significance level
+BONFERRONI = ALPHA / nrow(out_clean)
 
 # Plot
 out_plot = plot_man(out_clean,
@@ -97,7 +105,8 @@ out_plot = plot_man(out_clean,
                     bin_length = BIN_LENGTH, 
                     gwas_pal = pal,
                     med_chr_lens = med_chr_lens,
-                    sig_level = SIG_LEVEL) +
+                    sig_level = SIG_LEVEL,
+                    bonferroni = BONFERRONI) +
   labs(subtitle = paste("Covariates: ", COVARIATES,
                         "\nInverse-normalised: ", INVERSE_NORM,
                         sep = ""))

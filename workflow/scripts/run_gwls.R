@@ -13,25 +13,25 @@ library(KRLS)
 # Get variables
 
 ## Debug
-GENO_FILE = "/nfs/research/birney/users/ian/somites/association_testing/20220214/all_sites/inputs/5000.rds"
-#PHENO_FILE = "data/20220214_phenotypes.xlsx" # True phenotypes
-PHENO_FILE = "/nfs/research/birney/users/ian/somites/permuted_phenos/20220214/unsegmented_psm_area/2.xlsx" # permuted phenotypes
-SOURCE_FILE = "workflow/scripts/run_gwls_source.R"
-BIN_LENGTH = 5000
-TARGET_PHENO = "unsegmented_psm_area"
-COVARIATES = "None"
-INVERSE_NORM = TRUE
+#GENO_FILE = "/nfs/research/birney/users/ian/somites/association_testing/20220214/all_sites/inputs/5000.rds"
+##PHENO_FILE = "data/20220214_phenotypes.xlsx" # True phenotypes
+#PHENO_FILE = "/hps/nobackup/birney/users/ian/somites/permuted_phenos/20220214/unsegmented_psm_area/2.xlsx" # permuted phenotypes
+#SOURCE_FILE = "workflow/scripts/run_gwls_source.R"
+#BIN_LENGTH = 5000
+#TARGET_PHENO = "unsegmented_psm_area"
+#COVARIATES = "None"
+#INVERSE_NORM = TRUE
 
 ## True
 GENO_FILE = snakemake@input[["gt_pos_list"]]
 PHENO_FILE = snakemake@input[["phenotypes_file"]]
-SOURCE_FILE = snakemake@input[["source_file"]]
 BIN_LENGTH = snakemake@params[["bin_length"]] %>%
     as.numeric()
 TARGET_PHENO = snakemake@params[["target_phenotype"]]
 COVARIATES = snakemake@params[["covariates"]]
 INVERSE_NORM = snakemake@params["inverse_norm"] %>% 
     as.logical()
+SOURCE_FILE = snakemake@params[["source_file"]]
 OUT_FILE = snakemake@output[[1]]
 
 # Get GWAS functions

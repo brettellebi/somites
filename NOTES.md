@@ -1,5 +1,22 @@
 # Notes
 
+## 9 March 2022
+
+Inverse-normalise both microscopes then combine and run GWAS.
+
+Notebook: `book/Inverse_normalise_by_microscope.Rmd`
+
+## 8 March 2022
+
+EB: 
+* Need to think about permutations. Doesn't capture all the structure in the data. 
+* Draw bonferroni correction on number of bins
+* Could do something very crude. Could do bonferroni with a bit extra, like 1e-7, then take the top points, and for every top point, we add it back as a covariate. The signal for the correlated points should disappear. Look for a package that can do this... COJO?
+* Fine mapping in the context of F2 cross.
+* Sensible thing is to rank all the SNPs by p-value, and exclude chr 3. Rank all blocks by p-value, accept the top block, then some threshold that is like 5 Mb, then exclude all the p-values within 5 Mb of our accepted list. 
+* Keep a list of points we've accepted, go down the list, and if it's within 5 Mb on something above, then exclude it. 
+* Look at genes under that GO (gene ontology) terms.
+
 ## 26 February 2022
 
 Ali provided F0 and F1 phenotypes: `data/F0_F1_period.xlsx`
