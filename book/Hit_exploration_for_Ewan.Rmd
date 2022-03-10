@@ -1,0 +1,127 @@
+# Hit exploration for Ewan
+
+## Setup
+
+```{r}
+# Libraries
+library(here)
+library(tidyverse)
+
+# Variables
+RAW_GENO = "/nfs/research/birney/users/ian/somites/recombination_blocks/F2/all_sites/5000.txt"
+GENO_FILE = "/nfs/research/birney/users/ian/somites/association_testing/20220214/all_sites/inputs/5000.rds"
+PHENO_FILE = here::here("data/20220214_phenotypes.xlsx")
+RESULTS = "/hps/nobackup/birney/users/ian/somites/association_testing/20220214/all_sites/true_results/intercept/Microscope/TRUE/5000.rds"
+OUT_FILE = here::here("data/20220309_hits.csv")
+BIN_LENGTH = 5000
+LOW_COV_SAMPLES = c(26,89,166,178,189,227,239,470,472,473,490,501,502,503,504,505,506,507,508,509,510,511)
+```
+
+## Read in files
+
+```{r}
+# Raw genos
+df = readr::read_tsv(RAW_GENO,
+                     col_types = "ciiidii") %>% 
+    dplyr::mutate(SAMPLE = sample %>%
+                    basename(.) %>% 
+                    stringr::str_remove(".txt") %>% 
+                    as.numeric(.),
+                  BIN_START = (bin - 1) * BIN_LENGTH + 1,
+                  BIN_END = bin * BIN_LENGTH) %>% 
+    # Filter out low-coverage samples
+    dplyr::filter(!SAMPLE %in% LOW_COV_SAMPLES) %>% 
+    # recode state to make 0 == "Cab"
+    dplyr::mutate(STATE = dplyr::recode(state,
+                                        `0` = 2,
+                                        `1` = 1,
+                                        `2` = 0)) 
+
+# Genos
+in_list = readRDS(GENO_FILE)
+
+# Phenos
+phenos = readxl::read_xlsx(PHENO_FILE) %>%
+  # adjust sample names
+  dplyr::mutate(SAMPLE = fish %>% stringr::str_remove("KC")) %>% 
+  # reorder columns
+  dplyr::select(SAMPLE, everything(), -c(fish, strain))
+
+# Results
+results = readRDS(RESULTS)
+results = results$results
+```
+
+## Pull hits
+
+```{r}
+# Chr3
+chr3_peak = results %>% 
+  dplyr::filter(Chr == 3 ) %>% 
+  dplyr::slice(which.min(p_value_REML.1)) %>% 
+  dplyr::select(CHROM = Chr, BIN_START = pos, p_value_REML.1)
+
+# Chr21
+chr21_peak = results %>% 
+  dplyr::filter(Chr == 21) %>% 
+  dplyr::slice(which.min(p_value_REML.1)) %>% 
+  dplyr::select(CHROM = Chr, BIN_START = pos, p_value_REML.1)
+
+# Bind
+peaks = list(chr3_peak,
+             chr21_peak)
+
+peaks_df = dplyr::bind_rows(chr3_peak,
+                            chr21_peak) %>% 
+  # create column with CHROM:BIN_START
+  tidyr::unite(col = "CHROM_LOC",
+               CHROM, BIN_START,
+               sep = ":",
+               remove = F)
+
+# Get indexes of genotypes for those positions
+indexes = lapply(peaks, function(PEAK){
+  which(in_list[["positions"]]$CHROM == PEAK$CHROM & in_list[["positions"]]$BIN_START == PEAK$BIN_START)
+}) %>% 
+  unlist()
+
+# Pull out those genotypes
+hit_genos = in_list[["genotypes"]][, indexes]
+colnames(hit_genos) = peaks_df$CHROM_LOC
+
+
+# Add sample order
+hit_genos = dplyr::bind_cols(SAMPLE = in_list[["sample_order"]],
+                             hit_genos)
+
+# Add phenotypes
+out = dplyr::left_join(phenos, hit_genos, by = "SAMPLE")
+
+# Pull Cab/Kaga counts
+counts = lapply(peaks, function(PEAK){
+  df %>%
+    dplyr::filter(chr == PEAK$CHROM & BIN_START == PEAK$BIN_START)
+})
+
+counts_df = dplyr::bind_rows(counts) %>% 
+  dplyr::select(SAMPLE, CHROM = chr, BIN_START, CAB_COUNT = mat, KAGA_COUNT = pat) %>% 
+  tidyr::unite(col = "CHROM_LOC",
+               CHROM, BIN_START,
+               sep = ":") %>% 
+  tidyr::pivot_wider(id_cols = SAMPLE,
+                     names_from = CHROM_LOC,
+                     values_from = c(CAB_COUNT, KAGA_COUNT)) %>% 
+  dplyr::select(SAMPLE, contains("3"), contains("21")) %>% 
+  dplyr::mutate(SAMPLE = SAMPLE %>% 
+                  as.character())
+
+# Add to Df
+
+out = dplyr::left_join(out,
+                       counts_df,
+                       by = "SAMPLE")
+
+# Write to file
+readr::write_csv(out, OUT_FILE)
+```
+

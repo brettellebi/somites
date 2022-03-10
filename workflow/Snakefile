@@ -169,13 +169,16 @@ rule all:
 #                site_filter = config["site_filter"],
 #                bin_length = config["bin_length"]
 #        ),
-## test_gwls
-#        expand(os.path.join(config["data_store_dir"], "association_testing/{date_of_assoc_test}/{site_filter}/test_results/{bin_length}.rds"),
-#                date_of_assoc_test = config["date_of_assoc_test"],
-#                site_filter = config["site_filter"],
-#                target_phenotype = config["target_phenotypes"],
-#                bin_length = config["bin_length"]
-#        ),
+# test_gwls
+        expand(os.path.join(
+            config["working_dir"],
+            "association_testing/{date_of_assoc_test}/{site_filter}/{target_phenotype}/test_results/{bin_length}.rds"
+            ),
+                date_of_assoc_test = config["date_of_assoc_test"],
+                site_filter = config["site_filter"],
+                target_phenotype = config["target_phenotypes"],
+                bin_length = config["bin_length"]
+        ),
 ## run_gwls
 #        expand(os.path.join(
 #                config["working_dir"],
@@ -199,16 +202,16 @@ rule all:
 #                        bin_length = config["bin_length"],
 #                        permutation_seed = PERM_SEEDS   
 #        ),
-# get_manhattan
-        expand("book/plots/manhattans/{date_of_assoc_test}/{site_filter}/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.png",
-                        date_of_assoc_test = config["date_of_assoc_test"],
-                        site_filter = config["site_filter"],
-                        target_phenotype = config["target_phenotypes"],
-                        covariates = config["covariates"],
-                        inverse_norm = config["inverse_norm"],                        
-                        bin_length = config["bin_length"],
-                        permutation_seed = PERM_SEEDS
-        ),
+## get_manhattan
+#        expand("book/plots/manhattans/{date_of_assoc_test}/{site_filter}/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.png",
+#                        date_of_assoc_test = config["date_of_assoc_test"],
+#                        site_filter = config["site_filter"],
+#                        target_phenotype = config["target_phenotypes"],
+#                        covariates = config["covariates"],
+#                        inverse_norm = config["inverse_norm"],                        
+#                        bin_length = config["bin_length"],
+#                        permutation_seed = PERM_SEEDS
+#        ),
 ################
 ## 08_F2_calling.smk
 ###############

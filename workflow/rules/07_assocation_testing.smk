@@ -3,11 +3,17 @@
 # Note: this step filters out the samples with low coverage (config["low_cov_samples"])
 rule create_gwas_input:
     input:
-        genotypes = os.path.join(config["data_store_dir"], "recombination_blocks/F2/{site_filter}/{bin_length}.txt"),
+        genotypes = rules.run_rc_block_F2.output,
     output:
-        os.path.join(config["data_store_dir"], "association_testing/{date_of_assoc_test}/{site_filter}/inputs/{bin_length}.rds"),
+        os.path.join(
+            config["working_dir"],
+            "association_testing/{date_of_assoc_test}/{site_filter}/inputs/{bin_length}.rds"
+        ),
     log:
-        os.path.join(config["working_dir"], "logs/create_gwas_input/{date_of_assoc_test}/{site_filter}/{bin_length}.log")
+        os.path.join(
+            config["working_dir"],
+            "logs/create_gwas_input/{date_of_assoc_test}/{site_filter}/{bin_length}.log"
+        ),
     params:
         bin_length = "{bin_length}",
         low_cov_samples = config["low_cov_samples"]
@@ -20,12 +26,21 @@ rule create_gwas_input:
 
 rule simulate_phenotypes:
     input:
-        os.path.join(config["data_store_dir"], "association_testing/{date_of_assoc_test}_true/{site_filter}/inputs/{bin_length}.rds"),
+        rules.create_gwas_input.output,
     output:
-        sample_genos = os.path.join(config["data_store_dir"], "association_testing/{date_of_assoc_test}/{site_filter}/sample_genos/{bin_length}.csv"),
-        sim_phenos = os.path.join(config["data_store_dir"], "association_testing/{date_of_assoc_test}/{site_filter}/sim_phenos/{bin_length}.xlsx"),
+        sample_genos = os.path.join(
+            config["working_dir"],
+            "association_testing/{date_of_assoc_test}/{site_filter}/{target_phenotype}/sample_genos/{bin_length}.csv"
+        ),
+        sim_phenos = os.path.join(
+            config["working_dir"],
+            "association_testing/{date_of_assoc_test}/{site_filter}/{target_phenotype}/sim_phenos/{bin_length}.xlsx"
+        ),
     log:
-        os.path.join(config["working_dir"], "logs/simulate_phenotypes/{date_of_assoc_test}/{site_filter}/{bin_length}.log"),
+        os.path.join(
+            config["working_dir"],
+            "logs/simulate_phenotypes/{date_of_assoc_test}/{site_filter}/{target_phenotype}/{bin_length}.log"
+        ),
     params:
         n_sample_gts = config["n_sample_gts"]
     resources:
@@ -41,9 +56,15 @@ rule test_gwls:
         phenotypes_file = rules.simulate_phenotypes.output.sim_phenos,
         source_file = "workflow/scripts/run_gwls_source.R"
     output:
-        os.path.join(config["data_store_dir"], "association_testing/{date_of_assoc_test}/{site_filter}/test_results/{bin_length}.rds"),
+        os.path.join(
+            config["working_dir"],
+            "association_testing/{date_of_assoc_test}/{site_filter}/{target_phenotype}/test_results/{bin_length}.rds"
+        ),
     log:
-        os.path.join(config["working_dir"], "logs/test_gwls/{date_of_assoc_test}/{site_filter}/{bin_length}.log")
+        os.path.join(
+            config["working_dir"],
+            "logs/test_gwls/{date_of_assoc_test}/{site_filter}/{target_phenotype}/{bin_length}.log"
+        ),
     params:
         bin_length = lambda wildcards: wildcards.bin_length,
         target_phenotype = "Y"
