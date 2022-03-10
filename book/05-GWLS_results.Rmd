@@ -56,15 +56,6 @@ knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, 
 knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "20000.png"))
 ```
 
-```{r}
-COVARIATES = "Microscope-Date_of_imaging"
-```
-
-```{r, out.width="100%"}
-knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "5000.png"))
-knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "20000.png"))
-```
-
 #### Mean
 
 ```{r}
@@ -82,15 +73,6 @@ knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, 
 
 ```{r}
 COVARIATES = "Microscope"
-```
-
-```{r, out.width="100%"}
-knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "5000.png"))
-knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "20000.png"))
-```
-
-```{r}
-COVARIATES = "Microscope-Date_of_imaging"
 ```
 
 ```{r, out.width="100%"}
@@ -122,14 +104,6 @@ knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, 
 knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "20000.png"))
 ```
 
-```{r}
-COVARIATES = "Microscope-Date_of_imaging"
-```
-
-```{r, out.width="100%"}
-knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "5000.png"))
-knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "20000.png"))
-```
 ### All filters
 
 ```{r}
@@ -161,14 +135,6 @@ knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, 
 knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "20000.png"))
 ```
 
-```{r}
-COVARIATES = "Microscope-Date_of_imaging"
-```
-
-```{r, out.width="100%"}
-knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "5000.png"))
-knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "20000.png"))
-```
 
 #### Mean
 
@@ -194,14 +160,6 @@ knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, 
 knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "20000.png"))
 ```
 
-```{r}
-COVARIATES = "Microscope-Date_of_imaging"
-```
-
-```{r, out.width="100%"}
-knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "5000.png"))
-knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "20000.png"))
-```
 
 #### PSM
 
@@ -227,11 +185,4 @@ knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, 
 knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "20000.png"))
 ```
 
-```{r}
-COVARIATES = "Microscope-Date_of_imaging"
-```
 
-```{r, out.width="100%"}
-knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "5000.png"))
-knitr::include_graphics(here::here("book/plots/manhattans", DATE_OF_ASSOC_TEST, SITE_FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, "20000.png"))
-```

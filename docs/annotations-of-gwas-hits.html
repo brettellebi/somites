@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Chapter 12 Annotations of GWAS hits | Somite period F2 analysis</title>
+<meta name="author" content="Ian Brettell">
+<meta name="description" content="library(here) #&gt; here() starts at /hps/software/users/birney/ian/repos/somites library(tidyverse) #&gt; ── Attaching packages ─────────────────── tidyverse 1.3.1 ── #&gt; ✓ ggplot2 3.3.5   ✓ purrr ...">
+<meta name="generator" content="bookdown 0.24.2 with bs4_book()">
+<meta property="og:title" content="Chapter 12 Annotations of GWAS hits | Somite period F2 analysis">
+<meta property="og:type" content="book">
+<meta property="og:description" content="library(here) #&gt; here() starts at /hps/software/users/birney/ian/repos/somites library(tidyverse) #&gt; ── Attaching packages ─────────────────── tidyverse 1.3.1 ── #&gt; ✓ ggplot2 3.3.5   ✓ purrr ...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chapter 12 Annotations of GWAS hits | Somite period F2 analysis">
+<meta name="twitter:description" content="library(here) #&gt; here() starts at /hps/software/users/birney/ian/repos/somites library(tidyverse) #&gt; ── Attaching packages ─────────────────── tidyverse 1.3.1 ── #&gt; ✓ ggplot2 3.3.5   ✓ purrr ...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/header-attrs-2.10/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.2.5.1/tabs.js"></script><script src="libs/bs3compat-0.2.5.1/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="libs/htmlwidgets-1.5.3/htmlwidgets.js"></script><script src="libs/plotly-binding-4.9.4.1/plotly.js"></script><script src="libs/typedarray-0.1/typedarray.min.js"></script><link href="libs/crosstalk-1.1.1/css/crosstalk.css" rel="stylesheet">
+<script src="libs/crosstalk-1.1.1/js/crosstalk.min.js"></script><link href="libs/plotly-htmlwidgets-css-1.57.1/plotly-htmlwidgets.css" rel="stylesheet">
+<script src="libs/plotly-main-1.57.1/plotly-latest.min.js"></script><link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet">
+<script src="libs/datatables-binding-0.18/datatables.js"></script><link href="libs/dt-core-1.10.20/css/jquery.dataTables.min.css" rel="stylesheet">
+<link href="libs/dt-core-1.10.20/css/jquery.dataTables.extra.css" rel="stylesheet">
+<script src="libs/dt-core-1.10.20/js/jquery.dataTables.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><link rel="stylesheet" href="style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="">Somite period F2 analysis</a>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html"><span class="header-section-number">1</span> About</a></li>
+<li><a class="" href="alignment-of-f0-and-f2-generations.html"><span class="header-section-number">2</span> Alignment of F0 and F2 generations</a></li>
+<li><a class="" href="homozygosity-of-f0-cab-and-kaga.html"><span class="header-section-number">3</span> Homozygosity of F0 Cab and Kaga</a></li>
+<li><a class="" href="f2-recombination-blocks-all-homozygous-divergent-sites.html"><span class="header-section-number">4</span> F2 recombination blocks (all homozygous-divergent sites)</a></li>
+<li><a class="" href="f2-recombination-blocks-filtered-sites.html"><span class="header-section-number">5</span> F2 recombination blocks (filtered sites)</a></li>
+<li><a class="" href="phenotypes.html"><span class="header-section-number">6</span> Phenotypes</a></li>
+<li><a class="" href="association-testing-with-simulated-phenotypes.html"><span class="header-section-number">7</span> Association testing with simulated phenotypes</a></li>
+<li><a class="" href="gwls-results.html"><span class="header-section-number">8</span> GWLS results</a></li>
+<li><a class="" href="association-testing-with-only-au-microscope.html"><span class="header-section-number">9</span> Association testing with only AU microscope</a></li>
+<li><a class="" href="association-testing-with-only-au-microscope-1.html"><span class="header-section-number">10</span> Association testing with only AU microscope</a></li>
+<li><a class="" href="inverse-normalize-by-microscope.html"><span class="header-section-number">11</span> Inverse-normalize by microscope</a></li>
+<li><a class="active" href="annotations-of-gwas-hits.html"><span class="header-section-number">12</span> Annotations of GWAS hits</a></li>
+<li><a class="" href="references.html">References</a></li>
+</ul>
+
+        <div class="book-extra">
+          <p><a id="book-repo" href="https://github.com/brettellebi/somites">View book source <i class="fab fa-github"></i></a></p>
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="annotations-of-gwas-hits" class="section level1" number="12">
+<h1>
+<span class="header-section-number">12</span> Annotations of GWAS hits<a class="anchor" aria-label="anchor" href="#annotations-of-gwas-hits"><i class="fas fa-link"></i></a>
+</h1>
+<div class="sourceCode" id="cb144"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://here.r-lib.org/">here</a></span><span class="op">)</span>
+<span class="co">#&gt; here() starts at /hps/software/users/birney/ian/repos/somites</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span>
+<span class="co">#&gt; ── Attaching packages ─────────────────── tidyverse 1.3.1 ──</span>
+<span class="co">#&gt; ✓ ggplot2 3.3.5     ✓ purrr   0.3.4</span>
+<span class="co">#&gt; ✓ tibble  3.1.3     ✓ dplyr   1.0.7</span>
+<span class="co">#&gt; ✓ tidyr   1.1.3     ✓ stringr 1.4.0</span>
+<span class="co">#&gt; ✓ readr   2.0.0     ✓ forcats 0.5.1</span>
+<span class="co">#&gt; ── Conflicts ────────────────────── tidyverse_conflicts() ──</span>
+<span class="co">#&gt; x dplyr::filter() masks stats::filter()</span>
+<span class="co">#&gt; x dplyr::lag()    masks stats::lag()</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">biomaRt</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb145"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">DATE_OF_ASSOC_TEST</span> <span class="op">=</span> <span class="st">"20220214"</span>
+<span class="va">SITE_FILTER</span> <span class="op">=</span> <span class="st">"all_sites"</span>
+<span class="va">COVARIATES</span> <span class="op">=</span> <span class="st">"None"</span>
+<span class="va">INVERSE_NORM</span> <span class="op">=</span> <span class="st">"TRUE"</span>
+<span class="va">BIN_LENGTH</span> <span class="op">=</span> <span class="fl">5000</span>
+<span class="va">OUT_DIR</span> <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"data"</span>, <span class="va">DATE_OF_ASSOC_TEST</span>, <span class="st">"annotations"</span><span class="op">)</span></code></pre></div>
+<div id="intercept-3" class="section level2" number="12.1">
+<h2>
+<span class="header-section-number">12.1</span> Intercept<a class="anchor" aria-label="anchor" href="#intercept-3"><i class="fas fa-link"></i></a>
+</h2>
+<div class="sourceCode" id="cb146"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">TARGET_PHENO</span> <span class="op">=</span> <span class="st">"intercept"</span></code></pre></div>
+<div id="read-in-data-2" class="section level3" number="12.1.1">
+<h3>
+<span class="header-section-number">12.1.1</span> Read in data<a class="anchor" aria-label="anchor" href="#read-in-data-2"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb147"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">GWAS_RESULTS</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="st">"/hps/nobackup/birney/users/ian/somites/association_testing"</span>,
+                         <span class="va">DATE_OF_ASSOC_TEST</span>,
+                         <span class="va">SITE_FILTER</span>,
+                         <span class="st">"true_results"</span>,
+                         <span class="va">TARGET_PHENO</span>,
+                         <span class="va">COVARIATES</span>,
+                         <span class="va">INVERSE_NORM</span>,
+                         <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="va">BIN_LENGTH</span>, <span class="st">".rds"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span>
+
+<span class="va">RESULTS</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="va">GWAS_RESULTS</span><span class="op">)</span>
+
+<span class="va">PERMS_PATHS</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="st">"/hps/nobackup/birney/users/ian/somites/association_testing/"</span>,
+                          <span class="va">DATE_OF_ASSOC_TEST</span>,
+                          <span class="va">SITE_FILTER</span>,
+                          <span class="st">"permutations"</span>,
+                          <span class="va">TARGET_PHENO</span>,
+                          <span class="va">COVARIATES</span>,
+                          <span class="va">INVERSE_NORM</span>,
+                          <span class="va">BIN_LENGTH</span><span class="op">)</span>
+<span class="va">PERMS</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span><span class="op">(</span><span class="va">PERMS_PATHS</span>, full.names <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">PERMS</span><span class="op">)</span> <span class="op">=</span> <span class="va">PERMS</span> <span class="op">%&gt;%</span> 
+  <span class="va">basename</span> <span class="op">%&gt;%</span> 
+  <span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_remove.html">str_remove</a></span><span class="op">(</span><span class="st">".rds"</span><span class="op">)</span>
+
+<span class="kw">if</span> <span class="op">(</span><span class="st">"p_value_REML"</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">RESULTS</span><span class="op">$</span><span class="va">results</span><span class="op">)</span><span class="op">)</span><span class="op">{</span>
+  <span class="va">P_COL</span> <span class="op">=</span> <span class="st">"p_value_REML"</span>
+<span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
+  <span class="va">P_COL</span> <span class="op">=</span> <span class="st">"p_value_REML.1"</span>
+<span class="op">}</span>
+
+<span class="co"># Rename column in results</span>
+
+<span class="kw">if</span> <span class="op">(</span><span class="va">P_COL</span> <span class="op">==</span> <span class="st">"p_value_REML.1"</span><span class="op">)</span><span class="op">{</span>
+  <span class="va">RESULTS</span><span class="op">$</span><span class="va">results</span> <span class="op">=</span> <span class="va">RESULTS</span><span class="op">$</span><span class="va">results</span> <span class="op">%&gt;%</span> 
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html">rename</a></span><span class="op">(</span>p_value_REML <span class="op">=</span> <span class="va">p_value_REML.1</span><span class="op">)</span>
+<span class="op">}</span>
+
+<span class="co"># Read in permutation results and get `SIG_LEVEL`</span>
+
+<span class="va">PERM_LIST</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">PERMS</span>, <span class="kw">function</span><span class="op">(</span><span class="va">PERM</span><span class="op">)</span><span class="op">{</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="va">PERM</span><span class="op">)</span>
+<span class="op">}</span><span class="op">)</span>
+
+<span class="va">perm_df</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map_dfr</a></span><span class="op">(</span><span class="va">PERM_LIST</span>, <span class="kw">function</span><span class="op">(</span><span class="va">PERM</span><span class="op">)</span><span class="op">{</span>
+  <span class="va">OUT</span> <span class="op">=</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span>MIN_P <span class="op">=</span> <span class="va">PERM</span><span class="op">$</span><span class="va">results</span> <span class="op">%&gt;%</span> 
+                         <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/all_of.html">all_of</a></span><span class="op">(</span><span class="va">P_COL</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+                         <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">.</span>, na.rm <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>
+  <span class="op">)</span>
+<span class="op">}</span>, .id <span class="op">=</span> <span class="st">"SEED"</span><span class="op">)</span>
+
+<span class="co"># Get minimum</span>
+<span class="va">SIG_LEVEL</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">perm_df</span><span class="op">$</span><span class="va">MIN_P</span><span class="op">)</span></code></pre></div>
+</div>
+<div id="pull-significant-loci" class="section level3" number="12.1.2">
+<h3>
+<span class="header-section-number">12.1.2</span> Pull significant loci<a class="anchor" aria-label="anchor" href="#pull-significant-loci"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb148"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">SIG_LOCS</span> <span class="op">=</span> <span class="va">RESULTS</span><span class="op">$</span><span class="va">results</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">p_value_REML</span> <span class="op">&lt;</span> <span class="va">SIG_LEVEL</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span>CHROM <span class="op">=</span> <span class="va">Chr</span>,
+                BIN_START <span class="op">=</span> <span class="va">pos</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>BIN_END <span class="op">=</span> <span class="va">BIN_START</span> <span class="op">+</span> <span class="va">BIN_LENGTH</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span>
+                </code></pre></div>
+</div>
+<div id="get-annotations" class="section level3" number="12.1.3">
+<h3>
+<span class="header-section-number">12.1.3</span> Get annotations<a class="anchor" aria-label="anchor" href="#get-annotations"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb149"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">## Select dataset</span>
+<span class="va">olat_mart</span> <span class="op">=</span> <span class="fu">biomaRt</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/biomaRt/man/useEnsembl.html">useEnsembl</a></span><span class="op">(</span>biomart <span class="op">=</span> <span class="st">"ensembl"</span>, dataset <span class="op">=</span> <span class="st">"olatipes_gene_ensembl"</span><span class="op">)</span>
+<span class="co">#&gt; Ensembl site unresponsive, trying asia mirror</span>
+<span class="co">#&gt; Ensembl site unresponsive, trying asia mirror</span>
+
+<span class="va">olat_attr</span> <span class="op">=</span> <span class="fu">biomaRt</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/biomaRt/man/listAttributes.html">listAttributes</a></span><span class="op">(</span><span class="va">olat_mart</span><span class="op">)</span>
+
+<span class="va">olat_genes</span> <span class="op">=</span> <span class="fu">biomaRt</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/biomaRt/man/getBM.html">getBM</a></span><span class="op">(</span>attributes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"chromosome_name"</span>,
+                                           <span class="st">"start_position"</span>,
+                                           <span class="st">"end_position"</span>,
+                                           <span class="st">"ensembl_gene_id"</span>,
+                                           <span class="st">"hgnc_symbol"</span>,
+                                           <span class="st">"ensembl_exon_id"</span>,
+                                           <span class="st">"description"</span>,
+                                           <span class="st">"strand"</span>,
+                                           <span class="st">"transcript_start"</span>,
+                                           <span class="st">"transcript_end"</span><span class="op">)</span>,
+                             mart <span class="op">=</span> <span class="va">olat_mart</span><span class="op">)</span> 
+
+<span class="va">olat_genes_r</span> <span class="op">=</span> <span class="va">olat_genes</span> <span class="op">%&gt;%</span> 
+  <span class="co"># change strand characters</span>
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>strand <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/recode.html">recode</a></span><span class="op">(</span><span class="va">.</span><span class="op">$</span><span class="va">strand</span>,
+                                       `1` <span class="op">=</span> <span class="st">"+"</span>,
+                                       `-1` <span class="op">=</span> <span class="st">"-"</span><span class="op">)</span>
+                <span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">GenomicRanges</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/makeGRangesFromDataFrame.html">makeGRangesFromDataFrame</a></span><span class="op">(</span>seqnames.field <span class="op">=</span> <span class="st">"chromosome_name"</span>,
+                                            start.field <span class="op">=</span> <span class="st">"start_position"</span>,
+                                            end.field <span class="op">=</span> <span class="st">"end_position"</span><span class="op">)</span>
+
+<span class="co"># convert hits to genomic ranges</span>
+<span class="va">sig_loc_r</span> <span class="op">=</span> <span class="va">SIG_LOCS</span> <span class="op">%&gt;%</span> 
+  <span class="fu">GenomicRanges</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/makeGRangesFromDataFrame.html">makeGRangesFromDataFrame</a></span><span class="op">(</span>seqnames.field <span class="op">=</span> <span class="st">"CHROM"</span>,
+                                          start.field <span class="op">=</span> <span class="st">"BIN_START"</span>,
+                                          end.field <span class="op">=</span> <span class="st">"BIN_END"</span>,
+                                          ignore.strand <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>
+
+
+<span class="co"># find overlaps</span>
+<span class="va">olaps</span> <span class="op">=</span> <span class="fu">GenomicRanges</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/findOverlaps-methods.html">findOverlaps</a></span><span class="op">(</span><span class="va">sig_loc_r</span>, <span class="va">olat_genes_r</span><span class="op">)</span>
+
+<span class="co"># Pull out data frame of hits</span>
+<span class="va">hits</span> <span class="op">=</span> <span class="va">olat_genes</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">olaps</span><span class="op">@</span><span class="va">to</span><span class="op">)</span>, <span class="op">]</span>
+
+<span class="va">hits</span> <span class="op">%&gt;%</span> 
+  <span class="fu">DT</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html">datatable</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span></code></pre></div>
+<div id="htmlwidget-876c5655ffc8b74a516b" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-876c5655ffc8b74a516b">{"x":{"filter":"none","data":[["52786"],["3"],[34635715],[34636717],["ENSORLG00000026609"],[""],["ENSORLE00000271723"],[""],[1],[34635715],[34636717]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>chromosome_name<\/th>\n      <th>start_position<\/th>\n      <th>end_position<\/th>\n      <th>ensembl_gene_id<\/th>\n      <th>hgnc_symbol<\/th>\n      <th>ensembl_exon_id<\/th>\n      <th>description<\/th>\n      <th>strand<\/th>\n      <th>transcript_start<\/th>\n      <th>transcript_end<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[2,3,8,9,10]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script><div class="sourceCode" id="cb150"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Save to file</span>
+<span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/write_delim.html">write_csv</a></span><span class="op">(</span><span class="va">hits</span>,
+                 <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">OUT_DIR</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="va">TARGET_PHENO</span>, <span class="st">".csv"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+</div>
+</div>
+<div id="psm-area" class="section level2" number="12.2">
+<h2>
+<span class="header-section-number">12.2</span> PSM area<a class="anchor" aria-label="anchor" href="#psm-area"><i class="fas fa-link"></i></a>
+</h2>
+<div class="sourceCode" id="cb151"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">TARGET_PHENO</span> <span class="op">=</span> <span class="st">"unsegmented_psm_area"</span></code></pre></div>
+<div id="read-in-data-3" class="section level3" number="12.2.1">
+<h3>
+<span class="header-section-number">12.2.1</span> Read in data<a class="anchor" aria-label="anchor" href="#read-in-data-3"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb152"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">GWAS_RESULTS</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="st">"/hps/nobackup/birney/users/ian/somites/association_testing"</span>,
+                         <span class="va">DATE_OF_ASSOC_TEST</span>,
+                         <span class="va">SITE_FILTER</span>,
+                         <span class="st">"true_results"</span>,
+                         <span class="va">TARGET_PHENO</span>,
+                         <span class="va">COVARIATES</span>,
+                         <span class="va">INVERSE_NORM</span>,
+                         <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="va">BIN_LENGTH</span>, <span class="st">".rds"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span>
+
+<span class="va">RESULTS</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="va">GWAS_RESULTS</span><span class="op">)</span>
+
+<span class="va">PERMS_PATHS</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="st">"/hps/nobackup/birney/users/ian/somites/association_testing/"</span>,
+                          <span class="va">DATE_OF_ASSOC_TEST</span>,
+                          <span class="va">SITE_FILTER</span>,
+                          <span class="st">"permutations"</span>,
+                          <span class="va">TARGET_PHENO</span>,
+                          <span class="va">COVARIATES</span>,
+                          <span class="va">INVERSE_NORM</span>,
+                          <span class="va">BIN_LENGTH</span><span class="op">)</span>
+<span class="va">PERMS</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span><span class="op">(</span><span class="va">PERMS_PATHS</span>, full.names <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">PERMS</span><span class="op">)</span> <span class="op">=</span> <span class="va">PERMS</span> <span class="op">%&gt;%</span> 
+  <span class="va">basename</span> <span class="op">%&gt;%</span> 
+  <span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_remove.html">str_remove</a></span><span class="op">(</span><span class="st">".rds"</span><span class="op">)</span>
+
+<span class="kw">if</span> <span class="op">(</span><span class="st">"p_value_REML"</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">RESULTS</span><span class="op">$</span><span class="va">results</span><span class="op">)</span><span class="op">)</span><span class="op">{</span>
+  <span class="va">P_COL</span> <span class="op">=</span> <span class="st">"p_value_REML"</span>
+<span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
+  <span class="va">P_COL</span> <span class="op">=</span> <span class="st">"p_value_REML.1"</span>
+<span class="op">}</span>
+
+<span class="co"># Rename column in results</span>
+
+<span class="kw">if</span> <span class="op">(</span><span class="va">P_COL</span> <span class="op">==</span> <span class="st">"p_value_REML.1"</span><span class="op">)</span><span class="op">{</span>
+  <span class="va">RESULTS</span><span class="op">$</span><span class="va">results</span> <span class="op">=</span> <span class="va">RESULTS</span><span class="op">$</span><span class="va">results</span> <span class="op">%&gt;%</span> 
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html">rename</a></span><span class="op">(</span>p_value_REML <span class="op">=</span> <span class="va">p_value_REML.1</span><span class="op">)</span>
+<span class="op">}</span>
+
+<span class="co"># Read in permutation results and get `SIG_LEVEL`</span>
+
+<span class="va">PERM_LIST</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">PERMS</span>, <span class="kw">function</span><span class="op">(</span><span class="va">PERM</span><span class="op">)</span><span class="op">{</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="va">PERM</span><span class="op">)</span>
+<span class="op">}</span><span class="op">)</span>
+
+<span class="va">perm_df</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map_dfr</a></span><span class="op">(</span><span class="va">PERM_LIST</span>, <span class="kw">function</span><span class="op">(</span><span class="va">PERM</span><span class="op">)</span><span class="op">{</span>
+  <span class="va">OUT</span> <span class="op">=</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span>MIN_P <span class="op">=</span> <span class="va">PERM</span><span class="op">$</span><span class="va">results</span> <span class="op">%&gt;%</span> 
+                         <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/all_of.html">all_of</a></span><span class="op">(</span><span class="va">P_COL</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+                         <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">.</span>, na.rm <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>
+  <span class="op">)</span>
+<span class="op">}</span>, .id <span class="op">=</span> <span class="st">"SEED"</span><span class="op">)</span>
+
+<span class="co"># Get minimum</span>
+<span class="va">SIG_LEVEL</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">perm_df</span><span class="op">$</span><span class="va">MIN_P</span><span class="op">)</span></code></pre></div>
+</div>
+<div id="pull-significant-loci-1" class="section level3" number="12.2.2">
+<h3>
+<span class="header-section-number">12.2.2</span> Pull significant loci<a class="anchor" aria-label="anchor" href="#pull-significant-loci-1"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb153"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">SIG_LOCS</span> <span class="op">=</span> <span class="va">RESULTS</span><span class="op">$</span><span class="va">results</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">p_value_REML</span> <span class="op">&lt;</span> <span class="va">SIG_LEVEL</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span>CHROM <span class="op">=</span> <span class="va">Chr</span>,
+                BIN_START <span class="op">=</span> <span class="va">pos</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>BIN_END <span class="op">=</span> <span class="va">BIN_START</span> <span class="op">+</span> <span class="va">BIN_LENGTH</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span>
+                </code></pre></div>
+</div>
+<div id="get-annotations-1" class="section level3" number="12.2.3">
+<h3>
+<span class="header-section-number">12.2.3</span> Get annotations<a class="anchor" aria-label="anchor" href="#get-annotations-1"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb154"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">## Select dataset</span>
+<span class="va">olat_mart</span> <span class="op">=</span> <span class="fu">biomaRt</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/biomaRt/man/useEnsembl.html">useEnsembl</a></span><span class="op">(</span>biomart <span class="op">=</span> <span class="st">"ensembl"</span>, dataset <span class="op">=</span> <span class="st">"olatipes_gene_ensembl"</span><span class="op">)</span>
+
+<span class="va">olat_attr</span> <span class="op">=</span> <span class="fu">biomaRt</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/biomaRt/man/listAttributes.html">listAttributes</a></span><span class="op">(</span><span class="va">olat_mart</span><span class="op">)</span>
+
+<span class="va">olat_genes</span> <span class="op">=</span> <span class="fu">biomaRt</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/biomaRt/man/getBM.html">getBM</a></span><span class="op">(</span>attributes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"chromosome_name"</span>,
+                                           <span class="st">"start_position"</span>,
+                                           <span class="st">"end_position"</span>,
+                                           <span class="st">"ensembl_gene_id"</span>,
+                                           <span class="st">"hgnc_symbol"</span>,
+                                           <span class="st">"ensembl_exon_id"</span>,
+                                           <span class="st">"description"</span>,
+                                           <span class="st">"strand"</span>,
+                                           <span class="st">"transcript_start"</span>,
+                                           <span class="st">"transcript_end"</span><span class="op">)</span>,
+                             mart <span class="op">=</span> <span class="va">olat_mart</span><span class="op">)</span> 
+
+<span class="va">olat_genes_r</span> <span class="op">=</span> <span class="va">olat_genes</span> <span class="op">%&gt;%</span> 
+  <span class="co"># change strand characters</span>
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>strand <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/recode.html">recode</a></span><span class="op">(</span><span class="va">.</span><span class="op">$</span><span class="va">strand</span>,
+                                       `1` <span class="op">=</span> <span class="st">"+"</span>,
+                                       `-1` <span class="op">=</span> <span class="st">"-"</span><span class="op">)</span>
+                <span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">GenomicRanges</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/makeGRangesFromDataFrame.html">makeGRangesFromDataFrame</a></span><span class="op">(</span>seqnames.field <span class="op">=</span> <span class="st">"chromosome_name"</span>,
+                                            start.field <span class="op">=</span> <span class="st">"start_position"</span>,
+                                            end.field <span class="op">=</span> <span class="st">"end_position"</span><span class="op">)</span>
+
+<span class="co"># convert hits to genomic ranges</span>
+<span class="va">sig_loc_r</span> <span class="op">=</span> <span class="va">SIG_LOCS</span> <span class="op">%&gt;%</span> 
+  <span class="fu">GenomicRanges</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/makeGRangesFromDataFrame.html">makeGRangesFromDataFrame</a></span><span class="op">(</span>seqnames.field <span class="op">=</span> <span class="st">"CHROM"</span>,
+                                          start.field <span class="op">=</span> <span class="st">"BIN_START"</span>,
+                                          end.field <span class="op">=</span> <span class="st">"BIN_END"</span>,
+                                          ignore.strand <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>
+
+
+<span class="co"># find overlaps</span>
+<span class="va">olaps</span> <span class="op">=</span> <span class="fu">GenomicRanges</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/findOverlaps-methods.html">findOverlaps</a></span><span class="op">(</span><span class="va">sig_loc_r</span>, <span class="va">olat_genes_r</span><span class="op">)</span>
+
+<span class="co"># Pull out data frame of hits</span>
+<span class="va">hits</span> <span class="op">=</span> <span class="va">olat_genes</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">olaps</span><span class="op">@</span><span class="va">to</span><span class="op">)</span>, <span class="op">]</span>
+
+<span class="va">hits</span> <span class="op">%&gt;%</span> 
+  <span class="fu">DT</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html">datatable</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span></code></pre></div>
+<div id="htmlwidget-3dcea5edc4f4fb9b0639" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-3dcea5edc4f4fb9b0639">{"x":{"filter":"none","data":[["106182","106183","106184","106185","106186","106187","106188","106189","106190","106191","106192","106193","106194","106195","106196"],["3","3","3","3","3","3","3","3","3","3","3","3","3","3","3"],[22963087,22963087,22963087,22963087,22963087,22963087,22963087,22963087,22963087,22963087,22963087,22963087,22963087,22963087,22963087],[22992674,22992674,22992674,22992674,22992674,22992674,22992674,22992674,22992674,22992674,22992674,22992674,22992674,22992674,22992674],["ENSORLG00000009678","ENSORLG00000009678","ENSORLG00000009678","ENSORLG00000009678","ENSORLG00000009678","ENSORLG00000009678","ENSORLG00000009678","ENSORLG00000009678","ENSORLG00000009678","ENSORLG00000009678","ENSORLG00000009678","ENSORLG00000009678","ENSORLG00000009678","ENSORLG00000009678","ENSORLG00000009678"],["","","","","","","","","","","","","","",""],["ENSORLE00000270694","ENSORLE00000109779","ENSORLE00000109778","ENSORLE00000109768","ENSORLE00000109762","ENSORLE00000269835","ENSORLE00000302288","ENSORLE00000249511","ENSORLE00000109760","ENSORLE00000109757","ENSORLE00000109761","ENSORLE00000138828","ENSORLE00000109778","ENSORLE00000109768","ENSORLE00000109762"],["synaptotagmin-9 [Source:NCBI gene;Acc:101174010]","synaptotagmin-9 [Source:NCBI gene;Acc:101174010]","synaptotagmin-9 [Source:NCBI gene;Acc:101174010]","synaptotagmin-9 [Source:NCBI gene;Acc:101174010]","synaptotagmin-9 [Source:NCBI gene;Acc:101174010]","synaptotagmin-9 [Source:NCBI gene;Acc:101174010]","synaptotagmin-9 [Source:NCBI gene;Acc:101174010]","synaptotagmin-9 [Source:NCBI gene;Acc:101174010]","synaptotagmin-9 [Source:NCBI gene;Acc:101174010]","synaptotagmin-9 [Source:NCBI gene;Acc:101174010]","synaptotagmin-9 [Source:NCBI gene;Acc:101174010]","synaptotagmin-9 [Source:NCBI gene;Acc:101174010]","synaptotagmin-9 [Source:NCBI gene;Acc:101174010]","synaptotagmin-9 [Source:NCBI gene;Acc:101174010]","synaptotagmin-9 [Source:NCBI gene;Acc:101174010]"],[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],[22963087,22963087,22963087,22963087,22963087,22963087,22963087,22968889,22968889,22968889,22968889,22968889,22968889,22968889,22968889],[22992674,22992674,22992674,22992674,22992674,22992674,22992674,22992573,22992573,22992573,22992573,22992573,22992573,22992573,22992573]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>chromosome_name<\/th>\n      <th>start_position<\/th>\n      <th>end_position<\/th>\n      <th>ensembl_gene_id<\/th>\n      <th>hgnc_symbol<\/th>\n      <th>ensembl_exon_id<\/th>\n      <th>description<\/th>\n      <th>strand<\/th>\n      <th>transcript_start<\/th>\n      <th>transcript_end<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[2,3,8,9,10]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script><div class="sourceCode" id="cb155"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Save to file</span>
+<span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/write_delim.html">write_csv</a></span><span class="op">(</span><span class="va">hits</span>,
+                 <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">OUT_DIR</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="va">TARGET_PHENO</span>, <span class="st">".csv"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+
+</div>
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="inverse-normalize-by-microscope.html"><span class="header-section-number">11</span> Inverse-normalize by microscope</a></div>
+<div class="next"><a href="references.html">References</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#annotations-of-gwas-hits"><span class="header-section-number">12</span> Annotations of GWAS hits</a></li>
+<li>
+<a class="nav-link" href="#intercept-3"><span class="header-section-number">12.1</span> Intercept</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#read-in-data-2"><span class="header-section-number">12.1.1</span> Read in data</a></li>
+<li><a class="nav-link" href="#pull-significant-loci"><span class="header-section-number">12.1.2</span> Pull significant loci</a></li>
+<li><a class="nav-link" href="#get-annotations"><span class="header-section-number">12.1.3</span> Get annotations</a></li>
+</ul>
+</li>
+<li>
+<a class="nav-link" href="#psm-area"><span class="header-section-number">12.2</span> PSM area</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#read-in-data-3"><span class="header-section-number">12.2.1</span> Read in data</a></li>
+<li><a class="nav-link" href="#pull-significant-loci-1"><span class="header-section-number">12.2.2</span> Pull significant loci</a></li>
+<li><a class="nav-link" href="#get-annotations-1"><span class="header-section-number">12.2.3</span> Get annotations</a></li>
+</ul>
+</li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+<li><a id="book-source" href="https://github.com/brettellebi/somites/blob/master/book/08-Annotations.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/brettellebi/somites/edit/master/book/08-Annotations.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Somite period F2 analysis</strong>" was written by Ian Brettell. It was last built on 2022-03-10.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer>
+</body>
+</html>

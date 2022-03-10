@@ -1,6 +1,6 @@
 # Association testing with only AU microscope
 
-## Run GWLS
+## Load libraries and variables
 
 ```{r, message=F, warning = F}
 library(tidyverse)
@@ -23,17 +23,15 @@ source(GWLS_SOURCE_FILE)
 source(MANHAT_SOURCE_FILE)
 ```
 
-
-```{r, eval = F}
-
-# Load genotypes and positions
-
-in_list = readRDS(GENO_FILE)
-
-```
+## Load genotypes and positions
 
 ```{r}
-# Read in phenotypes
+in_list = readRDS(GENO_FILE)
+```
+
+## Read in phenotypes
+```{r}
+
 
 ## Read in file and wrangle
 phenos = readxl::read_xlsx(PHENO_FILE) %>%
@@ -49,8 +47,9 @@ phenos = readxl::read_xlsx(PHENO_FILE) %>%
 
 ```
 
-```{r, eval = F}
+## Filter for samples with both genos and phenos
 
+```{r}
 ## Filter and order phenotypes
 in_list[["phenotypes"]] = phenos %>%
     # filter phenotypes for those with genotypes
@@ -75,7 +74,11 @@ in_list[["sample_order"]] = in_list[["phenotypes"]]$SAMPLE
 ## Get number of samples
 N_SAMPLES = in_list[["sample_order"]] %>% 
   length()
-            
+```
+
+## Run GWAS
+
+```{r, eval = F}
 # Run GWAS
 
 out = run_gwas(d = in_list[["genotypes"]],
@@ -183,10 +186,6 @@ out_clean = clean_gwas_res(out,
                            bin_length = BIN_LENGTH,
                            chr_lens = med_chr_lens)
 
-# Get significant level
-#SIG_LEVEL = SIG_LEVEL %>% 
-#  -log10(.)
-
 # Plot
 out_plot = plot_man(out_clean,
                     site_filter = "all_sites",
@@ -194,8 +193,8 @@ out_plot = plot_man(out_clean,
                     bin_length = BIN_LENGTH, 
                     gwas_pal = intercept_pal,
                     med_chr_lens = med_chr_lens,
-                    sig_level = SIG_LEVEL) +
-                 #ylim(0,7) + 
+                    sig_level = SIG_LEVEL,
+                    bonferroni = SIG_BONF) +
                  labs(subtitle = paste("Microscope: ", MICROSCOPE, "\nCovariates: None\nn samples: ", N_SAMPLES, sep = ""))
 
 out_plot

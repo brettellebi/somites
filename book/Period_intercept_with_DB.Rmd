@@ -1,8 +1,8 @@
 # Association testing with only AU microscope
 
-## Run GWLS
+## Load libraries and variables
 
-```{r}
+```{r, message=F, warning = F}
 library(tidyverse)
 library(GridLMM)
 library(KRLS)
@@ -15,6 +15,7 @@ BIN_LENGTH = 5000
 TARGET_PHENO = "intercept"
 MICROSCOPE = "DB"
 PLOT_DIR = here::here("book/plots/20220214/microscope_test")
+ALPHA = 0.05
 
 # Get GWAS functions
 
@@ -22,17 +23,15 @@ source(GWLS_SOURCE_FILE)
 source(MANHAT_SOURCE_FILE)
 ```
 
-
-```{r, eval = F}
-
-# Load genotypes and positions
-
-in_list = readRDS(GENO_FILE)
-
-```
+## Load genotypes and positions
 
 ```{r}
-# Read in phenotypes
+in_list = readRDS(GENO_FILE)
+```
+
+## Read in phenotypes
+```{r}
+
 
 ## Read in file and wrangle
 phenos = readxl::read_xlsx(PHENO_FILE) %>%
@@ -46,13 +45,11 @@ phenos = readxl::read_xlsx(PHENO_FILE) %>%
     # THIS IS THE (big) CHANGE: filter for microscope
     dplyr::filter(Microscope == MICROSCOPE)
 
-## Get number of samples
-N_SAMPLES = nrow(phenos)
-
 ```
 
-```{r, eval = F}
+## Filter for samples with both genos and phenos
 
+```{r}
 ## Filter and order phenotypes
 in_list[["phenotypes"]] = phenos %>%
     # filter phenotypes for those with genotypes
@@ -68,11 +65,20 @@ in_list[["phenotypes"]] = phenos %>%
 
 ## Filter genotypes for those that have phenotypes
 in_list[["genotypes"]] = in_list[["genotypes"]] %>%
-    dplyr::filter(in_list[["sample_order"]] %in% in_list[["phenotypes"]]$SAMPLE)
+    dplyr::slice(in_list[["sample_order"]] %in% in_list[["phenotypes"]]$SAMPLE %>% 
+                   which())
 
 ## Filter sample_order for those that have phenotypes
 in_list[["sample_order"]] = in_list[["phenotypes"]]$SAMPLE
-            
+
+## Get number of samples
+N_SAMPLES = in_list[["sample_order"]] %>% 
+  length()
+```
+
+## Run GWAS
+
+```{r, eval = F}
 # Run GWAS
 
 out = run_gwas(d = in_list[["genotypes"]],
@@ -99,14 +105,11 @@ counter = 0
 perm_phenos = purrr::map(seeds, function(SEED){
   counter <<- counter + 1
   # set seed
-  set.seed(SEED)
+  set.seed(seeds[counter])
+  # get original phenotypes
+  orig_phenos = phenos
   # randomise
-  phenos = readxl::read_xlsx(PHENO_FILE) %>%
-      # select key columns
-      dplyr::select(fish, all_of(TARGET_PHENO), Microscope) %>%
-      # ensure that the phenotype column is numeric
-      dplyr::mutate(dplyr::across(all_of(TARGET_PHENO),
-                                  ~ as.numeric(.x))) %>%
+  phenos = orig_phenos
       # randomise phenotype
       dplyr::mutate(dplyr::across(all_of(TARGET_PHENO),
                                   ~ sample(.x)))
@@ -117,17 +120,8 @@ perm_phenos = purrr::map(seeds, function(SEED){
 
 ```{r, eval = F}
 perm_out = purrr::map(perm_phenos, function(PERM_PHENO){
-  ## Read in file and wrangle
-  phenos = PERM_PHENO %>%
-      # adjust sample names
-      dplyr::mutate(SAMPLE = fish %>% stringr::str_remove("KC")) %>%
-      # select key columns
-      dplyr::select(SAMPLE, all_of(TARGET_PHENO), Microscope) %>%
-      # ensure that the phenotype column is numeric
-      dplyr::mutate(dplyr::across(all_of(TARGET_PHENO),
-                                  ~ as.numeric(.x))) %>% 
-      # THIS IS THE (big) CHANGE: filter for microscope
-      dplyr::filter(Microscope == MICROSCOPE)
+  ## Get phenotypes
+  phenos = PERM_PHENO
   
   ## Filter and order phenotypes
   in_list[["phenotypes"]] = phenos %>%
@@ -180,6 +174,9 @@ perm_df = purrr::map_dfr(perm_out, function(PERM){
 
 # Get minimum
 SIG_LEVEL = min(perm_df$MIN_P)
+
+# Get bonferroni correction
+SIG_BONF = ALPHA / ncol(in_list[["genotypes"]])
 ```
 
 ## Generate Manhattan plot
@@ -189,10 +186,6 @@ out_clean = clean_gwas_res(out,
                            bin_length = BIN_LENGTH,
                            chr_lens = med_chr_lens)
 
-# Get significant level
-#SIG_LEVEL = SIG_LEVEL %>% 
-#  -log10(.)
-
 # Plot
 out_plot = plot_man(out_clean,
                     site_filter = "all_sites",
@@ -200,8 +193,8 @@ out_plot = plot_man(out_clean,
                     bin_length = BIN_LENGTH, 
                     gwas_pal = intercept_pal,
                     med_chr_lens = med_chr_lens,
-                    sig_level = SIG_LEVEL) +
-                 #ylim(0,7) + 
+                    sig_level = SIG_LEVEL,
+                    bonferroni = SIG_BONF) +
                  labs(subtitle = paste("Microscope: ", MICROSCOPE, "\nCovariates: None\nn samples: ", N_SAMPLES, sep = ""))
 
 out_plot

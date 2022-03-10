@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Chapter 6 Phenotypes | Somite period F2 analysis</title>
+<meta name="author" content="Ian Brettell">
+<meta name="description" content="library(tidyverse) #&gt; ── Attaching packages ─────────────────── tidyverse 1.3.1 ── #&gt; ✓ ggplot2 3.3.5   ✓ purrr  0.3.4 #&gt; ✓ tibble 3.1.3   ✓ dplyr  1.0.7 #&gt; ✓ tidyr  1.1.3   ✓ stringr 1.4.0 #&gt; ✓...">
+<meta name="generator" content="bookdown 0.24.2 with bs4_book()">
+<meta property="og:title" content="Chapter 6 Phenotypes | Somite period F2 analysis">
+<meta property="og:type" content="book">
+<meta property="og:description" content="library(tidyverse) #&gt; ── Attaching packages ─────────────────── tidyverse 1.3.1 ── #&gt; ✓ ggplot2 3.3.5   ✓ purrr  0.3.4 #&gt; ✓ tibble 3.1.3   ✓ dplyr  1.0.7 #&gt; ✓ tidyr  1.1.3   ✓ stringr 1.4.0 #&gt; ✓...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chapter 6 Phenotypes | Somite period F2 analysis">
+<meta name="twitter:description" content="library(tidyverse) #&gt; ── Attaching packages ─────────────────── tidyverse 1.3.1 ── #&gt; ✓ ggplot2 3.3.5   ✓ purrr  0.3.4 #&gt; ✓ tibble 3.1.3   ✓ dplyr  1.0.7 #&gt; ✓ tidyr  1.1.3   ✓ stringr 1.4.0 #&gt; ✓...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/header-attrs-2.10/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.2.5.1/tabs.js"></script><script src="libs/bs3compat-0.2.5.1/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="libs/htmlwidgets-1.5.3/htmlwidgets.js"></script><script src="libs/plotly-binding-4.9.4.1/plotly.js"></script><script src="libs/typedarray-0.1/typedarray.min.js"></script><link href="libs/crosstalk-1.1.1/css/crosstalk.css" rel="stylesheet">
+<script src="libs/crosstalk-1.1.1/js/crosstalk.min.js"></script><link href="libs/plotly-htmlwidgets-css-1.57.1/plotly-htmlwidgets.css" rel="stylesheet">
+<script src="libs/plotly-main-1.57.1/plotly-latest.min.js"></script><link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet">
+<script src="libs/datatables-binding-0.18/datatables.js"></script><link href="libs/dt-core-1.10.20/css/jquery.dataTables.min.css" rel="stylesheet">
+<link href="libs/dt-core-1.10.20/css/jquery.dataTables.extra.css" rel="stylesheet">
+<script src="libs/dt-core-1.10.20/js/jquery.dataTables.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><link rel="stylesheet" href="style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="">Somite period F2 analysis</a>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html"><span class="header-section-number">1</span> About</a></li>
+<li><a class="" href="alignment-of-f0-and-f2-generations.html"><span class="header-section-number">2</span> Alignment of F0 and F2 generations</a></li>
+<li><a class="" href="homozygosity-of-f0-cab-and-kaga.html"><span class="header-section-number">3</span> Homozygosity of F0 Cab and Kaga</a></li>
+<li><a class="" href="f2-recombination-blocks-all-homozygous-divergent-sites.html"><span class="header-section-number">4</span> F2 recombination blocks (all homozygous-divergent sites)</a></li>
+<li><a class="" href="f2-recombination-blocks-filtered-sites.html"><span class="header-section-number">5</span> F2 recombination blocks (filtered sites)</a></li>
+<li><a class="active" href="phenotypes.html"><span class="header-section-number">6</span> Phenotypes</a></li>
+<li><a class="" href="association-testing-with-simulated-phenotypes.html"><span class="header-section-number">7</span> Association testing with simulated phenotypes</a></li>
+<li><a class="" href="gwls-results.html"><span class="header-section-number">8</span> GWLS results</a></li>
+<li><a class="" href="association-testing-with-only-au-microscope.html"><span class="header-section-number">9</span> Association testing with only AU microscope</a></li>
+<li><a class="" href="association-testing-with-only-au-microscope-1.html"><span class="header-section-number">10</span> Association testing with only AU microscope</a></li>
+<li><a class="" href="inverse-normalize-by-microscope.html"><span class="header-section-number">11</span> Inverse-normalize by microscope</a></li>
+<li><a class="" href="annotations-of-gwas-hits.html"><span class="header-section-number">12</span> Annotations of GWAS hits</a></li>
+<li><a class="" href="references.html">References</a></li>
+</ul>
+
+        <div class="book-extra">
+          <p><a id="book-repo" href="https://github.com/brettellebi/somites">View book source <i class="fab fa-github"></i></a></p>
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="phenotypes" class="section level1" number="6">
+<h1>
+<span class="header-section-number">6</span> Phenotypes<a class="anchor" aria-label="anchor" href="#phenotypes"><i class="fas fa-link"></i></a>
+</h1>
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span>
+<span class="co">#&gt; ── Attaching packages ─────────────────── tidyverse 1.3.1 ──</span>
+<span class="co">#&gt; ✓ ggplot2 3.3.5     ✓ purrr   0.3.4</span>
+<span class="co">#&gt; ✓ tibble  3.1.3     ✓ dplyr   1.0.7</span>
+<span class="co">#&gt; ✓ tidyr   1.1.3     ✓ stringr 1.4.0</span>
+<span class="co">#&gt; ✓ readr   2.0.0     ✓ forcats 0.5.1</span>
+<span class="co">#&gt; ── Conflicts ────────────────────── tidyverse_conflicts() ──</span>
+<span class="co">#&gt; x dplyr::filter() masks stats::filter()</span>
+<span class="co">#&gt; x dplyr::lag()    masks stats::lag()</span>
+<span class="co"># Get lighter/darker functions</span>
+<span class="kw"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op">(</span><span class="st">"https://gist.githubusercontent.com/brettellebi/c5015ee666cdf8d9f7e25fa3c8063c99/raw/91e601f82da6c614b4983d8afc4ef399fa58ed4b/karyoploteR_lighter_darker.R"</span><span class="op">)</span>
+<span class="co"># Get palettes for phenotypes</span>
+<span class="kw"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"book/source/04-Association_testing.R"</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt; ## KRLS Package for Kernel-based Regularized Least Squares.</span>
+<span class="co">#&gt; ## See Hainmueller and Hazlett (2014) for details.</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Attaching package: 'plotly'</span>
+<span class="co">#&gt; The following object is masked from 'package:ggplot2':</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;     last_plot</span>
+<span class="co">#&gt; The following object is masked from 'package:stats':</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;     filter</span>
+<span class="co">#&gt; The following object is masked from 'package:graphics':</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;     layout</span>
+<span class="co"># Get GWAS code</span>
+<span class="kw"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"workflow/scripts/run_gwls_source.R"</span><span class="op">)</span><span class="op">)</span>
+<span class="co"># Adjust palettes</span>
+<span class="va">mean_pal</span> <span class="op">=</span> <span class="va">mean_pal</span><span class="op">[</span><span class="fl">2</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>
+<span class="va">intercept_pal</span> <span class="op">=</span> <span class="va">intercept_pal</span><span class="op">[</span><span class="fl">2</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>
+<span class="va">unsegmented_psm_pal</span> <span class="op">=</span> <span class="va">unsegmented_psm_area_pal</span><span class="op">[</span><span class="fl">2</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>
+
+<span class="va">DATE_OF_ASSOC_TEST</span> <span class="op">=</span> <span class="fl">20220214</span>
+
+
+<span class="va">PLOT_DIR</span> <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"book/plots"</span>, <span class="va">DATE_OF_ASSOC_TEST</span>, <span class="st">"phenotypes"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/files2.html">dir.create</a></span><span class="op">(</span><span class="va">PLOT_DIR</span>, recursive <span class="op">=</span> <span class="cn">T</span>, showWarnings <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></code></pre></div>
+<div id="read-in-phenotype-data" class="section level2" number="6.1">
+<h2>
+<span class="header-section-number">6.1</span> Read in phenotype data<a class="anchor" aria-label="anchor" href="#read-in-phenotype-data"><i class="fas fa-link"></i></a>
+</h2>
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">pheno_file</span> <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"data/20220214_phenotypes.xlsx"</span><span class="op">)</span>
+<span class="va">F01_pheno_file</span> <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"data/F0_F1_period.xlsx"</span><span class="op">)</span>
+
+<span class="co"># Read in F2 data</span>
+<span class="va">df</span> <span class="op">=</span> <span class="fu">readxl</span><span class="fu">::</span><span class="fu"><a href="https://readxl.tidyverse.org/reference/read_excel.html">read_xlsx</a></span><span class="op">(</span><span class="va">pheno_file</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="co"># remove "KC" from sample name</span>
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>sample <span class="op">=</span> <span class="va">fish</span> <span class="op">%&gt;%</span> 
+                  <span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_remove.html">str_remove</a></span><span class="op">(</span><span class="st">"KC"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="co"># add `GEN` column</span>
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>GEN <span class="op">=</span> <span class="st">"F2"</span><span class="op">)</span>
+
+<span class="co"># How many F2 samples?</span>
+<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">sample</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt; [1] 646</span>
+
+<span class="co"># Read in F0 and F1 data</span>
+<span class="va">df_f01</span> <span class="op">=</span> <span class="fu">readxl</span><span class="fu">::</span><span class="fu"><a href="https://readxl.tidyverse.org/reference/read_excel.html">read_xlsx</a></span><span class="op">(</span><span class="va">F01_pheno_file</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>sample <span class="op">=</span> <span class="va">fish</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>GEN <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html">case_when</a></span><span class="op">(</span><span class="fu">str_detect</span><span class="op">(</span><span class="va">fish</span>, <span class="st">"^C"</span><span class="op">)</span> <span class="op">~</span> <span class="st">"F0"</span>,
+                                       <span class="fu">str_detect</span><span class="op">(</span><span class="va">fish</span>, <span class="st">"^K"</span><span class="op">)</span> <span class="op">~</span> <span class="st">"F1"</span><span class="op">)</span><span class="op">)</span>
+
+<span class="co"># Bind two data frames</span>
+<span class="va">df_all</span> <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html">bind_rows</a></span><span class="op">(</span><span class="va">df_f01</span>, <span class="va">df</span><span class="op">)</span></code></pre></div>
+</div>
+<div id="period" class="section level2" number="6.2">
+<h2>
+<span class="header-section-number">6.2</span> Period<a class="anchor" aria-label="anchor" href="#period"><i class="fas fa-link"></i></a>
+</h2>
+<p>Note that all F0s and F1s were imaged on the AU scope.</p>
+<p>DB tends to have a higher temperature than AU, by 0.7°C.</p>
+<p>AU has been extensively calibrated, which may cause the differences in the phenotype measurements.</p>
+<div id="mean" class="section level3" number="6.2.1">
+<h3>
+<span class="header-section-number">6.2.1</span> Mean<a class="anchor" aria-label="anchor" href="#mean"><i class="fas fa-link"></i></a>
+</h3>
+<p>Difference between means of two microscopes:</p>
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">micr_mean</span> <span class="op">=</span> <span class="va">df</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">Microscope</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">Microscope</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span><span class="op">(</span>mean_pheno <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">mean</span><span class="op">)</span><span class="op">)</span>
+
+<span class="va">micr_mean</span>
+<span class="co">#&gt; # A tibble: 2 × 2</span>
+<span class="co">#&gt;   Microscope mean_pheno</span>
+<span class="co">#&gt;   &lt;chr&gt;           &lt;dbl&gt;</span>
+<span class="co">#&gt; 1 AU               60.6</span>
+<span class="co">#&gt; 2 DB               64.1</span>
+
+<span class="co"># Difference</span>
+<span class="va">diff_mean</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">micr_mean</span><span class="op">$</span><span class="va">mean_pheno</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">-</span> <span class="va">micr_mean</span><span class="op">$</span><span class="va">mean_pheno</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span></code></pre></div>
+<div id="histogram" class="section level4" number="6.2.1.1">
+<h4>
+<span class="header-section-number">6.2.1.1</span> Histogram<a class="anchor" aria-label="anchor" href="#histogram"><i class="fas fa-link"></i></a>
+</h4>
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">mean_pal</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"#177e89"</span>, <span class="st">"#084c61"</span><span class="op">)</span>
+
+<span class="va">df</span> <span class="op">%&gt;%</span> 
+  <span class="co"># remove NAs in `Microscope` column</span>
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">Microscope</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">Microscope</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">geom_histogram</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">mean</span>, fill <span class="op">=</span> <span class="va">Microscope</span><span class="op">)</span>,
+                   bins <span class="op">=</span> <span class="fl">50</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">scale_fill_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="va">mean_pal</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">geom_vline</span><span class="op">(</span>data<span class="op">=</span><span class="va">micr_mean</span>, <span class="fu">aes</span><span class="op">(</span>xintercept<span class="op">=</span><span class="va">mean_pheno</span><span class="op">)</span>, colour <span class="op">=</span> <span class="fu">darker</span><span class="op">(</span><span class="va">mean_pal</span>, amount <span class="op">=</span> <span class="fl">50</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+    <span class="co">#stat_summary(fun=mean, geom="line") +</span>
+    <span class="fu">facet_grid</span><span class="op">(</span>rows <span class="op">=</span> <span class="fu">vars</span><span class="op">(</span><span class="va">Microscope</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">xlab</span><span class="op">(</span><span class="st">"period mean"</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">ggtitle</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"Period mean\n"</span>, <span class="st">"Difference between means: "</span>, <span class="va">diff_mean</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<div class="inline-figure"><img src="04-1-Phenotype_exploration_files/figure-html/unnamed-chunk-4-1.png" width="672"></div>
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<code class="sourceCode R">
+<span class="co"># Make output directory and save</span>
+<span class="va">OUT_DIR</span> <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="va">PLOT_DIR</span>, <span class="st">"mean"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/files2.html">dir.create</a></span><span class="op">(</span><span class="va">OUT_DIR</span>, recursive <span class="op">=</span> <span class="cn">T</span>, showWarnings <span class="op">=</span> <span class="cn">F</span><span class="op">)</span>
+
+<span class="fu">ggsave</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">OUT_DIR</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"histogram"</span>, <span class="st">".png"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span>,
+ device <span class="op">=</span> <span class="st">"png"</span>,
+ width <span class="op">=</span> <span class="fl">9.6</span>,
+ height <span class="op">=</span> <span class="fl">6</span>,
+ units <span class="op">=</span> <span class="st">"in"</span>,
+ dpi <span class="op">=</span> <span class="fl">400</span><span class="op">)</span>
+  </code></pre></div>
+</div>
+<div id="q-q-plot" class="section level4" number="6.2.1.2">
+<h4>
+<span class="header-section-number">6.2.1.2</span> Q-Q plot<a class="anchor" aria-label="anchor" href="#q-q-plot"><i class="fas fa-link"></i></a>
+</h4>
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">df</span> <span class="op">%&gt;%</span> 
+  <span class="co"># remove NAs in `Microscope` column</span>
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">Microscope</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">stat_qq</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>sample <span class="op">=</span> <span class="va">mean</span>, colour <span class="op">=</span> <span class="va">Microscope</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">stat_qq_line</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>sample <span class="op">=</span> <span class="va">mean</span>, colour <span class="op">=</span> <span class="va">Microscope</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">scale_colour_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"#177e89"</span>, <span class="st">"#084c61"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">facet_grid</span><span class="op">(</span>rows <span class="op">=</span> <span class="fu">vars</span><span class="op">(</span><span class="va">Microscope</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">xlab</span><span class="op">(</span><span class="st">"period mean"</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">ggtitle</span><span class="op">(</span><span class="st">"Period mean"</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">theme</span><span class="op">(</span>aspect.ratio<span class="op">=</span><span class="fl">1</span><span class="op">)</span></code></pre></div>
+<div class="inline-figure"><img src="04-1-Phenotype_exploration_files/figure-html/unnamed-chunk-5-1.png" width="672"></div>
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<code class="sourceCode R">
+<span class="co"># Make output directory and save</span>
+<span class="va">OUT_DIR</span> <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="va">PLOT_DIR</span>, <span class="st">"mean"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/files2.html">dir.create</a></span><span class="op">(</span><span class="va">OUT_DIR</span>, recursive <span class="op">=</span> <span class="cn">T</span>, showWarnings <span class="op">=</span> <span class="cn">F</span><span class="op">)</span>
+
+<span class="fu">ggsave</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">OUT_DIR</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"qqplot"</span>, <span class="st">".png"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span>,
+ device <span class="op">=</span> <span class="st">"png"</span>,
+ width <span class="op">=</span> <span class="fl">9.6</span>,
+ height <span class="op">=</span> <span class="fl">6</span>,
+ units <span class="op">=</span> <span class="st">"in"</span>,
+ dpi <span class="op">=</span> <span class="fl">400</span><span class="op">)</span>
+  </code></pre></div>
+</div>
+<div id="boxplot" class="section level4" number="6.2.1.3">
+<h4>
+<span class="header-section-number">6.2.1.3</span> Boxplot<a class="anchor" aria-label="anchor" href="#boxplot"><i class="fas fa-link"></i></a>
+</h4>
+<p>Kruskal-Wallis test</p>
+<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">mean_kw</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/kruskal.test.html">kruskal.test</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">df_all</span> <span class="op">%&gt;%</span> 
+                             <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">Microscope</span> <span class="op">==</span> <span class="st">"AU"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+                             <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html">pull</a></span><span class="op">(</span><span class="va">mean</span><span class="op">)</span>,
+                           <span class="va">df_all</span> <span class="op">%&gt;%</span> 
+                             <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">Microscope</span> <span class="op">==</span> <span class="st">"DB"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+                             <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html">pull</a></span><span class="op">(</span><span class="va">mean</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+
+<span class="va">mean_kw</span><span class="op">$</span><span class="va">p.value</span>
+<span class="co">#&gt; [1] 6.498432e-38</span></code></pre></div>
+<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">df_all</span> <span class="op">%&gt;%</span> 
+  <span class="co"># remove NAs</span>
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">Microscope</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span><span class="va">GEN</span>, <span class="va">mean</span>, fill <span class="op">=</span> <span class="va">Microscope</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">geom_violin</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
+    <span class="fu">geom_boxplot</span><span class="op">(</span>width <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">ggbeeswarm</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ggbeeswarm/man/geom_beeswarm.html">geom_beeswarm</a></span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span><span class="va">GEN</span>, <span class="va">mean</span>, colour <span class="op">=</span> <span class="va">Microscope</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">0.4</span>, alpha <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">facet_grid</span><span class="op">(</span>cols <span class="op">=</span> <span class="fu">vars</span><span class="op">(</span><span class="va">Microscope</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
+    <span class="fu">scale_colour_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="fu">lighter</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"#177e89"</span>, <span class="st">"#084c61"</span><span class="op">)</span>, amount <span class="op">=</span> <span class="fl">50</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">scale_fill_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="fu">darker</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"#177e89"</span>, <span class="st">"#084c61"</span><span class="op">)</span>, amount <span class="op">=</span> <span class="fl">50</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">xlab</span><span class="op">(</span><span class="st">"generation"</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">ggtitle</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"Kruskal-Wallis p-value comparing AB and DB (F2 only):"</span>, <span class="va">mean_kw</span><span class="op">$</span><span class="va">p.value</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<div class="inline-figure"><img src="04-1-Phenotype_exploration_files/figure-html/unnamed-chunk-7-1.png" width="672"></div>
+</div>
+</div>
+</div>
+<div id="intercept" class="section level2" number="6.3">
+<h2>
+<span class="header-section-number">6.3</span> Intercept<a class="anchor" aria-label="anchor" href="#intercept"><i class="fas fa-link"></i></a>
+</h2>
+<p>Difference between means of two microscopes:</p>
+<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">micr_intercept</span> <span class="op">=</span> <span class="va">df</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">Microscope</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">Microscope</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span><span class="op">(</span>mean_pheno <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">intercept</span><span class="op">)</span><span class="op">)</span>
+
+<span class="va">micr_intercept</span>
+<span class="co">#&gt; # A tibble: 2 × 2</span>
+<span class="co">#&gt;   Microscope mean_pheno</span>
+<span class="co">#&gt;   &lt;chr&gt;           &lt;dbl&gt;</span>
+<span class="co">#&gt; 1 AU               57.9</span>
+<span class="co">#&gt; 2 DB               61.9</span>
+
+<span class="co"># Difference</span>
+<span class="va">diff_intercept</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">micr_intercept</span><span class="op">$</span><span class="va">mean_pheno</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">-</span> <span class="va">micr_intercept</span><span class="op">$</span><span class="va">mean_pheno</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span></code></pre></div>
+<div id="histogram-1" class="section level4" number="6.3.0.1">
+<h4>
+<span class="header-section-number">6.3.0.1</span> Histogram<a class="anchor" aria-label="anchor" href="#histogram-1"><i class="fas fa-link"></i></a>
+</h4>
+<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">intercept_pal</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"#8D99AE"</span>, <span class="st">"#2b2d42"</span><span class="op">)</span>
+
+<span class="va">df</span> <span class="op">%&gt;%</span> 
+  <span class="co"># remove NAs in `Microscope` column</span>
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">Microscope</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">geom_histogram</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span><span class="va">intercept</span>, fill <span class="op">=</span> <span class="va">Microscope</span><span class="op">)</span>,
+                   bins <span class="op">=</span> <span class="fl">50</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">geom_vline</span><span class="op">(</span>data<span class="op">=</span><span class="va">micr_intercept</span>, <span class="fu">aes</span><span class="op">(</span>xintercept<span class="op">=</span><span class="va">mean_pheno</span><span class="op">)</span>, colour <span class="op">=</span> <span class="fu">darker</span><span class="op">(</span><span class="va">intercept_pal</span>, amount <span class="op">=</span> <span class="fl">50</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">scale_fill_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="va">intercept_pal</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">facet_grid</span><span class="op">(</span>rows <span class="op">=</span> <span class="fu">vars</span><span class="op">(</span><span class="va">Microscope</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">xlab</span><span class="op">(</span><span class="st">"period intercept"</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">ggtitle</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"Period intercept\n"</span>, <span class="st">"Difference between means: "</span>, <span class="va">diff_intercept</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<div class="inline-figure"><img src="04-1-Phenotype_exploration_files/figure-html/unnamed-chunk-9-1.png" width="672"></div>
+<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
+<code class="sourceCode R">
+<span class="co"># Make output directory and save</span>
+<span class="va">OUT_DIR</span> <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="va">PLOT_DIR</span>, <span class="st">"intercept"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/files2.html">dir.create</a></span><span class="op">(</span><span class="va">OUT_DIR</span>, recursive <span class="op">=</span> <span class="cn">T</span>, showWarnings <span class="op">=</span> <span class="cn">F</span><span class="op">)</span>
+
+<span class="fu">ggsave</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">OUT_DIR</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"histogram"</span>, <span class="st">".png"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span>,
+ device <span class="op">=</span> <span class="st">"png"</span>,
+ width <span class="op">=</span> <span class="fl">9.6</span>,
+ height <span class="op">=</span> <span class="fl">6</span>,
+ units <span class="op">=</span> <span class="st">"in"</span>,
+ dpi <span class="op">=</span> <span class="fl">400</span><span class="op">)</span>
+  </code></pre></div>
+</div>
+<div id="q-q-plot-1" class="section level4" number="6.3.0.2">
+<h4>
+<span class="header-section-number">6.3.0.2</span> Q-Q plot<a class="anchor" aria-label="anchor" href="#q-q-plot-1"><i class="fas fa-link"></i></a>
+</h4>
+<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">df</span> <span class="op">%&gt;%</span> 
+  <span class="co"># remove NAs in `Microscope` column</span>
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">Microscope</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">stat_qq</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>sample <span class="op">=</span> <span class="va">intercept</span>, colour <span class="op">=</span> <span class="va">Microscope</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">stat_qq_line</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>sample <span class="op">=</span> <span class="va">intercept</span>, colour <span class="op">=</span> <span class="va">Microscope</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">scale_colour_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"#8D99AE"</span>, <span class="st">"#2b2d42"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">facet_grid</span><span class="op">(</span>rows <span class="op">=</span> <span class="fu">vars</span><span class="op">(</span><span class="va">Microscope</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">xlab</span><span class="op">(</span><span class="st">"period intercept"</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">ggtitle</span><span class="op">(</span><span class="st">"Period intercept"</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">theme</span><span class="op">(</span>aspect.ratio<span class="op">=</span><span class="fl">1</span><span class="op">)</span></code></pre></div>
+<div class="inline-figure"><img src="04-1-Phenotype_exploration_files/figure-html/unnamed-chunk-10-1.png" width="672"></div>
+<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
+<code class="sourceCode R">
+<span class="co"># Make output directory and save</span>
+<span class="va">OUT_DIR</span> <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="va">PLOT_DIR</span>, <span class="st">"intercept"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/files2.html">dir.create</a></span><span class="op">(</span><span class="va">OUT_DIR</span>, recursive <span class="op">=</span> <span class="cn">T</span>, showWarnings <span class="op">=</span> <span class="cn">F</span><span class="op">)</span>
+
+<span class="fu">ggsave</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">OUT_DIR</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"qqplot"</span>, <span class="st">".png"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span>,
+ device <span class="op">=</span> <span class="st">"png"</span>,
+ width <span class="op">=</span> <span class="fl">9.6</span>,
+ height <span class="op">=</span> <span class="fl">6</span>,
+ units <span class="op">=</span> <span class="st">"in"</span>,
+ dpi <span class="op">=</span> <span class="fl">400</span><span class="op">)</span></code></pre></div>
+</div>
+<div id="boxplot-1" class="section level4" number="6.3.0.3">
+<h4>
+<span class="header-section-number">6.3.0.3</span> Boxplot<a class="anchor" aria-label="anchor" href="#boxplot-1"><i class="fas fa-link"></i></a>
+</h4>
+<p>Kruskal-Wallis test</p>
+<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">intercept_kw</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/kruskal.test.html">kruskal.test</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">df_all</span> <span class="op">%&gt;%</span> 
+                             <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">Microscope</span> <span class="op">==</span> <span class="st">"AU"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+                             <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html">pull</a></span><span class="op">(</span><span class="va">intercept</span><span class="op">)</span>,
+                           <span class="va">df_all</span> <span class="op">%&gt;%</span> 
+                             <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">Microscope</span> <span class="op">==</span> <span class="st">"DB"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+                             <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html">pull</a></span><span class="op">(</span><span class="va">intercept</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+
+<span class="va">intercept_kw</span><span class="op">$</span><span class="va">p.value</span>
+<span class="co">#&gt; [1] 5.067328e-44</span></code></pre></div>
+<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">df_all</span> <span class="op">%&gt;%</span> 
+  <span class="co"># remove NAs</span>
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">Microscope</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span><span class="va">GEN</span>, <span class="va">mean</span>, fill <span class="op">=</span> <span class="va">Microscope</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">geom_violin</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
+    <span class="fu">geom_boxplot</span><span class="op">(</span>width <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">ggbeeswarm</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ggbeeswarm/man/geom_beeswarm.html">geom_beeswarm</a></span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span><span class="va">GEN</span>, <span class="va">mean</span>, colour <span class="op">=</span> <span class="va">Microscope</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">0.4</span>, alpha <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">facet_grid</span><span class="op">(</span>cols <span class="op">=</span> <span class="fu">vars</span><span class="op">(</span><span class="va">Microscope</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
+    <span class="fu">scale_colour_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="fu">lighter</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"#8D99AE"</span>, <span class="st">"#2b2d42"</span><span class="op">)</span>, amount <span class="op">=</span> <span class="fl">50</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">scale_fill_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="fu">darker</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"#8D99AE"</span>, <span class="st">"#2b2d42"</span><span class="op">)</span>, amount <span class="op">=</span> <span class="fl">50</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">xlab</span><span class="op">(</span><span class="st">"generation"</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">ggtitle</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"Kruskal-Wallis p-value comparing AB and DB (F2 only):"</span>, <span class="va">intercept_kw</span><span class="op">$</span><span class="va">p.value</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<div class="inline-figure"><img src="04-1-Phenotype_exploration_files/figure-html/unnamed-chunk-12-1.png" width="672"></div>
+</div>
+</div>
+<div id="presomitic-mesoderm-size" class="section level2" number="6.4">
+<h2>
+<span class="header-section-number">6.4</span> Presomitic mesoderm size<a class="anchor" aria-label="anchor" href="#presomitic-mesoderm-size"><i class="fas fa-link"></i></a>
+</h2>
+<div id="histogram-2" class="section level3" number="6.4.1">
+<h3>
+<span class="header-section-number">6.4.1</span> Histogram<a class="anchor" aria-label="anchor" href="#histogram-2"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">df</span> <span class="op">%&gt;%</span> 
+  <span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">geom_histogram</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span><span class="va">unsegmented_psm_area</span><span class="op">)</span>,
+                   fill <span class="op">=</span> <span class="st">"#401f3e"</span>,
+                   bins <span class="op">=</span> <span class="fl">50</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">ggtitle</span><span class="op">(</span><span class="st">"Presomitic mesoderm size"</span><span class="op">)</span>
+<span class="co">#&gt; Warning: Removed 14 rows containing non-finite values</span>
+<span class="co">#&gt; (stat_bin).</span></code></pre></div>
+<div class="inline-figure"><img src="04-1-Phenotype_exploration_files/figure-html/unnamed-chunk-13-1.png" width="672"></div>
+<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
+<code class="sourceCode R">
+<span class="co"># Make output directory and save</span>
+<span class="va">OUT_DIR</span> <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="va">PLOT_DIR</span>, <span class="st">"unsegmented_psm_area"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/files2.html">dir.create</a></span><span class="op">(</span><span class="va">OUT_DIR</span>, recursive <span class="op">=</span> <span class="cn">T</span>, showWarnings <span class="op">=</span> <span class="cn">F</span><span class="op">)</span>
+
+<span class="fu">ggsave</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">OUT_DIR</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"histogram"</span>, <span class="st">".png"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span>,
+ device <span class="op">=</span> <span class="st">"png"</span>,
+ width <span class="op">=</span> <span class="fl">9.6</span>,
+ height <span class="op">=</span> <span class="fl">6</span>,
+ units <span class="op">=</span> <span class="st">"in"</span>,
+ dpi <span class="op">=</span> <span class="fl">400</span><span class="op">)</span>
+<span class="co">#&gt; Warning: Removed 14 rows containing non-finite values</span>
+<span class="co">#&gt; (stat_bin).</span></code></pre></div>
+</div>
+<div id="q-q-plot-2" class="section level3" number="6.4.2">
+<h3>
+<span class="header-section-number">6.4.2</span> Q-Q plot<a class="anchor" aria-label="anchor" href="#q-q-plot-2"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">df</span> <span class="op">%&gt;%</span> 
+  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>sample <span class="op">=</span> <span class="va">intercept</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">stat_qq</span><span class="op">(</span>colour <span class="op">=</span> <span class="st">"#401f3e"</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">stat_qq_line</span><span class="op">(</span>colour <span class="op">=</span> <span class="fu">darker</span><span class="op">(</span><span class="st">"#401f3e"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">xlab</span><span class="op">(</span><span class="st">"presomitic mesoderm area"</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">ggtitle</span><span class="op">(</span><span class="st">"Presomitic mesoderm area"</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">theme</span><span class="op">(</span>aspect.ratio<span class="op">=</span><span class="fl">1</span><span class="op">)</span>
+<span class="co">#&gt; Warning: Removed 8 rows containing non-finite values</span>
+<span class="co">#&gt; (stat_qq).</span>
+<span class="co">#&gt; Warning: Removed 8 rows containing non-finite values</span>
+<span class="co">#&gt; (stat_qq_line).</span></code></pre></div>
+<div class="inline-figure"><img src="04-1-Phenotype_exploration_files/figure-html/unnamed-chunk-14-1.png" width="672"></div>
+<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
+<code class="sourceCode R">
+<span class="co"># Make output directory and save</span>
+<span class="va">OUT_DIR</span> <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="va">PLOT_DIR</span>, <span class="st">"unsegmented_psm_area"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/files2.html">dir.create</a></span><span class="op">(</span><span class="va">OUT_DIR</span>, recursive <span class="op">=</span> <span class="cn">T</span>, showWarnings <span class="op">=</span> <span class="cn">F</span><span class="op">)</span>
+
+<span class="fu">ggsave</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">OUT_DIR</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"qqplot"</span>, <span class="st">".png"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span>,
+ device <span class="op">=</span> <span class="st">"png"</span>,
+ width <span class="op">=</span> <span class="fl">9.6</span>,
+ height <span class="op">=</span> <span class="fl">6</span>,
+ units <span class="op">=</span> <span class="st">"in"</span>,
+ dpi <span class="op">=</span> <span class="fl">400</span><span class="op">)</span>
+<span class="co">#&gt; Warning: Removed 8 rows containing non-finite values (stat_qq).</span>
+
+<span class="co">#&gt; Warning: Removed 8 rows containing non-finite values</span>
+<span class="co">#&gt; (stat_qq_line).</span></code></pre></div>
+
+</div>
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="f2-recombination-blocks-filtered-sites.html"><span class="header-section-number">5</span> F2 recombination blocks (filtered sites)</a></div>
+<div class="next"><a href="association-testing-with-simulated-phenotypes.html"><span class="header-section-number">7</span> Association testing with simulated phenotypes</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#phenotypes"><span class="header-section-number">6</span> Phenotypes</a></li>
+<li><a class="nav-link" href="#read-in-phenotype-data"><span class="header-section-number">6.1</span> Read in phenotype data</a></li>
+<li>
+<a class="nav-link" href="#period"><span class="header-section-number">6.2</span> Period</a><ul class="nav navbar-nav"><li><a class="nav-link" href="#mean"><span class="header-section-number">6.2.1</span> Mean</a></li></ul>
+</li>
+<li><a class="nav-link" href="#intercept"><span class="header-section-number">6.3</span> Intercept</a></li>
+<li>
+<a class="nav-link" href="#presomitic-mesoderm-size"><span class="header-section-number">6.4</span> Presomitic mesoderm size</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#histogram-2"><span class="header-section-number">6.4.1</span> Histogram</a></li>
+<li><a class="nav-link" href="#q-q-plot-2"><span class="header-section-number">6.4.2</span> Q-Q plot</a></li>
+</ul>
+</li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+<li><a id="book-source" href="https://github.com/brettellebi/somites/blob/master/book/04-1-Phenotype_exploration.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/brettellebi/somites/edit/master/book/04-1-Phenotype_exploration.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Somite period F2 analysis</strong>" was written by Ian Brettell. It was last built on 2022-03-10.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer>
+</body>
+</html>

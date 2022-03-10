@@ -1,6 +1,5 @@
 # Process haplotype blocks data and create GWAS input
-
-# Note: this step filters out the samples with low coverage (config["low_cov_samples"])
+## NOTE: this step filters out the samples with low coverage (config["low_cov_samples"])
 rule create_gwas_input:
     input:
         genotypes = rules.run_rc_block_F2.output,
@@ -24,22 +23,23 @@ rule create_gwas_input:
     script:
         "../scripts/create_gwas_input.R"
 
+# Extract 10 SNPs to generate simulated phenotypes
 rule simulate_phenotypes:
     input:
         rules.create_gwas_input.output,
     output:
         sample_genos = os.path.join(
             config["working_dir"],
-            "association_testing/{date_of_assoc_test}/{site_filter}/{target_phenotype}/sample_genos/{bin_length}.csv"
+            "association_testing/{date_of_assoc_test}/{site_filter}/sample_genos/{bin_length}.csv"
         ),
         sim_phenos = os.path.join(
             config["working_dir"],
-            "association_testing/{date_of_assoc_test}/{site_filter}/{target_phenotype}/sim_phenos/{bin_length}.xlsx"
+            "association_testing/{date_of_assoc_test}/{site_filter}/sim_phenos/{bin_length}.xlsx"
         ),
     log:
         os.path.join(
             config["working_dir"],
-            "logs/simulate_phenotypes/{date_of_assoc_test}/{site_filter}/{target_phenotype}/{bin_length}.log"
+            "logs/simulate_phenotypes/{date_of_assoc_test}/{site_filter}/{bin_length}.log"
         ),
     params:
         n_sample_gts = config["n_sample_gts"]
@@ -54,22 +54,24 @@ rule test_gwls:
     input:
         gt_pos_list = rules.create_gwas_input.output,
         phenotypes_file = rules.simulate_phenotypes.output.sim_phenos,
-        source_file = "workflow/scripts/run_gwls_source.R"
     output:
         os.path.join(
             config["working_dir"],
-            "association_testing/{date_of_assoc_test}/{site_filter}/{target_phenotype}/test_results/{bin_length}.rds"
+            "association_testing/{date_of_assoc_test}/{site_filter}/test_results/{bin_length}.rds"
         ),
     log:
         os.path.join(
             config["working_dir"],
-            "logs/test_gwls/{date_of_assoc_test}/{site_filter}/{target_phenotype}/{bin_length}.log"
+            "logs/test_gwls/{date_of_assoc_test}/{site_filter}/{bin_length}.log"
         ),
     params:
-        bin_length = lambda wildcards: wildcards.bin_length,
-        target_phenotype = "Y"
+        bin_length = "{bin_length}",
+        target_phenotype = "Y",
+        covariates = "None",
+        inverse_norm = "FALSE",
+        source_file = "workflow/scripts/run_gwls_source.R"
     resources:
-        mem_mb = 20000
+        mem_mb = 10000
     container:
         config["R"]
     script:
@@ -100,9 +102,15 @@ rule run_gwls:
         gt_pos_list = rules.create_gwas_input.output,
         phenotypes_file = config["phenotypes_file"],
     output:
-        os.path.join(config["working_dir"], "association_testing/{date_of_assoc_test}/{site_filter}/true_results/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.rds"),
+        os.path.join(
+            config["working_dir"],
+            "association_testing/{date_of_assoc_test}/{site_filter}/true_results/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.rds"
+        ),
     log:
-        os.path.join(config["working_dir"], "logs/run_gwls/{date_of_assoc_test}/{site_filter}/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.log")
+        os.path.join(
+            config["working_dir"], 
+            "logs/run_gwls/{date_of_assoc_test}/{site_filter}/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.log"
+        ),
     params:
         target_phenotype = "{target_phenotype}",
         covariates = "{covariates}",
@@ -121,9 +129,15 @@ rule create_permuted_phenotypes:
     input:
         config["phenotypes_file"]
     output:
-        os.path.join(config["working_dir"], "permuted_phenos/{date_of_assoc_test}/{permutation_seed}.xlsx")
+        os.path.join(
+            config["working_dir"], 
+            "permuted_phenos/{date_of_assoc_test}/{permutation_seed}.xlsx"
+        ),
     log:
-        os.path.join(config["working_dir"], "logs/create_permuted_phenotypes/{date_of_assoc_test}/{permutation_seed}.log")
+        os.path.join(
+            config["working_dir"], 
+            "logs/create_permuted_phenotypes/{date_of_assoc_test}/{permutation_seed}.log"
+        ),
     params:
         permutation_seed = "{permutation_seed}",
     resources:

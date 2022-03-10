@@ -2,7 +2,7 @@ __default__:
   memory: "{resources.mem_mb}"
   n: 1
   name: "{rule}.{wildcards}"
-  queue: short
+  queue: standard
   outfile: "{log}"
 # 00_1_common.smk
 create_F1_samples_file:
@@ -28,8 +28,6 @@ consolidate_dbABs_Ewan:
 filter_sites_for_read_count_and_cab_prop:
   queue: bigmem
 # 07_association_testing.smk
-create_gwas_input:
-  queue: bigmem
 run_gwls:
   queue: "{resources.queue}"
 run_permutations:

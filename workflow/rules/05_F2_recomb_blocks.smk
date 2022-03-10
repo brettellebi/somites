@@ -322,11 +322,23 @@ rule filter_sites_for_read_count_and_cab_prop:
         ),
         sites_file = os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/homo_divergent/no_repeats_no_persistent_hets.txt"),
     output:
-        counts_pre_filter  = os.path.join(config["data_store_dir"], "dpABs/F2_total_read_counts/pre_filter.txt.gz"),
-        counts_post_filter = os.path.join(config["data_store_dir"], "dpABs/F2_total_read_counts/post_filter.txt.gz"),
-        filtered_sites = os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/homo_divergent/no_repeats_no_persistent_hets_filtered_for_read_count_and_cab_prop.txt"),
+        counts_pre_filter  = os.path.join(
+            config["data_store_dir"],
+            "dpABs/F2_total_read_counts/pre_filter.txt.gz"
+        ),
+        counts_post_filter = os.path.join(
+            config["data_store_dir"], 
+            "dpABs/F2_total_read_counts/post_filter.txt.gz"
+        ),
+        filtered_sites = os.path.join(
+            config["working_dir"], 
+            "data/sites_files/F0_Cab_Kaga/homo_divergent/no_repeats_no_persistent_hets_filtered_for_read_count_and_cab_prop.txt"
+        ),
     log:
-        os.path.join(config["working_dir"], "logs/filter_sites_for_read_count_and_cab_prop/all.log")
+        os.path.join(
+            config["working_dir"], 
+            "logs/filter_sites_for_read_count_and_cab_prop/all.log"
+        ),
     params:
         min_reads = config["min_reads"],
         max_reads = config["max_reads"],

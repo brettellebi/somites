@@ -1,3 +1,5 @@
+# Inverse-normalize by microscope
+
 ## Run GWAS
 
 ```{r, message=F, warning = F}
@@ -10,8 +12,9 @@ PHENO_FILE = here::here("data/20220214_phenotypes.xlsx") # True phenotypes
 GWLS_SOURCE_FILE = here::here("workflow/scripts/run_gwls_source.R")
 MANHAT_SOURCE_FILE = here::here("workflow/scripts/get_manhattan_source.R")
 BIN_LENGTH = 5000
-TARGET_PHENO = "intercept"
+TARGET_PHENO = c("mean", "intercept")
 MICROSCOPE = "split_invnorm"
+OUT_PHENOS = here::here("data/20220310_invnorm_phenos.csv")
 PLOT_DIR = here::here("book/plots/20220214/microscope_test")
 ALPHA = 0.05
 
@@ -54,10 +57,13 @@ phenos_db = phenos %>%
 
 ## Combine
 phenos = dplyr::bind_rows(phenos_au,
-                              phenos_db) %>% 
+                          phenos_db) %>% 
   dplyr::arrange(SAMPLE) %>% 
   dplyr::mutate(SAMPLE = SAMPLE %>% 
                   as.character())
+
+## Write to file
+readr::write_csv(phenos, OUT_PHENOS)
 
 # Plot
 micr_pal = c("#8D99AE", "#2b2d42")

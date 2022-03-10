@@ -172,11 +172,10 @@ rule all:
 # test_gwls
         expand(os.path.join(
             config["working_dir"],
-            "association_testing/{date_of_assoc_test}/{site_filter}/{target_phenotype}/test_results/{bin_length}.rds"
+            "association_testing/{date_of_assoc_test}/{site_filter}/test_results/{bin_length}.rds"
             ),
                 date_of_assoc_test = config["date_of_assoc_test"],
                 site_filter = config["site_filter"],
-                target_phenotype = config["target_phenotypes"],
                 bin_length = config["bin_length"]
         ),
 ## run_gwls
@@ -225,7 +224,7 @@ include: "rules/01_ref.smk"
 #include: "rules/03_F0_calling.smk"
 include: "rules/03_1_F1_mapping.smk"
 #include: "rules/04_F2_mapping.smk"
-#include: "rules/05_F2_recomb_blocks.smk"
+include: "rules/05_F2_recomb_blocks.smk"
 #include: "rules/06_F0_recomb_blocks.smk"
 include: "rules/07_assocation_testing.smk"
 #include: "rules/08_F2_calling.smk"
