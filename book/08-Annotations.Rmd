@@ -1,6 +1,6 @@
 # Annotations of GWAS hits
 
-```{r}
+```{r, message = F, warning = F}
 library(here)
 library(tidyverse)
 library(biomaRt)

@@ -1,5 +1,15 @@
 # Notes
 
+## 14 March 2022
+
+Sent Ali zoomed plots for PSM:
+
+* `book/plots/20220214/hits_exploration/all_sites/unsegmented_psm_area`
+
+And annotations (from rule get_annotations):
+
+* 
+
 ## 9 March 2022
 
 Inverse-normalise both microscopes then combine and run GWAS.
