@@ -52,7 +52,7 @@ association-testing-with-simulated-phenotypes
 read-in-sampled-genotypes
 read-in-gwls-results
 plot
-gwls-results
+gwas-results
 notes
 snakemake-rules
 results
@@ -75,7 +75,7 @@ permute-phenos
 run-gwls
 get-minimum
 generate-manhattan-plot
-association-testing-with-only-au-microscope-1
+association-testing-with-only-db-microscope
 load-libraries-and-variables-1
 load-genotypes-and-positions-1
 read-in-phenotypes-1

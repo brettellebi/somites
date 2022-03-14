@@ -28,8 +28,5 @@ consolidate_dbABs_Ewan:
 filter_sites_for_read_count_and_cab_prop:
   queue: bigmem
 # 07_association_testing.smk
-run_gwls:
-  queue: "{resources.queue}"
-run_permutations:
-  queue: "{resources.queue}"
+
 

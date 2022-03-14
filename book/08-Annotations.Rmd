@@ -94,7 +94,9 @@ SIG_LOCS = RESULTS$results %>%
 
 ```{r}
 ## Select dataset
-olat_mart = biomaRt::useEnsembl(biomart = "ensembl", dataset = "olatipes_gene_ensembl")
+olat_mart = biomaRt::useEnsembl(biomart = "ensembl", 
+                                dataset = "olatipes_gene_ensembl", 
+                                mirror = "uswest")
 
 olat_attr = biomaRt::listAttributes(olat_mart)
 
@@ -222,33 +224,6 @@ SIG_LOCS = RESULTS$results %>%
 ### Get annotations
 
 ```{r}
-## Select dataset
-olat_mart = biomaRt::useEnsembl(biomart = "ensembl", dataset = "olatipes_gene_ensembl")
-
-olat_attr = biomaRt::listAttributes(olat_mart)
-
-olat_genes = biomaRt::getBM(attributes = c("chromosome_name",
-                                           "start_position",
-                                           "end_position",
-                                           "ensembl_gene_id",
-                                           "hgnc_symbol",
-                                           "ensembl_exon_id",
-                                           "description",
-                                           "strand",
-                                           "transcript_start",
-                                           "transcript_end"),
-                             mart = olat_mart) 
-
-olat_genes_r = olat_genes %>% 
-  # change strand characters
-  dplyr::mutate(strand = dplyr::recode(.$strand,
-                                       `1` = "+",
-                                       `-1` = "-")
-                ) %>% 
-  GenomicRanges::makeGRangesFromDataFrame(seqnames.field = "chromosome_name",
-                                            start.field = "start_position",
-                                            end.field = "end_position")
-
 # convert hits to genomic ranges
 sig_loc_r = SIG_LOCS %>% 
   GenomicRanges::makeGRangesFromDataFrame(seqnames.field = "CHROM",

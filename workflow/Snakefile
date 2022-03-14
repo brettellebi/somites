@@ -169,15 +169,15 @@ rule all:
 #                site_filter = config["site_filter"],
 #                bin_length = config["bin_length"]
 #        ),
-# test_gwls
-        expand(os.path.join(
-            config["working_dir"],
-            "association_testing/{date_of_assoc_test}/{site_filter}/test_results/{bin_length}.rds"
-            ),
-                date_of_assoc_test = config["date_of_assoc_test"],
-                site_filter = config["site_filter"],
-                bin_length = config["bin_length"]
-        ),
+## test_gwls
+#        expand(os.path.join(
+#            config["working_dir"],
+#            "association_testing/{date_of_assoc_test}/{site_filter}/test_results/{bin_length}.rds"
+#            ),
+#                date_of_assoc_test = config["date_of_assoc_test"],
+#                site_filter = config["site_filter"],
+#                bin_length = config["bin_length"]
+#        ),
 ## run_gwls
 #        expand(os.path.join(
 #                config["working_dir"],
@@ -188,6 +188,13 @@ rule all:
 #                        covariates = config["covariates"],
 #                        inverse_norm = config["inverse_norm"],
 #                        bin_length = config["bin_length"]
+#        ),
+## create_permuted_phenotypes
+#        expand(os.path.join(
+#                config["working_dir"], 
+#                "permuted_phenos/{date_of_assoc_test}/{permutation_seed}.xlsx"),
+#                        date_of_assoc_test = config["date_of_assoc_test"],
+#                        permutation_seed = PERM_SEEDS
 #        ),
 ## run_permutations
 #        expand(os.path.join(
@@ -209,8 +216,16 @@ rule all:
 #                        covariates = config["covariates"],
 #                        inverse_norm = config["inverse_norm"],                        
 #                        bin_length = config["bin_length"],
-#                        permutation_seed = PERM_SEEDS
 #        ),
+# get_annotations
+        expand("data/{date_of_assoc_test}/annotations/{site_filter}/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.csv",
+                        date_of_assoc_test = config["date_of_assoc_test"],
+                        site_filter = "all_sites",
+                        target_phenotype = "unsegmented_psm_area",
+                        covariates = "Microscope",
+                        inverse_norm = "TRUE",                        
+                        bin_length = "5000",                        
+        ),
 ################
 ## 08_F2_calling.smk
 ###############

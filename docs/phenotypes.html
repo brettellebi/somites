@@ -6,15 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Chapter 6 Phenotypes | Somite period F2 analysis</title>
 <meta name="author" content="Ian Brettell">
-<meta name="description" content="library(tidyverse) #&gt; ── Attaching packages ─────────────────── tidyverse 1.3.1 ── #&gt; ✓ ggplot2 3.3.5   ✓ purrr  0.3.4 #&gt; ✓ tibble 3.1.3   ✓ dplyr  1.0.7 #&gt; ✓ tidyr  1.1.3   ✓ stringr 1.4.0 #&gt; ✓...">
-<meta name="generator" content="bookdown 0.24.2 with bs4_book()">
-<meta property="og:title" content="Chapter 6 Phenotypes | Somite period F2 analysis">
-<meta property="og:type" content="book">
-<meta property="og:description" content="library(tidyverse) #&gt; ── Attaching packages ─────────────────── tidyverse 1.3.1 ── #&gt; ✓ ggplot2 3.3.5   ✓ purrr  0.3.4 #&gt; ✓ tibble 3.1.3   ✓ dplyr  1.0.7 #&gt; ✓ tidyr  1.1.3   ✓ stringr 1.4.0 #&gt; ✓...">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Chapter 6 Phenotypes | Somite period F2 analysis">
-<meta name="twitter:description" content="library(tidyverse) #&gt; ── Attaching packages ─────────────────── tidyverse 1.3.1 ── #&gt; ✓ ggplot2 3.3.5   ✓ purrr  0.3.4 #&gt; ✓ tibble 3.1.3   ✓ dplyr  1.0.7 #&gt; ✓ tidyr  1.1.3   ✓ stringr 1.4.0 #&gt; ✓...">
-<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/header-attrs-2.10/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.2"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/header-attrs-2.10/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.2.5.1/tabs.js"></script><script src="libs/bs3compat-0.2.5.1/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
 <script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="libs/htmlwidgets-1.5.3/htmlwidgets.js"></script><script src="libs/plotly-binding-4.9.4.1/plotly.js"></script><script src="libs/typedarray-0.1/typedarray.min.js"></script><link href="libs/crosstalk-1.1.1/css/crosstalk.css" rel="stylesheet">
@@ -22,7 +14,12 @@
 <script src="libs/plotly-main-1.57.1/plotly-latest.min.js"></script><link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet">
 <script src="libs/datatables-binding-0.18/datatables.js"></script><link href="libs/dt-core-1.10.20/css/jquery.dataTables.min.css" rel="stylesheet">
 <link href="libs/dt-core-1.10.20/css/jquery.dataTables.extra.css" rel="stylesheet">
-<script src="libs/dt-core-1.10.20/js/jquery.dataTables.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><link rel="stylesheet" href="style.css">
+<script src="libs/dt-core-1.10.20/js/jquery.dataTables.min.js"></script><style>
+    #content {
+        font-size: 0.95rem;
+    }
+    </style>
+<script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/mark.js@8.11.1/dist/mark.min.js"></script><!-- CSS --><link rel="stylesheet" href="style.css">
 </head>
 <body data-spy="scroll" data-target="#toc">
 
@@ -51,9 +48,9 @@
 <li><a class="" href="f2-recombination-blocks-filtered-sites.html"><span class="header-section-number">5</span> F2 recombination blocks (filtered sites)</a></li>
 <li><a class="active" href="phenotypes.html"><span class="header-section-number">6</span> Phenotypes</a></li>
 <li><a class="" href="association-testing-with-simulated-phenotypes.html"><span class="header-section-number">7</span> Association testing with simulated phenotypes</a></li>
-<li><a class="" href="gwls-results.html"><span class="header-section-number">8</span> GWLS results</a></li>
+<li><a class="" href="gwas-results.html"><span class="header-section-number">8</span> GWAS results</a></li>
 <li><a class="" href="association-testing-with-only-au-microscope.html"><span class="header-section-number">9</span> Association testing with only AU microscope</a></li>
-<li><a class="" href="association-testing-with-only-au-microscope-1.html"><span class="header-section-number">10</span> Association testing with only AU microscope</a></li>
+<li><a class="" href="association-testing-with-only-db-microscope.html"><span class="header-section-number">10</span> Association testing with only DB microscope</a></li>
 <li><a class="" href="inverse-normalize-by-microscope.html"><span class="header-section-number">11</span> Inverse-normalize by microscope</a></li>
 <li><a class="" href="annotations-of-gwas-hits.html"><span class="header-section-number">12</span> Annotations of GWAS hits</a></li>
 <li><a class="" href="references.html">References</a></li>
@@ -475,8 +472,8 @@
 
       <div class="book-extra">
         <ul class="list-unstyled">
-<li><a id="book-source" href="https://github.com/brettellebi/somites/blob/master/book/04-1-Phenotype_exploration.Rmd">View source <i class="fab fa-github"></i></a></li>
-          <li><a id="book-edit" href="https://github.com/brettellebi/somites/edit/master/book/04-1-Phenotype_exploration.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
+<li><a id="book-source" href="https://github.com/brettellebi/somites/blob/master/04-1-Phenotype_exploration.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/brettellebi/somites/edit/master/04-1-Phenotype_exploration.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
         </ul>
 </div>
     </nav>
@@ -488,7 +485,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Somite period F2 analysis</strong>" was written by Ian Brettell. It was last built on 2022-03-10.</p>
+    <p>"<strong>Somite period F2 analysis</strong>" was written by Ian Brettell. It was last built on 2022-03-14.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

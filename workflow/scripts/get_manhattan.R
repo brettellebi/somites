@@ -100,7 +100,7 @@ BONFERRONI = ALPHA / nrow(out_clean)
 
 # Plot
 out_plot = plot_man(out_clean,
-                    site_filter = "all_sites",
+                    site_filter = SITE_FILTER,
                     phenotype = TARGET_PHENO,
                     bin_length = BIN_LENGTH, 
                     gwas_pal = pal,

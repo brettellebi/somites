@@ -81,21 +81,12 @@ rule test_gwls:
 # types of GWAS (no covariates require little memory; two covariates require a lot)
 def get_mem_mb(wildcards, attempt):
     if wildcards.covariates == "None":
-        multiplier = 4000
+        multiplier = 10000
     elif wildcards.covariates == "Microscope":
-        multiplier = 6000
+        multiplier = 10000
     elif wildcards.covariates == "Microscope-Date_of_imaging":
         multiplier = 80000
     return attempt * multiplier
-
-def get_queue(wildcards, attempt):
-    if wildcards.covariates == "None":
-        queue = "short"
-    elif wildcards.covariates == "Microscope":
-        queue = "short"
-    elif wildcards.covariates == "Microscope-Date_of_imaging":
-        queue = "short"
-    return queue
 
 rule run_gwls:
     input:
@@ -119,7 +110,6 @@ rule run_gwls:
         source_file = "workflow/scripts/run_gwls_source.R"
     resources:
         mem_mb = get_mem_mb,
-        queue = get_queue
     container:
         config["R"]
     script:
@@ -169,7 +159,6 @@ rule run_permutations:
         source_file = "workflow/scripts/run_gwls_source.R"
     resources:
         mem_mb = get_mem_mb,
-        queue = get_queue
     container:
         config["R"]
     script:
@@ -203,4 +192,27 @@ rule get_manhattan:
         mem_mb = 2500
     script:
         "../scripts/get_manhattan.R"
-                
+
+rule get_annotations:
+    input:
+        gwas_results = rules.run_gwls.output,
+        perm_results = expand(os.path.join(
+            config["working_dir"],
+            "association_testing/{{date_of_assoc_test}}/{{site_filter}}/permutations/{{target_phenotype}}/{{covariates}}/{{inverse_norm}}/{{bin_length}}/{permutation_seed}.rds"),
+                permutation_seed = PERM_SEEDS
+        ),
+    output:
+        csv = "data/{date_of_assoc_test}/annotations/{site_filter}/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.csv"
+    log:
+        os.path.join(
+            config["working_dir"],
+            "logs/get_annotations/{date_of_assoc_test}/{site_filter}/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.log"
+        ),
+    params:
+        bin_length = "{bin_length}"
+    resources:
+        mem_mb = 1000
+    container:
+        config["R"]
+    script:
+        "../scripts/get_annotations.R" 

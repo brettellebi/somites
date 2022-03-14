@@ -80,7 +80,7 @@ names(results_list) = TARGET_FILES %>%
 
 ```{r}
 COUNTER = 0
-lapply(results_list[1], function(RES){
+man_int = lapply(results_list[1], function(RES){
   COUNTER <<- COUNTER + 1
   # Get bin length
   BIN_LENGTH = RES[["BIN_LENGTH"]] %>% 
@@ -151,5 +151,7 @@ lapply(results_list[1], function(RES){
   
   return(out)
 })
+
+man_int[[1]]
 ```
 

@@ -109,9 +109,9 @@ SIG_LOCS = RESULTS$results %>%
 
 ```r
 ## Select dataset
-olat_mart = biomaRt::useEnsembl(biomart = "ensembl", dataset = "olatipes_gene_ensembl")
-#> Ensembl site unresponsive, trying asia mirror
-#> Ensembl site unresponsive, trying asia mirror
+olat_mart = biomaRt::useEnsembl(biomart = "ensembl", 
+                                dataset = "olatipes_gene_ensembl", 
+                                mirror = "uswest")
 
 olat_attr = biomaRt::listAttributes(olat_mart)
 
@@ -156,8 +156,8 @@ hits %>%
 ```
 
 ```{=html}
-<div id="htmlwidget-876c5655ffc8b74a516b" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-876c5655ffc8b74a516b">{"x":{"filter":"none","data":[["52786"],["3"],[34635715],[34636717],["ENSORLG00000026609"],[""],["ENSORLE00000271723"],[""],[1],[34635715],[34636717]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>chromosome_name<\/th>\n      <th>start_position<\/th>\n      <th>end_position<\/th>\n      <th>ensembl_gene_id<\/th>\n      <th>hgnc_symbol<\/th>\n      <th>ensembl_exon_id<\/th>\n      <th>description<\/th>\n      <th>strand<\/th>\n      <th>transcript_start<\/th>\n      <th>transcript_end<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[2,3,8,9,10]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-37e562e844253ac993b1" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-37e562e844253ac993b1">{"x":{"filter":"none","data":[["52786"],["3"],[34635715],[34636717],["ENSORLG00000026609"],[""],["ENSORLE00000271723"],[""],[1],[34635715],[34636717]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>chromosome_name<\/th>\n      <th>start_position<\/th>\n      <th>end_position<\/th>\n      <th>ensembl_gene_id<\/th>\n      <th>hgnc_symbol<\/th>\n      <th>ensembl_exon_id<\/th>\n      <th>description<\/th>\n      <th>strand<\/th>\n      <th>transcript_start<\/th>\n      <th>transcript_end<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[2,3,8,9,10]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 ```
 
 
@@ -249,33 +249,6 @@ SIG_LOCS = RESULTS$results %>%
 
 
 ```r
-## Select dataset
-olat_mart = biomaRt::useEnsembl(biomart = "ensembl", dataset = "olatipes_gene_ensembl")
-
-olat_attr = biomaRt::listAttributes(olat_mart)
-
-olat_genes = biomaRt::getBM(attributes = c("chromosome_name",
-                                           "start_position",
-                                           "end_position",
-                                           "ensembl_gene_id",
-                                           "hgnc_symbol",
-                                           "ensembl_exon_id",
-                                           "description",
-                                           "strand",
-                                           "transcript_start",
-                                           "transcript_end"),
-                             mart = olat_mart) 
-
-olat_genes_r = olat_genes %>% 
-  # change strand characters
-  dplyr::mutate(strand = dplyr::recode(.$strand,
-                                       `1` = "+",
-                                       `-1` = "-")
-                ) %>% 
-  GenomicRanges::makeGRangesFromDataFrame(seqnames.field = "chromosome_name",
-                                            start.field = "start_position",
-                                            end.field = "end_position")
-
 # convert hits to genomic ranges
 sig_loc_r = SIG_LOCS %>% 
   GenomicRanges::makeGRangesFromDataFrame(seqnames.field = "CHROM",
@@ -295,8 +268,8 @@ hits %>%
 ```
 
 ```{=html}
-<div id="htmlwidget-3dcea5edc4f4fb9b0639" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-3dcea5edc4f4fb9b0639">{"x":{"filter":"none","data":[["106182","106183","106184","106185","106186","106187","106188","106189","106190","106191","106192","106193","106194","106195","106196"],["3","3","3","3","3","3","3","3","3","3","3","3","3","3","3"],[22963087,22963087,22963087,22963087,22963087,22963087,22963087,22963087,22963087,22963087,22963087,22963087,22963087,22963087,22963087],[22992674,22992674,22992674,22992674,22992674,22992674,22992674,22992674,22992674,22992674,22992674,22992674,22992674,22992674,22992674],["ENSORLG00000009678","ENSORLG00000009678","ENSORLG00000009678","ENSORLG00000009678","ENSORLG00000009678","ENSORLG00000009678","ENSORLG00000009678","ENSORLG00000009678","ENSORLG00000009678","ENSORLG00000009678","ENSORLG00000009678","ENSORLG00000009678","ENSORLG00000009678","ENSORLG00000009678","ENSORLG00000009678"],["","","","","","","","","","","","","","",""],["ENSORLE00000270694","ENSORLE00000109779","ENSORLE00000109778","ENSORLE00000109768","ENSORLE00000109762","ENSORLE00000269835","ENSORLE00000302288","ENSORLE00000249511","ENSORLE00000109760","ENSORLE00000109757","ENSORLE00000109761","ENSORLE00000138828","ENSORLE00000109778","ENSORLE00000109768","ENSORLE00000109762"],["synaptotagmin-9 [Source:NCBI gene;Acc:101174010]","synaptotagmin-9 [Source:NCBI gene;Acc:101174010]","synaptotagmin-9 [Source:NCBI gene;Acc:101174010]","synaptotagmin-9 [Source:NCBI gene;Acc:101174010]","synaptotagmin-9 [Source:NCBI gene;Acc:101174010]","synaptotagmin-9 [Source:NCBI gene;Acc:101174010]","synaptotagmin-9 [Source:NCBI gene;Acc:101174010]","synaptotagmin-9 [Source:NCBI gene;Acc:101174010]","synaptotagmin-9 [Source:NCBI gene;Acc:101174010]","synaptotagmin-9 [Source:NCBI gene;Acc:101174010]","synaptotagmin-9 [Source:NCBI gene;Acc:101174010]","synaptotagmin-9 [Source:NCBI gene;Acc:101174010]","synaptotagmin-9 [Source:NCBI gene;Acc:101174010]","synaptotagmin-9 [Source:NCBI gene;Acc:101174010]","synaptotagmin-9 [Source:NCBI gene;Acc:101174010]"],[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],[22963087,22963087,22963087,22963087,22963087,22963087,22963087,22968889,22968889,22968889,22968889,22968889,22968889,22968889,22968889],[22992674,22992674,22992674,22992674,22992674,22992674,22992674,22992573,22992573,22992573,22992573,22992573,22992573,22992573,22992573]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>chromosome_name<\/th>\n      <th>start_position<\/th>\n      <th>end_position<\/th>\n      <th>ensembl_gene_id<\/th>\n      <th>hgnc_symbol<\/th>\n      <th>ensembl_exon_id<\/th>\n      <th>description<\/th>\n      <th>strand<\/th>\n      <th>transcript_start<\/th>\n      <th>transcript_end<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[2,3,8,9,10]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-a965ddca991e0e9fe965" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-a965ddca991e0e9fe965">{"x":{"filter":"none","data":[["106182","106183","106184","106185","106186","106187","106188","106189","106190","106191","106192","106193","106194","106195","106196"],["3","3","3","3","3","3","3","3","3","3","3","3","3","3","3"],[22963087,22963087,22963087,22963087,22963087,22963087,22963087,22963087,22963087,22963087,22963087,22963087,22963087,22963087,22963087],[22992674,22992674,22992674,22992674,22992674,22992674,22992674,22992674,22992674,22992674,22992674,22992674,22992674,22992674,22992674],["ENSORLG00000009678","ENSORLG00000009678","ENSORLG00000009678","ENSORLG00000009678","ENSORLG00000009678","ENSORLG00000009678","ENSORLG00000009678","ENSORLG00000009678","ENSORLG00000009678","ENSORLG00000009678","ENSORLG00000009678","ENSORLG00000009678","ENSORLG00000009678","ENSORLG00000009678","ENSORLG00000009678"],["","","","","","","","","","","","","","",""],["ENSORLE00000270694","ENSORLE00000109779","ENSORLE00000109778","ENSORLE00000109768","ENSORLE00000109762","ENSORLE00000269835","ENSORLE00000302288","ENSORLE00000249511","ENSORLE00000109760","ENSORLE00000109757","ENSORLE00000109761","ENSORLE00000138828","ENSORLE00000109778","ENSORLE00000109768","ENSORLE00000109762"],["synaptotagmin-9 [Source:NCBI gene;Acc:101174010]","synaptotagmin-9 [Source:NCBI gene;Acc:101174010]","synaptotagmin-9 [Source:NCBI gene;Acc:101174010]","synaptotagmin-9 [Source:NCBI gene;Acc:101174010]","synaptotagmin-9 [Source:NCBI gene;Acc:101174010]","synaptotagmin-9 [Source:NCBI gene;Acc:101174010]","synaptotagmin-9 [Source:NCBI gene;Acc:101174010]","synaptotagmin-9 [Source:NCBI gene;Acc:101174010]","synaptotagmin-9 [Source:NCBI gene;Acc:101174010]","synaptotagmin-9 [Source:NCBI gene;Acc:101174010]","synaptotagmin-9 [Source:NCBI gene;Acc:101174010]","synaptotagmin-9 [Source:NCBI gene;Acc:101174010]","synaptotagmin-9 [Source:NCBI gene;Acc:101174010]","synaptotagmin-9 [Source:NCBI gene;Acc:101174010]","synaptotagmin-9 [Source:NCBI gene;Acc:101174010]"],[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],[22963087,22963087,22963087,22963087,22963087,22963087,22963087,22968889,22968889,22968889,22968889,22968889,22968889,22968889,22968889],[22992674,22992674,22992674,22992674,22992674,22992674,22992674,22992573,22992573,22992573,22992573,22992573,22992573,22992573,22992573]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>chromosome_name<\/th>\n      <th>start_position<\/th>\n      <th>end_position<\/th>\n      <th>ensembl_gene_id<\/th>\n      <th>hgnc_symbol<\/th>\n      <th>ensembl_exon_id<\/th>\n      <th>description<\/th>\n      <th>strand<\/th>\n      <th>transcript_start<\/th>\n      <th>transcript_end<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[2,3,8,9,10]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 ```
 
 

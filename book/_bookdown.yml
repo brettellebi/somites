@@ -23,7 +23,6 @@ rmd_files: [
   "Period_intercept_with_AU.Rmd",
   "Period_intercept_with_DB.Rmd",
   "Inverse_normalise_by_microscope.Rmd",
-#  "Notes.Rmd",
   "08-Annotations.Rmd",
   "07-references.Rmd"
 ]

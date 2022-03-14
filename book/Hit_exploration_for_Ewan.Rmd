@@ -6,14 +6,19 @@
 # Libraries
 library(here)
 library(tidyverse)
+library(DT)
+
+# Get palettes
+source(here::here("workflow/scripts/get_manhattan_source.R"))
 
 # Variables
-RAW_GENO = "/nfs/research/birney/users/ian/somites/recombination_blocks/F2/all_sites/5000.txt"
-GENO_FILE = "/nfs/research/birney/users/ian/somites/association_testing/20220214/all_sites/inputs/5000.rds"
-PHENO_FILE = here::here("data/20220214_phenotypes.xlsx")
-RESULTS = "/hps/nobackup/birney/users/ian/somites/association_testing/20220214/all_sites/true_results/intercept/Microscope/TRUE/5000.rds"
-OUT_FILE = here::here("data/20220309_hits.csv")
 BIN_LENGTH = 5000
+RAW_GENO = file.path("/nfs/research/birney/users/ian/somites/recombination_blocks/F2/all_sites",
+                     paste(BIN_LENGTH, ".txt", sep = ""))
+GENO_FILE = file.path("/nfs/research/birney/users/ian/somites/association_testing/20220214/all_sites/inputs",
+                      paste(BIN_LENGTH, ".rds", sep = ""))
+PHENO_FILE = here::here("data/20220214_phenotypes.xlsx")
+
 LOW_COV_SAMPLES = c(26,89,166,178,189,227,239,470,472,473,490,501,502,503,504,505,506,507,508,509,510,511)
 ```
 
@@ -46,33 +51,67 @@ phenos = readxl::read_xlsx(PHENO_FILE) %>%
   dplyr::mutate(SAMPLE = fish %>% stringr::str_remove("KC")) %>% 
   # reorder columns
   dplyr::select(SAMPLE, everything(), -c(fish, strain))
+```
 
+## Total Cab vs Kaga in each sample
+
+```{r}
+# Group by SAMPLE and get total Cab and Kaga counts, and ratio
+read_counts = df %>% 
+  dplyr::select(SAMPLE, CAB = mat, KAGA = pat, STATE) %>% 
+  dplyr::group_by(SAMPLE) %>% 
+  dplyr::summarise(SUM_CAB_READS = sum(CAB),
+                   SUM_KAGA_READS = sum(KAGA),
+                   SUM_GT_CAB = sum(STATE == 0),
+                   SUM_GT_HET = sum(STATE == 1),
+                   SUM_GT_KAGA = sum(STATE == 2)) %>% 
+  dplyr::ungroup() %>% 
+  dplyr::mutate(TOTAL_READS = SUM_CAB_READS + SUM_KAGA_READS,
+                PROP_CAB_READS = SUM_CAB_READS / TOTAL_READS,
+                PROP_KAGA_READS = SUM_KAGA_READS / TOTAL_READS,
+                TOTAL_GT = SUM_GT_CAB + SUM_GT_HET + SUM_GT_KAGA,
+                PROP_CAB_GT = SUM_GT_CAB / TOTAL_GT,
+                PROP_HET_GT = SUM_GT_HET / TOTAL_GT,
+                PROP_KAGA_GT = SUM_GT_KAGA / TOTAL_GT) %>% 
+  # put into nicer order %>% 
+  dplyr::select(SAMPLE, tidyr::contains("READS"), tidyr::contains("GT")) %>% 
+  # convert SAMPLE to character
+  dplyr::mutate(SAMPLE = SAMPLE %>% 
+                  as.character())
+```
+
+## Intercept
+
+```{r}
+TARGET_PHENO = "intercept"
+TARGET_CHROMS = c(3, 21)
+RESULTS = file.path("/hps/nobackup/birney/users/ian/somites/association_testing/20220214/all_sites/true_results",
+                    TARGET_PHENO,
+                    "Microscope/TRUE/5000.rds")
+OUT_FILE = here::here("data/20220311_hits_Ewan",
+                      paste(TARGET_PHENO, ".csv", sep = ""))
+
+```
+
+### Read results
+
+```{r}
 # Results
 results = readRDS(RESULTS)
 results = results$results
 ```
 
-## Pull hits
+### Pull hits
 
 ```{r}
-# Chr3
-chr3_peak = results %>% 
-  dplyr::filter(Chr == 3 ) %>% 
-  dplyr::slice(which.min(p_value_REML.1)) %>% 
-  dplyr::select(CHROM = Chr, BIN_START = pos, p_value_REML.1)
+peaks = purrr::map(TARGET_CHROMS, function(TARGET_CHROM){
+  results %>% 
+    dplyr::filter(Chr == TARGET_CHROM) %>% 
+    dplyr::slice(which.min(p_value_REML.1)) %>% 
+    dplyr::select(CHROM = Chr, BIN_START = pos, p_value_REML.1)
+})
 
-# Chr21
-chr21_peak = results %>% 
-  dplyr::filter(Chr == 21) %>% 
-  dplyr::slice(which.min(p_value_REML.1)) %>% 
-  dplyr::select(CHROM = Chr, BIN_START = pos, p_value_REML.1)
-
-# Bind
-peaks = list(chr3_peak,
-             chr21_peak)
-
-peaks_df = dplyr::bind_rows(chr3_peak,
-                            chr21_peak) %>% 
+peaks_df = dplyr::bind_rows(peaks) %>% 
   # create column with CHROM:BIN_START
   tidyr::unite(col = "CHROM_LOC",
                CHROM, BIN_START,
@@ -97,31 +136,246 @@ hit_genos = dplyr::bind_cols(SAMPLE = in_list[["sample_order"]],
 # Add phenotypes
 out = dplyr::left_join(phenos, hit_genos, by = "SAMPLE")
 
-# Pull Cab/Kaga counts
-counts = lapply(peaks, function(PEAK){
-  df %>%
-    dplyr::filter(chr == PEAK$CHROM & BIN_START == PEAK$BIN_START)
-})
-
-counts_df = dplyr::bind_rows(counts) %>% 
-  dplyr::select(SAMPLE, CHROM = chr, BIN_START, CAB_COUNT = mat, KAGA_COUNT = pat) %>% 
-  tidyr::unite(col = "CHROM_LOC",
-               CHROM, BIN_START,
-               sep = ":") %>% 
-  tidyr::pivot_wider(id_cols = SAMPLE,
-                     names_from = CHROM_LOC,
-                     values_from = c(CAB_COUNT, KAGA_COUNT)) %>% 
-  dplyr::select(SAMPLE, contains("3"), contains("21")) %>% 
-  dplyr::mutate(SAMPLE = SAMPLE %>% 
-                  as.character())
-
-# Add to Df
+# Add read counts
 
 out = dplyr::left_join(out,
-                       counts_df,
+                       read_counts,
+                       by = "SAMPLE")
+
+
+# Write to file
+readr::write_csv(out, OUT_FILE)
+```
+
+### Plot
+
+```{r}
+pal = eval(as.name(paste(TARGET_PHENO, "_pal", sep = "")))
+vars_to_test = c("PROP_KAGA_READS", "PROP_CAB_GT", "PROP_HET_GT", "PROP_KAGA_GT")
+cor_tests = purrr::map(vars_to_test, function(VAR){
+  cor.test(out[[TARGET_PHENO]],
+           out[[VAR]],
+           use = "complete.obs")
+})
+names(cor_tests) = vars_to_test
+
+# Pull out correlation coefficients
+cor_df = tibble::tibble(VARIABLE = names(cor_tests),
+                        CORRELATION = purrr::map_dbl(cor_tests, "estimate"),
+                        P_VALUE = purrr::map_dbl(cor_tests, "p.value"))
+
+DT::datatable(cor_df)
+
+# Plot against PROP_KAGA_READS
+TARGET_VAR = "PROP_KAGA_READS"
+out_plot = out %>% 
+  # remove NA
+  dplyr::filter(!is.na(dplyr::all_of(TARGET_PHENO))) %>% 
+  ggplot(aes_string(TARGET_VAR, TARGET_PHENO)) +
+    geom_point(colour = pal[3],
+               alpha = 0.8) +
+    geom_smooth(method='lm', formula= y~x, colour = pal[2]) +
+    xlab("Proportion of all reads mapping to Kaga") +
+    theme_bw() +
+    ggtitle(TARGET_PHENO,
+            subtitle = paste("Correlation: ",
+                             cor_df %>%
+                               dplyr::filter(VARIABLE == TARGET_VAR) %>%
+                               dplyr::pull(CORRELATION),
+                             "\nP-value: ",
+                             cor_df %>%
+                               dplyr::filter(VARIABLE == TARGET_VAR) %>%
+                               dplyr::pull(P_VALUE),                             
+                             sep = ""))
+
+OUT_FILE = here::here("data/20220311_hits_Ewan",
+                      paste(TARGET_PHENO, "_", TARGET_VAR, ".png", sep = ""))
+ggsave(OUT_FILE,
+       out_plot,
+       device = "png",
+       width = 9.6,
+       height = 6,
+       units = "in",
+       dpi = 400)
+
+# Plot against PROP_KAGA_GT
+TARGET_VAR = "PROP_KAGA_GT"
+out_plot = out %>%   # remove NA
+  dplyr::filter(!is.na(dplyr::all_of(TARGET_PHENO))) %>% 
+  ggplot(aes_string(TARGET_VAR, TARGET_PHENO)) +
+    geom_point(colour = pal[3],
+               alpha = 0.8) +
+    geom_smooth(method='lm', formula= y~x, colour = pal[2]) +
+    xlab("Proportion of all genotypes called as homozygous Kaga") +
+    theme_bw() +
+    ggtitle(TARGET_PHENO,
+            subtitle = paste("Correlation: ",
+                             cor_df %>%
+                               dplyr::filter(VARIABLE == TARGET_VAR) %>%
+                               dplyr::pull(CORRELATION),
+                             "\nP-value: ",
+                             cor_df %>%
+                               dplyr::filter(VARIABLE == TARGET_VAR) %>%
+                               dplyr::pull(P_VALUE),                             
+                             sep = ""))
+
+OUT_FILE = here::here("data/20220311_hits_Ewan",
+                      paste(TARGET_PHENO, "_", TARGET_VAR, ".png", sep = ""))
+ggsave(OUT_FILE,
+       out_plot,
+       device = "png",
+       width = 9.6,
+       height = 6,
+       units = "in",
+       dpi = 400)
+```
+
+## PSM
+
+```{r}
+TARGET_PHENO = "unsegmented_psm_area"
+TARGET_CHROMS = c(3, 6, 12, 20)
+RESULTS = file.path("/hps/nobackup/birney/users/ian/somites/association_testing/20220214/all_sites/true_results",
+                    TARGET_PHENO,
+                    "Microscope/TRUE/5000.rds")
+OUT_FILE = here::here("data/20220311_hits_Ewan",
+                      paste(TARGET_PHENO, ".csv", sep = ""))
+
+```
+
+### Read results
+
+```{r}
+# Results
+results = readRDS(RESULTS)
+results = results$results
+```
+
+### Pull hits
+
+```{r}
+peaks = purrr::map(TARGET_CHROMS, function(TARGET_CHROM){
+  results %>% 
+    dplyr::filter(Chr == TARGET_CHROM) %>% 
+    dplyr::slice(which.min(p_value_REML.1)) %>% 
+    dplyr::select(CHROM = Chr, BIN_START = pos, p_value_REML.1)
+})
+
+peaks_df = dplyr::bind_rows(peaks) %>% 
+  # create column with CHROM:BIN_START
+  tidyr::unite(col = "CHROM_LOC",
+               CHROM, BIN_START,
+               sep = ":",
+               remove = F)
+
+# Get indexes of genotypes for those positions
+indexes = lapply(peaks, function(PEAK){
+  which(in_list[["positions"]]$CHROM == PEAK$CHROM & in_list[["positions"]]$BIN_START == PEAK$BIN_START)
+}) %>% 
+  unlist()
+
+# Pull out those genotypes
+hit_genos = in_list[["genotypes"]][, indexes]
+colnames(hit_genos) = peaks_df$CHROM_LOC
+
+
+# Add sample order
+hit_genos = dplyr::bind_cols(SAMPLE = in_list[["sample_order"]],
+                             hit_genos)
+
+# Add phenotypes
+out = dplyr::left_join(phenos, hit_genos, by = "SAMPLE")
+
+# Add read counts
+
+out = dplyr::left_join(out,
+                       read_counts,
                        by = "SAMPLE")
 
 # Write to file
 readr::write_csv(out, OUT_FILE)
 ```
 
+### Plot
+
+```{r}
+pal = eval(as.name(paste(TARGET_PHENO, "_pal", sep = "")))
+vars_to_test = c("PROP_KAGA_READS", "PROP_CAB_GT", "PROP_HET_GT", "PROP_KAGA_GT")
+cor_tests = purrr::map(vars_to_test, function(VAR){
+  cor.test(out[[TARGET_PHENO]],
+           out[[VAR]],
+           use = "complete.obs")
+})
+names(cor_tests) = vars_to_test
+
+# Pull out correlation coefficients
+cor_df = tibble::tibble(VARIABLE = names(cor_tests),
+                        CORRELATION = purrr::map_dbl(cor_tests, "estimate"),
+                        P_VALUE = purrr::map_dbl(cor_tests, "p.value"))
+
+DT::datatable(cor_df)
+
+# Plot against PROP_KAGA_READS
+TARGET_VAR = "PROP_KAGA_READS"
+out_plot = out %>% 
+  # remove NA
+  dplyr::filter(!is.na(dplyr::all_of(TARGET_PHENO))) %>% 
+  ggplot(aes_string(TARGET_VAR, TARGET_PHENO)) +
+    geom_point(colour = pal[3],
+               alpha = 0.8) +
+    geom_smooth(method='lm', formula= y~x, colour = pal[2]) +
+    xlab("Proportion of all reads mapping to Kaga") +
+    theme_bw() +
+    ggtitle(TARGET_PHENO,
+            subtitle = paste("Correlation: ",
+                             cor_df %>%
+                               dplyr::filter(VARIABLE == TARGET_VAR) %>%
+                               dplyr::pull(CORRELATION),
+                             "\nP-value: ",
+                             cor_df %>%
+                               dplyr::filter(VARIABLE == TARGET_VAR) %>%
+                               dplyr::pull(P_VALUE),                             
+                             sep = ""))
+
+OUT_FILE = here::here("data/20220311_hits_Ewan",
+                      paste(TARGET_PHENO, "_", TARGET_VAR, ".png", sep = ""))
+ggsave(OUT_FILE,
+       out_plot,
+       device = "png",
+       width = 9.6,
+       height = 6,
+       units = "in",
+       dpi = 400)
+
+# Plot against PROP_KAGA_GT
+TARGET_VAR = "PROP_KAGA_GT"
+out_plot = out %>% 
+  # remove NA
+  dplyr::filter(!is.na(dplyr::all_of(TARGET_PHENO))) %>% 
+  ggplot(aes_string(TARGET_VAR, TARGET_PHENO)) +
+    geom_point(colour = pal[3],
+               alpha = 0.8) +
+    geom_smooth(method='lm', formula= y~x, colour = pal[2]) +
+    xlab("Proportion of all genotypes called as homozygous Kaga") +
+    theme_bw() +
+    ggtitle(TARGET_PHENO,
+            subtitle = paste("Correlation: ",
+                             cor_df %>%
+                               dplyr::filter(VARIABLE == TARGET_VAR) %>%
+                               dplyr::pull(CORRELATION),
+                             "\nP-value: ",
+                             cor_df %>%
+                               dplyr::filter(VARIABLE == TARGET_VAR) %>%
+                               dplyr::pull(P_VALUE),                             
+                             sep = ""))
+
+OUT_FILE = here::here("data/20220311_hits_Ewan",
+                      paste(TARGET_PHENO, "_", TARGET_VAR, ".png", sep = ""))
+ggsave(OUT_FILE,
+       out_plot,
+       device = "png",
+       width = 9.6,
+       height = 6,
+       units = "in",
+       dpi = 400)
+```

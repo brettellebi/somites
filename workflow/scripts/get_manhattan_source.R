@@ -60,6 +60,55 @@ plot_man = function(df, site_filter, phenotype, bin_length, gwas_pal, size = 0.5
   
 }
 
+plot_man_chr = function(df, site_filter, phenotype, bin_length, gwas_pal, size = 0.5, alpha = 0.5, med_chr_lens, sig_level = NULL, bonferroni = NULL, target_chrom = NULL){
+  # Create palette
+  pal = rep_len(gwas_pal, length.out = nrow(med_chr_lens))
+  names(pal) = med_chr_lens$chr
+  
+  df = df %>% 
+    # create `COLOUR` vector
+    dplyr::mutate(COLOUR = dplyr::case_when(!is.null(sig_level) & p_value_REML < sig_level ~ gwas_pal[1],
+                                            gtools::even(CHROM) ~ gwas_pal[2],
+                                            gtools::odd(CHROM) ~ gwas_pal[3])) %>% 
+    dplyr::mutate(CHROM = factor(CHROM, levels = med_chr_lens$chr)) %>% 
+    # filter for target chromosome
+    dplyr::filter(CHROM == target_chrom)
+  
+  # Get breaks for target chromosome
+  CHROM_END = med_chr_lens %>% 
+    dplyr::filter(chr == target_chrom) %>% 
+    dplyr::pull(end)
+  X_BREAKS = seq(from = 0, to = CHROM_END, by = 5e6)
+  
+  out_plot = df %>% 
+    ggplot(aes(x = BIN_START,
+               y = -log10(p_value_REML),
+               label = BIN_START,
+               label2 = BIN_END)) + 
+    geom_point(colour = df$COLOUR,
+               size = size,
+               alpha = alpha) +
+    scale_x_continuous(breaks = X_BREAKS,
+                       labels = X_BREAKS / 1e6) +
+    theme_bw() +
+    theme(panel.grid.major.x = element_blank(),
+          panel.grid.minor.x = element_blank()
+    ) +
+    guides(colour = "none") +
+    ggtitle(paste("Site filter: ", site_filter, "\nPhenotype: ", phenotype, "\nBin length: ",  bin_length, sep = "")) +
+    xlab("Chromosome") +
+    ylab("-log10(p-value)") + 
+    # permutations significance level
+    geom_hline(yintercept = -log10(sig_level), colour = "#60D394", linetype = "dashed") +
+    geom_text(aes(out_clean$MID_TOT[1], -log10(sig_level), label = "permutations", vjust = 1), size = 3, colour = "#60D394") + 
+    # bonferroni significance level
+    geom_hline(yintercept = -log10(bonferroni), colour = "#F06449", linetype = "dashed") +
+    geom_text(aes(out_clean$MID_TOT[1], -log10(bonferroni), label = "bonferroni", vjust = 1), size = 3, colour = "#F06449")
+  
+  return(out_plot)
+  
+}
+
 plot_int_man = function(df, phenotype, bin_length, gwas_pal, size = 0.5, alpha = 0.5, med_chr_lens, sig_line = NULL){
   # Create palette
   pal = rep_len(gwas_pal, length.out = nrow(med_chr_lens))
@@ -109,7 +158,7 @@ mean_pal = c("#D81E5B", "#8AA399", "#084C61")
 names(mean_pal) = c("target", "even chr", "odd chr")
 
 # PSM
-unsegmented_psm_area_pal = c("#E59500", "#D9D0DE", "#401F3E")
+unsegmented_psm_area_pal = c("#E59500", "#9C6FC3", "#401F3E")
 names(mean_pal) = c("target", "even chr", "odd chr")
 
 ########################

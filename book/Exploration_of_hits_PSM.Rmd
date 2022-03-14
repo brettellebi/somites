@@ -1,0 +1,267 @@
+# Exploration of GWLS hits
+
+```{r, message = F, warning = F}
+library(here)
+source(here::here("workflow/scripts/get_manhattan_source.R"))
+```
+
+## Read in data
+
+### Get variables
+```{r}
+DATE_OF_ASSOC_TEST = 20220214
+
+TARGET_PHENO = "unsegmented_psm_area"
+
+BIN_LENGTH = 5000 
+
+FILTER = "all_sites"
+
+COVARIATES = "Microscope"
+
+INVERSE_NORM = "TRUE"
+
+GWAS_RESULTS = file.path("/hps/nobackup/birney/users/ian/somites/association_testing",
+                         DATE_OF_ASSOC_TEST,
+                         FILTER,
+                         "true_results",
+                         TARGET_PHENO,
+                         COVARIATES,
+                         INVERSE_NORM,
+                         paste(BIN_LENGTH, ".rds", sep = ""))
+
+PERMS_FILES = list.files(file.path("/hps/nobackup/birney/users/ian/somites/association_testing",
+                                   DATE_OF_ASSOC_TEST,
+                                   FILTER,
+                                   "permutations",
+                                   TARGET_PHENO,
+                                   COVARIATES,
+                                   INVERSE_NORM,
+                                   BIN_LENGTH),
+                         full.names = T)
+
+PLOT_DIR = here::here("book/plots", DATE_OF_ASSOC_TEST, "hits_exploration")
+
+TARGET_CHROMS = c(3, 6, 12, 20)
+
+```
+
+### Read in files
+
+```{r}
+# Results
+gwas_res = readRDS(GWAS_RESULTS)
+
+if ("p_value_REML" %in% colnames(gwas_res$results)){
+  P_COL = "p_value_REML"
+} else {
+  P_COL = "p_value_REML.1"
+}
+# Rename column in results
+if (P_COL == "p_value_REML.1"){
+  gwas_res$results = gwas_res$results %>% 
+    dplyr::rename(p_value_REML = p_value_REML.1)
+}
+
+# Permutations
+perms = purrr::map(PERMS_FILES, readRDS)
+```
+
+### Get significance levels
+
+```{r}
+perm_df = purrr::map_dfr(perms, function(PERM){
+  # get correct p-value column
+  if ("p_value_REML" %in% colnames(PERM)){
+    TARGET_COL = "p_value_REML"
+  } else {
+    TARGET_COL = "p_value_REML.1"
+  }
+  OUT = tibble::tibble(MIN_P = PERM$results %>% 
+                         dplyr::select(all_of(TARGET_COL)) %>%
+                         min(., na.rm = T)
+  )
+}, .id = "SEED")
+
+# Get minimum
+SIG_LEVEL = min(perm_df$MIN_P)
+
+# Get bonferroni correction
+SIG_BONF = 0.05 / nrow(gwas_true$results)
+```
+
+
+#### Manhattans
+
+Process data
+```{r}
+out_clean = clean_gwas_res(gwas_res,
+                           bin_length = BIN_LENGTH,
+                           chr_lens = med_chr_lens)
+
+# Get palette
+PAL = eval(as.name(paste(TARGET_PHENO, "_pal", sep = "")))
+
+# Get correct column name
+
+TARGET_CHROM = TARGET_CHROMS[1]
+
+# Plot
+lapply(TARGET_CHROMS, function(TARGET_CHROM){
+  
+  out_plot = plot_man_chr(out_clean,
+                      site_filter = FILTER,
+                      phenotype = TARGET_PHENO,
+                      bin_length = BIN_LENGTH, 
+                      gwas_pal = PAL,
+                      med_chr_lens = med_chr_lens,
+                      sig_level = SIG_LEVEL,
+                      bonferroni = SIG_BONF,
+                      target_chrom = TARGET_CHROM) +
+                   labs(subtitle = paste("Covariates: ", COVARIATES, "\nChromosome: ", TARGET_CHROM, sep = ""))
+  
+  ## Write
+  OUT_FILE = file.path(PLOT_DIR, FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, BIN_LENGTH, paste(TARGET_CHROM, ".png", sep = ""))
+  dir.create(dirname(OUT_FILE), recursive = T, showWarnings = F)
+  ggsave(OUT_FILE,
+         out_plot,
+         device = "png",
+         width = 9.6,
+         height = 6,
+         units = "in",
+         dpi = 400)
+
+})
+```
+
+Plot
+```{r}
+df = gwas_res
+
+  # Create palette
+  pal = rep_len(gwas_pal, length.out = nrow(med_chr_lens))
+  names(pal) = med_chr_lens$chr
+  
+  df = df %>% 
+    # create `COLOUR` vector
+    dplyr::mutate(COLOUR = dplyr::case_when(!is.null(sig_level) & p_value_REML < sig_level ~ gwas_pal[1],
+                                            gtools::even(CHROM) ~ gwas_pal[2],
+                                            gtools::odd(CHROM) ~ gwas_pal[3])) %>% 
+    dplyr::mutate(CHROM = factor(CHROM, levels = med_chr_lens$chr)) 
+  
+  out_plot = df %>% 
+    ggplot(aes(x = X_COORD,
+               y = -log10(p_value_REML),
+               label = BIN_START,
+               label2 = BIN_END)) + 
+    geom_point(colour = df$COLOUR,
+               size = size,
+               alpha = alpha) +
+    #scale_color_manual(values = gwas_pal) +
+    scale_x_continuous(breaks = med_chr_lens$MID_TOT, 
+                       labels = med_chr_lens$chr) +
+    theme_bw() +
+    theme(panel.grid.major.x = element_blank(),
+          panel.grid.minor.x = element_blank()
+    ) +
+    guides(colour = "none") +
+    ggtitle(paste("Site filter: ", site_filter, "\nPhenotype: ", phenotype, "\nBin length: ",  bin_length, sep = "")) +
+    xlab("Chromosome") +
+    ylab("-log10(p-value)") + 
+    # permutations significance level
+    geom_hline(yintercept = -log10(sig_level), colour = "#60D394", linetype = "dashed") +
+    geom_text(aes(out_clean$MID_TOT[1], -log10(sig_level), label = "permutations", vjust = 1), size = 3, colour = "#60D394") + 
+    # bonferroni significance level
+    geom_hline(yintercept = -log10(bonferroni), colour = "#F06449", linetype = "dashed") +
+    geom_text(aes(out_clean$MID_TOT[1], -log10(bonferroni), label = "bonferroni", vjust = 1), size = 3, colour = "#F06449")
+```
+
+
+Read in significance levels from permutations
+
+```{r}
+perms_df_mins = readr::read_csv(PERMS_FILE,
+                                col_types = c("ccid"))
+```
+
+```{r}
+# Get palette
+lapply(TARGET_PHENOS, function(PHENO){
+  lapply(FILTERS, function(FILTER){
+    lapply(BIN_LENGTHS, function(BIN_L){
+      # Get significance level
+      SIG_LEVEL = perms_df_mins %>% 
+        dplyr::filter(TARGET_PHENO == PHENO,
+                      SITE_FILTER == FILTER,
+                      BIN_LENGTH == BIN_L) %>% 
+        dplyr::pull(MIN_P)
+      # Get palette
+      pal = eval(as.name(paste(PHENO, "pal", sep = "_")))
+      # Get target chromosome
+      TARGET_CHROM = 3
+      # Get chrom lengths and breaks
+      CHROM_END = med_chr_lens %>% 
+        dplyr::filter(chr == TARGET_CHROM) %>% 
+        dplyr::pull(end)
+      X_BREAKS = seq(from = 0, to = CHROM_END, by = 5e6)
+      # Plot
+      df = plot_dat[[PHENO]][[FILTER]][[as.character(BIN_L)]] %>%
+        # filter for target chromosome
+        dplyr::filter(CHROM == TARGET_CHROM) %>% 
+        # create `COLOUR` vector
+        dplyr::mutate(COLOUR = dplyr::case_when(p_value_REML < SIG_LEVEL ~ pal[1],
+                                                gtools::even(CHROM) ~ pal[2],
+                                                gtools::odd(CHROM) ~ pal[3])) %>% 
+        dplyr::mutate(CHROM = factor(CHROM, levels = med_chr_lens$chr)) 
+      
+      out_plot = df %>% 
+        ggplot(aes(x = BIN_START,
+                   y = -log10(p_value_REML),
+                   label = BIN_START,
+                   label2 = BIN_END)) + 
+        geom_point(colour = df$COLOUR,
+                   size = 0.5,
+                   alpha = 0.5) +
+        scale_x_continuous(breaks = X_BREAKS,
+                           labels = X_BREAKS / 1e6) +
+        theme_bw() +
+        theme(panel.grid.major.x = element_blank(),
+              panel.grid.minor.x = element_blank()
+        ) +
+        guides(colour = "none") +
+        ggtitle(paste("Site filter: ", FILTER, "\nPhenotype: ", PHENO, "\nBin length: ",  BIN_L, sep = "")) +
+        xlab("Mb") +
+        ylab("-log10(p-value)") + 
+        geom_hline(yintercept = -log10(SIG_LEVEL), colour = "#60D394", linetype = "dashed")
+      
+      out_plot
+      
+      # create output directory
+      OUT_DIR = here::here(PLOT_DIR, PHENO, FILTER, BIN_L)
+      dir.create(OUT_DIR, recursive = T, showWarnings = F)
+      
+      ggsave(file.path(OUT_DIR, paste(TARGET_CHROM, ".png", sep = "")),
+       out_plot,
+       device = "png",
+       width = 9.6,
+       height = 6,
+       units = "in",
+       dpi = 400)
+    })
+  })
+})
+
+out_plot = plot_man(out_clean,
+                    site_filter = "all_sites",
+                    phenotype = TARGET_PHENO,
+                    bin_length = BIN_LENGTH, 
+                    gwas_pal = intercept_pal,
+                    med_chr_lens = med_chr_lens,
+                    sig_level = SIG_LEVEL) +
+                 ylim(0,7) + 
+                 labs(subtitle = paste("Microscope: ", MICROSCOPE, "\nn samples: ", N_SAMPLES, sep = ""))
+
+out_plot
+```
+
+

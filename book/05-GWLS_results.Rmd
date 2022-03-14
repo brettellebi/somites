@@ -2,7 +2,7 @@
 zotero: PhD
 ---
 
-# GWLS results
+# GWAS results
 
 ```{r, message = F, warning = F}
 library(here)

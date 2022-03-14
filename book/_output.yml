@@ -7,6 +7,8 @@ bookdown::bs4_book:
     base: https://github.com/brettellebi/somites
     branch: master
     subdir: book
+  includes:
+    in_header: [css.html]
 #bookdown::pdf_book:
 #  includes:
 #    in_header: preamble.tex

@@ -1,4 +1,4 @@
-# Association testing with only AU microscope
+# Association testing with only DB microscope
 
 ## Load libraries and variables
 
