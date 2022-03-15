@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Chapter 11 Inverse-normalize by microscope | Somite period F2 analysis</title>
+<title>Chapter 12 Reporter as covariate | Somite period F2 analysis</title>
 <meta name="author" content="Ian Brettell">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.2"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/header-attrs-2.10/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
@@ -51,8 +51,8 @@
 <li><a class="" href="gwas-results.html"><span class="header-section-number">8</span> GWAS results</a></li>
 <li><a class="" href="association-testing-with-only-au-microscope.html"><span class="header-section-number">9</span> Association testing with only AU microscope</a></li>
 <li><a class="" href="association-testing-with-only-db-microscope.html"><span class="header-section-number">10</span> Association testing with only DB microscope</a></li>
-<li><a class="active" href="inverse-normalize-by-microscope.html"><span class="header-section-number">11</span> Inverse-normalize by microscope</a></li>
-<li><a class="" href="reporter-as-covariate.html"><span class="header-section-number">12</span> Reporter as covariate</a></li>
+<li><a class="" href="inverse-normalize-by-microscope.html"><span class="header-section-number">11</span> Inverse-normalize by microscope</a></li>
+<li><a class="active" href="reporter-as-covariate.html"><span class="header-section-number">12</span> Reporter as covariate</a></li>
 <li><a class="" href="annotations-of-gwas-hits.html"><span class="header-section-number">13</span> Annotations of GWAS hits</a></li>
 <li><a class="" href="references.html">References</a></li>
 </ul>
@@ -62,15 +62,16 @@
         </div>
       </nav>
 </div>
-  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="inverse-normalize-by-microscope" class="section level1" number="11">
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="reporter-as-covariate" class="section level1" number="12">
 <h1>
-<span class="header-section-number">11</span> Inverse-normalize by microscope<a class="anchor" aria-label="anchor" href="#inverse-normalize-by-microscope"><i class="fas fa-link"></i></a>
+<span class="header-section-number">12</span> Reporter as covariate<a class="anchor" aria-label="anchor" href="#reporter-as-covariate"><i class="fas fa-link"></i></a>
 </h1>
-<div id="run-gwas-2" class="section level2" number="11.1">
+<p>Run GWAS on split inverse-normalised microscope, with reporter genotype as a covariate.</p>
+<div id="setup" class="section level2" number="12.1">
 <h2>
-<span class="header-section-number">11.1</span> Run GWAS<a class="anchor" aria-label="anchor" href="#run-gwas-2"><i class="fas fa-link"></i></a>
+<span class="header-section-number">12.1</span> Setup<a class="anchor" aria-label="anchor" href="#setup"><i class="fas fa-link"></i></a>
 </h2>
-<div class="sourceCode" id="cb131"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb144"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">GridLMM</span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://www.r-project.org">KRLS</a></span><span class="op">)</span>
@@ -80,20 +81,39 @@
 <span class="va">GWLS_SOURCE_FILE</span> <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"workflow/scripts/run_gwls_source.R"</span><span class="op">)</span>
 <span class="va">MANHAT_SOURCE_FILE</span> <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"workflow/scripts/get_manhattan_source.R"</span><span class="op">)</span>
 <span class="va">BIN_LENGTH</span> <span class="op">=</span> <span class="fl">5000</span>
-<span class="va">TARGET_PHENO</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"mean"</span>, <span class="st">"intercept"</span><span class="op">)</span>
-<span class="va">MICROSCOPE</span> <span class="op">=</span> <span class="st">"split_invnorm"</span>
+<span class="va">TARGET_PHENO</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"intercept"</span><span class="op">)</span>
+<span class="va">MICROSCOPE</span> <span class="op">=</span> <span class="st">"split_invnorm_reporter"</span>
 <span class="va">OUT_PHENOS</span> <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"data/20220310_invnorm_phenos.csv"</span><span class="op">)</span>
 <span class="va">PLOT_DIR</span> <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"book/plots/20220214/microscope_test"</span><span class="op">)</span>
 <span class="va">ALPHA</span> <span class="op">=</span> <span class="fl">0.05</span>
+<span class="va">REPORTER_LOC</span> <span class="op">=</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span>CHROM <span class="op">=</span> <span class="fl">16</span>,
+                              START <span class="op">=</span> <span class="fl">28706898</span>,
+                              END <span class="op">=</span> <span class="fl">28708417</span><span class="op">)</span>
 
 <span class="co"># Get GWAS functions</span>
 
 <span class="kw"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op">(</span><span class="va">GWLS_SOURCE_FILE</span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op">(</span><span class="va">MANHAT_SOURCE_FILE</span><span class="op">)</span></code></pre></div>
-<div class="sourceCode" id="cb132"><pre class="downlit sourceCode r">
+<span class="kw"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op">(</span><span class="va">MANHAT_SOURCE_FILE</span><span class="op">)</span>
+<span class="co"># Get lighter/darker functions</span>
+<span class="kw"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op">(</span><span class="st">"https://gist.githubusercontent.com/brettellebi/c5015ee666cdf8d9f7e25fa3c8063c99/raw/91e601f82da6c614b4983d8afc4ef399fa58ed4b/karyoploteR_lighter_darker.R"</span><span class="op">)</span></code></pre></div>
+</div>
+<div id="read-in-data-2" class="section level2" number="12.2">
+<h2>
+<span class="header-section-number">12.2</span> Read in data<a class="anchor" aria-label="anchor" href="#read-in-data-2"><i class="fas fa-link"></i></a>
+</h2>
+<div id="genos" class="section level3" number="12.2.1">
+<h3>
+<span class="header-section-number">12.2.1</span> Genos<a class="anchor" aria-label="anchor" href="#genos"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb145"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Load genotypes and positions</span>
 <span class="va">in_list</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="va">GENO_FILE</span><span class="op">)</span></code></pre></div>
-<div class="sourceCode" id="cb133"><pre class="downlit sourceCode r">
+</div>
+<div id="phenos" class="section level3" number="12.2.2">
+<h3>
+<span class="header-section-number">12.2.2</span> Phenos<a class="anchor" aria-label="anchor" href="#phenos"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb146"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Read in phenotypes</span>
 
 <span class="co">## Read in file and wrangle</span>
@@ -145,23 +165,67 @@
     <span class="fu">guides</span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span>
 
 <span class="va">pheno_hist</span></code></pre></div>
-<div class="inline-figure"><img src="Inverse_normalise_by_microscope_files/figure-html/unnamed-chunk-3-1.png" width="672"></div>
-<div class="sourceCode" id="cb134"><pre class="downlit sourceCode r">
-<code class="sourceCode R">
-<span class="fu">ggsave</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">PLOT_DIR</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="va">MICROSCOPE</span>, <span class="st">"_intercept_hist.png"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span>,
-       <span class="va">pheno_hist</span>,
-       device <span class="op">=</span> <span class="st">"png"</span>,
-       width <span class="op">=</span> <span class="fl">9.6</span>,
-       height <span class="op">=</span> <span class="fl">6</span>,
-       units <span class="op">=</span> <span class="st">"in"</span>,
-       dpi <span class="op">=</span> <span class="fl">400</span><span class="op">)</span></code></pre></div>
-<div id="prepare-input" class="section level3" number="11.1.1">
+<div class="inline-figure"><img src="Reporter_as_covariate_files/figure-html/unnamed-chunk-3-1.png" width="672"></div>
+</div>
+<div id="covariates" class="section level3" number="12.2.3">
 <h3>
-<span class="header-section-number">11.1.1</span> Prepare input<a class="anchor" aria-label="anchor" href="#prepare-input"><i class="fas fa-link"></i></a>
+<span class="header-section-number">12.2.3</span> Covariates<a class="anchor" aria-label="anchor" href="#covariates"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb135"><pre class="downlit sourceCode r">
-<code class="sourceCode R">
-<span class="co">## Filter and order phenotypes</span>
+<div class="sourceCode" id="cb147"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Get genotypes for reporter</span>
+<span class="va">rep_ind</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="va">in_list</span><span class="op">[[</span><span class="st">"positions"</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">CHROM</span> <span class="op">==</span> <span class="va">REPORTER_LOC</span><span class="op">$</span><span class="va">CHROM</span> <span class="op">&amp;</span> <span class="va">in_list</span><span class="op">[[</span><span class="st">"positions"</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">BIN_START</span> <span class="op">&lt;</span> <span class="va">REPORTER_LOC</span><span class="op">$</span><span class="va">START</span> <span class="op">&amp;</span> <span class="va">in_list</span><span class="op">[[</span><span class="st">"positions"</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">BIN_END</span> <span class="op">&gt;</span> <span class="va">REPORTER_LOC</span><span class="op">$</span><span class="va">END</span><span class="op">)</span>
+
+<span class="co"># Sanity check</span>
+<span class="va">REPORTER_LOC</span>
+<span class="co">#&gt; # A tibble: 1 × 3</span>
+<span class="co">#&gt;   CHROM    START      END</span>
+<span class="co">#&gt;   &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;</span>
+<span class="co">#&gt; 1    16 28706898 28708417</span>
+<span class="va">in_list</span><span class="op">[[</span><span class="st">"positions"</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="va">rep_ind</span>, <span class="op">]</span>
+<span class="co">#&gt;       CHROM BIN_START  BIN_END</span>
+<span class="co">#&gt; 75474    16  28705001 28710000</span>
+
+<span class="co"># Pull genotypes for that locus</span>
+<span class="va">rep_genos</span> <span class="op">=</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span>SAMPLE <span class="op">=</span> <span class="va">in_list</span><span class="op">[[</span><span class="st">"sample_order"</span><span class="op">]</span><span class="op">]</span>,
+                           reporter_geno <span class="op">=</span> <span class="va">in_list</span><span class="op">[[</span><span class="st">"genotypes"</span><span class="op">]</span><span class="op">]</span><span class="op">[</span>, <span class="va">rep_ind</span><span class="op">]</span><span class="op">)</span>
+
+<span class="co"># Bind to phenos</span>
+<span class="va">phenos</span> <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span><span class="op">(</span><span class="va">phenos</span>,
+                          <span class="va">rep_genos</span>,
+                          by <span class="op">=</span> <span class="st">"SAMPLE"</span><span class="op">)</span>
+
+<span class="co"># How many counts for each reporter genotype? </span>
+<span class="va">phenos</span> <span class="op">%&gt;%</span>
+  <span class="fu">count</span><span class="op">(</span><span class="va">reporter_geno</span><span class="op">)</span>
+<span class="co">#&gt; # A tibble: 4 × 2</span>
+<span class="co">#&gt;   reporter_geno     n</span>
+<span class="co">#&gt;           &lt;dbl&gt; &lt;int&gt;</span>
+<span class="co">#&gt; 1            -1   341</span>
+<span class="co">#&gt; 2             0   249</span>
+<span class="co">#&gt; 3             1     1</span>
+<span class="co">#&gt; 4            NA    47</span></code></pre></div>
+<div class="sourceCode" id="cb148"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Plot</span>
+<span class="va">phenos</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>reporter_geno <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span><span class="op">(</span><span class="va">reporter_geno</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span><span class="va">reporter_geno</span>, <span class="va">intercept</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">geom_violin</span><span class="op">(</span>fill <span class="op">=</span> <span class="va">intercept_pal</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span> <span class="op">+</span> 
+    <span class="fu">geom_boxplot</span><span class="op">(</span>width <span class="op">=</span> <span class="fl">0.3</span>, fill <span class="op">=</span> <span class="va">intercept_pal</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">ggbeeswarm</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ggbeeswarm/man/geom_beeswarm.html">geom_beeswarm</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">0.4</span>, alpha <span class="op">=</span> <span class="fl">0.5</span>, colour <span class="op">=</span> <span class="fu">lighter</span><span class="op">(</span><span class="va">intercept_pal</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">xlab</span><span class="op">(</span><span class="st">"Reporter genotype"</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">ylab</span><span class="op">(</span><span class="st">"Inverse-normalised intercept split by microscope"</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">ggtitle</span><span class="op">(</span><span class="st">"Intercept phenotype by reporter genotype"</span><span class="op">)</span>
+<span class="co">#&gt; Warning: Groups with fewer than two data points have been</span>
+<span class="co">#&gt; dropped.</span></code></pre></div>
+<div class="inline-figure"><img src="Reporter_as_covariate_files/figure-html/unnamed-chunk-5-1.png" width="672"></div>
+</div>
+<div id="prepare-input-1" class="section level3" number="12.2.4">
+<h3>
+<span class="header-section-number">12.2.4</span> Prepare input<a class="anchor" aria-label="anchor" href="#prepare-input-1"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb149"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">## Filter and order phenotypes</span>
 <span class="va">in_list</span><span class="op">[[</span><span class="st">"phenotypes"</span><span class="op">]</span><span class="op">]</span> <span class="op">=</span> <span class="va">phenos</span> <span class="op">%&gt;%</span>
     <span class="co"># filter phenotypes for those with genotypes</span>
     <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">SAMPLE</span> <span class="op">%in%</span> <span class="va">in_list</span><span class="op">[[</span><span class="st">"sample_order"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span> <span class="op">%&gt;%</span>
@@ -186,31 +250,46 @@
 <span class="va">N_SAMPLES</span> <span class="op">=</span> <span class="va">in_list</span><span class="op">[[</span><span class="st">"sample_order"</span><span class="op">]</span><span class="op">]</span> <span class="op">%&gt;%</span> 
   <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="run" class="section level3" number="11.1.2">
+<div id="run-1" class="section level3" number="12.2.5">
 <h3>
-<span class="header-section-number">11.1.2</span> Run<a class="anchor" aria-label="anchor" href="#run"><i class="fas fa-link"></i></a>
+<span class="header-section-number">12.2.5</span> Run<a class="anchor" aria-label="anchor" href="#run-1"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb136"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb150"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Run GWAS</span>
 <span class="va">out</span> <span class="op">=</span> <span class="fu">run_gwas</span><span class="op">(</span>d <span class="op">=</span> <span class="va">in_list</span><span class="op">[[</span><span class="st">"genotypes"</span><span class="op">]</span><span class="op">]</span>,
                m <span class="op">=</span> <span class="va">in_list</span><span class="op">[[</span><span class="st">"positions"</span><span class="op">]</span><span class="op">]</span>,
-               p <span class="op">=</span> <span class="va">in_list</span><span class="op">[[</span><span class="st">"phenotypes"</span><span class="op">]</span><span class="op">]</span>
+               p <span class="op">=</span> <span class="va">in_list</span><span class="op">[[</span><span class="st">"phenotypes"</span><span class="op">]</span><span class="op">]</span>,
+               covariates <span class="op">=</span> <span class="st">"reporter_geno"</span>
               <span class="op">)</span>
 
 <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">out</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"/hps/nobackup/birney/users/ian/somites/microscope_test/gwas_results/"</span>, <span class="va">MICROSCOPE</span>, <span class="st">".rds"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<div class="sourceCode" id="cb137"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">out</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"/hps/nobackup/birney/users/ian/somites/microscope_test/gwas_results/"</span>, <span class="va">MICROSCOPE</span>, <span class="st">".rds"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb151"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">out</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"/hps/nobackup/birney/users/ian/somites/microscope_test/gwas_results/"</span>, <span class="va">MICROSCOPE</span>, <span class="st">".rds"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span>
+
+<span class="co"># Rename p-value column</span>
+<span class="kw">if</span> <span class="op">(</span><span class="st">"p_value_REML"</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">out</span><span class="op">$</span><span class="va">results</span><span class="op">)</span><span class="op">)</span><span class="op">{</span>
+  <span class="va">P_COL</span> <span class="op">=</span> <span class="st">"p_value_REML"</span>
+<span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
+  <span class="va">P_COL</span> <span class="op">=</span> <span class="st">"p_value_REML.1"</span>
+<span class="op">}</span>
+
+<span class="co"># Rename column in results</span>
+
+<span class="kw">if</span> <span class="op">(</span><span class="va">P_COL</span> <span class="op">==</span> <span class="st">"p_value_REML.1"</span><span class="op">)</span><span class="op">{</span>
+  <span class="va">out</span><span class="op">$</span><span class="va">results</span> <span class="op">=</span> <span class="va">out</span><span class="op">$</span><span class="va">results</span> <span class="op">%&gt;%</span> 
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html">rename</a></span><span class="op">(</span>p_value_REML <span class="op">=</span> <span class="va">p_value_REML.1</span><span class="op">)</span>
+<span class="op">}</span></code></pre></div>
 </div>
 </div>
-<div id="run-permutations-2" class="section level2" number="11.2">
+<div id="run-permutations-3" class="section level2" number="12.3">
 <h2>
-<span class="header-section-number">11.2</span> Run permutations<a class="anchor" aria-label="anchor" href="#run-permutations-2"><i class="fas fa-link"></i></a>
+<span class="header-section-number">12.3</span> Run permutations<a class="anchor" aria-label="anchor" href="#run-permutations-3"><i class="fas fa-link"></i></a>
 </h2>
-<div id="permute-phenos-2" class="section level3" number="11.2.1">
+<div id="permute-phenos-3" class="section level3" number="12.3.1">
 <h3>
-<span class="header-section-number">11.2.1</span> Permute phenos<a class="anchor" aria-label="anchor" href="#permute-phenos-2"><i class="fas fa-link"></i></a>
+<span class="header-section-number">12.3.1</span> Permute phenos<a class="anchor" aria-label="anchor" href="#permute-phenos-3"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb138"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb152"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">seeds</span> <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>
 
 <span class="va">counter</span> <span class="op">=</span> <span class="fl">0</span>
@@ -219,17 +298,19 @@
   <span class="co"># set seed</span>
   <span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="va">seeds</span><span class="op">[</span><span class="va">counter</span><span class="op">]</span><span class="op">)</span>
   <span class="co"># randomise</span>
-  <span class="va">phenos</span> <span class="op">=</span> <span class="va">phenos</span> <span class="op">%&gt;%</span> 
-      <span class="co"># randomise phenotype</span>
-      <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/across.html">across</a></span><span class="op">(</span><span class="fu">all_of</span><span class="op">(</span><span class="va">TARGET_PHENO</span><span class="op">)</span>,
-                                  <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="va">.x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+  <span class="co"># Randomise all columns other than `fish`</span>
+  <span class="va">permute_order</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">phenos</span><span class="op">)</span><span class="op">)</span>
+  <span class="va">out</span> <span class="op">=</span> <span class="va">phenos</span> <span class="op">%&gt;%</span> 
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/across.html">across</a></span><span class="op">(</span><span class="op">-</span><span class="va">SAMPLE</span>,
+                                <span class="op">~</span><span class="va">.x</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html">order</a></span><span class="op">(</span><span class="va">permute_order</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>
+                  <span class="op">)</span>
 <span class="op">}</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="run-gwls-2" class="section level3" number="11.2.2">
+<div id="run-gwls-3" class="section level3" number="12.3.2">
 <h3>
-<span class="header-section-number">11.2.2</span> Run GWLS<a class="anchor" aria-label="anchor" href="#run-gwls-2"><i class="fas fa-link"></i></a>
+<span class="header-section-number">12.3.2</span> Run GWLS<a class="anchor" aria-label="anchor" href="#run-gwls-3"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb139"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb153"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">perm_out</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">perm_phenos</span>, <span class="kw">function</span><span class="op">(</span><span class="va">PERM_PHENO</span><span class="op">)</span><span class="op">{</span>
   <span class="co">## Read in file and wrangle</span>
   <span class="va">phenos</span> <span class="op">=</span> <span class="va">PERM_PHENO</span>
@@ -259,7 +340,8 @@
   
   <span class="va">out</span> <span class="op">=</span> <span class="fu">run_gwas</span><span class="op">(</span>d <span class="op">=</span> <span class="va">in_list</span><span class="op">[[</span><span class="st">"genotypes"</span><span class="op">]</span><span class="op">]</span>,
                  m <span class="op">=</span> <span class="va">in_list</span><span class="op">[[</span><span class="st">"positions"</span><span class="op">]</span><span class="op">]</span>,
-                 p <span class="op">=</span> <span class="va">in_list</span><span class="op">[[</span><span class="st">"phenotypes"</span><span class="op">]</span><span class="op">]</span>
+                 p <span class="op">=</span> <span class="va">in_list</span><span class="op">[[</span><span class="st">"phenotypes"</span><span class="op">]</span><span class="op">]</span>,
+                 covariates <span class="op">=</span> <span class="st">"reporter_geno"</span>
                 <span class="op">)</span>
   
   <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span>
@@ -268,16 +350,17 @@
 <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">perm_out</span><span class="op">)</span> <span class="op">=</span> <span class="va">seeds</span>
 
 <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">perm_out</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"/hps/nobackup/birney/users/ian/somites/microscope_test/perms/"</span>, <span class="va">MICROSCOPE</span>, <span class="st">".rds"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<div class="sourceCode" id="cb140"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb154"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">perm_out</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"/hps/nobackup/birney/users/ian/somites/microscope_test/perms/"</span>, <span class="va">MICROSCOPE</span>, <span class="st">".rds"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="get-minimum-2" class="section level3" number="11.2.3">
+<div id="get-minimum-3" class="section level3" number="12.3.3">
 <h3>
-<span class="header-section-number">11.2.3</span> Get minimum<a class="anchor" aria-label="anchor" href="#get-minimum-2"><i class="fas fa-link"></i></a>
+<span class="header-section-number">12.3.3</span> Get minimum<a class="anchor" aria-label="anchor" href="#get-minimum-3"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb141"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb155"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">perm_df</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map_dfr</a></span><span class="op">(</span><span class="va">perm_out</span>, <span class="kw">function</span><span class="op">(</span><span class="va">PERM</span><span class="op">)</span><span class="op">{</span>
-  <span class="va">OUT</span> <span class="op">=</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span>MIN_P <span class="op">=</span> <span class="va">PERM</span><span class="op">$</span><span class="va">results</span><span class="op">$</span><span class="va">p_value_REML</span> <span class="op">%&gt;%</span>
+  <span class="va">OUT</span> <span class="op">=</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span>MIN_P <span class="op">=</span> <span class="va">PERM</span><span class="op">$</span><span class="va">results</span> <span class="op">%&gt;%</span> 
+                         <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/all_of.html">all_of</a></span><span class="op">(</span><span class="va">P_COL</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
                          <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">.</span>, na.rm <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>
   <span class="op">)</span>
 <span class="op">}</span>, .id <span class="op">=</span> <span class="st">"SEED"</span><span class="op">)</span>
@@ -289,11 +372,11 @@
 <span class="va">SIG_BONF</span> <span class="op">=</span> <span class="va">ALPHA</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">out</span><span class="op">$</span><span class="va">results</span><span class="op">)</span></code></pre></div>
 </div>
 </div>
-<div id="generate-manhattan-plot-2" class="section level2" number="11.3">
+<div id="generate-manhattan-plot-3" class="section level2" number="12.4">
 <h2>
-<span class="header-section-number">11.3</span> Generate Manhattan plot<a class="anchor" aria-label="anchor" href="#generate-manhattan-plot-2"><i class="fas fa-link"></i></a>
+<span class="header-section-number">12.4</span> Generate Manhattan plot<a class="anchor" aria-label="anchor" href="#generate-manhattan-plot-3"><i class="fas fa-link"></i></a>
 </h2>
-<div class="sourceCode" id="cb142"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb156"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">out_clean</span> <span class="op">=</span> <span class="fu">clean_gwas_res</span><span class="op">(</span><span class="va">out</span>,
                            bin_length <span class="op">=</span> <span class="va">BIN_LENGTH</span>,
                            chr_lens <span class="op">=</span> <span class="va">med_chr_lens</span><span class="op">)</span>
@@ -312,48 +395,56 @@
                     sig_level <span class="op">=</span> <span class="va">SIG_LEVEL</span>,
                     bonferroni <span class="op">=</span> <span class="va">BONFERRONI</span><span class="op">)</span> <span class="op">+</span>
                  <span class="co">#ylim(0,7) + </span>
-                 <span class="fu">labs</span><span class="op">(</span>subtitle <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"Microscope: "</span>, <span class="va">MICROSCOPE</span>, <span class="st">"\nCovariates: None\nn samples: "</span>, <span class="va">N_SAMPLES</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span>
+                 <span class="fu">labs</span><span class="op">(</span>subtitle <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"Microscope: split_invnorm"</span>, <span class="st">"\nCovariates: Reporter genotype\nn samples: "</span>, <span class="va">N_SAMPLES</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span>
 
-<span class="va">out_plot</span></code></pre></div>
-<div class="inline-figure"><img src="Inverse_normalise_by_microscope_files/figure-html/unnamed-chunk-11-1.png" width="672"></div>
-<div class="sourceCode" id="cb143"><pre class="downlit sourceCode r">
+<span class="va">out_plot</span>
+<span class="co">#&gt; Warning: Removed 9 rows containing missing values</span>
+<span class="co">#&gt; (geom_point).</span></code></pre></div>
+<div class="inline-figure"><img src="Reporter_as_covariate_files/figure-html/unnamed-chunk-13-1.png" width="672"></div>
+<div class="sourceCode" id="cb157"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">ggsave</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">PLOT_DIR</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="va">MICROSCOPE</span>, <span class="st">"_manhattan.png"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span>,
        <span class="va">out_plot</span>,
        device <span class="op">=</span> <span class="st">"png"</span>,
        width <span class="op">=</span> <span class="fl">9.6</span>,
        height <span class="op">=</span> <span class="fl">6</span>,
        units <span class="op">=</span> <span class="st">"in"</span>,
-       dpi <span class="op">=</span> <span class="fl">400</span><span class="op">)</span></code></pre></div>
+       dpi <span class="op">=</span> <span class="fl">400</span><span class="op">)</span>
+<span class="co">#&gt; Warning: Removed 9 rows containing missing values</span>
+<span class="co">#&gt; (geom_point).</span></code></pre></div>
 
 </div>
 </div>
   <div class="chapter-nav">
-<div class="prev"><a href="association-testing-with-only-db-microscope.html"><span class="header-section-number">10</span> Association testing with only DB microscope</a></div>
-<div class="next"><a href="reporter-as-covariate.html"><span class="header-section-number">12</span> Reporter as covariate</a></div>
+<div class="prev"><a href="inverse-normalize-by-microscope.html"><span class="header-section-number">11</span> Inverse-normalize by microscope</a></div>
+<div class="next"><a href="annotations-of-gwas-hits.html"><span class="header-section-number">13</span> Annotations of GWAS hits</a></div>
 </div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
     <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
-<li><a class="nav-link" href="#inverse-normalize-by-microscope"><span class="header-section-number">11</span> Inverse-normalize by microscope</a></li>
+<li><a class="nav-link" href="#reporter-as-covariate"><span class="header-section-number">12</span> Reporter as covariate</a></li>
+<li><a class="nav-link" href="#setup"><span class="header-section-number">12.1</span> Setup</a></li>
 <li>
-<a class="nav-link" href="#run-gwas-2"><span class="header-section-number">11.1</span> Run GWAS</a><ul class="nav navbar-nav">
-<li><a class="nav-link" href="#prepare-input"><span class="header-section-number">11.1.1</span> Prepare input</a></li>
-<li><a class="nav-link" href="#run"><span class="header-section-number">11.1.2</span> Run</a></li>
+<a class="nav-link" href="#read-in-data-2"><span class="header-section-number">12.2</span> Read in data</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#genos"><span class="header-section-number">12.2.1</span> Genos</a></li>
+<li><a class="nav-link" href="#phenos"><span class="header-section-number">12.2.2</span> Phenos</a></li>
+<li><a class="nav-link" href="#covariates"><span class="header-section-number">12.2.3</span> Covariates</a></li>
+<li><a class="nav-link" href="#prepare-input-1"><span class="header-section-number">12.2.4</span> Prepare input</a></li>
+<li><a class="nav-link" href="#run-1"><span class="header-section-number">12.2.5</span> Run</a></li>
 </ul>
 </li>
 <li>
-<a class="nav-link" href="#run-permutations-2"><span class="header-section-number">11.2</span> Run permutations</a><ul class="nav navbar-nav">
-<li><a class="nav-link" href="#permute-phenos-2"><span class="header-section-number">11.2.1</span> Permute phenos</a></li>
-<li><a class="nav-link" href="#run-gwls-2"><span class="header-section-number">11.2.2</span> Run GWLS</a></li>
-<li><a class="nav-link" href="#get-minimum-2"><span class="header-section-number">11.2.3</span> Get minimum</a></li>
+<a class="nav-link" href="#run-permutations-3"><span class="header-section-number">12.3</span> Run permutations</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#permute-phenos-3"><span class="header-section-number">12.3.1</span> Permute phenos</a></li>
+<li><a class="nav-link" href="#run-gwls-3"><span class="header-section-number">12.3.2</span> Run GWLS</a></li>
+<li><a class="nav-link" href="#get-minimum-3"><span class="header-section-number">12.3.3</span> Get minimum</a></li>
 </ul>
 </li>
-<li><a class="nav-link" href="#generate-manhattan-plot-2"><span class="header-section-number">11.3</span> Generate Manhattan plot</a></li>
+<li><a class="nav-link" href="#generate-manhattan-plot-3"><span class="header-section-number">12.4</span> Generate Manhattan plot</a></li>
 </ul>
 
       <div class="book-extra">
         <ul class="list-unstyled">
-<li><a id="book-source" href="https://github.com/brettellebi/somites/blob/master/Inverse_normalise_by_microscope.Rmd">View source <i class="fab fa-github"></i></a></li>
-          <li><a id="book-edit" href="https://github.com/brettellebi/somites/edit/master/Inverse_normalise_by_microscope.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
+<li><a id="book-source" href="https://github.com/brettellebi/somites/blob/master/Reporter_as_covariate.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/brettellebi/somites/edit/master/Reporter_as_covariate.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
         </ul>
 </div>
     </nav>

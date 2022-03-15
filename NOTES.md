@@ -1,5 +1,11 @@
 # Notes
 
+## 15 March 2022
+
+Run GWAS on split inverse-normalised microscope, with reporter genotype as a covariate:
+
+* `book/Reporter_as_covariate.Rmd`
+
 ## 14 March 2022
 
 Sent Ali zoomed plots for PSM:
@@ -8,7 +14,7 @@ Sent Ali zoomed plots for PSM:
 
 And annotations (from rule get_annotations):
 
-* 
+* `data/20220214/annotations/all_sites/unsegmented_psm_area/Microscope/TRUE/5000.csv`
 
 ## 9 March 2022
 
