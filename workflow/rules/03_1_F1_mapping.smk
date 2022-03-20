@@ -11,7 +11,7 @@ rule copy_F1_seq_data:
             config["working_dir"],
             "logs/copy_F1_seq_data/{F1_sample}.log")
     resources:
-        mem_mb = 1000
+        mem_mb = 100
     shell:
         """
         cp {input[0]} {output[0]} ;
@@ -31,7 +31,9 @@ rule bwa_mem2_mem_F1:
             "sams/F1/bwamem2/mapped/{F1_sample}.sam"
         ),
     log:
-        os.path.join(config["working_dir"], "logs/bwa_mem2_mem/{F1_sample}.log")
+        os.path.join(
+            config["working_dir"],
+            "logs/bwa_mem2_mem/{F1_sample}.log")
     params:
         index=lambda wildcards: config["ref_prefix"] + ".fasta",
         extra=r"-R '@RG\tID:{F1_sample}\tSM:{F1_sample}'",

@@ -88,7 +88,7 @@ run_gwas <- function(d,m,p,invers_norm=F, covariates = NULL) {
     h2_step = 0.01, # step size per random effect for testing alternate values of h2
     max_steps = 100, # maximum number of steps of size h2_step to take from h2_start
     X_map = map, # Optional. The marker positions.
-    relmat = list(Plot = K), # A list of Kernel matrices for the random effects. If X_ID (here Geno) is not included in this list, then it is calculated as tcrossprod(Xc)/ncol(Xc) where Xc is the centered (and optionally scaled) X. If any random effects are described in `error_model` but not provided here, the Kernel is assumed to be the identity matrix
+    relmat = NULL, # A list of Kernel matrices for the random effects. If X_ID (here Geno) is not included in this list, then it is calculated as tcrossprod(Xc)/ncol(Xc) where Xc is the centered (and optionally scaled) X. If any random effects are described in `error_model` but not provided here, the Kernel is assumed to be the identity matrix
     centerX = TRUE, # Should the markers be centered when calculating the GRM (only will be done if needed for calculating the GRM),
     scaleX = FALSE, # Should the markers be scaled to have constant variance when calculating the GRM?
     fillNAX = FALSE, # Should missing marker data be filled in with the mean allele frequency?

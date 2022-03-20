@@ -1,5 +1,18 @@
 # Notes
 
+## 18 March 2022
+
+Issue with aligning F1 samples:
+
+```
+[0000] 3. Calling kt_for - worker_sam
+[mem_sam_pe_batch_post] paired reads have different names: "NB501764:1497:HGMH7AFX3:1:11105:22518:17061", "NB501764:1369A/"
+```
+
+Requested that Ali re-upload the F1 sequences.
+
+
+
 ## 15 March 2022
 
 Run GWAS on split inverse-normalised microscope, with reporter genotype as a covariate:

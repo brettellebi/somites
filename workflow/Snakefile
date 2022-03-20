@@ -79,24 +79,24 @@ rule all:
 ################
 ## 03_1_F1_mapping.smk
 ################
-## copy_f2_seq_data
-#        expand(os.path.join(config["working_dir"], "fastqs/F1/{F1_sample}_{pair}.txt.gz"),
-#                F1_sample = F1_samples['SAMPLE'],
-#                pair = config["pairs"]
-#        ),
-## bwa_mem2_mem
-#        expand(os.path.join(config["working_dir"], "sams/F1/bwamem2/mapped/{F1_sample}.sam"),
-#                F1_sample = F1_samples['SAMPLE']
-#        ),
-## sort_sam_f2
+# copy_f2_seq_data
+        expand(os.path.join(config["working_dir"], "fastqs/F1/{F1_sample}_{pair}.txt.gz"),
+                F1_sample = F1_samples['SAMPLE'],
+                pair = config["pairs"]
+        ),
+# bwa_mem2_mem_F1
+        expand(os.path.join(config["working_dir"], "sams/F1/bwamem2/mapped/{F1_sample}.sam"),
+                F1_sample = F1_samples['SAMPLE']
+        ),
+## sort_sam_f1
 #        expand(os.path.join(config["working_dir"], "bams/F1/bwamem2/sorted/{F1_sample}.bam"),
 #                F1_sample = F1_samples['SAMPLE']
 #        ),
-## mark_duplicates_f2
+## mark_duplicates_f1
 #        expand(os.path.join(config["working_dir"], "bams/F1/bwamem2/marked/{F1_sample}.bam"),
 #                F1_sample = F1_samples['SAMPLE']
 #        ),
-## samtools_index_f2
+## samtools_index_f1
 #        expand(os.path.join(config["working_dir"], "bams/F1/bwamem2/marked/{F1_sample}.bam.bai"),
 #                F1_sample = F1_samples['SAMPLE']
 #        ),
@@ -217,15 +217,15 @@ rule all:
 #                        inverse_norm = config["inverse_norm"],                        
 #                        bin_length = config["bin_length"],
 #        ),
-# get_annotations
-        expand("data/{date_of_assoc_test}/annotations/{site_filter}/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.csv",
-                        date_of_assoc_test = config["date_of_assoc_test"],
-                        site_filter = "all_sites",
-                        target_phenotype = "unsegmented_psm_area",
-                        covariates = "Microscope",
-                        inverse_norm = "TRUE",                        
-                        bin_length = "5000",                        
-        ),
+## get_annotations
+#        expand("data/{date_of_assoc_test}/annotations/{site_filter}/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.csv",
+#                        date_of_assoc_test = config["date_of_assoc_test"],
+#                        site_filter = "all_sites",
+#                        target_phenotype = "unsegmented_psm_area",
+#                        covariates = "Microscope",
+#                        inverse_norm = "TRUE",                        
+#                        bin_length = "5000",                        
+#        ),
 ################
 ## 08_F2_calling.smk
 ###############

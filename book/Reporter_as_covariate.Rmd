@@ -50,8 +50,6 @@ phenos = readxl::read_xlsx(PHENO_FILE) %>%
     # adjust sample names
     dplyr::mutate(SAMPLE = fish %>% stringr::str_remove("KC") %>% 
                     as.numeric()) %>%
-    # select key columns
-    dplyr::select(SAMPLE, all_of(TARGET_PHENO), Microscope) %>%
     # ensure that the phenotype column is numeric
     dplyr::mutate(dplyr::across(all_of(TARGET_PHENO),
                                 ~ as.numeric(.x)))

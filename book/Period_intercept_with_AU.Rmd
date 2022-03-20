@@ -109,7 +109,7 @@ perm_phenos = purrr::map(seeds, function(SEED){
   # get original phenotypes
   orig_phenos = phenos
   # randomise
-  phenos = orig_phenos
+  phenos = orig_phenos %>% 
       # randomise phenotype
       dplyr::mutate(dplyr::across(all_of(TARGET_PHENO),
                                   ~ sample(.x)))
