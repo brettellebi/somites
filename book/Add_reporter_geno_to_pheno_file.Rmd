@@ -1,0 +1,16 @@
+# Add reporter genotype to phenotypes file
+
+## Variables
+
+```{r}
+REPORTER = here::here("data/phenos_with_reporter_genoandpheno.csv")
+PHENO_OUT = here::here("data/20220321_phenotypes.xlsx")
+```
+
+## Read in files
+
+```{r}
+rep = readr::read_csv2(REPORTER)
+openxlsx::write.xlsx(rep, PHENO_OUT, overwrite = T)
+```
+

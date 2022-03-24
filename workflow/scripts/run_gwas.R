@@ -12,23 +12,26 @@ library(KRLS)
 
 # Get variables
 
-## Debugging
-GENO_FILE = "/nfs/research/birney/users/ian/somites/association_testing/20220118/no_repeat_reads_or_pers_hets_filtered_for_read_count_and_cab_prop/inputs/20000.rds"
-PHENO_FILE = "data/First595-F2_DF_removed393-389-121_outliers.xlsx"
-SOURCE_FILE = "workflow/scripts/run_gwls_source.R"
-BIN_LENGTH = 20000
-TARGET_PHENO = "intercept"
-PERM_SEED = 1
+## Debug
+#GENO_FILE = "/hps/nobackup/birney/users/ian/somites/association_testing/20220321/all_sites/inputs/5000.rds"
+##PHENO_FILE = "data/20220321_phenotypes.xlsx" # True phenotypes
+#PHENO_FILE = "/hps/nobackup/birney/users/ian/somites/permuted_phenos/20220321/8.xlsx" # permuted phenotypes
+#SOURCE_FILE = "workflow/scripts/run_gwas_source.R"
+#BIN_LENGTH = 20000
+#TARGET_PHENO = "intercept"
+#COVARIATES = "Microscope"
+#INVERSE_NORM = TRUE
 
 ## True
 GENO_FILE = snakemake@input[["gt_pos_list"]]
 PHENO_FILE = snakemake@input[["phenotypes_file"]]
-SOURCE_FILE = snakemake@input[["source_file"]]
 BIN_LENGTH = snakemake@params[["bin_length"]] %>%
     as.numeric()
 TARGET_PHENO = snakemake@params[["target_phenotype"]]
-PERM_SEED = snakemake@params[["permutation_seed"]] %>%
-    as.numeric()
+COVARIATES = snakemake@params[["covariates"]]
+INVERSE_NORM = snakemake@params["inverse_norm"] %>% 
+    as.logical()
+SOURCE_FILE = snakemake@params[["source_file"]]
 OUT_FILE = snakemake@output[[1]]
 
 # Get GWAS functions
@@ -41,26 +44,25 @@ in_list = readRDS(GENO_FILE)
 
 # Read in phenotypes
 
-## Set seed for randomisation of phenotype
-
-set.seed(PERM_SEED)
+## Get covariates
+if (COVARIATES == "None"){
+    COVARIATES = NULL
+    # if there are multiple covariates (separated by "-")
+} else if (stringr::str_detect(COVARIATES, "-")){
+    COVARIATES = COVARIATES %>% 
+        stringr::str_split("-") %>% 
+        unlist()
+}
 
 ## Read in file and wrangle
 phenos = readxl::read_xlsx(PHENO_FILE) %>%
     # adjust sample names
     dplyr::mutate(SAMPLE = fish %>% stringr::str_remove("KC")) %>%
     # select key columns
-    dplyr::select(SAMPLE, all_of(TARGET_PHENO)) %>%
+    dplyr::select(SAMPLE, all_of(TARGET_PHENO), all_of(COVARIATES)) %>%
     # ensure that the phenotype column is numeric
     dplyr::mutate(dplyr::across(all_of(TARGET_PHENO),
-                                ~ as.numeric(.x))) %>%
-    # randomise phenotype
-    dplyr::mutate(dplyr::across(all_of(TARGET_PHENO),
-                                ~ sample(.x)))
-
-## Filter genotypes for those that have phenotypes
-in_list[["genotypes"]] = in_list[["genotypes"]] %>%
-    dplyr::filter(in_list[["sample_order"]] %in% phenos$SAMPLE)
+                                ~ as.numeric(.x)))
 
 ## Filter and order phenotypes
 in_list[["phenotypes"]] = phenos %>%
@@ -74,15 +76,28 @@ in_list[["phenotypes"]] = phenos %>%
     tidyr::drop_na() %>%
     # the GridLMM code doesn't work with tibbles
     as.data.frame()
+
+## Filter genotypes for those that have phenotypes
+in_list[["genotypes"]] = in_list[["genotypes"]] %>%
+  dplyr::slice(in_list[["sample_order"]] %in% in_list[["phenotypes"]]$SAMPLE %>% 
+                 which())
+
+## Filter sample_order for those that have phenotypes
+in_list[["sample_order"]] = in_list[["phenotypes"]]$SAMPLE
             
 # Run GWAS
 
 out = run_gwas(d = in_list[["genotypes"]],
                m = in_list[["positions"]],
-               p = in_list[["phenotypes"]]
+               p = in_list[["phenotypes"]],
+               invers_norm = INVERSE_NORM,
+               covariates = COVARIATES
               )
 
 # Write results to file
 
+## Make sure the directory exists
+dir.create(dirname(OUT_FILE), recursive = T, showWarnings = F)
+## Write
 out = saveRDS(out, OUT_FILE)
 

@@ -1,5 +1,16 @@
 # Notes
 
+## 21 March 2022
+
+Added new phenotypes file including reporter:
+
+Original: `data/phenos_with_reporter_genoandpheno.csv`, provided by Ali via Slack on 17 March 2022; previous pheno file including reporter pheno.
+
+Process for converting from .csv to 
+`book/Add_reporter_geno_to_pheno_file.Rmd`
+
+New: `data/20220321_phenotypes.xlsx`
+
 ## 18 March 2022
 
 Issue with aligning F1 samples:
@@ -11,7 +22,7 @@ Issue with aligning F1 samples:
 
 Requested that Ali re-upload the F1 sequences.
 
-
+Used Google Drive and Rclone successfully to upload files
 
 ## 15 March 2022
 

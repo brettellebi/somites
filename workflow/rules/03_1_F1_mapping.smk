@@ -56,11 +56,20 @@ rule bwa_mem2_mem_F1:
 
 rule sort_sam_F1:
     input:
-        os.path.join(config["working_dir"], "sams/F1/bwamem2/mapped/{F1_sample}.sam"),
+        os.path.join(
+            config["working_dir"], 
+            "sams/F1/bwamem2/mapped/{F1_sample}.sam"
+        ),
     output:
-        os.path.join(config["working_dir"], "bams/F1/bwamem2/sorted/{F1_sample}.bam"),
+        os.path.join(
+            config["working_dir"], 
+            "bams/F1/bwamem2/sorted/{F1_sample}.bam"
+        ),
     log:
-        os.path.join(config["working_dir"], "logs/sort_sam_F1/{F1_sample}.log")        
+        os.path.join(
+            config["working_dir"], 
+            "logs/sort_sam_F1/{F1_sample}.log"
+        )        
     params:
         sort_order="coordinate",
         extra=lambda wildcards: "VALIDATION_STRINGENCY=LENIENT TMP_DIR=" + config["tmp_dir"],
@@ -79,24 +88,38 @@ rule sort_sam_F1:
             SORT_ORDER={params.sort_order} \
                 2> {log}
         """
+
 rule mark_duplicates_F1:
     input:
-        os.path.join(config["working_dir"], "bams/F1/bwamem2/sorted/{F1_sample}.bam")
+        os.path.join(
+            config["working_dir"], 
+            "bams/F1/bwamem2/sorted/{F1_sample}.bam"
+        )
     output:
-        bam=os.path.join(config["working_dir"], "bams/F1/bwamem2/marked/{F1_sample}.bam"),
-        metrics=os.path.join(config["working_dir"], "bams/F1/bwamem2/marked/{F1_sample}.metrics.txt")
+        bam=os.path.join(
+            config["working_dir"], 
+            "bams/F1/bwamem2/marked/{F1_sample}.bam"
+        ),
+        metrics=os.path.join(
+            config["working_dir"], 
+            "bams/F1/bwamem2/marked/{F1_sample}.metrics.txt"
+        )
     log:
-        os.path.join(config["working_dir"], "logs/mark_duplicates_F1/{F1_sample}.log") 
+        os.path.join(
+            config["working_dir"], 
+            "logs/mark_duplicates_F1/{F1_sample}.log"
+        ) 
     params:
         extra = lambda wildcards: "REMOVE_DUPLICATES=true TMP_DIR=" + config["tmp_dir"]
     container:
         config["picard"]
     resources:
-        mem_mb=1024
+        java_mem_mb = 1024,
+        mem_mb=5000
     shell:
         """
         picard MarkDuplicates \
-            -Xmx{resources.mem_mb}M \
+            -Xmx{resources.java_mem_mb}M \
             {params.extra} \
             INPUT={input[0]} \
             OUTPUT={output.bam} \
@@ -106,13 +129,24 @@ rule mark_duplicates_F1:
 
 rule samtools_index_F1:
     input:
-        os.path.join(config["working_dir"], "bams/F1/bwamem2/marked/{F1_sample}.bam")
+        os.path.join(
+            config["working_dir"], 
+            "bams/F1/bwamem2/marked/{F1_sample}.bam"
+        )
     output:
-        os.path.join(config["working_dir"], "bams/F1/bwamem2/marked/{F1_sample}.bam.bai")
+        os.path.join(
+            config["working_dir"], 
+            "bams/F1/bwamem2/marked/{F1_sample}.bam.bai"
+        )
     log:
-        os.path.join(config["working_dir"], "logs/samtools_index_F1/{F1_sample}.log") 
+        os.path.join(
+            config["working_dir"], 
+            "logs/samtools_index_F1/{F1_sample}.log"
+        ) 
     container:
         config["samtools"]
+    resources:
+        mem_mb = 5000
     shell:
         """
         samtools index \

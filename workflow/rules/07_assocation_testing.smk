@@ -2,7 +2,7 @@
 ## NOTE: this step filters out the samples with low coverage (config["low_cov_samples"])
 rule create_gwas_input:
     input:
-        genotypes = rules.run_rc_block_F2.output,
+        genotypes = rules.process_rc_blocks.output,
     output:
         os.path.join(
             config["working_dir"],
@@ -50,7 +50,8 @@ rule simulate_phenotypes:
     script:
         "../scripts/simulate_phenotypes.R"    
 
-rule test_gwls:
+# Run GWAS code on simulated phenotypes
+rule test_gwas:
     input:
         gt_pos_list = rules.create_gwas_input.output,
         phenotypes_file = rules.simulate_phenotypes.output.sim_phenos,
@@ -62,33 +63,33 @@ rule test_gwls:
     log:
         os.path.join(
             config["working_dir"],
-            "logs/test_gwls/{date_of_assoc_test}/{site_filter}/{bin_length}.log"
+            "logs/test_gwas/{date_of_assoc_test}/{site_filter}/{bin_length}.log"
         ),
     params:
         bin_length = "{bin_length}",
         target_phenotype = "Y",
         covariates = "None",
         inverse_norm = "FALSE",
-        source_file = "workflow/scripts/run_gwls_source.R"
+        source_file = "workflow/scripts/run_gwas_source.R"
     resources:
         mem_mb = 10000
     container:
         config["R"]
     script:
-        "../scripts/run_gwls.R"   
+        "../scripts/run_gwas.R"   
 
 # Create functions to assign different memory and queue requirements for different
 # types of GWAS (no covariates require little memory; two covariates require a lot)
 def get_mem_mb(wildcards, attempt):
     if wildcards.covariates == "None":
-        multiplier = 10000
+        multiplier = 6000
     elif wildcards.covariates == "Microscope":
         multiplier = 10000
-    elif wildcards.covariates == "Microscope-Date_of_imaging":
-        multiplier = 80000
+    elif wildcards.covariates == "Microscope-reporter_pheno":
+        multiplier = 12000
     return attempt * multiplier
 
-rule run_gwls:
+rule run_gwas:
     input:
         gt_pos_list = rules.create_gwas_input.output,
         phenotypes_file = config["phenotypes_file"],
@@ -100,20 +101,20 @@ rule run_gwls:
     log:
         os.path.join(
             config["working_dir"], 
-            "logs/run_gwls/{date_of_assoc_test}/{site_filter}/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.log"
+            "logs/run_gwas/{date_of_assoc_test}/{site_filter}/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.log"
         ),
     params:
         target_phenotype = "{target_phenotype}",
         covariates = "{covariates}",
         inverse_norm = "{inverse_norm}",
         bin_length = "{bin_length}",
-        source_file = "workflow/scripts/run_gwls_source.R"
+        source_file = "workflow/scripts/run_gwas_source.R"
     resources:
         mem_mb = get_mem_mb,
     container:
         config["R"]
     script:
-        "../scripts/run_gwls.R"
+        "../scripts/run_gwas.R"
 
 rule create_permuted_phenotypes:
     input:
@@ -156,17 +157,17 @@ rule run_permutations:
         covariates = "{covariates}",
         inverse_norm = "{inverse_norm}",
         bin_length = "{bin_length}",
-        source_file = "workflow/scripts/run_gwls_source.R"
+        source_file = "workflow/scripts/run_gwas_source.R"
     resources:
         mem_mb = get_mem_mb,
     container:
         config["R"]
     script:
-        "../scripts/run_gwls.R"
+        "../scripts/run_gwas.R"
 
 rule get_manhattan:
     input:
-        gwas_results = rules.run_gwls.output,
+        gwas_results = rules.run_gwas.output,
         perm_results = expand(os.path.join(
             config["working_dir"],
             "association_testing/{{date_of_assoc_test}}/{{site_filter}}/permutations/{{target_phenotype}}/{{covariates}}/{{inverse_norm}}/{{bin_length}}/{permutation_seed}.rds"),
@@ -195,7 +196,7 @@ rule get_manhattan:
 
 rule get_annotations:
     input:
-        gwas_results = rules.run_gwls.output,
+        gwas_results = rules.run_gwas.output,
         perm_results = expand(os.path.join(
             config["working_dir"],
             "association_testing/{{date_of_assoc_test}}/{{site_filter}}/permutations/{{target_phenotype}}/{{covariates}}/{{inverse_norm}}/{{bin_length}}/{permutation_seed}.rds"),

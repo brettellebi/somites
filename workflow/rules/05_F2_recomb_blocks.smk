@@ -351,9 +351,36 @@ rule filter_sites_for_read_count_and_cab_prop:
     script:
         "../scripts/filter_sites_for_read_count_and_cab_prop.R"
 
+# This rule takes the raw HMM output, tidies it, 
+# and creates a .csv file with the sample, read counts, genotype (`STATE`),
+# and imputed genotype based on the previous call (`STATE_IMP`)
+# This step also flips the STATE calls so that 0 == Cab, 1 == Het, 2 == Kaga.
+rule process_rc_blocks:
+    input:
+        rules.run_rc_block_F2.output,
+    output:
+        os.path.join(
+            config["working_dir"],
+            "processed_recomb/F2/{site_filter}/{bin_length}.csv"
+        ),
+    log:
+        os.path.join(
+            config["working_dir"], 
+            "logs/run_rc_block_F2/{site_filter}/{bin_length}.log"
+        ),
+    params:
+        bin_length = "{bin_length}"
+    resources:
+        mem_mb = 30000
+    container:
+        config["R"]
+    script:
+        "../scripts/process_rc_blocks.R"
+
+
 rule plot_recombination_blocks:
     input:
-        os.path.join(config["data_store_dir"], "recombination_blocks/F2/{site_filter}/{bin_length}.txt"),
+        rules.run_rc_block_F2.output,
     output:
         base_cov_total = "book/plots/snakemake/{site_filter}/{bin_length}/base_cov_total.png",
         base_cov_by_chrom = "book/plots/snakemake/{site_filter}/{bin_length}/base_cov_by_chrom.png",

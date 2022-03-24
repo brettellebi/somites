@@ -2,13 +2,13 @@ bookdown::bs4_book:
   css: style.css
   theme:
     primary: "#3C1642"
-    font_scale: 0.8
+  includes:
+    in_header: [css.html]
   repo:
     base: https://github.com/brettellebi/somites
     branch: master
     subdir: book
-  includes:
-    in_header: [css.html]
+
 #bookdown::pdf_book:
 #  includes:
 #    in_header: preamble.tex

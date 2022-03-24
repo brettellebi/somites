@@ -1,16 +1,23 @@
+# Send output to log
+
+log <- file(LOG_FILE, open="wt")
+sink(log)
+sink(log, type = "message")
+
+# Load libraries
+
+library(tidyverse)
+
 # Get variables
 
-#IN_FILE = "/nfs/research/birney/users/ian/somites/recombination_blocks/F2/no_repeat_reads_or_pers_hets/20000.txt"
-#SITE_FILTER = "no_repeat_sites"
+### Debug
+#SITE_FILTER = "all_sites"
 #BIN_LENGTH = as.numeric("20000")
-#BASE_COV_TOT = "/hps/software/users/birney/ian/repos/somites/book/plots/no_repeat_sites/20000/base_cov_total.png"
-#BASE_COV_BY_CHROM = "/hps/software/users/birney/ian/repos/somites/book/plots/no_repeat_sites/20000/base_cov_by_chrom.png"
-#PROP_SITES_TOT = "/hps/software/users/birney/ian/repos/somites/book/plots/no_repeat_sites/20000/prop_sites_total.png"
-#PROP_SITES_BY_CHROM = "/hps/software/users/birney/ian/repos/somites/book/plots/no_repeat_sites/20000/prop_sites_by_chrom.png"
-#KARYOPLOT_NOMISS = "/hps/software/users/birney/ian/repos/somites/book/plots/no_repeat_sites/20000/karyoplot_no_missing.png"
-#KARYOPLOT_WIMISS = "/hps/software/users/birney/ian/repos/somites/book/plots/no_repeat_sites/20000/karyoplot_with_missing.png"
+#IN_FILE = file.path("/nfs/research/birney/users/ian/somites/recombination_blocks/F2",
+#                    SITE_FILTER,
+#                    paste(BIN_LENGTH, ".txt", sep = ""))
 
-
+## True
 IN_FILE = snakemake@input[[1]]
 SITE_FILTER = snakemake@params[["site_filter"]]
 BIN_LENGTH = as.numeric(snakemake@params[["bin_length"]])
@@ -22,15 +29,7 @@ PROP_SITES_BY_CHROM = snakemake@output[["prop_sites_by_chrom"]]
 KARYOPLOT_NOMISS = snakemake@output[["karyoplot_no_missing"]]
 KARYOPLOT_WIMISS = snakemake@output[["karyoplot_with_missing"]]
 
-# Send output to log
 
-log <- file(LOG_FILE, open="wt")
-sink(log)
-sink(log, type = "message")
-
-# Load libraries
-
-library(tidyverse)
 #library(here)
 source("book/source/03-F2_recombination.R")
 

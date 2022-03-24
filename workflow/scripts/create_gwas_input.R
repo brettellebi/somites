@@ -11,9 +11,9 @@ library(tidyverse)
 # Get variables
 
 ## Debugging
-GENO_FILE = "/nfs/research/birney/users/ian/somites/recombination_blocks/F2/all_sites/5000.txt"
-BIN_LENGTH = 5000
-LOW_COV_SAMPLES = c(26, 89)
+#GENO_FILE = "/hps/nobackup/birney/users/ian/somites/processed_recomb/F2/all_sites/5000.csv"
+#BIN_LENGTH = 5000
+#LOW_COV_SAMPLES = c(26, 89)
 
 ## True
 GENO_FILE = snakemake@input[["genotypes"]]
@@ -25,36 +25,25 @@ OUT_FILE = snakemake@output[[1]]
 
 # Read in and wrangle haplotype block data
 
-df = readr::read_tsv(GENO_FILE,
-                     col_types = "ciiidii") %>% 
-    dplyr::mutate(SAMPLE = sample %>%
-                    basename(.) %>% 
-                    stringr::str_remove(".txt") %>% 
-                    as.numeric(.),
-                  BIN_START = (bin - 1) * BIN_LENGTH + 1,
-                  BIN_END = bin * BIN_LENGTH) %>% 
+df = readr::read_csv(GENO_FILE,
+                     col_types = c("ddddddddd")) %>% 
     # Filter out low-coverage samples
-    dplyr::filter(!SAMPLE %in% LOW_COV_SAMPLES) %>% 
-    # recode state to make 0 == "Cab"
-    dplyr::mutate(STATE = dplyr::recode(state,
-                                        `0` = 2,
-                                        `1` = 1,
-                                        `2` = 0)) %>% 
-    dplyr::select(SAMPLE, CHROM = chr, BIN = bin, BIN_START, BIN_END, STATE) %>%
+    dplyr::filter(!SAMPLE %in% LOW_COV_SAMPLES) %>%
     # order by SAMPLE
     dplyr::arrange(SAMPLE, CHROM, BIN)
+
 
 # Filter for loci with > 1 genotype across all samples
 
 ## Widen data frame
 gt_df = df %>%
-    tidyr::pivot_wider(names_from = SAMPLE, values_from = STATE)
+    tidyr::pivot_wider(names_from = SAMPLE, values_from = STATE_IMP)
 
 ## Pull out sample names
-sample_names = colnames(gt_df)[5:ncol(gt_df)]
+sample_names = colnames(gt_df)[8:ncol(gt_df)]
 
 ## Pull out matrix of genotypes
-gt_mat = as.matrix(gt_df[, 5:ncol(gt_df)])
+gt_mat = as.matrix(gt_df[, 8:ncol(gt_df)])
 
 ## Get indexes of loci with > 1 genotype
 bins_to_keep = logical()
@@ -78,7 +67,7 @@ for (ROW in 1:nrow(gt_mat)){
 gt_filt = gt_df %>% 
     dplyr::filter(bins_to_keep) %>% 
     # recode genotypes to -1, 0, 1
-    dplyr::mutate(dplyr::across(-c("CHROM", "BIN", "BIN_START", "BIN_END"),
+    dplyr::mutate(dplyr::across(-c("CHROM", "BIN", "BIN_START", "BIN_END", "CAB_READS", "KAGA_READS", "STATE"),
                                 ~dplyr::recode(.x,
                                                `0` = -1,
                                                `1` = 0,
@@ -92,7 +81,7 @@ out_list = list()
 
 ## Genotypes
 out_list[["genotypes"]] = gt_filt %>% 
-    dplyr::select(-c(CHROM, BIN, BIN_START, BIN_END)) %>% 
+    dplyr::select(-c(CHROM, BIN, BIN_START, BIN_END, CAB_READS, KAGA_READS, STATE)) %>% 
     # convert to matrix
     as.matrix(.) %>% 
     # transpose to put samples as rows

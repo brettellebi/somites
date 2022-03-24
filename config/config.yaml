@@ -35,10 +35,11 @@ hdrr_repeats_gff:
     /nfs/research/birney/users/ian/mikk_genome/repeats/medaka_hdrr_repeats.fixed.gff
 phenotypes_file:
     #data/First595-F2_DF_removed393-389-121_outliers.xlsx
-    data/20220214_phenotypes.xlsx
+    #data/20220214_phenotypes.xlsx
+    data/20220321_phenotypes.xlsx # now includes reporter
 target_phenotypes:
     - intercept
-    - mean
+    #- mean
     - unsegmented_psm_area
 ref_chr_lengths:
     data/Oryzias_latipes.ASM223467v1.dna.toplevel.fa_chr_counts.txt
@@ -101,12 +102,16 @@ date_of_assoc_test:
     #- 20211104
     #- 20211109
     #- 20220118
-    - 20220214
+    #- 20220214
+    - 20220321
 bin_length:
     - 5000
     #- 10000
     #- 15000
     - 20000
+gt_impute:
+    - het_default
+    - imputed_left
 bin_length_F0:
     - 5000
     - 100000
@@ -115,6 +120,7 @@ n_sample_gts:
 covariates:
     - None
     - Microscope
+    - Microscope-reporter_pheno
     #- Date_of_imaging
     #- Microscope-Date_of_imaging
 inverse_norm:

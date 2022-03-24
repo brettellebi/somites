@@ -21,21 +21,11 @@ run_gwas <- function(d,m,p,invers_norm=F, covariates = NULL) {
   mm = mm[,1:3]
   # Rename it as `map`
   map = mm
+  
   # Get number of samples (rows) from genotype DF
   n_geno=nrow(d)
-  # Create matrix of 1200 elements from 1 to 1200, with 10 columns
-  Plots = matrix(1:1200,nc = 10)
-  # Create matrix of row numbers for each element of the `Plots` matrix (1:1200)
-  Plot_Row = row(Plots)
-  # Create matrix of col numbers for each element of the `Plots` matrix (1:10)
-  Plot_Col = col(Plots)
   # Create a data frame with "Genox" for each sample in the first column
-  # And randomly sample `n_geno` times from `Plots`
-  data = data.frame(Geno = paste0('Geno',1: n_geno), Plot = sample(Plots)[1:nrow(d)])
-  # Add a column `Row` with the row number of each randomly-sampled element
-  data$Row = Plot_Row[data$Plot]
-  # Add a column `Col` with the row number of each randomly-sampled element
-  data$Col = Plot_Col[data$Plot]
+  data = data.frame(Geno = paste0('Geno',1: n_geno))
   # Add phenotype
   if(invers_norm) {
     ## Inverse-normalise
@@ -50,24 +40,22 @@ run_gwas <- function(d,m,p,invers_norm=F, covariates = NULL) {
                    dplyr::select(y = dplyr::all_of(TARGET_PHENO), # pull phenotype
                                  dplyr::all_of(covariates))) # and covariates
   }
+  
   # Convert genotypes DF to matrix
   X = as.matrix(d)
   # Convert NAs to 0
   X[is.na(X)]=0
   # Add sample names to `X` as row names
   row.names(X) = data[,1]
-  # Center genotypes by subtracting the mean for each marker (column) from the genotype value
-  X_centered = sweep(X,2,colMeans(X),'-') # center marker genotypes
-  # Use centered genotypes to create `K` kinship matrix
-  K = tcrossprod(X_centered) / ncol(X_centered)
-  # Make rownames and colnames of `K` the randomly sampled elements from `Plots`
-  rownames(K) = colnames(K) = data$Plot
-  # Calculate the spatial kernel
-  field = data[,c('Row','Col')] # Pull out `Row` and `Col` columns
-  dists = as.matrix(dist(field)) # Compute the distances 
-  h = median(dists) # Calculate default tuning parameter `h`
-  K_plot = KRLS::gausskernel(field,h^2/2); diag(K_plot)=1 # Compute the NxN distance matrix with pairwise with pairwise differences between rows as measured by a Gaussian Kernel
-  rownames(K_plot) = colnames(K_plot) = data$Plot
+  
+  # Create `formula`
+  if (is.null(covariates)){
+    MAIN_FORMULA = "y~1 + (1|Geno)"
+  } else if (!is.null(covariates)){
+    MAIN_FORMULA = paste("y~1 +", paste(covariates, collapse = " + "), "+ (1|Geno)")
+  }
+  MAIN_FORMULA = as.formula(MAIN_FORMULA)
+  
   # Create `test_formula`
   if (is.null(covariates)){
     TEST_FORMULA = "~1"
@@ -75,11 +63,12 @@ run_gwas <- function(d,m,p,invers_norm=F, covariates = NULL) {
     TEST_FORMULA = paste("~1 +", paste(covariates, collapse = " + "))
   }
   TEST_FORMULA = as.formula(TEST_FORMULA)
+  
   # Run gwas
   gwas = GridLMM::GridLMM_GWAS(
-    formula = y~1 + (1|Geno), # the same error model is used for each marker. It is specified similarly to lmer
+    formula = MAIN_FORMULA, # the same error model is used for each marker. It is specified similarly to lmer
     test_formula = TEST_FORMULA, # this is the model for each marker. ~1 means an intercept for the marker. ~1 + cov means an intercept plus a slope on `cov` for each marker
-    reduced_formula = ~0, # This is the null model for each test. ~0 means just the error model. ~1 means the null includes the intercept of the marker, but not anything additional
+    reduced_formula = ~1, # This is the null model for each test. ~0 means just the error model. ~1 means the null includes the intercept of the marker, but not anything additional
     data = data, # The dataframe to look for terms from the 3 models
     weights = NULL, # optional observation-specific weights
     X = X, # The matrix of markers. Note: This can be of dimension n_g x p, where n_g is the number of unique genotypes.

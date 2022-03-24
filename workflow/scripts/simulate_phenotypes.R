@@ -14,10 +14,10 @@ library(openxlsx)
 # Get variables
 
 ## Debugging
-IN_FILE = "/nfs/research/birney/users/ian/somites/association_testing/20220118_true/no_repeat_sites/inputs/5000.rds"
-OUT_SAMPLE_GENOS = "/nfs/research/birney/users/ian/somites/association_testing/20220118_test/no_repeat_sites/sample_genos/5000.csv"
-OUT_SIM_PHENOS = "/nfs/research/birney/users/ian/somites/association_testing/20220118_test/no_repeat_sites/sim_phenos/5000.xlsx"
-N_SAMPLE_GTS = 10
+#IN_FILE = "/nfs/research/birney/users/ian/somites/association_testing/20220118_true/no_repeat_sites/inputs/5000.rds"
+#OUT_SAMPLE_GENOS = "/nfs/research/birney/users/ian/somites/association_testing/20220118_test/no_repeat_sites/sample_genos/5000.csv"
+#OUT_SIM_PHENOS = "/nfs/research/birney/users/ian/somites/association_testing/20220118_test/no_repeat_sites/sim_phenos/5000.xlsx"
+#N_SAMPLE_GTS = 10
 
 ## True
 IN_FILE = snakemake@input[[1]]
