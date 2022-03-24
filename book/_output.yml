@@ -2,8 +2,8 @@ bookdown::bs4_book:
   css: style.css
   theme:
     primary: "#3C1642"
-  includes:
-    in_header: [css.html]
+  #includes:
+  #  in_header: [css.html]
   repo:
     base: https://github.com/brettellebi/somites
     branch: master

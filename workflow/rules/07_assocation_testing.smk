@@ -17,7 +17,7 @@ rule create_gwas_input:
         bin_length = "{bin_length}",
         low_cov_samples = config["low_cov_samples"]
     resources:
-        mem_mb = 50000
+        mem_mb = lambda wildcards, attempt: attempt * 50000
     container:
         config["R"]
     script:
