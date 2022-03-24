@@ -6,7 +6,10 @@ language:
   ui:
     chapter_name: "Chapter "
 output_dir: "../docs"
-
+repo:
+  base: https://github.com/brettellebi/somites
+  branch: master
+  subdir: book
 rmd_files: [
   "index.Rmd",
   
