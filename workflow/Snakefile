@@ -103,12 +103,12 @@ rule all:
 ################
 ## 04_1_F1_calling.smk
 ################
-# merge_variants_F1
-        expand(os.path.join(
-            config["working_dir"],
-            "vcfs/F1/final/{F1_sample}.vcf.gz"),
-                F1_sample = F1_samples['SAMPLE']
-        ),
+## merge_variants_F1
+#        expand(os.path.join(
+#            config["working_dir"],
+#            "vcfs/F1/final/{F1_sample}.vcf.gz"),
+#                F1_sample = F1_samples['SAMPLE']
+#        ),
 ###############
 # 04_F2_mapping.smk
 ###############
@@ -173,12 +173,12 @@ rule all:
 ################
 ## 07_association_testing.smk
 ###############
-## create_gwas_input
-#        expand(os.path.join(config["data_store_dir"], "association_testing/{date_of_assoc_test}/{site_filter}/inputs/{bin_length}.rds"),
-#                date_of_assoc_test = config["date_of_assoc_test"],
-#                site_filter = config["site_filter"],
-#                bin_length = config["bin_length"]
-#        ),
+# create_gwas_input
+        expand(os.path.join(config["working_dir"], "association_testing/{date_of_assoc_test}/{site_filter}/inputs/{bin_length}.rds"),
+                date_of_assoc_test = config["date_of_assoc_test"],
+                site_filter = config["site_filter"],
+                bin_length = config["bin_length"]
+        ),
 ## simulate_phenotypes
 #        expand(os.path.join(config["data_store_dir"], "association_testing/{date_of_assoc_test}/{site_filter}/sim_phenos/{bin_length}.xlsx"),
 #                date_of_assoc_test = config["date_of_assoc_test"],
@@ -224,15 +224,15 @@ rule all:
 #                        bin_length = config["bin_length"],
 #                        permutation_seed = PERM_SEEDS   
 #        ),
-# get_manhattan
-        expand("book/plots/manhattans/{date_of_assoc_test}/{site_filter}/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.png",
-                        date_of_assoc_test = config["date_of_assoc_test"],
-                        site_filter = config["site_filter"],
-                        target_phenotype = config["target_phenotypes"],
-                        covariates = config["covariates"],
-                        inverse_norm = config["inverse_norm"],                        
-                        bin_length = config["bin_length"],
-        ),
+## get_manhattan
+#        expand("book/plots/manhattans/{date_of_assoc_test}/{site_filter}/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.png",
+#                        date_of_assoc_test = config["date_of_assoc_test"],
+#                        site_filter = config["site_filter"],
+#                        target_phenotype = config["target_phenotypes"],
+#                        covariates = config["covariates"],
+#                        inverse_norm = config["inverse_norm"],                        
+#                        bin_length = config["bin_length"],
+#        ),
 ## get_annotations
 #        expand("data/{date_of_assoc_test}/annotations/{site_filter}/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.csv",
 #                        date_of_assoc_test = config["date_of_assoc_test"],

@@ -6,27 +6,23 @@ language:
   ui:
     chapter_name: "Chapter "
 output_dir: "../docs"
-repo:
-  base: https://github.com/brettellebi/somites
-  branch: master
-  subdir: book
 rmd_files: [
   "index.Rmd",
   
-#  "01-Data_processing_with_Snakemake.Rmd",
-#  "02-F0_homozygosity.Rmd",
-#  "03-1-F2_recombination_all_sites.Rmd",
-#  #"03-2-F2_recombination_no_repeat_sites.Rmd",
-#  #"03-3-F2_recombination_no_repeat_reads.Rmd",
-#  #"03-4-F2_recombination_no_repeat_reads_or_pers_hets.Rmd",
-#  "03-5-F2_recombination_no_repeat_reads_or_pers_hets_filtered_for_read_count_and_cab_prop.Rmd",
-#  "04-1-Phenotype_exploration.Rmd",
-#  "04-2-Test_GWAS_code.Rmd",
-#  "05-GWLS_results.Rmd",
-#  "Period_intercept_with_AU.Rmd",
-#  "Period_intercept_with_DB.Rmd",
-#  "Inverse_normalise_by_microscope.Rmd",
-#  "Reporter_as_covariate.Rmd",
-#  "08-Annotations.Rmd",
-#  "07-references.Rmd"
+  "01-Data_processing_with_Snakemake.Rmd",
+  "02-F0_homozygosity.Rmd",
+  "03-1-F2_recombination_all_sites.Rmd",
+  #"03-2-F2_recombination_no_repeat_sites.Rmd",
+  #"03-3-F2_recombination_no_repeat_reads.Rmd",
+  #"03-4-F2_recombination_no_repeat_reads_or_pers_hets.Rmd",
+  "03-5-F2_recombination_no_repeat_reads_or_pers_hets_filtered_for_read_count_and_cab_prop.Rmd",
+  "04-1-Phenotype_exploration.Rmd",
+  "04-2-Test_GWAS_code.Rmd",
+  "05-GWLS_results.Rmd",
+  "Period_intercept_with_AU.Rmd",
+  "Period_intercept_with_DB.Rmd",
+  "Inverse_normalise_by_microscope.Rmd",
+  "Reporter_as_covariate.Rmd",
+  "08-Annotations.Rmd",
+  "07-references.Rmd"
 ]

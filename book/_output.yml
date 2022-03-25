@@ -1,13 +1,13 @@
 bookdown::bs4_book:
-  includes:
-    in_header: [css.html]
   repo:
     base: https://github.com/brettellebi/somites
     branch: master
     subdir: book
+  includes:
+    in_header: [css.html]
   css: style.css
   theme:
-    primary: "#F0803C"
+    primary: "#3C1642"
 
 #bookdown::pdf_book:
 #  includes:

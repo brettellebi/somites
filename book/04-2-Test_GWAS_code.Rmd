@@ -7,10 +7,13 @@ zotero: PhD
 The code for simulating phenotypes and using them to test the GWLS code is set out in this Snakefile, specifically rules `simulate_phenotypes` and `test_gwls`: https://github.com/brettellebi/somites/blob/master/workflow/rules/07_association_testing.smk
 
 ```{r}
-date_of_assoc_test = "20220214"
+date_of_assoc_test = "20220321"
 RECOM_BLOCKS_DIR = "/nfs/research/birney/users/ian/somites/recombination_blocks/F2/all_sites"
-SAMPLE_GTS_DIR = "/hps/nobackup/birney/users/ian/somites/association_testing/20220214/all_sites/sample_genos"
-RESULTS_DIR = "/hps/nobackup/birney/users/ian/somites/association_testing/20220214"
+SAMPLE_GTS_DIR = file.path("/hps/nobackup/birney/users/ian/somites/association_testing",
+                           date_of_assoc_test,
+                           "all_sites/sample_genos")
+RESULTS_DIR = file.path("/hps/nobackup/birney/users/ian/somites/association_testing",
+                        date_of_assoc_test)
 ```
 
 

@@ -1,6 +1,7 @@
 # Phenotypes
 
-```{r, message = F, warning = F}
+
+```r
 library(tidyverse)
 # Get lighter/darker functions
 source("https://gist.githubusercontent.com/brettellebi/c5015ee666cdf8d9f7e25fa3c8063c99/raw/91e601f82da6c614b4983d8afc4ef399fa58ed4b/karyoploteR_lighter_darker.R")
@@ -22,7 +23,8 @@ dir.create(PLOT_DIR, recursive = T, showWarnings = F)
 
 ## Read in phenotype data
 
-```{r}
+
+```r
 pheno_file = here::here("data/20220214_phenotypes.xlsx")
 F01_pheno_file = here::here("data/F0_F1_period.xlsx")
 
@@ -36,6 +38,7 @@ df = readxl::read_xlsx(pheno_file) %>%
 
 # How many F2 samples?
 length(unique(df$sample))
+#> [1] 646
 
 # Read in F0 and F1 data
 df_f01 = readxl::read_xlsx(F01_pheno_file) %>% 
@@ -59,13 +62,19 @@ AU has been extensively calibrated, which may cause the differences in the pheno
 
 Difference between means of two microscopes:
 
-```{r}
+
+```r
 micr_mean = df %>% 
   dplyr::filter(!is.na(Microscope)) %>% 
   dplyr::group_by(Microscope) %>% 
   dplyr::summarise(mean_pheno = mean(mean))
 
 micr_mean
+#> # A tibble: 2 × 2
+#>   Microscope mean_pheno
+#>   <chr>           <dbl>
+#> 1 AU               60.6
+#> 2 DB               64.1
 
 # Difference
 diff_mean = abs(micr_mean$mean_pheno[1] - micr_mean$mean_pheno[2])
@@ -73,7 +82,8 @@ diff_mean = abs(micr_mean$mean_pheno[1] - micr_mean$mean_pheno[2])
 
 #### Histogram
 
-```{r}
+
+```r
 mean_pal = c("#177e89", "#084c61")
 
 df %>% 
@@ -90,6 +100,11 @@ df %>%
     theme_bw() +
     xlab("period mean") +
     ggtitle(paste("Period mean\n", "Difference between means: ", diff_mean, sep = ""))
+```
+
+<img src="04-1-Phenotype_exploration_files/figure-html/unnamed-chunk-4-1.png" width="672" />
+
+```r
 
 # Make output directory and save
 OUT_DIR = here::here(PLOT_DIR, "mean")
@@ -107,7 +122,8 @@ ggsave(file.path(OUT_DIR, paste("histogram", ".png", sep = "")),
 
 #### Q-Q plot
 
-```{r}
+
+```r
 df %>% 
   # remove NAs in `Microscope` column
   dplyr::filter(!is.na(Microscope)) %>% 
@@ -120,6 +136,11 @@ df %>%
     xlab("period mean") +
     ggtitle("Period mean") +
     theme(aspect.ratio=1)
+```
+
+<img src="04-1-Phenotype_exploration_files/figure-html/unnamed-chunk-5-1.png" width="672" />
+
+```r
 
 # Make output directory and save
 OUT_DIR = here::here(PLOT_DIR, "mean")
@@ -138,7 +159,8 @@ ggsave(file.path(OUT_DIR, paste("qqplot", ".png", sep = "")),
 
 Kruskal-Wallis test
 
-```{r}
+
+```r
 mean_kw = kruskal.test(list(df_all %>% 
                              dplyr::filter(Microscope == "AU") %>% 
                              dplyr::pull(mean),
@@ -147,10 +169,12 @@ mean_kw = kruskal.test(list(df_all %>%
                              dplyr::pull(mean)))
 
 mean_kw$p.value
+#> [1] 6.498432e-38
 ```
 
 
-```{r}
+
+```r
 df_all %>% 
   # remove NAs
   dplyr::filter(!is.na(Microscope)) %>% 
@@ -166,18 +190,26 @@ df_all %>%
     ggtitle(paste("Kruskal-Wallis p-value comparing AB and DB (F2 only):", mean_kw$p.value))
 ```
 
+<img src="04-1-Phenotype_exploration_files/figure-html/unnamed-chunk-7-1.png" width="672" />
+
 
 ## Intercept
 
 Difference between means of two microscopes:
 
-```{r}
+
+```r
 micr_intercept = df %>% 
   dplyr::filter(!is.na(Microscope)) %>% 
   dplyr::group_by(Microscope) %>% 
   dplyr::summarise(mean_pheno = mean(intercept))
 
 micr_intercept
+#> # A tibble: 2 × 2
+#>   Microscope mean_pheno
+#>   <chr>           <dbl>
+#> 1 AU               57.9
+#> 2 DB               61.9
 
 # Difference
 diff_intercept = abs(micr_intercept$mean_pheno[1] - micr_intercept$mean_pheno[2])
@@ -185,7 +217,8 @@ diff_intercept = abs(micr_intercept$mean_pheno[1] - micr_intercept$mean_pheno[2]
 
 #### Histogram 
 
-```{r}
+
+```r
 intercept_pal = c("#8D99AE", "#2b2d42")
 
 df %>% 
@@ -200,6 +233,11 @@ df %>%
     xlab("period intercept") +
     theme_bw() +
     ggtitle(paste("Period intercept\n", "Difference between means: ", diff_intercept, sep = ""))
+```
+
+<img src="04-1-Phenotype_exploration_files/figure-html/unnamed-chunk-9-1.png" width="672" />
+
+```r
 
 # Make output directory and save
 OUT_DIR = here::here(PLOT_DIR, "intercept")
@@ -216,7 +254,8 @@ ggsave(file.path(OUT_DIR, paste("histogram", ".png", sep = "")),
 
 #### Q-Q plot
 
-```{r}
+
+```r
 df %>% 
   # remove NAs in `Microscope` column
   dplyr::filter(!is.na(Microscope)) %>% 
@@ -229,6 +268,11 @@ df %>%
     xlab("period intercept") +
     ggtitle("Period intercept") +
     theme(aspect.ratio=1)
+```
+
+<img src="04-1-Phenotype_exploration_files/figure-html/unnamed-chunk-10-1.png" width="672" />
+
+```r
 
 # Make output directory and save
 OUT_DIR = here::here(PLOT_DIR, "intercept")
@@ -246,7 +290,8 @@ ggsave(file.path(OUT_DIR, paste("qqplot", ".png", sep = "")),
 
 Kruskal-Wallis test
 
-```{r}
+
+```r
 intercept_kw = kruskal.test(list(df_all %>% 
                              dplyr::filter(Microscope == "AU") %>% 
                              dplyr::pull(intercept),
@@ -255,10 +300,12 @@ intercept_kw = kruskal.test(list(df_all %>%
                              dplyr::pull(intercept)))
 
 intercept_kw$p.value
+#> [1] 5.067328e-44
 ```
 
 
-```{r}
+
+```r
 df_all %>% 
   # remove NAs
   dplyr::filter(!is.na(Microscope)) %>% 
@@ -274,11 +321,14 @@ df_all %>%
     ggtitle(paste("Kruskal-Wallis p-value comparing AB and DB (F2 only):", intercept_kw$p.value))
 ```
 
+<img src="04-1-Phenotype_exploration_files/figure-html/unnamed-chunk-12-1.png" width="672" />
+
 ## Presomitic mesoderm size
 
 ### Histogram 
 
-```{r}
+
+```r
 df %>% 
   ggplot() +
     geom_histogram(aes(unsegmented_psm_area),
@@ -286,6 +336,13 @@ df %>%
                    bins = 50) +
     theme_bw() +
     ggtitle("Presomitic mesoderm size")
+#> Warning: Removed 14 rows containing non-finite values
+#> (stat_bin).
+```
+
+<img src="04-1-Phenotype_exploration_files/figure-html/unnamed-chunk-13-1.png" width="672" />
+
+```r
 
 # Make output directory and save
 OUT_DIR = here::here(PLOT_DIR, "unsegmented_psm_area")
@@ -297,11 +354,14 @@ ggsave(file.path(OUT_DIR, paste("histogram", ".png", sep = "")),
  height = 6,
  units = "in",
  dpi = 400)
+#> Warning: Removed 14 rows containing non-finite values
+#> (stat_bin).
 ```
 
 ### Q-Q plot
 
-```{r}
+
+```r
 df %>% 
   ggplot(aes(sample = intercept)) +
     stat_qq(colour = "#401f3e") +
@@ -310,6 +370,15 @@ df %>%
     xlab("presomitic mesoderm area") +
     ggtitle("Presomitic mesoderm area") +
     theme(aspect.ratio=1)
+#> Warning: Removed 8 rows containing non-finite values
+#> (stat_qq).
+#> Warning: Removed 8 rows containing non-finite values
+#> (stat_qq_line).
+```
+
+<img src="04-1-Phenotype_exploration_files/figure-html/unnamed-chunk-14-1.png" width="672" />
+
+```r
 
 # Make output directory and save
 OUT_DIR = here::here(PLOT_DIR, "unsegmented_psm_area")
@@ -321,4 +390,8 @@ ggsave(file.path(OUT_DIR, paste("qqplot", ".png", sep = "")),
  height = 6,
  units = "in",
  dpi = 400)
+#> Warning: Removed 8 rows containing non-finite values (stat_qq).
+
+#> Warning: Removed 8 rows containing non-finite values
+#> (stat_qq_line).
 ```

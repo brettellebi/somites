@@ -30,20 +30,24 @@ df = readr::read_csv(GENO_FILE,
     # Filter out low-coverage samples
     dplyr::filter(!SAMPLE %in% LOW_COV_SAMPLES) %>%
     # order by SAMPLE
-    dplyr::arrange(SAMPLE, CHROM, BIN)
+    dplyr::arrange(SAMPLE, CHROM, BIN) 
+    
+df_select = df %>% 
+    # remove unnecessary columns
+    dplyr::select(CHROM, BIN, BIN_START, BIN_END, SAMPLE, STATE_IMP)
 
 
 # Filter for loci with > 1 genotype across all samples
 
 ## Widen data frame
-gt_df = df %>%
+gt_df = df_select %>%
     tidyr::pivot_wider(names_from = SAMPLE, values_from = STATE_IMP)
 
 ## Pull out sample names
-sample_names = colnames(gt_df)[8:ncol(gt_df)]
+sample_names = colnames(gt_df)[5:ncol(gt_df)]
 
 ## Pull out matrix of genotypes
-gt_mat = as.matrix(gt_df[, 8:ncol(gt_df)])
+gt_mat = as.matrix(gt_df[, 5:ncol(gt_df)])
 
 ## Get indexes of loci with > 1 genotype
 bins_to_keep = logical()
@@ -67,7 +71,7 @@ for (ROW in 1:nrow(gt_mat)){
 gt_filt = gt_df %>% 
     dplyr::filter(bins_to_keep) %>% 
     # recode genotypes to -1, 0, 1
-    dplyr::mutate(dplyr::across(-c("CHROM", "BIN", "BIN_START", "BIN_END", "CAB_READS", "KAGA_READS", "STATE"),
+    dplyr::mutate(dplyr::across(-c("CHROM", "BIN", "BIN_START", "BIN_END"),
                                 ~dplyr::recode(.x,
                                                `0` = -1,
                                                `1` = 0,
@@ -81,7 +85,7 @@ out_list = list()
 
 ## Genotypes
 out_list[["genotypes"]] = gt_filt %>% 
-    dplyr::select(-c(CHROM, BIN, BIN_START, BIN_END, CAB_READS, KAGA_READS, STATE)) %>% 
+    dplyr::select(-c(CHROM, BIN, BIN_START, BIN_END)) %>% 
     # convert to matrix
     as.matrix(.) %>% 
     # transpose to put samples as rows
