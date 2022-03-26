@@ -10,15 +10,15 @@ library(tidyverse)
 library(GridLMM)
 library(KRLS)
 
-GENO_FILE = "/nfs/research/birney/users/ian/somites/association_testing/20220214/all_sites/inputs/5000.rds"
-PHENO_FILE = here::here("data/20220214_phenotypes.xlsx") # True phenotypes
-GWLS_SOURCE_FILE = here::here("workflow/scripts/run_gwls_source.R")
+GENO_FILE = "/hps/nobackup/birney/users/ian/somites/association_testing/20220321/all_sites/inputs/5000.rds"
+PHENO_FILE = here::here("data/20220321_phenotypes.xlsx") # True phenotypes
+GWLS_SOURCE_FILE = here::here("workflow/scripts/run_gwas_source.R")
 MANHAT_SOURCE_FILE = here::here("workflow/scripts/get_manhattan_source.R")
 BIN_LENGTH = 5000
 TARGET_PHENO = c("intercept")
 MICROSCOPE = "split_invnorm_reporter"
 OUT_PHENOS = here::here("data/20220310_invnorm_phenos.csv")
-PLOT_DIR = here::here("book/plots/20220214/microscope_test")
+PLOT_DIR = here::here("book/plots/20220321/microscope_test")
 ALPHA = 0.05
 REPORTER_LOC = tibble::tibble(CHROM = 16,
                               START = 28706898,
@@ -53,8 +53,6 @@ phenos = readxl::read_xlsx(PHENO_FILE) %>%
     # adjust sample names
     dplyr::mutate(SAMPLE = fish %>% stringr::str_remove("KC") %>% 
                     as.numeric()) %>%
-    # select key columns
-    dplyr::select(SAMPLE, all_of(TARGET_PHENO), Microscope) %>%
     # ensure that the phenotype column is numeric
     dplyr::mutate(dplyr::across(all_of(TARGET_PHENO),
                                 ~ as.numeric(.x)))
@@ -105,28 +103,6 @@ pheno_hist
 
 
 ```r
-# Get genotypes for reporter
-rep_ind = which(in_list[["positions"]]$CHROM == REPORTER_LOC$CHROM & in_list[["positions"]]$BIN_START < REPORTER_LOC$START & in_list[["positions"]]$BIN_END > REPORTER_LOC$END)
-
-# Sanity check
-REPORTER_LOC
-#> # A tibble: 1 × 3
-#>   CHROM    START      END
-#>   <dbl>    <dbl>    <dbl>
-#> 1    16 28706898 28708417
-in_list[["positions"]][rep_ind, ]
-#>       CHROM BIN_START  BIN_END
-#> 75474    16  28705001 28710000
-
-# Pull genotypes for that locus
-rep_genos = tibble::tibble(SAMPLE = in_list[["sample_order"]],
-                           reporter_geno = in_list[["genotypes"]][, rep_ind])
-
-# Bind to phenos
-phenos = dplyr::left_join(phenos,
-                          rep_genos,
-                          by = "SAMPLE")
-
 # How many counts for each reporter genotype? 
 phenos %>%
   count(reporter_geno)

@@ -29,7 +29,13 @@ source(here::here("book/source/04-Association_testing.R"))
 TARGET_FILES = list.files(SAMPLE_GTS_DIR, full.names = T) ; names(TARGET_FILES) = TARGET_FILES
 
 sample_genos_list = purrr::map(TARGET_FILES, function(FILE){
-  readr::read_csv(FILE) %>% 
+  # get number of columns in file
+  n_cols = readr::count_fields(FILE, tokenizer_csv())[1]
+  # set column types
+  COL_TYPES = paste("c", paste(rep("i", n_cols -1 ), collapse = ""), sep = "", collapse = "")
+  # read in files
+  readr::read_delim(FILE, delim = ",",
+                    col_types = COL_TYPES) %>% 
     dplyr::select(LOCUS)
 })
 names(sample_genos_list) = TARGET_FILES %>% 

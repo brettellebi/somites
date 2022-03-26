@@ -1,7 +1,7 @@
 --- 
 title: "Somite period F2 analysis"
 author: "Ian Brettell"
-date: "2022-03-24"
+date: "2022-03-26"
 site: bookdown::bookdown_site
 documentclass: book
 bibliography: [book.bib, packages.bib]

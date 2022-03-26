@@ -2,7 +2,7 @@ bookdown::bs4_book:
   repo:
     base: https://github.com/brettellebi/somites
     branch: master
-    subdir: "book"
+    subdir: book
   includes:
     in_header: [css.html]
   css: style.css

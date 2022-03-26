@@ -8,14 +8,14 @@ library(tidyverse)
 library(GridLMM)
 library(KRLS)
 
-GENO_FILE = "/nfs/research/birney/users/ian/somites/association_testing/20220214/all_sites/inputs/5000.rds"
-PHENO_FILE = here::here("data/20220214_phenotypes.xlsx") # True phenotypes
-GWLS_SOURCE_FILE = here::here("workflow/scripts/run_gwls_source.R")
+GENO_FILE = "/hps/nobackup/birney/users/ian/somites/association_testing/20220321/all_sites/inputs/5000.rds"
+PHENO_FILE = here::here("data/20220321_phenotypes.xlsx") # True phenotypes
+GWLS_SOURCE_FILE = here::here("workflow/scripts/run_gwas_source.R")
 MANHAT_SOURCE_FILE = here::here("workflow/scripts/get_manhattan_source.R")
 BIN_LENGTH = 5000
 TARGET_PHENO = "intercept"
 MICROSCOPE = "AU"
-PLOT_DIR = here::here("book/plots/20220214/microscope_test")
+PLOT_DIR = here::here("book/plots/20220321/microscope_test")
 ALPHA = 0.05
 
 # Get GWAS functions
@@ -115,7 +115,7 @@ perm_phenos = purrr::map(seeds, function(SEED){
   # get original phenotypes
   orig_phenos = phenos
   # randomise
-  phenos = orig_phenos
+  phenos = orig_phenos %>% 
       # randomise phenotype
       dplyr::mutate(dplyr::across(all_of(TARGET_PHENO),
                                   ~ sample(.x)))

@@ -37,7 +37,7 @@ snakemake \
   --rerun-incomplete \
   --use-conda \
   --use-singularity \
-  --restart-times 4 \
+  --restart-times 0 \
   -s workflow/Snakefile \
   -p
 
@@ -65,6 +65,16 @@ singularity build --remote \
     $CONT \
     workflow/envs/R_4.1.0/R_4.1.0.def
 
+# Newer R version
+module load singularity-3.7.0-gcc-9.3.0-dp5ffrp
+bsub -M 20000 -Is bash
+cd /hps/software/users/birney/ian/repos/somites
+CONT=/hps/nobackup/birney/users/ian/containers/somites/R_4.1.3.sif
+module load singularity-3.7.0-gcc-9.3.0-dp5ffrp
+singularity build --remote \
+    $CONT \
+    workflow/envs/R_4.1.3/R_4.1.3.def
+
 # Build R container for PhenotypeSimulator
 CONT=/hps/nobackup/birney/users/ian/containers/somites/R_4.1.0_PhenotypeSimulator.sif
 module load singularity-3.7.0-gcc-9.3.0-dp5ffrp
@@ -78,12 +88,16 @@ bsub -M 50000 -Is bash
 cd /hps/software/users/birney/ian/repos/somites
 module load singularity-3.7.0-gcc-9.3.0-dp5ffrp
 CONT=/hps/nobackup/birney/users/ian/containers/somites/R_4.1.0.sif
+CONT=/hps/nobackup/birney/users/ian/containers/somites/R_4.1.3.sif
 singularity shell --bind /hps/nobackup/birney/users/ian/rstudio_db:/var/lib/rstudio-server \
                   --bind /hps/nobackup/birney/users/ian/tmp:/tmp \
                   --bind /hps/nobackup/birney/users/ian/run:/run \
                   $CONT
 # Then run rserver, setting path of config file containing library path
-rserver --rsession-config-file /hps/software/users/birney/ian/repos/somites/workflow/envs/rstudio_server/rsession.conf
+rserver \
+    --rsession-config-file /hps/software/users/birney/ian/repos/somites/workflow/envs/rstudio_server/rsession.conf \
+    --server-user brettell
+
 
 ssh -L 8787:hl-codon-37-04:8787 proxy-codon
 

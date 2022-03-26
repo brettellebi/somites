@@ -535,12 +535,13 @@ bb_list_ck_wunc = purrr::map(ck_list, function(df){
     
       
       # Bind DF
-      new_df = dplyr::left_join(poss_bins,
+      new_df = dplyr::left_join(poss_bins, 
                                 LANE %>% 
                                   dplyr::select(chr, BIN_START, BIN_END, state),
                                 by = c("chr", "BIN_START", "BIN_END")) %>% 
         # replace NAs with `UNCLASSIFIED`
         dplyr::mutate(state = state %>% 
+                        as.character() %>% 
                         tidyr::replace_na("UNCLASSIFIED"),
                       # add STRAIN
                       LANE = STRAIN) %>% 

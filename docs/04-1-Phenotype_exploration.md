@@ -8,13 +8,13 @@ source("https://gist.githubusercontent.com/brettellebi/c5015ee666cdf8d9f7e25fa3c
 # Get palettes for phenotypes
 source(here::here("book/source/04-Association_testing.R"))
 # Get GWAS code
-source(here::here("workflow/scripts/run_gwls_source.R"))
+source(here::here("workflow/scripts/run_gwas_source.R"))
 # Adjust palettes
 mean_pal = mean_pal[2:3]
 intercept_pal = intercept_pal[2:3]
 unsegmented_psm_pal = unsegmented_psm_area_pal[2:3]
 
-DATE_OF_ASSOC_TEST = 20220214
+DATE_OF_ASSOC_TEST = 20220321
 
 
 PLOT_DIR = here::here("book/plots", DATE_OF_ASSOC_TEST, "phenotypes")
@@ -391,7 +391,6 @@ ggsave(file.path(OUT_DIR, paste("qqplot", ".png", sep = "")),
  units = "in",
  dpi = 400)
 #> Warning: Removed 8 rows containing non-finite values (stat_qq).
-
-#> Warning: Removed 8 rows containing non-finite values
+#> Removed 8 rows containing non-finite values
 #> (stat_qq_line).
 ```
