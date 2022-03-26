@@ -68,7 +68,7 @@ run_gwas <- function(d,m,p,invers_norm=F, covariates = NULL) {
   gwas = GridLMM::GridLMM_GWAS(
     formula = MAIN_FORMULA, # the same error model is used for each marker. It is specified similarly to lmer
     test_formula = TEST_FORMULA, # this is the model for each marker. ~1 means an intercept for the marker. ~1 + cov means an intercept plus a slope on `cov` for each marker
-    reduced_formula = ~1, # This is the null model for each test. ~0 means just the error model. ~1 means the null includes the intercept of the marker, but not anything additional
+    reduced_formula = ~0, # This is the null model for each test. ~0 means just the error model. ~1 means the null includes the intercept of the marker, but not anything additional
     data = data, # The dataframe to look for terms from the 3 models
     weights = NULL, # optional observation-specific weights
     X = X, # The matrix of markers. Note: This can be of dimension n_g x p, where n_g is the number of unique genotypes.

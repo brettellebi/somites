@@ -13,7 +13,7 @@ mean_pal = mean_pal[2:3]
 intercept_pal = intercept_pal[2:3]
 unsegmented_psm_pal = unsegmented_psm_area_pal[2:3]
 
-DATE_OF_ASSOC_TEST = 20220214
+DATE_OF_ASSOC_TEST = 20220321
 
 
 PLOT_DIR = here::here("book/plots", DATE_OF_ASSOC_TEST, "phenotypes")

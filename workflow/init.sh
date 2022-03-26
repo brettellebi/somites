@@ -37,10 +37,19 @@ snakemake \
   --rerun-incomplete \
   --use-conda \
   --use-singularity \
-  --restart-times 0 \
+  --restart-times 4 \
   -s workflow/Snakefile \
   -p
 
+####################
+# Containers
+####################
+
+HMMCONT=/hps/nobackup/birney/users/ian/containers/somites/hmmlearn_0.2.7.sif
+module load singularity-3.7.0-gcc-9.3.0-dp5ffrp
+singularity build --remote \
+    $HMMCONT \
+    workflow/envs/hmmlearn_0.2.7.def
 
 ####################
 # RStudio Server

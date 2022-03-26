@@ -1,5 +1,11 @@
 # Notes
 
+## 25 March 2022
+
+Testing different HMM parameters:
+
+* `workflow/scripts/test_hmm.py`
+
 ## 21 March 2022
 
 Added new phenotypes file including reporter:
