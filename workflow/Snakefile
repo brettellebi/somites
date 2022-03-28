@@ -174,31 +174,31 @@ rule all:
 ## 07_association_testing.smk
 ###############
 # create_gwas_input
-        expand(os.path.join(config["working_dir"], "association_testing/{date_of_assoc_test}/{site_filter}/inputs/{bin_length}.rds"),
-                date_of_assoc_test = config["date_of_assoc_test"],
-                site_filter = config["site_filter"],
-                bin_length = config["bin_length"]
+        expand(os.path.join(
+                config["working_dir"], 
+                "association_testing/{site_filter}/inputs/{bin_length}.rds"),
+                        site_filter = config["site_filter"],
+                        bin_length = config["bin_length"]
         ),
 # simulate_phenotypes
-        expand(os.path.join(config["working_dir"], "association_testing/{date_of_assoc_test}/{site_filter}/sim_phenos/{bin_length}.xlsx"),
-                date_of_assoc_test = config["date_of_assoc_test"],
-                site_filter = config["site_filter"],
-                bin_length = config["bin_length"]
-        ),
-# test_gwls
-        expand(os.path.join(
-            config["working_dir"],
-            "association_testing/{date_of_assoc_test}/{site_filter}/test_results/{bin_length}.rds"
-            ),
-                date_of_assoc_test = config["date_of_assoc_test"],
-                site_filter = config["site_filter"],
-                bin_length = config["bin_length"]
-        ),
-# run_gwls
         expand(os.path.join(
                 config["working_dir"],
-                "association_testing/{date_of_assoc_test}/{site_filter}/true_results/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.rds"),
-                        date_of_assoc_test = config["date_of_assoc_test"],
+                "association_testing/{site_filter}/sim_phenos/{bin_length}.xlsx"),
+                        site_filter = config["site_filter"],
+                        bin_length = config["bin_length"]
+        ),
+# test_gwas
+        expand(os.path.join(
+                config["working_dir"],
+                "association_testing/{site_filter}/test_results/{bin_length}.rds"
+                ),
+                        site_filter = config["site_filter"],
+                        bin_length = config["bin_length"]
+        ),
+# run_gwas
+        expand(os.path.join(
+                config["working_dir"],
+                "association_testing/{site_filter}/true_results/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.rds"),
                         site_filter = config["site_filter"],
                         target_phenotype = config["target_phenotypes"],
                         covariates = config["covariates"],
@@ -208,15 +208,13 @@ rule all:
 # create_permuted_phenotypes
         expand(os.path.join(
                 config["working_dir"], 
-                "permuted_phenos/{date_of_assoc_test}/{permutation_seed}.xlsx"),
-                        date_of_assoc_test = config["date_of_assoc_test"],
+                "permuted_phenos/{permutation_seed}.xlsx"),
                         permutation_seed = PERM_SEEDS
         ),
 # run_permutations
         expand(os.path.join(
                 config["working_dir"], 
-                "association_testing/{date_of_assoc_test}/{site_filter}/permutations/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}/{permutation_seed}.rds"),
-                        date_of_assoc_test = config["date_of_assoc_test"],
+                "association_testing/{site_filter}/permutations/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}/{permutation_seed}.rds"),
                         site_filter = config["site_filter"],
                         target_phenotype = config["target_phenotypes"],
                         covariates = config["covariates"],
@@ -225,8 +223,7 @@ rule all:
                         permutation_seed = PERM_SEEDS   
         ),
 # get_manhattan
-        expand("book/plots/manhattans/{date_of_assoc_test}/{site_filter}/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.png",
-                        date_of_assoc_test = config["date_of_assoc_test"],
+        expand("book/plots/manhattans/{site_filter}/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.png",
                         site_filter = config["site_filter"],
                         target_phenotype = config["target_phenotypes"],
                         covariates = config["covariates"],
@@ -235,7 +232,6 @@ rule all:
         ),
 ## get_annotations
 #        expand("data/{date_of_assoc_test}/annotations/{site_filter}/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.csv",
-#                        date_of_assoc_test = config["date_of_assoc_test"],
 #                        site_filter = "all_sites",
 #                        target_phenotype = "unsegmented_psm_area",
 #                        covariates = "Microscope",

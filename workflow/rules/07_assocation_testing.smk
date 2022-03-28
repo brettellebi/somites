@@ -6,12 +6,12 @@ rule create_gwas_input:
     output:
         os.path.join(
             config["working_dir"],
-            "association_testing/{date_of_assoc_test}/{site_filter}/inputs/{bin_length}.rds"
+            "association_testing/{site_filter}/inputs/{bin_length}.rds"
         ),
     log:
         os.path.join(
             config["working_dir"],
-            "logs/create_gwas_input/{date_of_assoc_test}/{site_filter}/{bin_length}.log"
+            "logs/create_gwas_input/{site_filter}/{bin_length}.log"
         ),
     params:
         bin_length = "{bin_length}",
@@ -30,16 +30,16 @@ rule simulate_phenotypes:
     output:
         sample_genos = os.path.join(
             config["working_dir"],
-            "association_testing/{date_of_assoc_test}/{site_filter}/sample_genos/{bin_length}.csv"
+            "association_testing/{site_filter}/sample_genos/{bin_length}.csv"
         ),
         sim_phenos = os.path.join(
             config["working_dir"],
-            "association_testing/{date_of_assoc_test}/{site_filter}/sim_phenos/{bin_length}.xlsx"
+            "association_testing/{site_filter}/sim_phenos/{bin_length}.xlsx"
         ),
     log:
         os.path.join(
             config["working_dir"],
-            "logs/simulate_phenotypes/{date_of_assoc_test}/{site_filter}/{bin_length}.log"
+            "logs/simulate_phenotypes/{site_filter}/{bin_length}.log"
         ),
     params:
         n_sample_gts = config["n_sample_gts"]
@@ -58,12 +58,12 @@ rule test_gwas:
     output:
         os.path.join(
             config["working_dir"],
-            "association_testing/{date_of_assoc_test}/{site_filter}/test_results/{bin_length}.rds"
+            "association_testing/{site_filter}/test_results/{bin_length}.rds"
         ),
     log:
         os.path.join(
             config["working_dir"],
-            "logs/test_gwas/{date_of_assoc_test}/{site_filter}/{bin_length}.log"
+            "logs/test_gwas/{site_filter}/{bin_length}.log"
         ),
     params:
         bin_length = "{bin_length}",
@@ -96,12 +96,12 @@ rule run_gwas:
     output:
         os.path.join(
             config["working_dir"],
-            "association_testing/{date_of_assoc_test}/{site_filter}/true_results/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.rds"
+            "association_testing/{site_filter}/true_results/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.rds"
         ),
     log:
         os.path.join(
             config["working_dir"], 
-            "logs/run_gwas/{date_of_assoc_test}/{site_filter}/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.log"
+            "logs/run_gwas/{site_filter}/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.log"
         ),
     params:
         target_phenotype = "{target_phenotype}",
@@ -122,12 +122,12 @@ rule create_permuted_phenotypes:
     output:
         os.path.join(
             config["working_dir"], 
-            "permuted_phenos/{date_of_assoc_test}/{permutation_seed}.xlsx"
+            "permuted_phenos/{permutation_seed}.xlsx"
         ),
     log:
         os.path.join(
             config["working_dir"], 
-            "logs/create_permuted_phenotypes/{date_of_assoc_test}/{permutation_seed}.log"
+            "logs/create_permuted_phenotypes/{permutation_seed}.log"
         ),
     params:
         permutation_seed = "{permutation_seed}",
@@ -145,12 +145,12 @@ rule run_permutations:
     output:
         os.path.join(
             config["working_dir"],
-            "association_testing/{date_of_assoc_test}/{site_filter}/permutations/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}/{permutation_seed}.rds"
+            "association_testing/{site_filter}/permutations/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}/{permutation_seed}.rds"
         ),
     log:
         os.path.join(
             config["working_dir"],
-            "logs/run_permutations/{date_of_assoc_test}/{site_filter}/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}/{permutation_seed}.log"
+            "logs/run_permutations/{site_filter}/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}/{permutation_seed}.log"
         ),
     params:
         target_phenotype = "{target_phenotype}",
@@ -175,11 +175,11 @@ rule get_manhattan:
         ),
         source_file = "workflow/scripts/get_manhattan_source.R"
     output:
-        fig = "book/plots/manhattans/{date_of_assoc_test}/{site_filter}/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.png"
+        fig = "book/plots/manhattans/{site_filter}/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.png"
     log:
         os.path.join(
             config["working_dir"],
-            "logs/get_manhattan/{date_of_assoc_test}/{site_filter}/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.log"
+            "logs/get_manhattan/{site_filter}/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.log"
         ),
     params:
         site_filter = "{site_filter}",
@@ -203,11 +203,11 @@ rule get_annotations:
                 permutation_seed = PERM_SEEDS
         ),
     output:
-        csv = "data/{date_of_assoc_test}/annotations/{site_filter}/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.csv"
+        csv = "data/annotations/{site_filter}/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.csv"
     log:
         os.path.join(
             config["working_dir"],
-            "logs/get_annotations/{date_of_assoc_test}/{site_filter}/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.log"
+            "logs/get_annotations/{site_filter}/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.log"
         ),
     params:
         bin_length = "{bin_length}"
