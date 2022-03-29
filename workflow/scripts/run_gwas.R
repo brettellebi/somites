@@ -31,6 +31,7 @@ TARGET_PHENO = snakemake@params[["target_phenotype"]]
 COVARIATES = snakemake@params[["covariates"]]
 INVERSE_NORM = snakemake@params["inverse_norm"] %>% 
     as.logical()
+REDUCED_FORMULA = snakemake@params[["reduced_formula"]]
 SOURCE_FILE = snakemake@params[["source_file"]]
 OUT_FILE = snakemake@output[[1]]
 
@@ -54,7 +55,7 @@ if (COVARIATES == "None"){
         unlist()
 }
 
-## Read in file and wrangle
+## Read in phenotype file and wrangle
 phenos = readxl::read_xlsx(PHENO_FILE) %>%
     # adjust sample names
     dplyr::mutate(SAMPLE = fish %>% stringr::str_remove("KC")) %>%
@@ -84,6 +85,29 @@ in_list[["genotypes"]] = in_list[["genotypes"]] %>%
 
 ## Filter sample_order for those that have phenotypes
 in_list[["sample_order"]] = in_list[["phenotypes"]]$SAMPLE
+
+##################
+# Formulas
+##################
+
+# Create `formula`
+if (is.null(covariates)){
+  MAIN_FORMULA = "y~1 + (1|Geno)"
+} else if (!is.null(covariates)){
+  MAIN_FORMULA = paste("y~1 +", paste(covariates, collapse = " + "), "+ (1|Geno)")
+}
+MAIN_FORMULA = as.formula(MAIN_FORMULA)
+
+# Create `test_formula`
+if (is.null(covariates)){
+  TEST_FORMULA = "~1"
+} else if (!is.null(covariates)){
+  TEST_FORMULA = paste("~1 +", paste(covariates, collapse = " + "))
+}
+TEST_FORMULA = as.formula(TEST_FORMULA)
+
+# Create `reduced_formula`
+REDUCED_FORMULA = as.formula(REDUCED_FORMULA)
             
 # Run GWAS
 
@@ -91,7 +115,10 @@ out = run_gwas(d = in_list[["genotypes"]],
                m = in_list[["positions"]],
                p = in_list[["phenotypes"]],
                invers_norm = INVERSE_NORM,
-               covariates = COVARIATES
+               covariates = COVARIATES,
+               main_formula = MAIN_FORMULA,
+               test_formula = TEST_FORMULA,
+               reduced_formula = REDUCED_FORMULA
               )
 
 # Write results to file

@@ -261,7 +261,15 @@ Other HMM genotyping by sequencing (GBS) methods:
 
 -   
 
-    ## *bcftools*'s `roh` results:
+## 12 November 2021
+
+From Ewan on Slack:
+
+>For @tomas and @Ian on the HMM to decode the WGS into the F2 genotypes - thinking about this, we need I think to force the transition parameters to be closer to what we expect (perhaps mean switches of 4 per individual, so rare) and then on the emission scores, I was wondering if training or setting would be better - one thing is that the data basically has “miscalls” - regions which get the wrong parental assignment (eg, due to repeats) in the midst of a long run in parents. So we might need to also directly set the emission probabilities and/or train with this fixed transition probability.
+
+>A really “harsh” imposition would be to set all the parameters, eg, Homozygous iCab emits iCab allele 95%, Kaga 5%, Het is 50% iCab, 50% Kaga, Homozygous Kaga is 5% iCab, 95% Kaga because we sort of “know” reality here - the only question is how much erroroneous read assignment there is (eg, due to repeats etc). I think this manual forcing (perhaps choosing error levels of 0.5%, 1%, 2%, 5%) might be interesting - we could get out summary statistics of how many blocks per chromosome per individual, and then assumming it is easy, assess the genetic association (which one gives the strongest F2 linkage results is not a bad optimisation problem).
+
+>This is related but orthogonal to cleaning up the sites we use - ie, if we only use clean sites which have less erroneous assignment then the error rate we put in goes down (this leads you towards the training mindset, but in the training mindset we have to remember expectation maximisation just maximises the likelihood of the data - it might be using states for modelling saying repeats as well as recombination blocks - ie, there is no guarentee that the training is training for our outcome!)
 
 ## 23 September 2021
 

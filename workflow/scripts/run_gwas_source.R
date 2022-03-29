@@ -8,7 +8,14 @@ my.invnorm = function(x) {
   return(res)
 }
 
-run_gwas <- function(d,m,p,invers_norm=F, covariates = NULL) {
+run_gwas <- function(d,m,p,
+                     invers_norm=F,
+                     covariates = NULL,
+                     main_formula = NULL,
+                     test_formula = NULL,
+                     reduced_formula = NULL
+                     )
+  {
   # Creates a vector of the prefix "snp" combined with the row number of positions
   ids = paste("snp", 1:nrow(m), sep="")
   # Adds this vector as first column of the DF of positions: now comprising `ids`, `CHROM`, `BIN_START`, `BIN_END`
@@ -48,27 +55,11 @@ run_gwas <- function(d,m,p,invers_norm=F, covariates = NULL) {
   # Add sample names to `X` as row names
   row.names(X) = data[,1]
   
-  # Create `formula`
-  if (is.null(covariates)){
-    MAIN_FORMULA = "y~1 + (1|Geno)"
-  } else if (!is.null(covariates)){
-    MAIN_FORMULA = paste("y~1 +", paste(covariates, collapse = " + "), "+ (1|Geno)")
-  }
-  MAIN_FORMULA = as.formula(MAIN_FORMULA)
-  
-  # Create `test_formula`
-  if (is.null(covariates)){
-    TEST_FORMULA = "~1"
-  } else if (!is.null(covariates)){
-    TEST_FORMULA = paste("~1 +", paste(covariates, collapse = " + "))
-  }
-  TEST_FORMULA = as.formula(TEST_FORMULA)
-  
   # Run gwas
   gwas = GridLMM::GridLMM_GWAS(
-    formula = MAIN_FORMULA, # the same error model is used for each marker. It is specified similarly to lmer
-    test_formula = TEST_FORMULA, # this is the model for each marker. ~1 means an intercept for the marker. ~1 + cov means an intercept plus a slope on `cov` for each marker
-    reduced_formula = ~0, # This is the null model for each test. ~0 means just the error model. ~1 means the null includes the intercept of the marker, but not anything additional
+    formula = main_formula, # the same error model is used for each marker. It is specified similarly to lmer
+    test_formula = test_formula, # this is the model for each marker. ~1 means an intercept for the marker. ~1 + cov means an intercept plus a slope on `cov` for each marker
+    reduced_formula = reduced_formula, # This is the null model for each test. ~0 means just the error model. ~1 means the null includes the intercept of the marker, but not anything additional
     data = data, # The dataframe to look for terms from the 3 models
     weights = NULL, # optional observation-specific weights
     X = X, # The matrix of markers. Note: This can be of dimension n_g x p, where n_g is the number of unique genotypes.

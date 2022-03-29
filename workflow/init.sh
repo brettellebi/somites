@@ -10,7 +10,7 @@
 
 ssh codon
 module load singularity-3.7.0-gcc-9.3.0-dp5ffrp
-bsub -M 20000 -q short -Is bash
+bsub -Is bash
 #bsub -q datamover -M 20000 -Is bash # when needing to copy raw data from FTP
 cd /hps/software/users/birney/ian/repos/somites
 conda activate snakemake_6.12.1
@@ -95,7 +95,7 @@ singularity shell --bind /hps/nobackup/birney/users/ian/rstudio_db:/var/lib/rstu
                   $CONT
 # Then run rserver, setting path of config file containing library path
 rserver \
-    --rsession-config-file /hps/software/users/birney/ian/repos/somites/workflow/envs/rstudio_server/rsession.conf \
+    --rsession-config-file /hps/software/users/birney/ian/repos/somites/workflow/envs/R_4.1.3/rsession.conf \
     --server-user brettell
 
 

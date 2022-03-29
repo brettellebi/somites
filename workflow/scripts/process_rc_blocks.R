@@ -11,11 +11,11 @@ library(tidyverse)
 # Get variables
 
 ## Debug
-SITE_FILTER = "all_sites"
-BIN_LENGTH = as.numeric("5000")
-IN_FILE = file.path("/nfs/research/birney/users/ian/somites/recombination_blocks/F2",
-                    SITE_FILTER,
-                    paste(BIN_LENGTH, ".txt", sep = ""))
+#SITE_FILTER = "all_sites"
+#BIN_LENGTH = as.numeric("20000")
+#IN_FILE = file.path("/nfs/research/birney/users/ian/somites/recombination_blocks/F2",
+#                    SITE_FILTER,
+#                    paste(BIN_LENGTH, ".txt", sep = ""))
 
 ## True
 IN_FILE = snakemake@input[[1]]
@@ -101,7 +101,7 @@ out = df %>%
           tidyr::fill(SAMPLE, .direction = "updown") %>% 
           # create new column with empty `STATE` values filled with previous value
           dplyr::mutate(STATE_IMP = STATE) %>% 
-          tidyr::fill(STATE_IMP, .direction = "up")
+          tidyr::fill(STATE_IMP, .direction = "updown")
         
         return(CHR_OUT)
         

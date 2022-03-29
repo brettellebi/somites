@@ -150,13 +150,13 @@ rule all:
 #        expand(os.path.join(config["data_store_dir"], "dpABs/F2_consolidated/{site_filter}.txt"),
 #                site_filter = config["site_filter"],
 #        ),
-## process_rc_blocks
-#        expand(os.path.join(
-#            config["working_dir"],
-#            "processed_recomb/F2/{site_filter}/{bin_length}.csv"),
-#                site_filter = config["site_filter"],
-#                bin_length = config["bin_length"],                
-#        ),
+# process_rc_blocks
+        expand(os.path.join(
+            config["working_dir"],
+            "processed_recomb/F2/{site_filter}/{bin_length}.csv"),
+                site_filter = config["site_filter"],
+                bin_length = config["bin_length"],                
+        ),
 ## plot_recombination_blocks
 #        expand("book/plots/snakemake/{site_filter}/{bin_length}/karyoplot_with_missing.png",
 #                site_filter = config["site_filter"],
@@ -171,65 +171,65 @@ rule all:
 #                bin_length = config["bin_length_F0"]
 #        ),
 ################
-## 07_association_testing.smk
+## 07_1_GridLMM.smk
 ###############
-# create_gwas_input
-        expand(os.path.join(
-                config["working_dir"], 
-                "association_testing/{site_filter}/inputs/{bin_length}.rds"),
-                        site_filter = config["site_filter"],
-                        bin_length = config["bin_length"]
-        ),
-# simulate_phenotypes
-        expand(os.path.join(
-                config["working_dir"],
-                "association_testing/{site_filter}/sim_phenos/{bin_length}.xlsx"),
-                        site_filter = config["site_filter"],
-                        bin_length = config["bin_length"]
-        ),
-# test_gwas
-        expand(os.path.join(
-                config["working_dir"],
-                "association_testing/{site_filter}/test_results/{bin_length}.rds"
-                ),
-                        site_filter = config["site_filter"],
-                        bin_length = config["bin_length"]
-        ),
-# run_gwas
-        expand(os.path.join(
-                config["working_dir"],
-                "association_testing/{site_filter}/true_results/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.rds"),
-                        site_filter = config["site_filter"],
-                        target_phenotype = config["target_phenotypes"],
-                        covariates = config["covariates"],
-                        inverse_norm = config["inverse_norm"],
-                        bin_length = config["bin_length"]
-        ),
-# create_permuted_phenotypes
-        expand(os.path.join(
-                config["working_dir"], 
-                "permuted_phenos/{permutation_seed}.xlsx"),
-                        permutation_seed = PERM_SEEDS
-        ),
-# run_permutations
-        expand(os.path.join(
-                config["working_dir"], 
-                "association_testing/{site_filter}/permutations/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}/{permutation_seed}.rds"),
-                        site_filter = config["site_filter"],
-                        target_phenotype = config["target_phenotypes"],
-                        covariates = config["covariates"],
-                        inverse_norm = config["inverse_norm"],                        
-                        bin_length = config["bin_length"],
-                        permutation_seed = PERM_SEEDS   
-        ),
-# get_manhattan
-        expand("book/plots/manhattans/{site_filter}/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.png",
-                        site_filter = config["site_filter"],
-                        target_phenotype = config["target_phenotypes"],
-                        covariates = config["covariates"],
-                        inverse_norm = config["inverse_norm"],                        
-                        bin_length = config["bin_length"],
-        ),
+## create_gwas_input
+#        expand(os.path.join(
+#                config["working_dir"], 
+#                "association_testing/{site_filter}/inputs/{bin_length}.rds"),
+#                        site_filter = config["site_filter"],
+#                        bin_length = config["bin_length"]
+#        ),
+## simulate_phenotypes
+#        expand(os.path.join(
+#                config["working_dir"],
+#                "association_testing/{site_filter}/sim_phenos/{bin_length}.xlsx"),
+#                        site_filter = config["site_filter"],
+#                        bin_length = config["bin_length"]
+#        ),
+## test_gwas
+#        expand(os.path.join(
+#                config["working_dir"],
+#                "association_testing/{site_filter}/test_results/{bin_length}.rds"
+#                ),
+#                        site_filter = config["site_filter"],
+#                        bin_length = config["bin_length"]
+#        ),
+## run_gwas
+#        expand(os.path.join(
+#                config["working_dir"],
+#                "association_testing/{site_filter}/true_results/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.rds"),
+#                        site_filter = config["site_filter"],
+#                        target_phenotype = config["target_phenotypes"],
+#                        covariates = config["covariates"],
+#                        inverse_norm = config["inverse_norm"],
+#                        bin_length = config["bin_length"]
+#        ),
+## create_permuted_phenotypes
+#        expand(os.path.join(
+#                config["working_dir"], 
+#                "permuted_phenos/{permutation_seed}.xlsx"),
+#                        permutation_seed = PERM_SEEDS
+#        ),
+## run_permutations
+#        expand(os.path.join(
+#                config["working_dir"], 
+#                "association_testing/{site_filter}/permutations/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}/{permutation_seed}.rds"),
+#                        site_filter = config["site_filter"],
+#                        target_phenotype = config["target_phenotypes"],
+#                        covariates = config["covariates"],
+#                        inverse_norm = config["inverse_norm"],                        
+#                        bin_length = config["bin_length"],
+#                        permutation_seed = PERM_SEEDS   
+#        ),
+## get_manhattan
+#        expand("book/plots/manhattans/{site_filter}/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.png",
+#                        site_filter = config["site_filter"],
+#                        target_phenotype = config["target_phenotypes"],
+#                        covariates = config["covariates"],
+#                        inverse_norm = config["inverse_norm"],                        
+#                        bin_length = config["bin_length"],
+#        ),
 ## get_annotations
 #        expand("data/{date_of_assoc_test}/annotations/{site_filter}/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.csv",
 #                        site_filter = "all_sites",
@@ -238,6 +238,25 @@ rule all:
 #                        inverse_norm = "TRUE",                        
 #                        bin_length = "5000",                        
 #        ),
+################
+## 07_2_GCTA.smk
+################
+# create_ped
+        expand(os.path.join(
+            config["working_dir"],
+            "peds/F2/{site_filter}/{bin_length}/{phenotype}.phen"),
+                site_filter = config["site_filter"],
+                bin_length = config["bin_length"],
+                phenotype = config["target_phenotypes"]
+        ),
+# create_bed
+        expand(os.path.join(
+            config["working_dir"],
+            "beds/F2/{site_filter}/{bin_length}/{phenotype}.bed"),
+                site_filter = config["site_filter"][0],
+                bin_length = config["bin_length"][0],
+                phenotype = config["target_phenotypes"][0]     
+        ,)
 ################
 ## 08_F2_calling.smk
 ###############
@@ -254,6 +273,7 @@ include: "rules/04_1_F1_calling.smk"
 #include: "rules/04_F2_mapping.smk"
 include: "rules/05_F2_recomb_blocks.smk"
 #include: "rules/06_F0_recomb_blocks.smk"
-include: "rules/07_assocation_testing.smk"
+include: "rules/07_1_GridLMM.smk"
+include: "rules/07_3_GCTA.smk"
 #include: "rules/08_F2_calling.smk"
 #include: "rules/09_TIGER.smk"
