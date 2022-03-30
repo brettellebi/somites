@@ -60,6 +60,21 @@ rule create_bed:
                 2> {log}
         """
 
+rule create_excluded_samples_list:
+    output:
+        "config/low_cov_samples.list"
+    log:
+        os.path.join(
+            config["working_dir"],
+            "logs/create_excluded_samples_list/all.log"
+        ),
+    resources:
+        mem_mb = 100 
+    run:
+        file = open(ouput[0], 'w')
+        for item in config["low_cov_samples"]:
+            file.writelines([item]+'\n')
+        file.close()
 
 rule run_mlma_loco:
     input:
@@ -78,8 +93,10 @@ rule run_mlma_loco:
     params:
         in_pref = lambda wildcards, input: input.bed.replace(".bed", ""),
         out_pref = lambda wildcards, output: output[0].replace(".loco.mlma", ""),
+        excl_samples = config["low_cov_samples"]
     resources:
-        mem_mb = 50000
+        mem_mb = 5000,
+        threads = 1
     container:
         config["GCTA"]
     shell:
@@ -89,6 +106,6 @@ rule run_mlma_loco:
             --bfile {params.in_pref} \
             --pheno {input.phen} \
             --out {params.out_pref} \
-            --thread-num 10 \
+            --thread-num {resources.threads} \
                 > {log}
         """

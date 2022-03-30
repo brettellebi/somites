@@ -11,7 +11,7 @@ library(tidyverse)
 # Get variables
 
 ## Debug
-#GENO_FILE = "/hps/nobackup/birney/users/ian/somites/processed_recomb/F2/all_sites/20000.csv"
+#GENO_FILE = "/hps/nobackup/birney/users/ian/somites/processed_recomb/F2/all_sites/5000.csv"
 #PHENO_FILE = here::here("data/20220321_phenotypes.xlsx")
 #PHENOTYPE = "unsegmented_psm_area"
 
@@ -77,7 +77,7 @@ map = new %>%
 # Create .phen file (see example here: https://github.com/jianyangqt/gcta/blob/master/test/tests/data/test.phen)
 
 phen = new %>% 
-  dplyr::select(FID, IID, all_of(PHENOTYPE))
+  dplyr::distinct(FID, IID, all_of(PHENOTYPE))
 
 # Write to file
 

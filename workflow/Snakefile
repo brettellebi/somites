@@ -249,14 +249,14 @@ rule all:
                 bin_length = config["bin_length"],
                 phenotype = config["target_phenotypes"]
         ),
-# create_bed
-        expand(os.path.join(
-            config["working_dir"],
-            "beds/F2/{site_filter}/{bin_length}/{phenotype}.bed"),
-                site_filter = config["site_filter"][0],
-                bin_length = config["bin_length"][0],
-                phenotype = config["target_phenotypes"][0]     
-        ,)
+## create_bed
+#        expand(os.path.join(
+#            config["working_dir"],
+#            "beds/F2/{site_filter}/{bin_length}/{phenotype}.bed"),
+#                site_filter = config["site_filter"][0],
+#                bin_length = config["bin_length"][0],
+#                phenotype = config["target_phenotypes"][0]     
+#        ,)
 ################
 ## 08_F2_calling.smk
 ###############
