@@ -180,9 +180,10 @@ rule merge_variants_F0_and_F2:
         os.path.join(config["working_dir"], "logs/merge_variants_F0_and_F2/all.log")
     params:
         in_files = lambda wildcards, input: " ".join("INPUT={}".format(f) for f in input.vcfs)
-    container:
-        config["picard"],
+    resources:
         mem_mb = 5000
+    container:
+        config["picard"]
     shell:
         """
         picard MergeVcfs \

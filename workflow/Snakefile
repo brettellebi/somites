@@ -21,6 +21,8 @@ rule all:
 #        config["ref_prefix"] + ".fasta.fai",
 ## genome_dict
 #        config["ref_prefix"] + ".dict",
+## get_chrom_lengths
+#        "config/hdrr_chrom_lengths.csv"
 ################
 ## 02_F0_mapping.smk
 ################
@@ -109,6 +111,37 @@ rule all:
 #            "vcfs/F1/final/{F1_sample}.vcf.gz"),
 #                F1_sample = F1_samples['SAMPLE']
 #        ),
+## get_genos_F1
+#        expand(os.path.join(
+#            config["working_dir"],
+#            "raw_genos/F1/{F1_sample}.csv"),
+#                F1_sample = F1_samples['SAMPLE']
+#        ),
+## merge_variants_F0_and_F1
+#        os.path.join(
+#            config["working_dir"],
+#            "vcfs/F0_and_F1/final/all.vcf.gz"
+#        ),
+## extract_trio_genos
+#        os.path.join(
+#            config["working_dir"],
+#            "genos/F0_and_F1/final/all.csv"
+#        ),
+###############
+# 04_2_trio_homozygosity.smk
+###############
+## trio_gt_counts_in_bins
+#        expand(os.path.join(
+#            config["working_dir"],
+#            "genos/F0_and_F1/counts/{sample}/{bin_length}.csv"),
+#                sample = ["Cab", "Kaga", "F1"],
+#                bin_length = 5000
+#        ),
+# circos_homozygosity
+        expand("book/plots/circos/trio_homo/{bin_length}/{sample}.png",
+                bin_length = 5000,
+                sample = ["Cab", "Kaga", "F1"]
+        ),
 ###############
 # 04_F2_mapping.smk
 ###############
@@ -150,13 +183,13 @@ rule all:
 #        expand(os.path.join(config["data_store_dir"], "dpABs/F2_consolidated/{site_filter}.txt"),
 #                site_filter = config["site_filter"],
 #        ),
-# process_rc_blocks
-        expand(os.path.join(
-            config["working_dir"],
-            "processed_recomb/F2/{site_filter}/{bin_length}.csv"),
-                site_filter = config["site_filter"],
-                bin_length = config["bin_length"],                
-        ),
+## process_rc_blocks
+#        expand(os.path.join(
+#            config["working_dir"],
+#            "processed_recomb/F2/{site_filter}/{bin_length}.csv"),
+#                site_filter = config["site_filter"],
+#                bin_length = config["bin_length"],                
+#        ),
 ## plot_recombination_blocks
 #        expand("book/plots/snakemake/{site_filter}/{bin_length}/karyoplot_with_missing.png",
 #                site_filter = config["site_filter"],
@@ -241,21 +274,21 @@ rule all:
 ################
 ## 07_2_GCTA.smk
 ################
-# create_ped
-        expand(os.path.join(
-            config["working_dir"],
-            "peds/F2/{site_filter}/{bin_length}/{phenotype}.phen"),
-                site_filter = config["site_filter"],
-                bin_length = config["bin_length"],
-                phenotype = config["target_phenotypes"]
-        ),
+## create_ped
+#        expand(os.path.join(
+#            config["working_dir"],
+#            "peds/F2/{site_filter}/{bin_length}/{phenotype}.phen"),
+#                site_filter = config["site_filter"],
+#                bin_length = config["bin_length"],
+#                phenotype = config["target_phenotypes"]
+#        ),
 ## create_bed
 #        expand(os.path.join(
 #            config["working_dir"],
 #            "beds/F2/{site_filter}/{bin_length}/{phenotype}.bed"),
-#                site_filter = config["site_filter"][0],
-#                bin_length = config["bin_length"][0],
-#                phenotype = config["target_phenotypes"][0]     
+#                site_filter = config["site_filter"],
+#                bin_length = config["bin_length"],
+#                phenotype = config["target_phenotypes"] 
 #        ,)
 ################
 ## 08_F2_calling.smk
@@ -270,6 +303,7 @@ include: "rules/01_ref.smk"
 #include: "rules/03_F0_calling.smk"
 include: "rules/03_1_F1_mapping.smk"
 include: "rules/04_1_F1_calling.smk"
+include: "rules/04_2_trio_homozygosity.smk"
 #include: "rules/04_F2_mapping.smk"
 include: "rules/05_F2_recomb_blocks.smk"
 #include: "rules/06_F0_recomb_blocks.smk"

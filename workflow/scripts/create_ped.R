@@ -35,7 +35,8 @@ phenos = readxl::read_xlsx(PHENO_FILE) %>%
 new = df %>%
   #dplyr::slice_sample(n = 1000) %>% 
   # order sample
-  dplyr::arrange(SAMPLE) %>% 
+  dplyr::arrange(SAMPLE, CHROM, BIN_START) %>% 
+  # add SNP ID by pasting CHROM and BIN_START
   dplyr::mutate(SNP = paste(CHROM, BIN_START, sep = ":")) %>% 
   dplyr::select(SNP, CHROM, BIN_START, SAMPLE, STATE_IMP) %>% 
   # add extra columns
@@ -49,7 +50,6 @@ new = df %>%
   dplyr::left_join(.,
                    phenos,
                    by = "SAMPLE") %>% 
-
   # split genotype into two columns, one for each allele
   dplyr::mutate(A1 = dplyr::case_when(STATE_IMP == 0 ~ "A",
                                       STATE_IMP == 1 ~ "A",
@@ -68,7 +68,10 @@ ped = new %>%
 # Create .map file
 
 map = new %>% 
-  dplyr::select(CHROM, SNP, BIN_START) %>% 
+  # order
+  dplyr::arrange(CHROM, BIN_START) %>% 
+  # get distinct loci
+  dplyr::distinct(CHROM, SNP, BIN_START, .keep_all = F) %>% 
   # add position in centimorgans column with dummy value of 0
   dplyr::mutate(POS = 0) %>% 
   # reorder
@@ -77,7 +80,8 @@ map = new %>%
 # Create .phen file (see example here: https://github.com/jianyangqt/gcta/blob/master/test/tests/data/test.phen)
 
 phen = new %>% 
-  dplyr::distinct(FID, IID, all_of(PHENOTYPE))
+  dplyr::distinct(FID, IID, all_of(PHENOTYPE)) %>% 
+  dplyr::arrange(FID)
 
 # Write to file
 

@@ -1,5 +1,37 @@
 # Notes
 
+## 4 April 2022
+
+Called F0 and F1 together as trio (see `workflow/rules/04_1_F1_calling.smk`) and extracted genotypes: 
+
+`/hps/nobackup/birney/users/ian/somites/genos/F0_and_F1/final/all.csv`
+
+23521458 total variants
+
+## 31 March 2022
+
+Meeting with Ewan Birney, Alexander Aulehla, Tom Fitzgerald, Ali Seleit, Ian Brettell
+
+**Actions**:
+
+* work on 3rd independent measure of period with Mcgill collaborators
+
+* Extract more features from the movies (as many as possible)….do they correlate with period?
+
+* What is the starting heterozygosity level in the F0 Kaga and Cab deep sequencing data?
+
+* Usage of F0 and F1 sequencing data to check inheritance of SNPs and to improve F2 recombination calling
+
+* Optimise HMM based on this new info and on the genotype calling based on endogenous reporter
+
+* New F2 recombination plots (less jumpy, more reliable for downstream analysis)
+
+* Try association testing anew on both phenotypes (timing, size)…where do we stand?
+
+* Size phenotype can be a back-up if all else fails, hold for now on going for CRISPRing of loci
+
+* Regular meetings in the coming period to check on progress and exchange info
+
 ## 25 March 2022
 
 Testing different HMM parameters:

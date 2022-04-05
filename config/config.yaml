@@ -122,9 +122,18 @@ inverse_norm:
     - "FALSE"
 n_permutations:
     - 10
+palette:
+    Cab: 
+        "#43AA8B"
+    Kaga: 
+        "#DE3C4B"
+    F1: 
+        "#381D2A"
 ####################
 # Containers
 ####################
+bash:
+    docker://bash:5.1.12
 minimap2:
     docker://quay.io/biocontainers/minimap2:2.21--h5bf99c6_0
 bwa-mem2:
@@ -137,12 +146,16 @@ samtools:
     docker://quay.io/biocontainers/samtools:1.13--h8c37831_0
 bcftools:
     docker://biocontainers/bcftools:v1.9-1-deb_cv1
+bcftools_1.14:
+    docker://quay.io/biocontainers/bcftools:1.14--hde04aa1_1
 pandas:
     docker://quay.io/biocontainers/pandas:1.1.5
 bam-readcount:
     docker://quay.io/biocontainers/bam-readcount:0.8--py36pl526h94a8ba4_4
 R:
     /hps/nobackup/birney/users/ian/containers/somites/R_4.1.0.sif
+R_4.1.3:
+    /hps/nobackup/birney/users/ian/containers/somites/R_4.1.3.sif
 PhenotypeSimulator:
     /hps/nobackup/birney/users/ian/containers/somites/R_4.1.0_PhenotypeSimulator.sif
 tidyverse_4:

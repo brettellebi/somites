@@ -19,7 +19,8 @@ From: rocker/tidyverse:4.1.3
         DT \
         writexl \
         gtools \
-        bookdown
+        bookdown \
+        circlize
     
     # Install correct version of `matrixStats`
     R -e 'devtools::install_version("matrixStats", ">= 0.60.1", repos = "https://cloud.r-project.org/")'

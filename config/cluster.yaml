@@ -27,6 +27,7 @@ consolidate_dbABs_Ewan:
   queue: bigmem
 filter_sites_for_read_count_and_cab_prop:
   queue: bigmem
-# 07_association_testing.smk
-
+# 07_3_GCTA.smk
+run_mlma_loco:
+  n: "{threads}"
 

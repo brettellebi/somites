@@ -74,3 +74,27 @@ rule bwa_mem2_index:
         """
         bwa-mem2 index {params.prefix} {input[0]}
         """
+
+rule get_chrom_lengths:
+    input:
+        rules.get_genome.output
+    output:
+        "config/hdrr_chrom_lengths.csv"
+    log:
+        os.path.join(
+            config["working_dir"],
+            "logs/get_chrom_lengths/all.log"
+        ),
+    container:
+        config["bash"]
+    resources:
+        mem_mb = 200
+    shell:
+        """
+        grep "^>" {input} | cut -f1 -d' ' | sed 's/>//g' > tmp1.txt ;
+        grep "^>" {input} | cut -f3 -d' ' | cut -f5 -d':' > tmp2.txt ;
+        paste -d',' tmp1.txt tmp2.txt > {output} ;
+        rm tmp1.txt tmp2.txt \
+            2> {log}
+        """
+    
