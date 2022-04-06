@@ -263,3 +263,35 @@ rule extract_trio_genos:
             --output {output} \
                 2> {log}
         """
+
+rule extract_trio_snps:
+    input:
+        rules.merge_variants_F0_and_F1.output
+    output:
+        os.path.join(
+            config["working_dir"],
+            "genos/F0_and_F1/snps_with_AD/all.txt"
+        ),
+    log:
+        os.path.join(
+            config["working_dir"],
+            "logs/extract_trio_snps/all.log"
+        ),
+    resources:
+        mem_mb = 2000
+    container:
+        config["bcftools_1.14"]
+    shell:
+        """
+        bcftools view \
+            --min-alleles 2 \
+            --max-alleles 2 \
+            --types snps \
+            --output-type u \
+            {input} |\
+        bcftools query \
+            --print-header \
+            --format '%CHROM\\t%POS\\t%REF\\t%ALT[\\t%GT\\t%AD]\\n' \
+            --output {output} \
+                2> {log}
+        """

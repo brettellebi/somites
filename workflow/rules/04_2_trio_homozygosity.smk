@@ -23,6 +23,7 @@ rule trio_gt_counts_in_bins:
     script:
         "../scripts/trio_gt_counts_in_bins.R"
 
+# Create Circos plots for homozygosity
 rule circos_homozygosity:
     input:
         gt_counts = rules.trio_gt_counts_in_bins.output,
@@ -45,3 +46,32 @@ rule circos_homozygosity:
     script:
         "../scripts/circos_homozygosity.R"
     
+# Extract target SNPs for F2 mapping
+## We want SNPs that are homozygous-divergent between Cab and Kaga
+## And are heterozygous in F1, with a decent allele depth
+rule extract_homo_div_snps:
+    input:
+        genos = rules.extract_trio_snps.output,
+    output:
+        full = os.path.join(
+            config["working_dir"],
+            "genos/F0_and_F1/homo_div/snps_all.csv"
+        ),
+        pass = os.path.join(
+            config["working_dir"],
+            "genos/F0_and_F1/homo_div/snps_pass.csv"
+        ),
+    log:
+        os.path.join(
+            config["working_dir"],
+            "logs/extract_homo_div_snps/all.log"
+        ),
+    params:
+        # set minimum allele depth
+        min_ad = 5
+    container:
+        config["tidyverse_4.1.3"]
+    resources:
+        mem_mb = 6000
+    script:
+        "../scripts/extract_homo_div_snps.R"

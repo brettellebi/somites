@@ -97,7 +97,8 @@ site_filter:
     #- no_repeat_sites
     #- no_repeat_reads
     #- no_repeat_reads_or_pers_hets
-    - no_repeat_reads_or_pers_hets_filtered_for_read_count_and_cab_prop
+    #- no_repeat_reads_or_pers_hets_filtered_for_read_count_and_cab_prop
+    - F1_het_min_DP
 bin_length:
     - 5000
     #- 10000

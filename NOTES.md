@@ -1,5 +1,16 @@
 # Notes
 
+## 6 April 2022
+
+Extracted only biallelic SNPs in rule `extract_trio_snps`.
+
+19628663 total SNPs.
+
+Filtered for homozygous-divergent in F0 and het in F1 in rule `extract_homo_div_snps`.
+
+
+
+
 ## 4 April 2022
 
 Called F0 and F1 together as trio (see `workflow/rules/04_1_F1_calling.smk`) and extracted genotypes: 

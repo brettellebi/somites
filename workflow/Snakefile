@@ -127,6 +127,11 @@ rule all:
 #            config["working_dir"],
 #            "genos/F0_and_F1/final/all.csv"
 #        ),
+## extract_trio_snps
+        os.path.join(
+            config["working_dir"],
+            "genos/F0_and_F1/snps_with_AD/all.txt"
+        ),
 ###############
 # 04_2_trio_homozygosity.smk
 ###############
@@ -137,11 +142,11 @@ rule all:
 #                sample = ["Cab", "Kaga", "F1"],
 #                bin_length = 5000
 #        ),
-# circos_homozygosity
-        expand("book/plots/circos/trio_homo/{bin_length}/{sample}.png",
-                bin_length = 5000,
-                sample = ["Cab", "Kaga", "F1"]
-        ),
+## circos_homozygosity
+#        expand("book/plots/circos/trio_homo/{bin_length}/{sample}.png",
+#                bin_length = 5000,
+#                sample = ["Cab", "Kaga", "F1"]
+#        ),
 ###############
 # 04_F2_mapping.smk
 ###############
@@ -298,7 +303,7 @@ rule all:
 
 ##### Modules #####
 
-include: "rules/01_ref.smk"
+include: "rules/01_ref_hdrr.smk"
 #include: "rules/02_F0_mapping.smk"
 #include: "rules/03_F0_calling.smk"
 include: "rules/03_1_F1_mapping.smk"

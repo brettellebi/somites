@@ -1,0 +1,7 @@
+# Homo/heterozygosity in F0 and F1 generations
+
+```{r, message = F, warning = F}
+library(tidyverse)
+```
+
+## 
