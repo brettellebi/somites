@@ -1,5 +1,20 @@
 include: "rules/00_1_common.smk"
 include: "rules/00_2_common.smk"
+##### Modules #####
+
+include: "rules/01_ref.smk"
+include: "rules/02_1_F0_mapping.smk"
+include: "rules/02_2_F0_calling.smk"
+include: "rules/03_1_F1_mapping.smk"
+include: "rules/03_2_F1_calling.smk"
+#include: "rules/04_2_trio_homozygosity.smk"
+#include: "rules/04_F2_mapping.smk"
+#include: "rules/05_F2_recomb_blocks.smk"
+##include: "rules/06_F0_recomb_blocks.smk"
+#include: "rules/07_1_GridLMM.smk"
+#include: "rules/07_3_GCTA.smk"
+#include: "rules/08_F2_calling.smk"
+#include: "rules/09_TIGER.smk"
 
 ##### Target rules #####
 
@@ -15,14 +30,21 @@ rule all:
 ################
 ## 01_ref.smk
 ################
-## get_genome
-#        config["ref_prefix"] + ".fasta",
-## genome_faidx
-#        config["ref_prefix"] + ".fasta.fai",
-## genome_dict
-#        config["ref_prefix"] + ".dict",
-## get_chrom_lengths
-#        "config/hdrr_chrom_lengths.csv"
+        expand(rules.get_genome.output,
+                ref = config["refs"]
+        ),
+        expand(rules.genome_faidx.output,
+                ref = config["refs"]
+        ),
+        expand(rules.genome_dict.output,
+                ref = config["refs"]
+        ),
+        expand(rules.bwa_mem2_index.output,
+                ref = config["refs"]
+        ),
+        expand(rules.get_chrom_lengths.output,
+                ref = config["refs"]
+        ),
 ################
 ## 02_F0_mapping.smk
 ################
@@ -59,78 +81,23 @@ rule all:
 #                F0_sample = config["F0_lines"]
 #        ),
 ################
-## 03_F0_calling.smk
+## 02_2_F0_calling.smk
 ################
-## haplotype_caller
-#        expand(os.path.join(config["working_dir"], "vcfs/F0/gvcfs/{F0_sample}/{contig}.g.vcf"),
-#                F0_sample = config["F0_lines"],
-#                contig = get_contigs(),
-#        ),
-## combine_calls
-#        expand(os.path.join(config["working_dir"], "vcfs/F0/combined/all.{contig}.g.vcf.gz"),
-#                contig = get_contigs(),
-#        ),
-## genotype_variants
-#        expand(os.path.join(config["working_dir"], "vcfs/F0/genotyped/all.{contig}.vcf.gz"),
-#                contig = get_contigs(),
-#        ),
-## merge_variants
-#        os.path.join(config["data_store_dir"], "vcfs/F0/final/all.vcf.gz"),
-## merge_variants_F0_and_F2
-#        os.path.join(config["data_store_dir"], "vcfs/F0_and_F2/final/all.vcf.gz"),
+        expand(rules.merge_variants.output,
+                ref = config["refs"]
+        ),
 ################
 ## 03_1_F1_mapping.smk
 ################
-## copy_f2_seq_data
-#        expand(os.path.join(config["working_dir"], "fastqs/F1/{F1_sample}_{pair}.txt.gz"),
-#                F1_sample = F1_samples['SAMPLE'],
-#                pair = config["pairs"]
-#        ),
-## bwa_mem2_mem_F1
-#        expand(os.path.join(config["working_dir"], "sams/F1/bwamem2/mapped/{F1_sample}.sam"),
-#                F1_sample = F1_samples['SAMPLE']
-#        ),
-## sort_sam_f1
-#        expand(os.path.join(config["working_dir"], "bams/F1/bwamem2/sorted/{F1_sample}.bam"),
-#                F1_sample = F1_samples['SAMPLE']
-#        ),
-## mark_duplicates_f1
-#        expand(os.path.join(config["working_dir"], "bams/F1/bwamem2/marked/{F1_sample}.bam"),
-#                F1_sample = F1_samples['SAMPLE']
-#        ),
-## samtools_index_f1
-#        expand(os.path.join(config["working_dir"], "bams/F1/bwamem2/marked/{F1_sample}.bam.bai"),
-#                F1_sample = F1_samples['SAMPLE']
-#        ),
+        expand(rules.samtools_index_F1.output,
+                ref = config["refs"],
+                F1_sample = F1_samples['SAMPLE']
+        ),
 ################
-## 04_1_F1_calling.smk
+## 03_2_F1_calling.smk
 ################
-## merge_variants_F1
-#        expand(os.path.join(
-#            config["working_dir"],
-#            "vcfs/F1/final/{F1_sample}.vcf.gz"),
-#                F1_sample = F1_samples['SAMPLE']
-#        ),
-## get_genos_F1
-#        expand(os.path.join(
-#            config["working_dir"],
-#            "raw_genos/F1/{F1_sample}.csv"),
-#                F1_sample = F1_samples['SAMPLE']
-#        ),
-## merge_variants_F0_and_F1
-#        os.path.join(
-#            config["working_dir"],
-#            "vcfs/F0_and_F1/final/all.vcf.gz"
-#        ),
-## extract_trio_genos
-#        os.path.join(
-#            config["working_dir"],
-#            "genos/F0_and_F1/final/all.csv"
-#        ),
-## extract_trio_snps
-        os.path.join(
-            config["working_dir"],
-            "genos/F0_and_F1/snps_with_AD/all.txt"
+        expand(rules.merge_variants_F0_and_F1.output,
+                ref = config["refs"]
         ),
 ###############
 # 04_2_trio_homozygosity.smk
@@ -146,6 +113,11 @@ rule all:
 #        expand("book/plots/circos/trio_homo/{bin_length}/{sample}.png",
 #                bin_length = 5000,
 #                sample = ["Cab", "Kaga", "F1"]
+#        ),
+## extract_homo_div_snps
+#        os.path.join(
+#            config["working_dir"],
+#            "genos/F0_and_F1/homo_div/snps_pass.txt"
 #        ),
 ###############
 # 04_F2_mapping.smk
@@ -175,7 +147,7 @@ rule all:
 ## 05_F2_recomb_blocks.smk
 ################
 ## make_dp_AB_F2
-#        expand(os.path.join(config["working_dir"], "dpABs/F2/{site_filter}/{F2_sample}.txt"),
+#        expand(rules.make_dp_AB_F2.output,
 #                site_filter = config["site_filter"],
 #                F2_sample = F2_samples['SAMPLE']
 #        ),
@@ -195,10 +167,9 @@ rule all:
 #                site_filter = config["site_filter"],
 #                bin_length = config["bin_length"],                
 #        ),
-## plot_recombination_blocks
-#        expand("book/plots/snakemake/{site_filter}/{bin_length}/karyoplot_with_missing.png",
+#        expand(rules.plot_recombination_blocks.output.karyoplot_no_missing,
 #                site_filter = config["site_filter"],
-#                bin_length = config["bin_length"],
+#                bin_length = config["bin_length"],                
 #        ),
 ################
 ## 06_F0_recomb_blocks.smk
@@ -301,18 +272,4 @@ rule all:
 ## merge_variants_F2
 #        os.path.join(config["data_store_dir"], "vcfs/F2/final/all.vcf.gz"),
 
-##### Modules #####
 
-include: "rules/01_ref_hdrr.smk"
-#include: "rules/02_F0_mapping.smk"
-#include: "rules/03_F0_calling.smk"
-include: "rules/03_1_F1_mapping.smk"
-include: "rules/04_1_F1_calling.smk"
-include: "rules/04_2_trio_homozygosity.smk"
-#include: "rules/04_F2_mapping.smk"
-include: "rules/05_F2_recomb_blocks.smk"
-#include: "rules/06_F0_recomb_blocks.smk"
-include: "rules/07_1_GridLMM.smk"
-include: "rules/07_3_GCTA.smk"
-#include: "rules/08_F2_calling.smk"
-#include: "rules/09_TIGER.smk"

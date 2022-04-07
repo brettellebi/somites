@@ -1,6 +1,6 @@
 # Send output to log
 
-log <- file(LOG_FILE, open="wt")
+log <- file(snakemake@log[[1]], open="wt")
 sink(log)
 sink(log, type = "message")
 
@@ -21,7 +21,6 @@ library(tidyverse)
 IN_FILE = snakemake@input[[1]]
 SITE_FILTER = snakemake@params[["site_filter"]]
 BIN_LENGTH = as.numeric(snakemake@params[["bin_length"]])
-LOG_FILE = snakemake@log[[1]]
 BASE_COV_TOT = snakemake@output[["base_cov_total"]]
 BASE_COV_BY_CHROM = snakemake@output[["base_cov_by_chrom"]]
 PROP_SITES_TOT = snakemake@output[["prop_sites_total"]]

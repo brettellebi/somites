@@ -8,7 +8,7 @@ Extracted only biallelic SNPs in rule `extract_trio_snps`.
 
 Filtered for homozygous-divergent in F0 and het in F1 in rule `extract_homo_div_snps`.
 
-
+2216032 SNPs after filtering.
 
 
 ## 4 April 2022

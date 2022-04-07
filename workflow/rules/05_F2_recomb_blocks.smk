@@ -1,7 +1,10 @@
 # Extract all homozygous sites per F0 sample
 rule get_homozygous_sites:
     input:
-        os.path.join(config["data_store_dir"], "vcfs/F0/final/all.vcf.gz")
+        os.path.join(
+            config["data_store_dir"], 
+            "vcfs/F0/final/all.vcf.gz"
+        ),
     output:
         os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/homo_all/{F0_sample}.csv")
     log:
@@ -31,13 +34,21 @@ rule get_divergent_sites:
     input:
     # Note we're using the order of the F0 lines provided in config["F0_lines"].
     # This order is critical for the next steps, so ensure it is correct.
-        expand(os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/homo_all/{F0_sample}.csv"),
+        expand(os.path.join(
+            config["working_dir"],
+            "data/sites_files/F0_Cab_Kaga/homo_all/{F0_sample}.csv"),
                 F0_sample = config["F0_lines"]
         ),
     output:
-        os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/homo_divergent/all.txt")
+        os.path.join(
+            config["working_dir"],
+            "data/sites_files/F0_Cab_Kaga/homo_divergent/all.txt"
+        ),
     log:
-        os.path.join(config["working_dir"], "logs/get_divergent_sites/all.log")
+        os.path.join(
+            config["working_dir"], 
+            "logs/get_divergent_sites/all.log"
+        ),
     resources:
         mem_mb = 5000
     container:
@@ -135,8 +146,10 @@ rule samtools_index_f2_filtered_bams:
             {output[0]} \
                 2> {log}
         """
+###########################################
+# Bam readcounts
+###########################################
 
-# Bam readcounts 
     ## All sites
 rule bam_readcount_F2_all:
     input:
@@ -149,7 +162,7 @@ rule bam_readcount_F2_all:
     log:
         os.path.join(config["working_dir"], "logs/bam_readcount_F2_all/{F2_sample}.log")
     resources:
-        mem_mb = 10000
+        mem_mb = 200
     container:
         config["bam-readcount"]
     shell:
@@ -265,35 +278,92 @@ rule bam_readcount_F2_excl_repeat_reads_and_black_list_and_extreme_read_count_an
                 > {output} 2> {log}
         """
 
+    ## Only sites that are HET in F1 with minimum DP
+rule bam_readcount_F2_F1_het_min_DP:
+    input:
+        bam = rules.mark_duplicates_f2.output.bam,
+        index = rules.samtools_index_f2.output,
+        sites_file = rules.extract_homo_div_snps.output.sites,
+        ref = rules.get_genome.output,
+    output:
+        os.path.join(
+            config["working_dir"],
+            "dp4s/F2/F1_het_min_DP/{F2_sample}.dp4.txt"
+        ),
+    log:
+        os.path.join(
+            config["working_dir"],
+            "logs/bam_readcount_F2_F1_het_min_DP/{F2_sample}.log"
+        ),
+    resources:
+        mem_mb = 10000
+    container:
+        config["bam-readcount"]
+    shell:
+        """
+        bam-readcount \
+            -l {input.sites_file} \
+            -f {input.ref} \
+            {input.bam} | \
+            cut -f 1,15,28,41,54,67 -d ":" | sed 's/=//g' | sed 's/\\t:/\\t/g' | sed 's/:/\\t/g' \
+                > {output} 2> {log}
+        """
+
+############################################        
+
+def get_sites_file(wildcards):
+    if wildcards.site_filter == "F1_het_min_DP":
+        out = rules.extract_homo_div_snps.output.sites
+    else:
+        out = rules.get_divergent_sites.output
+    return(out)
+
 # Make dpAB files
 rule make_dp_AB_F2:
     input:
-        dp4 = os.path.join(config["working_dir"], "dp4s/F2/{site_filter}/{F2_sample}.dp4.txt"),
-        sites_file = os.path.join(config["working_dir"], "data/sites_files/F0_Cab_Kaga/homo_divergent/all.txt"),
+        dp4 = os.path.join(
+            config["working_dir"],
+            "dp4s/F2/{site_filter}/{F2_sample}.dp4.txt"
+        ),
+        sites_file = get_sites_file,
     output:
-        os.path.join(config["working_dir"], "dpABs/F2/{site_filter}/{F2_sample}.txt"),
+        os.path.join(
+            config["working_dir"],
+            "dpABs/F2/{site_filter}/{F2_sample}.txt"
+        ),
     log:
-        os.path.join(config["working_dir"], "logs/make_dp_AB_F2/{site_filter}/{F2_sample}.log")
+        os.path.join(
+            config["working_dir"],
+            "logs/make_dp_AB_F2/{site_filter}/{F2_sample}.log"
+        ),
     resources:
-        mem_mb = 10000
+        mem_mb = 2000
     script:
         "../scripts/make_dp_AB.py"
 
 # Run HMM recombination blocks
 rule run_rc_block_F2:
     input:
-        dp_files = expand(os.path.join(config["working_dir"], "dpABs/F2/{{site_filter}}/{F2_sample}.txt"),
-            F2_sample = F2_samples['SAMPLE']
+        dp_files = expand(os.path.join(
+            config["working_dir"],
+            "dpABs/F2/{{site_filter}}/{F2_sample}.txt"),
+                F2_sample = F2_samples['SAMPLE']
         ),
         source_code = "workflow/scripts/rc_block_hmm.R"
     output:
-        os.path.join(config["data_store_dir"], "recombination_blocks/F2/{site_filter}/{bin_length}.txt"),
+        os.path.join(
+            config["data_store_dir"], 
+            "recombination_blocks/F2/{site_filter}/{bin_length}.txt"
+        ),
     log:
-        os.path.join(config["working_dir"], "logs/run_rc_block_F2/{site_filter}/{bin_length}.log")
+        os.path.join(
+            config["working_dir"], 
+            "logs/run_rc_block_F2/{site_filter}/{bin_length}.log"
+        ),
     params:
         bin_length = lambda wildcards: wildcards.bin_length
     resources:
-        mem_mb = 50000
+        mem_mb = 20000
     container:
         config["R"]
     script:
@@ -305,9 +375,15 @@ rule consolidate_dbABs_Ewan:
             F2_sample = F2_samples['SAMPLE']
         ),
     output:
-        os.path.join(config["data_store_dir"], "dpABs/F2_consolidated/{site_filter}.txt"),
+        os.path.join(
+            config["data_store_dir"], 
+            "dpABs/F2_consolidated/{site_filter}.txt"
+        ),
     log:
-        os.path.join(config["working_dir"], "logs/consolidate_dbABs_Ewan/{site_filter}.log")
+        os.path.join(
+            config["working_dir"], 
+            "logs/consolidate_dbABs_Ewan/{site_filter}.log"
+        ),
     resources:
         mem_mb = 350000
     container:
@@ -366,12 +442,12 @@ rule process_rc_blocks:
     log:
         os.path.join(
             config["working_dir"], 
-            "logs/run_rc_block_F2/{site_filter}/{bin_length}.log"
+            "logs/process_rc_blocks/{site_filter}/{bin_length}.log"
         ),
     params:
         bin_length = "{bin_length}"
     resources:
-        mem_mb = 30000
+        mem_mb = 25000
     container:
         config["R"]
     script:
@@ -389,12 +465,15 @@ rule plot_recombination_blocks:
         karyoplot_no_missing = "book/plots/snakemake/{site_filter}/{bin_length}/karyoplot_no_missing.png",
         karyoplot_with_missing = "book/plots/snakemake/{site_filter}/{bin_length}/karyoplot_with_missing.png",
     log:
-        os.path.join(config["working_dir"], "logs/plot_recombination_blocks/{site_filter}/{bin_length}.log")
+        os.path.join(
+            config["working_dir"],
+            "logs/plot_recombination_blocks/{site_filter}/{bin_length}.log"
+        ),
     params:
         site_filter = "{site_filter}",
         bin_length = "{bin_length}"
     resources:
-        mem_mb = 40000
+        mem_mb = 25000
     container:
         config["R"]
     script:

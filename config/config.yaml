@@ -1,8 +1,12 @@
 ####################
 # Locations
 ####################
+ref_dir:
+    /hps/nobackup/birney/users/ian/somites/refs
 ref_prefix:
     /hps/nobackup/birney/users/ian/somites/refs/hdrr
+ref_prefix_hni:
+    /hps/nobackup/birney/users/ian/somites/refs/hni
 F1_sequence_dirs:
     - /nfs/ftp/private/indigene_ftp/upload/Ali/F1_Kaga-Cab_DeepSeq
 F2_sequence_dirs:
@@ -48,6 +52,9 @@ het_black_list:
 ####################
 # Parameters
 ####################
+refs:
+    - hdrr
+    - hni
 pairs:
     - 1
     - 2
@@ -61,6 +68,13 @@ ref:
     release: 104
     # genome build
     build: ASM223467v1
+ref_hni:
+    # ensembl species name
+    species: oryzias_latipes_hni
+    # ensembl release
+    release: 105
+    # genome build
+    build: ASM223471v1
 min_reads:
     100
 max_reads:

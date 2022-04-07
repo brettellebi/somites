@@ -1,4 +1,68 @@
-# Get counts of genotypes within bins
+# Get genotypes for trio including both SNPs and indels
+rule extract_trio_genos:
+    input:
+        rules.merge_variants_F0_and_F1.output
+    output:
+        os.path.join(
+            config["working_dir"],
+            "genos/F0_and_F1/final/all.csv"
+        ),
+    log:
+        os.path.join(
+            config["working_dir"],
+            "logs/extract_trio_genos/all.log"
+        ),
+    resources:
+        mem_mb = 2000
+    container:
+        config["bcftools_1.14"]
+    shell:
+        """
+        bcftools view \
+            --max-alleles 2 \
+            --output-type u \
+            {input} |\
+        bcftools query \
+            --print-header \
+            --format '%CHROM,%POS,%REF,%ALT[,%GT]\\n' \
+            --output {output} \
+                2> {log}
+        """
+
+# Extract only biallelic SNPs
+rule extract_trio_snps:
+    input:
+        rules.merge_variants_F0_and_F1.output
+    output:
+        os.path.join(
+            config["working_dir"],
+            "genos/F0_and_F1/snps_with_AD/all.txt"
+        ),
+    log:
+        os.path.join(
+            config["working_dir"],
+            "logs/extract_trio_snps/all.log"
+        ),
+    resources:
+        mem_mb = 2000
+    container:
+        config["bcftools_1.14"]
+    shell:
+        """
+        bcftools view \
+            --min-alleles 2 \
+            --max-alleles 2 \
+            --types snps \
+            --output-type u \
+            {input} |\
+        bcftools query \
+            --print-header \
+            --format '%CHROM\\t%POS\\t%REF\\t%ALT[\\t%GT\\t%AD]\\n' \
+            --output {output} \
+                2> {log}
+        """
+
+# Get counts of all genotypes within bins
 rule trio_gt_counts_in_bins:
     input:
         genos = rules.extract_trio_genos.output,
@@ -57,9 +121,9 @@ rule extract_homo_div_snps:
             config["working_dir"],
             "genos/F0_and_F1/homo_div/snps_all.csv"
         ),
-        pass = os.path.join(
+        sites = os.path.join(
             config["working_dir"],
-            "genos/F0_and_F1/homo_div/snps_pass.csv"
+            "data/sites_files/F0_Cab_Kaga/homo_divergent/F1_het_min_DP.txt"
         ),
     log:
         os.path.join(
@@ -72,6 +136,6 @@ rule extract_homo_div_snps:
     container:
         config["tidyverse_4.1.3"]
     resources:
-        mem_mb = 6000
+        mem_mb = 20000
     script:
         "../scripts/extract_homo_div_snps.R"

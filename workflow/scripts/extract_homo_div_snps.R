@@ -11,15 +11,15 @@ library(tidyverse)
 # Get variables
 
 ## Debug
-GENO_FILE = "/hps/nobackup/birney/users/ian/somites/genos/F0_and_F1/snps_with_AD/all.txt"
-MIN_AD = 5
+#GENO_FILE = "/hps/nobackup/birney/users/ian/somites/genos/F0_and_F1/snps_with_AD/all.txt"
+#MIN_AD = 5
 
 ## True
 GENO_FILE = snakemake@input[["genos"]]
 MIN_AD = snakemake@params[["min_ad"]] %>% 
   as.numeric()
 OUT_FULL = snakemake@output[["full"]]
-OUT_PASS = snakemake@output[["pass"]]
+OUT_SITES = snakemake@output[["sites"]]
 
 # Read in file
 
@@ -52,13 +52,26 @@ rc = genos %>%
                   sep = ",",
                   convert = T) %>% 
   # reorder columns
-  dplyr::select(CHROM, POS, Cab_GT, Kaga_GT, F1_GT, F1_AD_REF, F1_AD_ALT, Cab_GT_RC, Kaga_GT_RC) %>% 
+  dplyr::select(CHROM, POS, REF, ALT, Cab_GT, Kaga_GT, F1_GT, F1_AD_REF, F1_AD_ALT, Cab_GT_RC, Kaga_GT_RC, F1_GT_RC)
 
-# Filter for 
+# Create pass/fail filter for homozygous-divergent SNPs with a minimum per-allele depth in F1
 
 filt = rc %>% 
-  dplyr::filter(FILTER = dplyr::case_when(Cab_GT == "00" & Kaga_GT == "11" & F1_GT == "01" & F1_REF_AD >= MIN_AD & F1_ALT_AD >= MIN_AD ~ "PASS",
-                                          Cab_GT == "11" & Kaga_GT == "00" & F1_GT == "01" & F1_REF_AD >= MIN_AD & F1_ALT_AD >= MIN_AD ~ "PASS",
+  dplyr::mutate(FILTER = dplyr::case_when(Cab_GT_RC == "00" & Kaga_GT_RC == "11" & F1_GT_RC == "01" & F1_AD_REF >= MIN_AD & F1_AD_ALT >= MIN_AD ~ "PASS",
+                                          Cab_GT_RC == "11" & Kaga_GT_RC == "00" & F1_GT_RC == "01" & F1_AD_REF >= MIN_AD & F1_AD_ALT >= MIN_AD ~ "PASS",
                                           TRUE ~ "FAIL"))
+## Write to file
+readr::write_csv(filt, OUT_FULL)
 
+# Filter for passes to create sites file
+
+sites = filt %>% 
+  dplyr::filter(FILTER == "PASS") %>% 
+  dplyr::select(CHROM, POS_1 = POS, POS_2 = POS, REF, ALT, Cab_GT, Kaga_GT) %>% 
+  # replace "|" with "/"
+  dplyr::mutate(dplyr::across(c(Cab_GT, Kaga_GT),
+                              ~stringr::str_replace(.x, "\\|", "\\/")))
+
+## Write to file
+readr::write_tsv(sites, OUT_SITES, col_names = F)
 
