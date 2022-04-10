@@ -10,10 +10,10 @@ rule get_genome:
             "logs/get_genome/{ref}.log"
         ),
     params:
-        species=config["ref"]["species"],
+        species=lambda wildcards: config["ref"][wildcards.ref]["species"],
         datatype="dna",
-        build=config["ref"]["build"],
-        release=config["ref"]["release"],
+        build=lambda wildcards: config["ref"][wildcards.ref]["build"],
+        release=lambda wildcards: config["ref"][wildcards.ref]["release"],
     resources:
         mem_mb = 1000
     wrapper:

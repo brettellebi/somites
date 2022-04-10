@@ -7,7 +7,7 @@ include: "rules/02_1_F0_mapping.smk"
 include: "rules/02_2_F0_calling.smk"
 include: "rules/03_1_F1_mapping.smk"
 include: "rules/03_2_F1_calling.smk"
-#include: "rules/04_2_trio_homozygosity.smk"
+include: "rules/04_trio_homozygosity.smk"
 #include: "rules/04_F2_mapping.smk"
 #include: "rules/05_F2_recomb_blocks.smk"
 ##include: "rules/06_F0_recomb_blocks.smk"
@@ -30,85 +30,54 @@ rule all:
 ################
 ## 01_ref.smk
 ################
-        expand(rules.get_genome.output,
-                ref = config["refs"]
-        ),
-        expand(rules.genome_faidx.output,
-                ref = config["refs"]
-        ),
-        expand(rules.genome_dict.output,
-                ref = config["refs"]
-        ),
-        expand(rules.bwa_mem2_index.output,
-                ref = config["refs"]
-        ),
-        expand(rules.get_chrom_lengths.output,
-                ref = config["refs"]
-        ),
-################
-## 02_F0_mapping.smk
-################
-## map_reads_F0
-#        expand(os.path.join(config["working_dir"], "sams/F0/mapped/{F0_sample}-{unit}.sam"),
-#                zip,
-#                F0_sample = F0_samples['sample'],
-#                unit = F0_samples['unit']
+#        expand(rules.get_genome.output,
+#                ref = config["refs"]
 #        ),
-## replace_rg_F0
-#        expand(os.path.join(config["working_dir"], "sams/F0/grouped/{F0_sample}-{unit}.sam"),
-#                zip,
-#                F0_sample = F0_samples['sample'],
-#                unit = F0_samples['unit']
+#        expand(rules.genome_faidx.output,
+#                ref = config["refs"]
 #        ),
-## sort_sam_F0
-#        expand(os.path.join(config["working_dir"], "bams/F0/sorted/{F0_sample}-{unit}.bam"),
-#                zip,
-#                F0_sample = F0_samples['sample'],
-#                unit = F0_samples['unit']
+#        expand(rules.genome_dict.output,
+#                ref = config["refs"]
 #        ),
-## mark_duplicates_F0
-#        expand(os.path.join(config["working_dir"], "bams/F0/marked/{F0_sample}-{unit}.bam"),
-#                zip,
-#                F0_sample = F0_samples['sample'],
-#                unit = F0_samples['unit']                
+#        expand(rules.bwa_mem2_index.output,
+#                ref = config["refs"]
 #        ),
-## merge_bams_F0
-#        expand(os.path.join(config["working_dir"], "bams/F0/merged/{F0_sample}.bam"),
-#                F0_sample = config["F0_lines"]
-#        ),
-## samtools_index_F0
-#        expand(os.path.join(config["working_dir"], "bams/F0/merged/{F0_sample}.bam.bai"),
-#                F0_sample = config["F0_lines"]
+#        expand(rules.get_chrom_lengths.output,
+#                ref = config["refs"]
 #        ),
 ################
 ## 02_2_F0_calling.smk
 ################
-        expand(rules.merge_variants.output,
-                ref = config["refs"]
-        ),
+#        expand(rules.merge_variants.output,
+#                ref = config["refs"]
+#        ),
 ################
 ## 03_1_F1_mapping.smk
 ################
-        expand(rules.samtools_index_F1.output,
-                ref = config["refs"],
-                F1_sample = F1_samples['SAMPLE']
-        ),
+#        expand(rules.samtools_index_F1.output,
+#                ref = config["refs"],
+#                F1_sample = F1_samples['SAMPLE']
+#        ),
 ################
 ## 03_2_F1_calling.smk
 ################
-        expand(rules.merge_variants_F0_and_F1.output,
+#        expand(rules.merge_variants_F0_and_F1.output,
+#                ref = config["refs"]
+#        ),
+###############
+# 04_trio_homozygosity.smk
+###############
+        expand(rules.extract_trio_genos.output,
                 ref = config["refs"]
         ),
-###############
-# 04_2_trio_homozygosity.smk
-###############
-## trio_gt_counts_in_bins
-#        expand(os.path.join(
-#            config["working_dir"],
-#            "genos/F0_and_F1/counts/{sample}/{bin_length}.csv"),
-#                sample = ["Cab", "Kaga", "F1"],
-#                bin_length = 5000
-#        ),
+        expand(rules.extract_trio_snps.output,
+                ref = config["refs"]
+        ),
+        expand(rules.trio_gt_counts_in_bins.output,
+                ref = config["refs"],
+                sample = ["Cab", "Kaga", "F1"],
+                bin_length = 5000
+        ),
 ## circos_homozygosity
 #        expand("book/plots/circos/trio_homo/{bin_length}/{sample}.png",
 #                bin_length = 5000,

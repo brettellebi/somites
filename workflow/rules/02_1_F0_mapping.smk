@@ -1,67 +1,100 @@
-rule map_reads_F0:
+#rule map_reads_F0:
+#    input:
+#        target = rules.get_genome.output,
+#        query = lambda wildcards: F0_samples.loc[(wildcards.F0_sample, wildcards.unit), ["fq1", "fq2"]].dropna().tolist(),
+#    output:
+#        os.path.join(
+#            config["working_dir"],
+#            "sams/F0/{ref}/mapped/{F0_sample}-{unit}.sam"
+#        ),
+#    log:
+#        os.path.join(
+#            config["working_dir"],
+#            "logs/map_reads_F0/{ref}/{F0_sample}/{unit}.log"
+#        ),
+#    params:
+#        extra="-ax sr",
+#    resources:
+#        mem_mb = 10000
+#    threads:
+#        8
+#    container:
+#        config["minimap2"]
+#    shell:
+#        """
+#        minimap2 \
+#            -t {threads} \
+#            {params.extra} \
+#            {input.target} \
+#            {input.query} \
+#                > {output[0]}
+#        """
+
+rule bwa_mem2_mem_F0:
     input:
-        target = config["ref_prefix"] + ".fasta",
-        query = lambda wildcards: F0_samples.loc[(wildcards.F0_sample, wildcards.unit), ["fq1", "fq2"]].dropna().tolist(),
+        reads = lambda wildcards: F0_samples.loc[(wildcards.F0_sample, wildcards.unit), ["fq1", "fq2"]].dropna().tolist(),
+        idx = rules.bwa_mem2_index.output,
+        ref = rules.get_genome.output,
     output:
         os.path.join(
             config["working_dir"],
-            "sams/F0/{ref}/mapped/{F0_sample}-{unit}.sam"
+            "sams/F0/{ref}/bwamem2/mapped/{F0_sample}-{unit}.sam"
         ),
     log:
         os.path.join(
             config["working_dir"],
-            "logs/map_reads_F0/{ref}/{F0_sample}/{unit}.log"
-        ),
+            "logs/bwa_mem2_mem/{ref}/{F0_sample}/{unit}.log")
     params:
-        extra="-ax sr",
+        extra=r"-R '@RG\tID:{F0_sample}\tSM:{F0_sample}'",
+    container:
+        config["bwa-mem2"]
     resources:
         mem_mb = 10000
     threads:
-        8
-    container:
-        config["minimap2"]
+        1
     shell:
         """
-        minimap2 \
+        bwa-mem2 mem \
             -t {threads} \
             {params.extra} \
-            {input.target} \
-            {input.query} \
-                > {output[0]}
+            {input.ref} \
+            {input.reads} \
+                > {output} \
+                    2> {log}
         """
 
-rule replace_rg_F0:
-    input:
-        rules.map_reads_F0.output,
-    output:
-        os.path.join(
-            config["working_dir"],
-            "sams/F0/{ref}/grouped/{F0_sample}-{unit}.sam"
-        ),
-    log:
-        os.path.join(
-            config["working_dir"],
-            "logs/replace_rg_F0/{ref}/{F0_sample}_{unit}.log"
-        ),
-    params:
-        "RGLB=lib1 RGPL=ILLUMINA RGPU={unit} RGSM={F0_sample}"
-    resources:
-        mem_mb=1024
-    container:
-        config["picard"]
-    shell:
-        """
-        picard AddOrReplaceReadGroups \
-            -Xmx{resources.mem_mb}M \
-            {params} \
-            INPUT={input[0]} \
-            OUTPUT={output[0]} \
-                &> {log}
-        """
+#rule replace_rg_F0:
+#    input:
+#        rules.map_reads_F0.output,
+#    output:
+#        os.path.join(
+#            config["working_dir"],
+#            "sams/F0/{ref}/grouped/{F0_sample}-{unit}.sam"
+#        ),
+#    log:
+#        os.path.join(
+#            config["working_dir"],
+#            "logs/replace_rg_F0/{ref}/{F0_sample}_{unit}.log"
+#        ),
+#    params:
+#        "RGLB=lib1 RGPL=ILLUMINA RGPU={unit} RGSM={F0_sample}"
+#    resources:
+#        mem_mb=1024
+#    container:
+#        config["picard"]
+#    shell:
+#        """
+#        picard AddOrReplaceReadGroups \
+#            -Xmx{resources.mem_mb}M \
+#            {params} \
+#            INPUT={input[0]} \
+#            OUTPUT={output[0]} \
+#                &> {log}
+#        """
 
 rule sort_sam_F0:
     input:
-        rules.replace_rg_F0.output,
+        rules.bwa_mem2_mem_F0.output,
     output:
         os.path.join(
             config["working_dir"],

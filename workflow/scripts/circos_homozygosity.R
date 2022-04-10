@@ -12,15 +12,17 @@ library(circlize)
 # Get variables
 
 ## Debug
-#IN_FILE = "/hps/nobackup/birney/users/ian/somites/genos/F0_and_F1/counts/Cab/5000.csv"
-#CHROM_LENGTHS = here::here("config/hdrr_chrom_lengths.csv")
-#SAMPLE = "Cab"
-#BIN_LENGTH = 5000
-#PAL = "#43AA8B"
+IN_FILE = "/hps/nobackup/birney/users/ian/somites/genos/F0_and_F1/counts/Cab/5000.csv"
+CHROM_LENGTHS = here::here("config/hdrr_chrom_lengths.csv")
+REF = "hdrr"
+SAMPLE = "Cab"
+BIN_LENGTH = 5000
+PAL = "#43AA8B"
 
 ## True
 IN_FILE = snakemake@input[["gt_counts"]]
 CHROM_LENGTHS = snakemake@input[["chrom_lens"]]
+REF = snakemake@params[["ref"]]
 SAMPLE = snakemake@params[["sample"]]
 BIN_LENGTH = snakemake@params[["bin_length"]] %>% 
   as.numeric()

@@ -5,12 +5,12 @@ rule extract_trio_genos:
     output:
         os.path.join(
             config["working_dir"],
-            "genos/F0_and_F1/final/all.csv"
+            "genos/F0_and_F1/{ref}/final/all.csv"
         ),
     log:
         os.path.join(
             config["working_dir"],
-            "logs/extract_trio_genos/all.log"
+            "logs/extract_trio_genos/{ref}.log"
         ),
     resources:
         mem_mb = 2000
@@ -36,12 +36,12 @@ rule extract_trio_snps:
     output:
         os.path.join(
             config["working_dir"],
-            "genos/F0_and_F1/snps_with_AD/all.txt"
+            "genos/F0_and_F1/snps_with_AD/{ref}.txt"
         ),
     log:
         os.path.join(
             config["working_dir"],
-            "logs/extract_trio_snps/all.log"
+            "logs/extract_trio_snps/{ref}.log"
         ),
     resources:
         mem_mb = 2000
@@ -70,12 +70,12 @@ rule trio_gt_counts_in_bins:
     output:
         os.path.join(
             config["working_dir"],
-            "genos/F0_and_F1/counts/{sample}/{bin_length}.csv"
+            "genos/F0_and_F1/{ref}/counts/{sample}/{bin_length}.csv"
         ),
     log:
         os.path.join(
             config["working_dir"],
-            "logs/trio_gt_counts_in_bins/{sample}/{bin_length}.log"
+            "logs/trio_gt_counts_in_bins/{ref}/{sample}/{bin_length}.log"
         ),
     params:
         bin_length = "{bin_length}",
@@ -93,13 +93,14 @@ rule circos_homozygosity:
         gt_counts = rules.trio_gt_counts_in_bins.output,
         chrom_lens = rules.get_chrom_lengths.output,
     output:
-        plot = "book/plots/circos/trio_homo/{bin_length}/{sample}.png",
+        plot = "book/plots/circos/trio_homo/{ref}/{bin_length}/{sample}.png",
     log:
         os.path.join(
             config["working_dir"],
-            "logs/circos_homozygosity/{bin_length}/{sample}.log"
+            "logs/circos_homozygosity/{ref}/{bin_length}/{sample}.log"
         ),
     params:
+        ref = "{ref}",
         bin_length = "{bin_length}",
         sample = "{sample}",
         palette = lambda wildcards: config["palette"][wildcards.sample]
@@ -119,16 +120,16 @@ rule extract_homo_div_snps:
     output:
         full = os.path.join(
             config["working_dir"],
-            "genos/F0_and_F1/homo_div/snps_all.csv"
+            "genos/F0_and_F1/{ref}/homo_div/snps_all.csv"
         ),
         sites = os.path.join(
             config["working_dir"],
-            "data/sites_files/F0_Cab_Kaga/homo_divergent/F1_het_min_DP.txt"
+            "sites_files/F0_Cab_Kaga/{ref}/homo_divergent/F1_het_min_DP.txt"
         ),
     log:
         os.path.join(
             config["working_dir"],
-            "logs/extract_homo_div_snps/all.log"
+            "logs/extract_homo_div_snps/{ref}.log"
         ),
     params:
         # set minimum allele depth

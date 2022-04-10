@@ -9,8 +9,8 @@ create_F1_samples_file:
   queue: datamover
 create_F2_samples_file:
   queue: datamover
-# 02_F0_mapping.smk
-map_reads_F0:
+# 02_1_F0_mapping.smk
+bwa_mem2_mem_F0:
   n: "{threads}"
 # 03_1_F1_mapping.smk
 copy_F1_seq_data:

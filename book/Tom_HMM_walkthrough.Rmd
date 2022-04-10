@@ -1,0 +1,115 @@
+# Walkthrough for Tom's HMM code
+
+## Libraries
+
+```{r}
+library(tidyverse)
+library(ViteRbi)
+library(DT)
+```
+
+## Input files
+
+```{r}
+dp_files = c("/hps/nobackup/birney/users/ian/somites/dpABs/F2/F1_het_min_DP/1.txt",
+             "/hps/nobackup/birney/users/ian/somites/dpABs/F2/F1_het_min_DP/2.txt")
+
+bin_len = 5000
+```
+
+## Step through function
+
+### `collect_chunked_data()`
+
+```{r}
+index1 = 1
+index2 = length(dp_files)
+
+# Create empty list to hold each sample's binned counts and ratios
+l = list()
+# Loop over each sample
+for(x in index1:index2) {
+  # Read in file - 6 columns: CHROM, POS, C_AL, C_AL_COUNT, K_AL, K_AL_COUNT 
+  d = read.table(unlist(dp_files)[x])
+  # Filter out the MT chromosome
+  d = d[d[,1]!="MT",]
+  # Convert CHROM column to numeric
+  d[,1] = as.numeric(as.character(d[,1]))
+  # Order by CHROM, POS, and C_AL(?)
+  d = d[order(d[,1], d[,2], d[,3]),]
+  
+  # `bin_all_chrs_and_plot()`
+  max_count = 15
+  
+  # `bin_all_chrs()`
+  ## Split into list by chromosome
+  d_list = split( d , f = d$V1 )
+  
+  # lapply `bin_single()` to each chromosome
+  binned = lapply(d_list, function(d){
+    # Remove all rows where the allele counts for both Cab and Kaga are less than 15?!
+    # For sample 1 chr1, only excludes 5 % of SNPs
+    cleand = d[d$V4 < max_count & d$V6 < max_count,]
+    # divide POS by bin_len and round down to get the bin number
+  	cleand$bin = floor(cleand$V2 / bin_len)
+  	# Get the proportion of Cab
+  	cleand$ratio = cleand$V4 / (cleand$V4 + cleand$V6)
+  	# Create new df with the first column being all the reads in each bin supporting the Cab allele
+  	binned = as.data.frame(tapply(cleand$V4,cleand$bin,sum))
+  	# Add another column with the number of reads per bin 
+  	binned$v6sum = tapply(cleand$V6,cleand$bin,sum)
+  	# Add the bin number
+  	binned$bin = tapply(cleand$bin,cleand$bin,unique)
+  	# Add column names, where mat = Cab and pat = Kaga
+  	colnames(binned) = c("mat", "pat", "bin")
+  	# Calculate the proportion of Cab of the binned reads
+  	binned$ratio = binned$mat / (binned$mat + binned$pat)
+  	
+  	return(binned)
+  })
+
+  
+	# back to `bin_all_chrs_and_plot()`
+  # bind the chromosome DFs in the list into a single DF
+  bdf = do.call(rbind, binned)
+  # Add chromosome
+  bdf$chr = unlist(strsplit(rownames(bdf), "\\."))[seq(1, nrow(bdf)*2, by=2)]
+  
+  # back to `collect_chunked_data()`
+  all_binned = bdf
+  # add first column as file name
+  d = data.frame(unlist(dp_files)[x], all_binned)
+  # add to output list
+  l[[x]] = d
+  # print index
+  print(x)
+}
+
+# Bind all the sample DFs into single DF
+all_binned = do.call(rbind, l)
+all_binned %>% 
+  head() %>% 
+  DT::datatable()
+# If any of the ratios are NA (due to counts of 0 for both Cab and Kaga), set to 0.5
+all_binned$ratio[is.na(all_binned$ratio)] = 0.5
+# Create data frame with all 1s in the first column, then bin, then ratio
+input = data.frame(1, all_binned$bin, all_binned$ratio)
+input %>% 
+  head() %>% 
+  DT::datatable()
+# Run Viterbi
+v = ViteRbi(input, active=F)
+# Add state to `all_binned`
+all_binned$state = v[,4]
+
+# Show final 
+bin1 = all_binned
+colnames(bin1)[1] = "sample"
+
+bin1 %>% 
+  head(100) %>% 
+  DT::datatable()
+```
+
+
+
