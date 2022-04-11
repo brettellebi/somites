@@ -1,26 +1,44 @@
-#!/usr/bin/env python3
+# Send log
 
-# Send stdout and stderr to log file
+import sys,os
+import logging, traceback
+logging.basicConfig(filename=snakemake.log[0],
+                    level=logging.INFO,
+                    format='%(asctime)s %(message)s',
+                    datefmt='%Y-%m-%d %H:%M:%S',
+                    )
+def handle_exception(exc_type, exc_value, exc_traceback):
+    if issubclass(exc_type, KeyboardInterrupt):
+        sys.__excepthook__(exc_type, exc_value, exc_traceback)
+        return
 
-import sys
+    logger.error(''.join(["Uncaught exception: ",
+                         *traceback.format_exception(exc_type, exc_value, exc_traceback)
+                         ])
+                 )
+# Install exception handler
+sys.excepthook = handle_exception
 
-with open(snakemake.log[0], "w") as f:
-    sys.stderr = sys.stdout = f
 
 # Import libraries
 
 import pandas as pd
 import numpy as np
 
+# Get variables
+DP4 = snakemake.input.dp4[0]
+SITES = snakemake.input.sites_file
+OUT = snakemake.output[0]
+
 # Read in dp4 file
 
 dp4_cols = ["CHR", "POS", "REF", "TOTAL", "A", "C", "G", "T", "N"]
-dp4 = pd.read_csv(snakemake.input.dp4, sep = "\t", names = dp4_cols, index_col = ["CHR", "POS"])
+dp4 = pd.read_csv(DP4, sep = "\t", names = dp4_cols, index_col = ["CHR", "POS"])
 
 # Read in sites file
 
 sites_cols = ["CHR", "POS", "POS_2", "REF", "ALT", "F0_1", "F0_2"]
-sites = pd.read_csv(snakemake.input.sites_file, sep = "\t", names = sites_cols, index_col = ["CHR", "POS"])
+sites = pd.read_csv(SITES, sep = "\t", names = sites_cols, index_col = ["CHR", "POS"])
 
 # Add columns with F0 and F1 alleles
 
@@ -55,11 +73,11 @@ joined['F0_2_COUNT'] = joined.apply(lambda x: rules(x, "F0_2_ALLELE"), 1)
 
 joined = joined.dropna()
 
-# Convert F0_1_COUNT and F0_2_COUNT to integers
+# Convert F0_1_COUNT and F0_2_COUNT to integers
 
 joined['F0_1_COUNT'] = joined['F0_1_COUNT'].astype(int)
 joined['F0_2_COUNT'] = joined['F0_2_COUNT'].astype(int)
 
 # Write to file
 
-joined[["F0_1_ALLELE", "F0_1_COUNT", "F0_2_ALLELE", "F0_2_COUNT"]].to_csv(snakemake.output[0], sep = "\t", header = False)
+joined[["F0_1_ALLELE", "F0_1_COUNT", "F0_2_ALLELE", "F0_2_COUNT"]].to_csv(OUT, sep = "\t", header = False)

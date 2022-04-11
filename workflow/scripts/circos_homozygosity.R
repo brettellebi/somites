@@ -12,12 +12,12 @@ library(circlize)
 # Get variables
 
 ## Debug
-IN_FILE = "/hps/nobackup/birney/users/ian/somites/genos/F0_and_F1/counts/Cab/5000.csv"
-CHROM_LENGTHS = here::here("config/hdrr_chrom_lengths.csv")
-REF = "hdrr"
-SAMPLE = "Cab"
-BIN_LENGTH = 5000
-PAL = "#43AA8B"
+#IN_FILE = "/hps/nobackup/birney/users/ian/somites/genos/F0_and_F1/hdrr/counts/Cab/5000.csv"
+#CHROM_LENGTHS = here::here("config/hdrr_chrom_lengths.csv")
+#REF = "hdrr"
+#SAMPLE = "Cab"
+#BIN_LENGTH = 5000
+#PAL = "#43AA8B"
 
 ## True
 IN_FILE = snakemake@input[["gt_counts"]]
@@ -47,14 +47,21 @@ chroms = readr::read_csv(CHROM_LENGTHS,
                 START = 1) %>% 
   dplyr::select(CHROM, START, END = LENGTH)
 
-
-# Process `genos`
+# Process variables
 
 if (SAMPLE == "F1"){
   TARGET_CHROM = "PROP_HET"
 } else {
   TARGET_CHROM = "PROP_HOM"
 }
+
+if (REF == "hdrr"){
+  REF = "HdrR"
+} else if (REF == "hni"){
+  REF = "HNI"
+}
+
+# Process `genos`
 
 homozyg = genos %>% 
   dplyr::mutate(CHROM = CHROM %>% 
@@ -97,6 +104,9 @@ if (SAMPLE == "F1"){
                      "\nwithin\n",
                      BIN_LENGTH / 1000,
                      "kb bins",
+                     "\n\n",
+                     REF,
+                     " reference",
                      sep = "")
 } else {
   CENTER_LAB = paste(SAMPLE,
@@ -104,6 +114,9 @@ if (SAMPLE == "F1"){
                      "\nwithin\n",
                      BIN_LENGTH / 1000,
                      "kb bins",
+                     "\n\n",
+                     REF,
+                     " reference",
                      sep = "")
 }
 # Add label to center

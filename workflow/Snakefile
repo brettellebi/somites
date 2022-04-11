@@ -8,7 +8,8 @@ include: "rules/02_2_F0_calling.smk"
 include: "rules/03_1_F1_mapping.smk"
 include: "rules/03_2_F1_calling.smk"
 include: "rules/04_trio_homozygosity.smk"
-#include: "rules/04_F2_mapping.smk"
+include: "rules/05_1_F2_mapping.smk"
+include: "rules/05_2_F2_calling.smk"
 #include: "rules/05_F2_recomb_blocks.smk"
 ##include: "rules/06_F0_recomb_blocks.smk"
 #include: "rules/07_1_GridLMM.smk"
@@ -64,54 +65,47 @@ rule all:
 #        expand(rules.merge_variants_F0_and_F1.output,
 #                ref = config["refs"]
 #        ),
-###############
-# 04_trio_homozygosity.smk
-###############
-        expand(rules.extract_trio_genos.output,
-                ref = config["refs"]
-        ),
-        expand(rules.extract_trio_snps.output,
-                ref = config["refs"]
-        ),
-        expand(rules.trio_gt_counts_in_bins.output,
-                ref = config["refs"],
-                sample = ["Cab", "Kaga", "F1"],
-                bin_length = 5000
-        ),
-## circos_homozygosity
-#        expand("book/plots/circos/trio_homo/{bin_length}/{sample}.png",
+################
+## 04_trio_homozygosity.smk
+################
+#        expand(rules.extract_trio_genos.output,
+#                ref = config["refs"]
+#        ),
+#        expand(rules.extract_trio_snps.output,
+#                ref = config["refs"]
+#        ),
+#        expand(rules.trio_gt_counts_in_bins.output,
+#                ref = config["refs"],
+#                sample = ["Cab", "Kaga", "F1"],
+#                bin_length = 5000
+#        ),
+#        expand(rules.circos_homozygosity.output.plot,
+#                ref = config["refs"],
 #                bin_length = 5000,
 #                sample = ["Cab", "Kaga", "F1"]
 #        ),
-## extract_homo_div_snps
-#        os.path.join(
-#            config["working_dir"],
-#            "genos/F0_and_F1/homo_div/snps_pass.txt"
+#        expand(rules.extract_homo_div_snps.output.sites,
+#                ref = config["refs"]
 #        ),
-###############
-# 04_F2_mapping.smk
-###############
-## copy_f2_seq_data
-#        expand(os.path.join(config["working_dir"], "fastqs/F2/{F2_sample}_{pair}.txt.gz"),
-#                F2_sample = F2_samples['SAMPLE'],
-#                pair = config["pairs"]
-#        ),
-## bwa_mem2_mem
-#        expand(os.path.join(config["working_dir"], "sams/F2/bwamem2/mapped/{F2_sample}.sam"),
+################
+## 05_1_F2_mapping.smk
+################
+#        expand(rules.samtools_index_F2.output,
+#                ref = "hdrr",
 #                F2_sample = F2_samples['SAMPLE']
 #        ),
-## sort_sam_f2
-#        expand(os.path.join(config["working_dir"], "bams/F2/bwamem2/sorted/{F2_sample}.bam"),
-#                F2_sample = F2_samples['SAMPLE']
-#        ),
-## mark_duplicates_f2
-#        expand(os.path.join(config["working_dir"], "bams/F2/bwamem2/marked/{F2_sample}.bam"),
-#                F2_sample = F2_samples['SAMPLE']
-#        ),
-## samtools_index_f2
-#        expand(os.path.join(config["working_dir"], "bams/F2/bwamem2/marked/{F2_sample}.bam.bai"),
-#                F2_sample = F2_samples['SAMPLE']
-#        ),
+################
+## 05_2_F2_calling.smk
+################
+        expand(rules.make_dp_AB_F2.output,
+                ref = "hdrr",
+                F2_sample = F2_samples['SAMPLE']
+        ),
+        expand(rules.make_hmm_input.output,
+                ref = "hdrr",
+                max_reads = config["max_reads_hmm"],
+                bin_length = config["bin_length"]
+        ),
 ################
 ## 05_F2_recomb_blocks.smk
 ################

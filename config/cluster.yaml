@@ -18,9 +18,9 @@ copy_F1_seq_data:
 bwa_mem2_mem_F1:
   n: "{threads}"
 # 04_F2_mapping.smk
-copy_f2_seq_data:
+copy_F2_seq_data:
   queue: datamover
-bwa_mem2_mem:
+bwa_mem2_mem_F2:
   n: "{threads}"
 # 05_F2_recomb_blocks.smk
 consolidate_dbABs_Ewan:

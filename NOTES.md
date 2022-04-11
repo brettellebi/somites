@@ -1,5 +1,13 @@
 # Notes
 
+## 7 April 2022
+
+Ewan suggestions for tweaking HMM parameters (Slack):
+
+> Another idea is to have three error states - error in homozygous icab, error in het and error in homozygous kaga with broader emission properties and then set a cost to go in and quite an aggressive decay (ie exit probability is high)
+>These states would only come in from their respective “real” states and back out
+>Basically it will be a way to soak up the choppiness we see
+
 ## 6 April 2022
 
 Extracted only biallelic SNPs in rule `extract_trio_snps`.

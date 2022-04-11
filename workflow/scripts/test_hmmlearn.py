@@ -27,9 +27,13 @@ from hmmlearn import hmm
 # Import variables
 
 ## Debug
-IN = "/hps/nobackup/birney/users/ian/somites/processed_recomb/F2/all_sites/20000.csv"
-REPORTER_LOC = "16:28706898-28708417"
-REP_PHENO = "data/20220321_phenotypes.xlsx"
+IN = "/hps/nobackup/birney/users/ian/somites/hmm_in/F2/hdrr/F1_het_min_DP/15/5000.csv"
+MOD = "A"
+
+## True
+IN = snakemake.input[0]
+MOD = snakemake.params.mod
+OUT = snakemake.output[0]
 
 # Extract reporter chr, start, and end
 

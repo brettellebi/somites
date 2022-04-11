@@ -11,8 +11,8 @@ library(DT)
 ## Input files
 
 ```{r}
-dp_files = c("/hps/nobackup/birney/users/ian/somites/dpABs/F2/F1_het_min_DP/1.txt",
-             "/hps/nobackup/birney/users/ian/somites/dpABs/F2/F1_het_min_DP/2.txt")
+dp_files = c("/hps/nobackup/birney/users/ian/somites/dpABs/F2/hdrr/F1_het_min_DP/1.txt",
+             "/hps/nobackup/birney/users/ian/somites/dpABs/F2/hdrr/F1_het_min_DP/2.txt")
 
 bin_len = 5000
 ```
