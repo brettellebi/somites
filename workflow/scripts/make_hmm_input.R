@@ -60,7 +60,7 @@ final = purrr::map(IN_FILES, function(FILE) {
     dplyr::summarise(CAB_COUNT = sum(F0_1_COUNT),
                      KAGA_COUNT = sum(F0_2_COUNT),
                      TOTAL_COUNT = CAB_COUNT + KAGA_COUNT,
-                     PROP_CAB = CAB_COUNT / TOTAL_COUNT) %>% 
+                     PROP_KAGA = KAGA_COUNT / TOTAL_COUNT) %>% 
     dplyr::ungroup()
   
   return(out)

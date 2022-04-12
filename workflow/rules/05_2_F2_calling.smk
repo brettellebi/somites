@@ -70,7 +70,7 @@ rule make_hmm_input:
         bin_length = "{bin_length}",
         max_reads = "{max_reads}"
     resources:
-        mem_mb = 10000
+        mem_mb = 7000
     container:
         config["tidyverse_4.1.3"]
     script:

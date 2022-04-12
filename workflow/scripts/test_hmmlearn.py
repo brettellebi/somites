@@ -29,78 +29,134 @@ from hmmlearn import hmm
 ## Debug
 IN = "/hps/nobackup/birney/users/ian/somites/hmm_in/F2/hdrr/F1_het_min_DP/15/5000.csv"
 MOD = "A"
+LOW_COV_SAMPLES = [26,89,166,178,189,227,239,470,472,473,490,501,502,503,504,505,506,507,508,509,510,511]
 
 ## True
 IN = snakemake.input[0]
 MOD = snakemake.params.mod
+LOW_COV_SAMPLES = snakemake.params.low_cov_samples
 OUT = snakemake.output[0]
 
-# Extract reporter chr, start, and end
+######################
+# Setup
+######################
 
-REP_CHR = int(REPORTER_LOC.split(':')[0])
-REP_STA = int(REPORTER_LOC.split(':')[1].split('-')[0])
-REP_END = int(REPORTER_LOC.split(':')[1].split('-')[1])
-
-# Read in files
+# Read in file
 
 df = pd.read_csv(IN, comment = "#")
-rep_pheno = pd.read_excel(REP_PHENO)
 
-# Filter for REP_CHR chromosome
+# Remove low coverage samples
 
-df_chr = df.loc[df['CHROM'] == REP_CHR, ]
-df_chr = df_chr.reset_index()
-
-# Remove NAs
-df_chr.dropna(inplace = True)
+df = df[~df['SAMPLE'].isin(LOW_COV_SAMPLES)]
 
 # get length (number of rows) for each sample
 
-sample_lengths = df_chr.groupby('SAMPLE').size().values
+s_lens = df.groupby('SAMPLE').size().values.tolist()
+s_chr_lens = df.groupby(['SAMPLE', 'CHROM']).size().values.tolist()
 
-# Pull out rows with the reporter
+# Filter DF for first five samples
 
-key_cols = ['CHROM', 'BIN_START', 'BIN_END', 'SAMPLE', 'STATE_IMP']
-rep_df = df_chr.loc[(df_chr['BIN_START'] < REP_STA) & (df_chr['BIN_END'] > REP_STA), key_cols]
+s_keep = df['SAMPLE'].unique()[0:5].tolist()
+d_trim = df[df['SAMPLE'].isin(s_keep)]
 
-# Recode `STATE_IMP`
-recode_dict = {0:-1, 1:0, 2:1}
-rep_df = rep_df.replace(dict(STATE_IMP=recode_dict))
+s_lens_trim = d_trim.groupby('SAMPLE').size().values.tolist()
+s_chr_lens_trim = d_trim.groupby(['SAMPLE', 'CHROM']).size().values.tolist()
 
-# Join with the reporter phenotype
+# Create HMM input
 
-rep_df = rep_df.merge(rep_pheno[['SAMPLE', 'reporter_pheno']], how = 'left')
+hmm_in = d_trim.loc[:, ['PROP_CAB']] # Needs to remain as a data frame
 
-# Concordance between `STATE_IMP` and `reporter_pheno`
+######################
+# HMM mods
+######################
 
-sum(rep_df['STATE_IMP'] == rep_df['reporter_pheno']) / len(rep_df)
-## 82.57%
+# Set means so that the states are in the right order (0,1,2 for Cab, Het, Kaga)
+means = np.array([[0],
+                 [0.5],
+                 [1]])
 
-###################
-# Proportion of Cab
-###################
+## Mod A
 
-# Create column with proportion of Cab reads
+### Single sequence
 
-df_chr['PROP_CAB'] = df_chr.apply(
-    lambda row: row.CAB_READS /  (row.CAB_READS + row.KAGA_READS), axis=1
-    )
-    
-# Create input
+if MOD == "A":
+  model = hmm.GaussianHMM(n_components=3,
+                          covariance_type="diag",
+                          n_iter=100,
+                          init_params = 'sct' # 'm' should be excluded from initialisations so that we can set them
+                          ) 
+  model.means_ = means
+  model.fit(hmm_in) 
+  states = model.predict(hmm_in)
 
-hmm_propc = df_chr['PROP_CAB'].values.reshape(-1, 1)
+## Mod B
 
-# Set up model
+### Separate chromosomes and samples
 
-model_propc = hmm.GaussianHMM(n_components=3, covariance_type="diag", n_iter=100)
+if MOD == "B":
+  model = hmm.GaussianHMM(n_components=3,
+                          covariance_type="diag",
+                          n_iter=100,
+                          init_params = 'sct'
+                          )
+  model.means_ = means
+  model.fit(hmm_in, lengths = s_chr_lens_trim)
+  states = model.predict(hmm_in)
 
-# Train
+## Mod C
 
-model_propc.fit(hmm_propc, lengths = sample_lengths)
+### Transition matrix:
 
-# Predict
+#### There are ~80k SNPs per sample
+#### We want 2-4 blocks per chromosome = 1-3 transitions = 80000 / (3 * 24) = up to 1 change every say 1000 SNPs
+#### 1 - (1/1000) = 0.999 probability of staying the same
+#### Double probability to transition to HET state than HOM
 
-df_chr['STATE_PROPC'] = model_propc.predict(hmm_propc)
+if MOD == "C":
+  tmat = np.array([[0.999, 0.00066, 0.00033],
+                   [0.0005, 0.999, 0.0005],
+                   [0.00033, 0.00066, 0.999]])
+  model = hmm.GaussianHMM(n_components=3,
+                          covariance_type="diag",
+                          n_iter=100,
+                          algorithm = 'viterbi',
+                          params = 'smc', # 't' excluded so that it doesn't get updated during training
+                          init_params = 'sc' # 's' (startprob), 't' (transmat), 'm' (means), or 'c' (covars)
+                          )
+  model.transmat_ = tmat
+  model.means_ = means
+  model.fit(hmm_in, lengths = s_chr_lens_trim)
+  states = model.predict(hmm_in)
+  
+## Mod D
+
+#### 'Error' states
+
+if MOD == "D":
+  # set means
+  means = np.array([[0],
+                   [0],
+                   [0.5],
+                   [0.5],
+                   [1],
+                   [1]])
+  tmat = np.array([[0.999, 0.00066, 0.00033], # 
+                   [0.0005, 0.999, 0.0005],
+                   [0.00033, 0.00066, 0.999]])
+  covars = np.array([[[]]])
+  # Note changed to MultinomialHMM
+  model = hmm.GaussianHMM(n_components=3,
+                          covariance_type="diag",
+                          n_iter=100,
+                          algorithm = 'viterbi',
+                          params = 'smc',
+                          init_params = 'sc' # 's' (startprob), 't' (transmat), 'm' (means), or 'c' (covars)
+                          )
+  model.transmat_ = tmat
+  model.fit(hmm_in, lengths = s_chr_lens_trim)
+  states = model.predict(hmm_in)
+
+
 
 
 
