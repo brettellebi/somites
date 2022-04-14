@@ -97,14 +97,38 @@ rule all:
 ################
 ## 05_2_F2_calling.smk
 ################
-        expand(rules.make_dp_AB_F2.output,
+#        expand(rules.make_dp_AB_F2.output,
+#                ref = "hdrr",
+#                F2_sample = F2_samples['SAMPLE']
+#        ),
+#        expand(rules.make_hmm_input.output,
+#                ref = "hdrr",
+#                max_reads = config["max_reads_hmm"],
+#                bin_length = config["bin_length"]
+#        ),
+        expand(rules.test_hmmlearn.output.pck,
                 ref = "hdrr",
-                F2_sample = F2_samples['SAMPLE']
+                max_reads = "None",
+                bin_length = "5000",
+                mod = config["mods"]               
         ),
-        expand(rules.make_hmm_input.output,
+        expand(rules.plot_hmmlearn.output.scatter,
                 ref = "hdrr",
-                max_reads = config["max_reads_hmm"],
-                bin_length = config["bin_length"]
+                max_reads = "None",
+                bin_length = "5000",
+                mod = config["mods"]
+        ),
+        expand(rules.true_hmmlearn.output.csv,
+                ref = "hdrr",
+                max_reads = "None",
+                bin_length = "5000",
+                cov = config["hmm_covariance"]
+        ),
+        expand(rules.plot_true_hmmlearn.output.karyoplot_no_missing,
+                ref = "hdrr",
+                max_reads = "None",
+                bin_length = "5000",
+                cov = config["hmm_covariance"]
         ),
 ################
 ## 05_F2_recomb_blocks.smk

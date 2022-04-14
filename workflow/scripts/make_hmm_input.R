@@ -67,8 +67,8 @@ final = purrr::map(IN_FILES, function(FILE) {
 }) %>% 
   # bind into single DF
   dplyr::bind_rows(.id = "SAMPLE") %>% 
-  # replace NAs in PROP_CAB (from counts of 0 for both Cab and Kaga) with 0.5
-  dplyr::mutate(PROP_CAB = tidyr::replace_na(PROP_CAB, 0.5))
+  # replace NAs in PROP_KAGA (from counts of 0 for both Cab and Kaga) with 0.5
+  dplyr::mutate(PROP_KAGA = tidyr::replace_na(PROP_KAGA, 0.5))
 
 # Write to file
 
