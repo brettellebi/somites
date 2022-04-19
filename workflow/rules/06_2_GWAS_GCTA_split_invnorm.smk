@@ -135,7 +135,7 @@ rule get_min_p_perms_invnorm:
             "logs/get_min_p_perms/{ref}/{max_reads}/{bin_length}/{cov}/{phenotype}.log"
         ),
     resources:
-        mem_mb = 200
+        mem_mb = 500
     container:
         config["tidyverse_4.1.3"]
     script:

@@ -13,6 +13,7 @@ include: "rules/05_2_F2_calling.smk"
 include: "rules/06_1_GWAS_GCTA.smk"
 include: "rules/06_2_GWAS_GCTA_split_invnorm.smk"
 include: "rules/06_3_GWAS_GCTA_split_microscope.smk"
+include: "rules/07_annotations.smk"
 #include: "rules/05_F2_recomb_blocks.smk"
 ##include: "rules/06_F0_recomb_blocks.smk"
 #include: "rules/07_1_GridLMM.smk"
@@ -244,12 +245,76 @@ rule all:
 #                phenotype = "intercept"
 #        ),
 ################
+## 07_annotations.smk
+################
+        expand(rules.get_annotations_invnorm.output,
+                ref = "hdrr",
+                max_reads = "None",
+                bin_length = "5000",
+                cov = 0.8,
+                phenotype = "intercept"                
+        ),
+        expand(rules.get_annotations_psm.output,
+                ref = "hdrr",
+                max_reads = "None",
+                bin_length = "5000",
+                cov = 0.8,
+                phenotype = "unsegmented_psm_area",
+                covars = "None"              
+        ),
+################
 ## 06_3_GWAS_GCTA_split_microscope.smk
 ################
-        expand(split_pheno_by_microscope,
-                phenotype = "intercept",
-                microscope = config["microscopes"]
-        ),
+#        expand(rules.split_pheno_by_microscope.output,
+#                phenotype = "intercept",
+#                microscope = config["microscopes"]
+#        ),
+#        expand(rules.split_bed.output,
+#                ref = "hdrr",
+#                max_reads = "None",
+#                bin_length = "5000",
+#                cov = config["hmm_covariance"],
+#                phenotype = "intercept",
+#                microscope = config["microscopes"]
+#        ),
+#        expand(rules.permute_split_microscope_phen.output,
+#                phenotype = "intercept",
+#                microscope = config["microscopes"],
+#                seed = PERM_SEEDS
+#        ),
+#        expand(rules.run_mlma_loco_split_microscope.output,
+#                ref = "hdrr",
+#                max_reads = "None",
+#                bin_length = "5000",
+#                cov = config["hmm_covariance"],
+#                phenotype = "intercept",
+#                microscope = config["microscopes"]
+#        ),
+#        expand(rules.run_mlma_loco_split_microscope_permuted.output,
+#                ref = "hdrr",
+#                max_reads = "None",
+#                bin_length = "5000",
+#                cov = config["hmm_covariance"],
+#                phenotype = "intercept",
+#                microscope = config["microscopes"],
+#                seed = PERM_SEEDS
+#        ),
+#        expand(rules.get_min_p_perms_split_microscope.output,
+#                ref = "hdrr",
+#                max_reads = "None",
+#                bin_length = "5000",
+#                cov = config["hmm_covariance"],
+#                phenotype = "intercept",
+#                microscope = config["microscopes"]
+#        ),
+#        expand(rules.get_manhattan_gcta_split_microscope.output,
+#                ref = "hdrr",
+#                max_reads = "None",
+#                bin_length = "5000",
+#                cov = config["hmm_covariance"],
+#                phenotype = "intercept",
+#                microscope = config["microscopes"]
+#        ),
 ################
 ## 05_F2_recomb_blocks.smk
 ################

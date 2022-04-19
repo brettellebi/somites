@@ -21,7 +21,8 @@ library(tidyverse)
 PHEN = snakemake@input[["phen"]]
 COVAR = snakemake@input[["covar"]]
 MICR = snakemake@params[["microscope"]]
-OUT = snakemake@output[[1]]
+OUT_PHEN = snakemake@output[["phen"]]
+OUT_LIST = snakemake@output[["ids"]]
 
 # Read in files and combine
 
@@ -41,4 +42,14 @@ out = df %>%
 
 # Write to file
 
-readr::write_tsv(out, OUT, col_names = F)
+readr::write_tsv(out, OUT_PHEN, col_names = F)
+
+# Create IDs list
+
+out = out %>% 
+  dplyr::select(FID, IID)
+
+# Write to file
+
+readr::write_tsv(out, OUT_LIST, col_names = F)
+
