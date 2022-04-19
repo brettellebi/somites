@@ -1,5 +1,29 @@
 # Notes
 
+## 14 April 2022
+
+Overall: 
+    COV  CONC
+  <dbl> <dbl>
+1   0.3 0.829
+2   0.5 0.831
+3   0.8 0.831
+4   1   0.831
+
+Concordance between hmmlearn genotype calls and reporter phenotype for covariance = 1:
+
+  STATE REPORTER_PHENO     n
+  <int>          <dbl> <int>
+1     0              0   252
+2     0              1    91
+3     1              0     9
+4     1              1   245
+5     2              1     1
+
+GCTA input formats: https://gcta.freeforums.net/thread/247/greml-estimating-variance-explained-snps
+
+Using phenotypes file shared by Ali via Slack: `phenos_with_reporter_genoandpheno.csv`
+
 ## 7 April 2022
 
 Ewan suggestions for tweaking HMM parameters (Slack):

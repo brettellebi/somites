@@ -165,6 +165,7 @@ rule plot_true_hmmlearn:
     output:
         prop_sites_total = "book/plots/{ref}/F1_het_min_DP/hmmlearn_true/{max_reads}/{bin_length}/{cov}/prop_sites_total.png",
         karyoplot_no_missing = "book/plots/{ref}/F1_het_min_DP/hmmlearn_true/{max_reads}/{bin_length}/{cov}/karyoplot_no_missing.png",
+        karyoplot_with_missing = "book/plots/{ref}/F1_het_min_DP/hmmlearn_true/{max_reads}/{bin_length}/{cov}/karyoplot_wi_missing.png",
     log:
         os.path.join(
             config["working_dir"],
@@ -197,10 +198,11 @@ rule reporter_concordance:
         ),
     params:
         cov = "{cov}",
+        bin_length = "{bin_length}",
         reporter_loc = config["reporter_loc"],
         low_cov_samples = config["low_cov_samples"]
     resources:
-        mem_mb = 2000
+        mem_mb = 10000
     container:
         config["tidyverse_4.1.3"]
     script:

@@ -36,11 +36,8 @@ hdrr_repeats_gff:
 phenotypes_file:
     #data/First595-F2_DF_removed393-389-121_outliers.xlsx
     #data/20220214_phenotypes.xlsx
-    data/20220321_phenotypes.xlsx # now includes reporter
-target_phenotypes:
-    - intercept
-    #- mean
-    - unsegmented_psm_area
+    #data/20220321_phenotypes.xlsx # now includes reporter ## THIS HAD ERRORS!!!
+    config/phenos_with_reporter_genoandpheno.csv
 ref_chr_lengths:
     data/Oryzias_latipes.ASM223467v1.dna.toplevel.fa_chr_counts.txt
 het_black_list:
@@ -138,12 +135,19 @@ reporter_loc:
     16:28706898-28708417
 n_sample_gts:
     - 10
+target_phenotypes:
+    - intercept
+    #- mean
+    - unsegmented_psm_area
 covariates:
     - None
     - Microscope
     - Microscope-reporter_pheno
     #- Date_of_imaging
     #- Microscope-Date_of_imaging
+microscopes:
+    - AU
+    - DB
 inverse_norm:
     - "TRUE"
     - "FALSE"

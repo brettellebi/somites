@@ -1,0 +1,11 @@
+# Concordance between hmmlearn genotype calls and reporter phenotype
+
+## Read in files
+
+```{r}
+IN_FILES = list.files("/hps/nobackup/birney/users/ian/somites/hmm_out/F2/hdrr/reporter_conc/None/5000",
+                      full.names = T)
+
+purrr::map_dfr(IN_FILES, readr::read_csv)
+```
+

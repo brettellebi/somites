@@ -140,3 +140,21 @@ rule extract_homo_div_snps:
         mem_mb = 20000
     script:
         "../scripts/extract_homo_div_snps.R"
+
+# Plot SNP counts per chromosome
+rule plot_SNP_counts_per_chr:
+    input:
+        rules.extract_homo_div_snps.output.sites,
+    output:
+        plot = "book/plots/sites/snp_counts_per_chr/{ref}.png"
+    log:
+        os.path.join(
+            config["working_dir"],
+            "logs/plot_SNP_counts_per_chr/{ref}.log"
+        ),
+    container:
+        config["tidyverse_4.1.3"]
+    resources:
+        mem_mb = 5000
+    script:
+        "../scripts/plot_SNP_counts_per_chr.R"

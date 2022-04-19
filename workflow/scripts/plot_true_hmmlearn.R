@@ -139,7 +139,7 @@ ggsave(PROP_SITES_TOT,
        dpi = 400)
 
 #######################
-# Karyoplots
+# Karyoplot no missing
 #######################
 
 # Create custom genome 
@@ -216,6 +216,106 @@ purrr::map(block_bounds_list, function(SAMPLE){
   karyoploteR::kpRect(kp,
                       chr = SAMPLE$CHROM,
                       x0 = SAMPLE$END_PREV,
+                      x1 = SAMPLE$BIN_END,
+                      y0 = lane_cutoffs[counter, ] %>% 
+                        dplyr::pull(lower),
+                      y1 = lane_cutoffs[counter, ] %>% 
+                        dplyr::pull(upper),
+                      col = SAMPLE$COLOUR,
+                      border = NA)
+  # Add axis label
+  karyoploteR::kpAddLabels(kp, labels = unique(SAMPLE$SAMPLE),
+                           r0 = lane_cutoffs[counter, ] %>% 
+                             dplyr::pull(lower),
+                           r1 = lane_cutoffs[counter, ] %>% 
+                             dplyr::pull(upper),
+                           cex = 0.5)
+})
+
+
+dev.off()
+
+#######################
+# Karyoplot WITH missing
+#######################
+
+## Process
+block_bounds_list = df %>% 
+  # loop over LANE
+  split(., f = .$SAMPLE) %>% 
+  purrr::map(., function(SAMPLE){
+  
+    STRAIN = unique(SAMPLE$SAMPLE)
+    # Create list of possible bins
+    poss_bins = purrr::map(med_chr_lens$chr, function(CHROM){
+      # Get chr end
+      CHR_END = med_chr_lens %>% 
+        dplyr::filter(chr == CHROM) %>% 
+        dplyr::pull(end) %>% 
+        as.numeric()
+      # Get bin starts
+      out = tibble::tibble(CHROM = as.numeric(CHROM),
+                           BIN_START = seq(from = 1, to = CHR_END, by = BIN_LENGTH),
+                           BIN_END = BIN_START + BIN_LENGTH - 1
+      )
+      # Adjust final bin end 
+      out[nrow(out), "BIN_END"] = CHR_END
+      
+      return(out)
+    }) %>% 
+      dplyr::bind_rows()
+  
+    
+    # Bind DF
+    new_df = dplyr::left_join(poss_bins,
+                              SAMPLE %>% 
+                                dplyr::select(CHROM, BIN_START, BIN_END, STATE),
+                              by = c("CHROM", "BIN_START", "BIN_END")) %>% 
+      # replace NAs with `UNCLASSIFIED`
+      dplyr::mutate(STATE = as.character(STATE),
+                    STATE = STATE %>% 
+                      tidyr::replace_na("UNCLASSIFIED"),
+                    # add STRAIN
+                    SAMPLE = STRAIN) %>% 
+      # add COLOUR
+      dplyr::mutate(COLOUR = dplyr::recode(STATE,
+                                           !!!pal_hom_het_2))
+  
+            
+  })
+
+# Plot karyoplot
+
+png(file=KARYOPLOT_WIMISS,
+    width=7800,
+    height=23400,
+    units = "px",
+    res = 400)
+
+# Plot ideogram
+kp = karyoploteR::plotKaryotype(med_genome, plot.type = 5)
+
+# Plot title
+karyoploteR::kpAddMainTitle(kp,
+                            paste("Emission (co)variances: ", 
+                                  COV,
+                                  "\nMax reads per bin: ",
+                                  MAX_READS,
+                                  "\nBin length: ",
+                                  BIN_LENGTH,
+                                  sep = ""),
+                            cex=4)
+
+
+# Add rectangles in loop
+counter = 0
+purrr::map(block_bounds_list, function(SAMPLE){
+  # Add to counter
+  counter <<- counter + 1
+  # Add rectangles
+  karyoploteR::kpRect(kp,
+                      chr = SAMPLE$CHROM,
+                      x0 = SAMPLE$BIN_START,
                       x1 = SAMPLE$BIN_END,
                       y0 = lane_cutoffs[counter, ] %>% 
                         dplyr::pull(lower),

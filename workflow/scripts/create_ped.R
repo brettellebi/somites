@@ -11,81 +11,78 @@ library(tidyverse)
 # Get variables
 
 ## Debug
-#GENO_FILE = "/hps/nobackup/birney/users/ian/somites/processed_recomb/F2/all_sites/5000.csv"
-#PHENO_FILE = here::here("data/20220321_phenotypes.xlsx")
+#GENO_FILE = "/hps/nobackup/birney/users/ian/somites/hmm_out/F2/hdrr/hmmlearn_true/None/5000/1.csv"
 #PHENOTYPE = "unsegmented_psm_area"
 
 ## True
 GENO_FILE = snakemake@input[["genos"]]
-PHENO_FILE = snakemake@input[["phenos"]]
 OUT_PED = snakemake@output[["ped"]]
 OUT_MAP= snakemake@output[["map"]]
 OUT_PHEN = snakemake@output[["phen"]]
 PHENOTYPE = snakemake@params[["phenotype"]]
 
-# Read in files
+# Read in genos
 
 df = readr::read_csv(GENO_FILE)
+  
+# Impute missing genotypes based on previous call
 
-phenos = readxl::read_xlsx(PHENO_FILE) %>% 
-  dplyr::select(SAMPLE, all_of(PHENOTYPE))
+df_imp = df %>% 
+  dplyr::select(SAMPLE, CHROM, BIN, STATE) %>% 
+  tidyr::pivot_wider(names_from = SAMPLE,
+                     values_from = STATE) %>% 
+  # group by chromosome so that values aren't pulled from previous chromosome
+  dplyr::group_by(CHROM) %>% 
+  # impute based on previous call. If first call is missing at start of chromosome, fill by genotypes below
+  tidyr::fill(-c(CHROM, BIN), .direction = "updown") %>% 
+  # ungroup
+  dplyr::ungroup() %>% 
+  # pivot back to longer format
+  tidyr::pivot_longer(cols = -c(CHROM, BIN),
+                      names_to = "SAMPLE",
+                      values_to = "STATE") %>% 
+  # make `SAMPLE` numeric
+  dplyr::mutate(SAMPLE = as.numeric(SAMPLE))
 
 # Process
 
-new = df %>%
+new = df_imp %>%
   #dplyr::slice_sample(n = 1000) %>% 
   # order sample
-  dplyr::arrange(SAMPLE, CHROM, BIN_START) %>% 
+  dplyr::arrange(SAMPLE, CHROM, BIN) %>% 
   # add SNP ID by pasting CHROM and BIN_START
-  dplyr::mutate(SNP = paste(CHROM, BIN_START, sep = ":")) %>% 
-  dplyr::select(SNP, CHROM, BIN_START, SAMPLE, STATE_IMP) %>% 
-  # add extra columns
-  dplyr::mutate(FID = SAMPLE,
-                IID = SAMPLE,
-                IID_PAT = 0,   # dummy
-                IID_MAT = 0,   # dummy
-                SEX = 0        # dummy
-                ) %>% 
-  # bind with phenotypes
-  dplyr::left_join(.,
-                   phenos,
-                   by = "SAMPLE") %>% 
+  dplyr::mutate(SNP = paste(CHROM, BIN, sep = ":")) %>% 
+  dplyr::select(SNP, CHROM, BIN, SAMPLE, STATE) %>% 
   # split genotype into two columns, one for each allele
-  dplyr::mutate(A1 = dplyr::case_when(STATE_IMP == 0 ~ "A",
-                                      STATE_IMP == 1 ~ "A",
-                                      STATE_IMP == 2 ~ "B"),
-                A2 = dplyr::case_when(STATE_IMP == 0 ~ "A",
-                                      STATE_IMP == 1 ~ "B",
-                                      STATE_IMP == 2 ~ "B"))
+  dplyr::mutate(GT = dplyr::case_when(STATE == 0 ~ "AA",
+                                      STATE == 1 ~ "AB",
+                                      STATE == 2 ~ "BB"))
 
 # Create .ped file by widening to put genotypes for each SNP into their own columns
 
 ped = new %>% 
-  dplyr::select(FID, IID, IID_PAT, IID_MAT, SEX, all_of(PHENOTYPE), SNP, A1, A2) %>% 
+  dplyr::select(SAMPLE, SNP, GT) %>% 
   # put each sample's genotypes into their own column
-  tidyr::pivot_wider(names_from = SNP, values_from = c(A1, A2), names_vary = "slowest")
+  tidyr::pivot_wider(names_from = SNP, values_from = GT, names_vary = "slowest")
 
 # Create .map file
 
 map = new %>% 
   # order
-  dplyr::arrange(CHROM, BIN_START) %>% 
+  dplyr::arrange(CHROM, BIN) %>% 
   # get distinct loci
-  dplyr::distinct(CHROM, SNP, BIN_START, .keep_all = F) %>% 
-  # add position in centimorgans column with dummy value of 0
-  dplyr::mutate(POS = 0) %>% 
-  # reorder
-  dplyr::select(CHROM, SNP, POS, BIN_START)
+  dplyr::distinct(CHROM, SNP, BIN, .keep_all = F) %>% 
+  # reorder columns
+  dplyr::select(CHROM, SNP, BIN)
 
-# Create .phen file (see example here: https://github.com/jianyangqt/gcta/blob/master/test/tests/data/test.phen)
+# Create .phen file (see example here: https://github.com/jianyangqt/gcta/blob/master/test/tests/data/test.phen )
 
-phen = new %>% 
-  dplyr::distinct(FID, IID, all_of(PHENOTYPE)) %>% 
-  dplyr::arrange(FID)
+#phen = new %>% 
+#  dplyr::distinct(FID, IID, all_of(PHENOTYPE)) %>% 
+#  dplyr::arrange(FID)
 
 # Write to file
 
-readr::write_delim(ped, OUT_PED, delim = " ", col_names = F)
-readr::write_delim(map, OUT_MAP, delim = " ", col_names = F)
-readr::write_delim(phen, OUT_PHEN, delim = " ", col_names = F)
-  
+readr::write_tsv(ped, OUT_PED, col_names = F)
+readr::write_tsv(map, OUT_MAP, col_names = F)
+#readr::write_tsv(phen, OUT_PHEN, col_names = F)

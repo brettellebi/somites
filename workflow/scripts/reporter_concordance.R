@@ -11,19 +11,22 @@ library(tidyverse)
 # Get variables
 
 ## Debug
-BIN_LENGTH = as.numeric("5000")
-GENO = "/hps/nobackup/birney/users/ian/somites/hmm_out/F2/hdrr/hmmlearn_true/None/5000/0.3.csv"
-COV = "0.3"
-REPORTER = "16:28706898-28708417"
-PHENO = here::here("data/20220321_phenotypes.xlsx")
-LOW_COV_SAMPLES = c(26, 89, 166, 178, 189, 227, 239, 470, 472, 473, 490, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511)
-MAX_READS = "None"
+#BIN_LENGTH = as.numeric("5000")
+#GENO = "/hps/nobackup/birney/users/ian/somites/hmm_out/F2/hdrr/hmmlearn_true/None/5000/1.csv"
+#COV = "1"
+#REPORTER = "16:28706898-28708417"
+#PHENO = here::here("data/20220321_phenotypes.xlsx")
+#LOW_COV_SAMPLES = c(26, 89, 166, 178, 189, 227, 239, 470, 472, 473, 490, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511)
+#MAX_READS = "None"
 
 ## True
 GENO = snakemake@input[["geno"]]
 PHENO = snakemake@input[["pheno"]]
 COV = snakemake@params[["cov"]]
+BIN_LENGTH = snakemake@params[["bin_length"]] %>% 
+  as.numeric()
 REPORTER = snakemake@params[["reporter_loc"]]
+LOW_COV_SAMPLES = snakemake@params[["low_cov_samples"]]
 OUT = snakemake@output[[1]]
 
 

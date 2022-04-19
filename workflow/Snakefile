@@ -10,10 +10,12 @@ include: "rules/03_2_F1_calling.smk"
 include: "rules/04_trio_homozygosity.smk"
 include: "rules/05_1_F2_mapping.smk"
 include: "rules/05_2_F2_calling.smk"
+include: "rules/06_1_GWAS_GCTA.smk"
+include: "rules/06_2_GWAS_GCTA_split_invnorm.smk"
+include: "rules/06_3_GWAS_GCTA_split_microscope.smk"
 #include: "rules/05_F2_recomb_blocks.smk"
 ##include: "rules/06_F0_recomb_blocks.smk"
 #include: "rules/07_1_GridLMM.smk"
-#include: "rules/07_3_GCTA.smk"
 #include: "rules/08_F2_calling.smk"
 #include: "rules/09_TIGER.smk"
 
@@ -87,6 +89,9 @@ rule all:
 #        expand(rules.extract_homo_div_snps.output.sites,
 #                ref = config["refs"]
 #        ),
+#        expand(rules.plot_SNP_counts_per_chr.output,
+#                ref = "hdrr"
+#        ),
 ################
 ## 05_1_F2_mapping.smk
 ################
@@ -106,29 +111,144 @@ rule all:
 #                max_reads = config["max_reads_hmm"],
 #                bin_length = config["bin_length"]
 #        ),
-        expand(rules.test_hmmlearn.output.pck,
-                ref = "hdrr",
-                max_reads = "None",
-                bin_length = "5000",
-                mod = config["mods"]               
-        ),
-        expand(rules.plot_hmmlearn.output.scatter,
-                ref = "hdrr",
-                max_reads = "None",
-                bin_length = "5000",
-                mod = config["mods"]
-        ),
-        expand(rules.true_hmmlearn.output.csv,
-                ref = "hdrr",
-                max_reads = "None",
-                bin_length = "5000",
-                cov = config["hmm_covariance"]
-        ),
-        expand(rules.plot_true_hmmlearn.output.karyoplot_no_missing,
-                ref = "hdrr",
-                max_reads = "None",
-                bin_length = "5000",
-                cov = config["hmm_covariance"]
+#        expand(rules.test_hmmlearn.output.pck,
+#                ref = "hdrr",
+#                max_reads = "None",
+#                bin_length = "5000",
+#                mod = config["mods"]               
+#        ),
+#        expand(rules.plot_hmmlearn.output.scatter,
+#                ref = "hdrr",
+#                max_reads = "None",
+#                bin_length = "5000",
+#                mod = config["mods"]
+#        ),
+#        expand(rules.true_hmmlearn.output.csv,
+#                ref = "hdrr",
+#                max_reads = "None",
+#                bin_length = "5000",
+#                cov = config["hmm_covariance"]
+#        ),
+#        expand(rules.plot_true_hmmlearn.output,
+#                ref = "hdrr",
+#                max_reads = "None",
+#                bin_length = "5000",
+#                cov = config["hmm_covariance"]
+#        ),
+#        expand(rules.reporter_concordance.output,
+#                ref = "hdrr",
+#                max_reads = "None",
+#                bin_length = "5000",
+#                cov = config["hmm_covariance"]
+#        ),
+################
+## 06_GWAS_GCTA.smk
+################
+#        expand(rules.create_ped.output,
+#                ref = "hdrr",
+#                max_reads = "None",
+#                bin_length = "5000",
+#                cov = config["hmm_covariance"]
+#        ),
+#        expand(rules.create_bed.output,
+#                ref = "hdrr",
+#                max_reads = "None",
+#                bin_length = "5000",
+#                cov = config["hmm_covariance"]
+#        ),
+#        expand(rules.create_phen.output,
+#                phenotype = config["target_phenotypes"]
+#        ),
+#        expand(rules.permute_phen.output,
+#                phenotype = config["target_phenotypes"],
+#                seed = PERM_SEEDS
+#        ),
+#        expand(rules.create_covar.output,
+#                covars = config["covariates"][1:] #NOTE: important not to include first covariate ("None")
+#        ),
+#        expand(rules.permute_covar.output,
+#                covars = config["covariates"][1:], #NOTE: important not to include first covariate ("None")
+#                seed = PERM_SEEDS
+#        ),
+#        rules.create_excluded_samples_list.output,
+#        expand(rules.run_mlma_loco.output,
+#                ref = "hdrr",
+#                max_reads = "None",
+#                bin_length = "5000",
+#                cov = config["hmm_covariance"],
+#                phenotype = config["target_phenotypes"],
+#                covars = config["covariates"]
+#        ),
+#        expand(rules.run_mlma_loco_permuted.output,
+#                ref = "hdrr",
+#                max_reads = "None",
+#                bin_length = "5000",
+#                cov = config["hmm_covariance"],
+#                phenotype = config["target_phenotypes"],
+#                covars = config["covariates"],
+#                seed = PERM_SEEDS
+#        ),
+#        expand(rules.get_min_p_perms.output,
+#                ref = "hdrr",
+#                max_reads = "None",
+#                bin_length = "5000",
+#                cov = config["hmm_covariance"],
+#                phenotype = config["target_phenotypes"],
+#                covars = config["covariates"],                
+#        ),
+#        expand(rules.get_manhattan_gcta.output,
+#                ref = "hdrr",
+#                max_reads = "None",
+#                bin_length = "5000",
+#                cov = config["hmm_covariance"],
+#                phenotype = config["target_phenotypes"],
+#                covars = config["covariates"]        
+#        ),
+################
+## 06_GWAS_GCTA_split_invnorm.smk
+################
+#        expand(rules.split_inv_norm_pheno.output,
+#                phenotype = "intercept"
+#        ),
+#        expand(rules.permute_invnorm_phen.output,
+#                phenotype = "intercept",
+#                seed = PERM_SEEDS
+#        ),
+#        expand(rules.run_mlma_loco_invnorm.output,
+#                ref = "hdrr",
+#                max_reads = "None",
+#                bin_length = "5000",
+#                cov = config["hmm_covariance"],
+#                phenotype = "intercept"
+#        ),
+#        expand(rules.run_mlma_loco_invnorm_permuted.output,
+#                ref = "hdrr",
+#                max_reads = "None",
+#                bin_length = "5000",
+#                cov = config["hmm_covariance"],
+#                phenotype = "intercept",
+#                seed = PERM_SEEDS
+#        ),
+#        expand(rules.get_min_p_perms_invnorm.output,
+#                ref = "hdrr",
+#                max_reads = "None",
+#                bin_length = "5000",
+#                cov = config["hmm_covariance"],
+#                phenotype = "intercept",
+#        ),
+#        expand(rules.get_manhattan_gcta_invnorm.output,
+#                ref = "hdrr",
+#                max_reads = "None",
+#                bin_length = "5000",
+#                cov = config["hmm_covariance"],
+#                phenotype = "intercept"
+#        ),
+################
+## 06_3_GWAS_GCTA_split_microscope.smk
+################
+        expand(split_pheno_by_microscope,
+                phenotype = "intercept",
+                microscope = config["microscopes"]
         ),
 ################
 ## 05_F2_recomb_blocks.smk
