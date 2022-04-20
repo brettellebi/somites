@@ -1,0 +1,136 @@
+# Exploration of hits
+
+```{r, message = F, warning = F}
+library(tidyverse)
+library(ggbeeswarm)
+```
+
+
+## Period intercept
+
+### Read in files
+
+```{r}
+HITS = "/hps/nobackup/birney/users/ian/somites/gcta/mlma_loco_invnorm/true/hdrr/None/5000/0.8/intercept.loco.mlma"
+GENOS = "/hps/nobackup/birney/users/ian/somites/hmm_out/F2/hdrr/hmmlearn_true/None/5000/0.8.csv"
+PHENOS_INVNORM = "/hps/nobackup/birney/users/ian/somites/phens/inv_norm/intercept.phen"
+PHENOS = here::here("config/phenos_with_reporter_genoandpheno.csv")
+BIN_LENGTH = 5000
+
+# Read in hits and pull location of top hit
+hits = readr::read_tsv(HITS) %>% 
+  dplyr::rename(BIN = bp) %>% 
+  dplyr::mutate(BIN_START = (BIN * BIN_LENGTH) + 1,
+                BIN_END = ((BIN + 1) * BIN_LENGTH)) %>% 
+  # make beta direction consistent
+  dplyr::mutate(ADJ_BETA = dplyr::case_when(A1 == "B" ~ b,
+                                            A1 == "A" ~ -b))
+
+top_hit = hits %>% 
+  dplyr::slice(which.min(p)) 
+
+TARGET_CHROM = top_hit %>% 
+  dplyr::pull(Chr)
+
+TARGET_BIN = top_hit %>% 
+  dplyr::pull(BIN)
+
+genos = readr::read_csv(GENOS) %>% 
+  dplyr::filter(CHROM == TARGET_CHROM & BIN == TARGET_BIN)
+
+
+geno_means = readr::read_csv(GENOS) %>% 
+  dplyr::group_by(SAMPLE) %>% 
+  dplyr::summarise(MEAN_PROP_KAGA = mean(PROP_KAGA))
+
+phenos = readr::read_tsv(PHENOS_INVNORM,
+                         col_names = c("FID", "SAMPLE", "PHENO"))
+
+phenos_ntrans = readr::read_delim(PHENOS, delim = ";")
+
+# Join
+
+df = dplyr::left_join(genos %>% 
+                        dplyr::select(SAMPLE, STATE),
+                      phenos %>% 
+                        dplyr::select(SAMPLE, PHENO),
+                      by = "SAMPLE")
+
+df_prop = dplyr::left_join(geno_means,
+                           phenos %>% 
+                             dplyr::select(SAMPLE, PHENO),
+                           by = "SAMPLE")
+
+df_ntrans = dplyr::left_join(geno_means,
+                             phenos_ntrans %>% 
+                               dplyr::select(SAMPLE, intercept),
+                             by = "SAMPLE")
+  
+```
+
+### Plot
+
+#### Mean proportion of Kaga against phenotype (invnorm)
+
+```{r}
+df_prop %>% 
+  ggplot(aes(MEAN_PROP_KAGA, PHENO)) +
+    geom_point() +
+    geom_smooth() +
+    theme_bw() +
+  xlab("Mean proportion of Kaga reads across all bins") +
+  ylab("Split inverse-normalised period intercept")
+```
+
+#### Mean proportion of Kaga against phenotype (non-transformed period intercept)
+
+```{r}
+df_ntrans %>% 
+  ggplot(aes(MEAN_PROP_KAGA, intercept)) +
+    geom_point() +
+    geom_smooth() +
+    theme_bw() +
+  xlab("Mean proportion of Kaga reads across all bins") +
+  ylab("Untransformed period intercept")
+```
+
+#### Top hit
+
+```{r}
+df %>% 
+  dplyr::mutate(STATE = factor(STATE, levels = 0:2)) %>% 
+  ggplot(aes(STATE, PHENO)) +
+    geom_boxplot() +
+    ggbeeswarm::geom_beeswarm(alpha = 0.5) +
+    theme_bw() +
+    ggtitle(paste("Period intercept top hit",
+                  "\nLocus: ",
+                  TARGET_CHROM,
+                  ":", 
+                  (TARGET_BIN * BIN_LENGTH + 1),
+                  "-",
+                  ((TARGET_BIN + 1) * BIN_LENGTH),
+                  sep = "")) +
+    xlab("Genotype (0 = Hom Cab, 1 = Het, 2 = Hom Kaga)") +
+    ylab("Split inverse-normalised period intercept")
+```
+
+#### All betas
+
+```{r}
+hits %>% 
+  ggplot() +
+  geom_point(aes(-log10(p), ADJ_BETA), alpha = 0.1) +
+  theme_bw() +
+  xlab(expression(-log[10](p))) +
+  ylab("beta for Kaga allele")
+```
+
+```{r}
+hits %>% 
+  ggplot() +
+    geom_density(aes(ADJ_BETA)) +
+    theme_bw() +
+    xlab("beta for Kaga allele")
+```
+
