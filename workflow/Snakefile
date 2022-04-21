@@ -274,7 +274,7 @@ rule all:
                 max_reads = "None",
                 bin_length = "5000",
                 cov = 0.8,
-                phenotype = "intercept",
+                phenotype = "unsegmented_psm_area",
                 covars = "None"    
         ),       
 ################
