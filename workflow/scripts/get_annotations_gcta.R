@@ -55,7 +55,7 @@ sites = readr::read_tsv(SITES,
                                               Cab_GT == "1/1" ~ ALT),
                 KAGA_ALLELE = dplyr::case_when(Kaga_GT == "0/0" ~ REF,
                                                Kaga_GT == "1/1" ~ ALT)) %>% 
-  dplyr::select(CHROM, POS = POS_1, CAB_ALLELE, KAGA_ALLELE) %>% 
+  dplyr::select(CHROM, POS = POS_1, REF, ALT, CAB_ALLELE, KAGA_ALLELE) %>% 
   # get bin
   dplyr::mutate(BIN = floor(POS / BIN_LENGTH),
                 BIN_START = (BIN * BIN_LENGTH) + 1,

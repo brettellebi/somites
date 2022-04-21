@@ -43,3 +43,53 @@ rule get_annotations_psm:
         config["R_4.1.3"]
     script:
         "../scripts/get_annotations_gcta.R"
+
+rule prepare_vep_input_invnorm:
+    input:
+        rules.get_annotations_invnorm.output.snps,
+    output:
+        out = "results/vep_invnorm/{ref}/{max_reads}/{bin_length}/{cov}/{phenotype}/vep_in.txt",
+    log:
+        os.path.join(
+            config["working_dir"],
+            "logs/prepare_vep_input_invnorm/{ref}/{max_reads}/{bin_length}/{cov}/{phenotype}.log"
+        ),
+    resources:
+        mem_mb = 500
+    container:
+        config["tidyverse_4.1.3"]
+    script:
+        "../scripts/prepare_vep_input.R"
+
+rule run_vep_invnorm:
+    input:
+        rules.prepare_vep_input_invnorm.output.out,
+    output:
+        out = "results/vep_invnorm/{ref}/{max_reads}/{bin_length}/{cov}/{phenotype}/vep_out.txt",
+        #cache = os.path.join(
+        #    config["working_dir"],
+        #    "vep_cache/{ref}/{max_reads}/{bin_length}/{cov}/{phenotype}"
+        #),
+    log:
+        os.path.join(
+            config["working_dir"],
+            "logs/run_vep_invnorm/{ref}/{max_reads}/{bin_length}/{cov}/{phenotype}.log"
+        ),
+    params:
+        species = lambda wildcards: config["refs"][wildcards.ref]["species"],
+        assembly = lambda wildcards: config["refs"][wildcards.ref]["build"],
+    resources:
+        mem_mb = 5000
+    container:
+        config["ensembl_vep_104"]
+    shell:
+        """
+        vep \
+            --input_file {input} \
+            --output_file {output.out} \
+            --species {params.species} \
+            --assembly {params.assembly} \
+            --database \
+            --genomes \
+                2> {log}
+        """
