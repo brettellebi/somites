@@ -262,20 +262,21 @@ rule all:
                 phenotype = "unsegmented_psm_area",
                 covars = "None"              
         ),
-        expand(rules.prepare_vep_input_invnorm.output,
-                ref = "hdrr",
-                max_reads = "None",
-                bin_length = "5000",
-                cov = 0.8,
-                phenotype = "intercept"       
-        ),
         expand(rules.run_vep_invnorm.output,
                 ref = "hdrr",
                 max_reads = "None",
                 bin_length = "5000",
                 cov = 0.8,
                 phenotype = "intercept"       
-        ),        
+        ),
+        expand(rules.run_vep_psm.output,
+                ref = "hdrr",
+                max_reads = "None",
+                bin_length = "5000",
+                cov = 0.8,
+                phenotype = "intercept",
+                covars = "None"    
+        ),       
 ################
 ## 06_3_GWAS_GCTA_split_microscope.smk
 ################
