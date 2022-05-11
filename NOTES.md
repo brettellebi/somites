@@ -1,5 +1,17 @@
 # Notes
 
+## 11 May 2022
+
+Requests from Ali:
+
+* Zoom in on significant 1Mb region on chr3 for Kaga F0 – het or hom?
+
+    - `rule kaga_F0_chr3` in `08_extra.smk`
+
+* Get list of F2 samples that are HOM Kaga at the significant 1Mb region on chr3 (to see period intercept)
+
+* Karyoplot of F2s without the low-coverage samples
+
 ## 14 April 2022
 
 Overall: 

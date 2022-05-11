@@ -94,6 +94,7 @@ singularity shell --bind /hps/nobackup/birney/users/ian/rstudio_db:/var/lib/rstu
                   --bind /hps/nobackup/birney/users/ian/run:/run \
                   $CONT
 # Then run rserver, setting path of config file containing library path
+rstudio-server kill-all
 rserver \
     --rsession-config-file /hps/software/users/birney/ian/repos/somites/workflow/envs/R_4.1.3/rsession.conf \
     --server-user brettell

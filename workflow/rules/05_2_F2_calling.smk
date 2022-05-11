@@ -206,4 +206,5 @@ rule reporter_concordance:
     container:
         config["tidyverse_4.1.3"]
     script:
-        "../scripts/reporter_concordance.R"    
+        "../scripts/reporter_concordance.R"
+
