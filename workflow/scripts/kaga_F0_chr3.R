@@ -13,41 +13,28 @@ library(cowplot)
 
 ## Debug
 
-GENOS = "/hps/nobackup/birney/users/ian/somites/genos/F0_and_F1/hdrr/final/all.csv"
 COUNTS = "/hps/nobackup/birney/users/ian/somites/genos/F0_and_F1/hdrr/counts/Kaga/5000.csv"
 RES = "/hps/nobackup/birney/users/ian/somites/gcta/mlma_loco_invnorm/true/hdrr/None/5000/0.8/intercept.loco.mlma"
 MIN_P = "/hps/nobackup/birney/users/ian/somites/gcta/mlma_loco_invnorm/min_p/hdrr/None/5000/0.8/intercept.csv"
-
 BIN_LENGTH = 5000
 
 ## True
-
+COUNTS = snakemake@input[["counts"]]
+RES = snakemake@input[["res"]]
+MIN_P = snakemake@input[["min_p"]]
+BIN_LENGTH = snakemake@params[["bin_length"]] %>% 
+  as.numeric()
+OUT = snakemake@output[["fig"]]
 
 ######################
 # Read in files
 ######################
 
-# Genotypes
-
-#genos = readr::read_csv(GENOS)
-
-# Select columns
-
-#genos = genos %>% 
-#  dplyr::select(CHROM = `# [1]CHROM`,
-#                POS = `[2]POS`,
-#                KAGA_GT = `[7]Kaga:GT`)
-#
 # Counts
 
 counts = readr::read_csv(COUNTS) %>% 
   dplyr::mutate(BIN_START = (BIN -1) * BIN_LENGTH + 1,
-                BIN_END = BIN * BIN_LENGTH) %>% 
-  # re-calculate PROP_HOM
-  dplyr::mutate(dplyr::across(c("HOM", "HET", "MISS"),
-                ~ tidyr::replace_na(.x, 0))) %>% 
-  dplyr::mutate(TOT_HITS = HOM + HET + MISS) %>% 
-  dplyr::mutate(PROP_HOM = HOM/ TOT_HITS)
+                BIN_END = BIN * BIN_LENGTH)
 
 # Significance level
 
@@ -71,18 +58,6 @@ res = readr::read_tsv(RES) %>%
 loc_start = min(res$BIN_START)
 loc_end = max(res$BIN_END)
 
-# Filter genotypes
-
-#genos_sig = genos %>% 
-#  dplyr::filter(CHROM == 3 & POS >= loc_start & POS <= loc_end) %>% 
-#  # Remove missing genotypes
-#  dplyr::filter(!(KAGA_GT %in% c("./.", ".|."))) %>% 
-#  # Recode GTs as hom or het
-#  dplyr::mutate(HOM_HET = dplyr::case_when(KAGA_GT %in% c("0/1", "0|1") ~ "HET",
-#                                           KAGA_GT %in% c("1|1", "0/0", "0|0", "1/1") ~ "HOM")) %>% 
-#  # convert POS to Mb
-#  dplyr::mutate(POS_MB = POS/1e6)
-
 # Filter counts
 
 counts_sig = counts %>% 
@@ -93,7 +68,7 @@ counts_sig = counts %>%
 # Plot
 ######################
 
-out = counts_sig %>% 
+prop_hom = counts_sig %>% 
   ggplot() + 
   #geom_line(aes(BIN_START_MB, PROP_HOM)) +
   geom_area(aes(BIN_START_MB, PROP_HOM), fill = "#DE3C4B") +
@@ -102,10 +77,24 @@ out = counts_sig %>%
   xlab("position (Mb)") +
   ylab("proportion of homozygous SNPs")
 
+snp_counts = counts_sig %>% 
+  ggplot() +
+  geom_col(aes(BIN_START_MB, TOT_HITS), fill = "#F3B700") + 
+  cowplot::theme_cowplot() +
+  ggtitle("SNP counts per bin") +
+  xlab("position (Mb)") +
+  ylab("SNP count per bin")
+
+out = cowplot::plot_grid(prop_hom,
+                         snp_counts,
+                         rel_widths = 1,
+                         rel_heights = 0.5,
+                         nrow = 2)
+
 ggsave(OUT,
        out,
        device = "png",
-       width = 9,
-       height = 3.2,
+       width = 10,
+       height = 5,
        units = "in", 
        dpi = 400)

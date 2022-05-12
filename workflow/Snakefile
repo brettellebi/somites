@@ -209,9 +209,9 @@ rule all:
 ################
 ## 06_GWAS_GCTA_split_invnorm.smk
 ################
-        expand(rules.split_inv_norm_pheno.output,
-                phenotype = "intercept"
-        ),
+#        expand(rules.split_inv_norm_pheno.output,
+#                phenotype = "intercept"
+#        ),
 #        expand(rules.permute_invnorm_phen.output,
 #                phenotype = "intercept",
 #                seed = PERM_SEEDS
@@ -238,13 +238,13 @@ rule all:
 #                cov = config["hmm_covariance"],
 #                phenotype = "intercept",
 #        ),
-        expand(rules.get_manhattan_gcta_invnorm.output,
-                ref = "hdrr",
-                max_reads = "None",
-                bin_length = "5000",
-                cov = config["hmm_covariance"],
-                phenotype = "intercept"
-        ),
+#        expand(rules.get_manhattan_gcta_invnorm.output,
+#                ref = "hdrr",
+#                max_reads = "None",
+#                bin_length = "5000",
+#                cov = config["hmm_covariance"],
+#                phenotype = "intercept"
+#        ),
 ################
 ## 07_annotations.smk
 ################
@@ -341,133 +341,18 @@ rule all:
                 cov = 0.8,
                 phenotype = "intercept"
         ),
-################
-## 05_F2_recomb_blocks.smk
-################
-## make_dp_AB_F2
-#        expand(rules.make_dp_AB_F2.output,
-#                site_filter = config["site_filter"],
-#                F2_sample = F2_samples['SAMPLE']
-#        ),
-## run_rc_block_F2
-#        expand(os.path.join(config["data_store_dir"], "recombination_blocks/F2/{site_filter}/{bin_length}.txt"),
-#                site_filter = config["site_filter"],
-#                bin_length = config["bin_length"]
-#        ),
-## consolidate_dbABs_Ewan
-#        expand(os.path.join(config["data_store_dir"], "dpABs/F2_consolidated/{site_filter}.txt"),
-#                site_filter = config["site_filter"],
-#        ),
-## process_rc_blocks
-#        expand(os.path.join(
-#            config["working_dir"],
-#            "processed_recomb/F2/{site_filter}/{bin_length}.csv"),
-#                site_filter = config["site_filter"],
-#                bin_length = config["bin_length"],                
-#        ),
-#        expand(rules.plot_recombination_blocks.output.karyoplot_no_missing,
-#                site_filter = config["site_filter"],
-#                bin_length = config["bin_length"],                
-#        ),
-################
-## 06_F0_recomb_blocks.smk
-################
-## run_rc_block_F0
-#        expand(os.path.join(config["data_store_dir"], "recombination_blocks/F0/{site_filter}/{bin_length}.txt"),
-#                site_filter = config["site_filter"],
-#                bin_length = config["bin_length_F0"]
-#        ),
-################
-## 07_1_GridLMM.smk
-###############
-## create_gwas_input
-#        expand(os.path.join(
-#                config["working_dir"], 
-#                "association_testing/{site_filter}/inputs/{bin_length}.rds"),
-#                        site_filter = config["site_filter"],
-#                        bin_length = config["bin_length"]
-#        ),
-## simulate_phenotypes
-#        expand(os.path.join(
-#                config["working_dir"],
-#                "association_testing/{site_filter}/sim_phenos/{bin_length}.xlsx"),
-#                        site_filter = config["site_filter"],
-#                        bin_length = config["bin_length"]
-#        ),
-## test_gwas
-#        expand(os.path.join(
-#                config["working_dir"],
-#                "association_testing/{site_filter}/test_results/{bin_length}.rds"
-#                ),
-#                        site_filter = config["site_filter"],
-#                        bin_length = config["bin_length"]
-#        ),
-## run_gwas
-#        expand(os.path.join(
-#                config["working_dir"],
-#                "association_testing/{site_filter}/true_results/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.rds"),
-#                        site_filter = config["site_filter"],
-#                        target_phenotype = config["target_phenotypes"],
-#                        covariates = config["covariates"],
-#                        inverse_norm = config["inverse_norm"],
-#                        bin_length = config["bin_length"]
-#        ),
-## create_permuted_phenotypes
-#        expand(os.path.join(
-#                config["working_dir"], 
-#                "permuted_phenos/{permutation_seed}.xlsx"),
-#                        permutation_seed = PERM_SEEDS
-#        ),
-## run_permutations
-#        expand(os.path.join(
-#                config["working_dir"], 
-#                "association_testing/{site_filter}/permutations/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}/{permutation_seed}.rds"),
-#                        site_filter = config["site_filter"],
-#                        target_phenotype = config["target_phenotypes"],
-#                        covariates = config["covariates"],
-#                        inverse_norm = config["inverse_norm"],                        
-#                        bin_length = config["bin_length"],
-#                        permutation_seed = PERM_SEEDS   
-#        ),
-## get_manhattan
-#        expand("book/plots/manhattans/{site_filter}/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.png",
-#                        site_filter = config["site_filter"],
-#                        target_phenotype = config["target_phenotypes"],
-#                        covariates = config["covariates"],
-#                        inverse_norm = config["inverse_norm"],                        
-#                        bin_length = config["bin_length"],
-#        ),
-## get_annotations
-#        expand("data/{date_of_assoc_test}/annotations/{site_filter}/{target_phenotype}/{covariates}/{inverse_norm}/{bin_length}.csv",
-#                        site_filter = "all_sites",
-#                        target_phenotype = "unsegmented_psm_area",
-#                        covariates = "Microscope",
-#                        inverse_norm = "TRUE",                        
-#                        bin_length = "5000",                        
-#        ),
-################
-## 07_2_GCTA.smk
-################
-## create_ped
-#        expand(os.path.join(
-#            config["working_dir"],
-#            "peds/F2/{site_filter}/{bin_length}/{phenotype}.phen"),
-#                site_filter = config["site_filter"],
-#                bin_length = config["bin_length"],
-#                phenotype = config["target_phenotypes"]
-#        ),
-## create_bed
-#        expand(os.path.join(
-#            config["working_dir"],
-#            "beds/F2/{site_filter}/{bin_length}/{phenotype}.bed"),
-#                site_filter = config["site_filter"],
-#                bin_length = config["bin_length"],
-#                phenotype = config["target_phenotypes"] 
-#        ,)
-################
-## 08_F2_calling.smk
-###############
-## merge_variants_F2
-#        os.path.join(config["data_store_dir"], "vcfs/F2/final/all.vcf.gz"),
-
-
+        expand(rules.kaga_F0_chr3.output,
+                ref = "hdrr",
+                max_reads = "None",
+                bin_length = "5000",
+                cov = 0.8,
+                phenotype = "intercept",
+                sample = "Kaga"
+        ),
+        expand(rules.F2_chr3_pheno_by_gt.output,
+                ref = "hdrr",
+                max_reads = "None",
+                bin_length = "5000",
+                cov = 0.8,
+                phenotype = "intercept",
+        ),

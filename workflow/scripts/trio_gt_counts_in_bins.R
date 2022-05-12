@@ -11,7 +11,7 @@ library(tidyverse)
 # Get variables
 
 ## Debug
-#IN_FILE = "/hps/nobackup/birney/users/ian/somites/genos/F0_and_F1/final/all.csv"
+#GENO_FILE = "/hps/nobackup/birney/users/ian/somites/genos/F0_and_F1/hdrr/final/all.csv"
 #CHROM_LENGTHS = here::here("config/hdrr_chrom_lengths.csv")
 #SAMPLE = "Cab"
 #BIN_LENGTH = 5000
@@ -83,14 +83,17 @@ df_bins = purrr::map_dfr(chr_lens$CHROM, function(TARGET_CHROM){
 # Group by chromosome and bin, and get total variants within each bin
 
 final = df_bins %>% 
-  dplyr::group_by(CHROM, BIN) %>% 
-  dplyr::count(HOM_HET) %>% 
-  dplyr::ungroup() %>% 
+  dplyr::count(CHROM, BIN, HOM_HET) %>% 
   tidyr::pivot_wider(names_from = "HOM_HET",
                      values_from = n) %>% 
+  # replace NAs with 0
+  dplyr::mutate(dplyr::across(c("MISS", "HOM", "HET"),
+                              ~tidyr::replace_na(.x, 0))) %>% 
   dplyr::mutate(TOT_HITS = HOM + HET,
                 PROP_HOM = HOM / TOT_HITS,
-                PROP_HET = HET / TOT_HITS)
+                PROP_HET = HET / TOT_HITS) %>% 
+  # remove rows with NA (caused by bins with only missing genotypes)
+  tidyr::drop_na()
 
 # Save to file
 

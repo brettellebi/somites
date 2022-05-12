@@ -167,7 +167,7 @@ circos.genomicTrack(n_vars,
                       circos.genomicLines(region,
                                           value,
                                           type = "h",
-                                          col = "#DE3C4B",
+                                          col = "#F3B700",
                                           cex = 0.05)
                     },
                     track.height = 0.12,
