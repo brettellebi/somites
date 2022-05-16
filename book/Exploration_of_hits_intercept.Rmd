@@ -127,10 +127,32 @@ hits %>%
 ```
 
 ```{r}
+# Calculate percentages
+pos_neg_perc = hits %>% 
+  dplyr::mutate(POS_NEG = dplyr::case_when(ADJ_BETA > 0 ~ "pos",
+                                           ADJ_BETA < 0 ~ "neg")) %>% 
+  dplyr::count(POS_NEG) %>% 
+  dplyr::add_count(wt = n, name = "nn") %>% 
+  dplyr::mutate(PERC = n / nn * 100)
+
+
+TITLE = "Phenotype: period intercept"
+SUBTITLE = paste("Percent positive: ",
+              pos_neg_perc %>% 
+                dplyr::filter(POS_NEG == "pos") %>% 
+                dplyr::pull(PERC),
+              "\nPercent negative: ",
+              pos_neg_perc %>% 
+                dplyr::filter(POS_NEG == "neg") %>% 
+                dplyr::pull(PERC),
+              sep = "")
+
 hits %>% 
   ggplot() +
     geom_density(aes(ADJ_BETA)) +
     theme_bw() +
-    xlab("beta for Kaga allele")
+    xlab("beta for Kaga allele") +
+    ggtitle(TITLE,
+            subtitle = SUBTITLE)
 ```
 

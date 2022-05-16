@@ -1,267 +1,137 @@
-# Exploration of GWLS hits
+# Exploration of hits
 
 ```{r, message = F, warning = F}
-library(here)
-source(here::here("workflow/scripts/get_manhattan_source.R"))
+library(tidyverse)
+library(ggbeeswarm)
 ```
 
-## Read in data
 
-### Get variables
-```{r}
-DATE_OF_ASSOC_TEST = 20220214
-
-TARGET_PHENO = "unsegmented_psm_area"
-
-BIN_LENGTH = 5000 
-
-FILTER = "all_sites"
-
-COVARIATES = "Microscope"
-
-INVERSE_NORM = "TRUE"
-
-GWAS_RESULTS = file.path("/hps/nobackup/birney/users/ian/somites/association_testing",
-                         DATE_OF_ASSOC_TEST,
-                         FILTER,
-                         "true_results",
-                         TARGET_PHENO,
-                         COVARIATES,
-                         INVERSE_NORM,
-                         paste(BIN_LENGTH, ".rds", sep = ""))
-
-PERMS_FILES = list.files(file.path("/hps/nobackup/birney/users/ian/somites/association_testing",
-                                   DATE_OF_ASSOC_TEST,
-                                   FILTER,
-                                   "permutations",
-                                   TARGET_PHENO,
-                                   COVARIATES,
-                                   INVERSE_NORM,
-                                   BIN_LENGTH),
-                         full.names = T)
-
-PLOT_DIR = here::here("book/plots", DATE_OF_ASSOC_TEST, "hits_exploration")
-
-TARGET_CHROMS = c(3, 6, 12, 20)
-
-```
+## Period intercept
 
 ### Read in files
 
 ```{r}
-# Results
-gwas_res = readRDS(GWAS_RESULTS)
+HITS = "/hps/nobackup/birney/users/ian/somites/gcta/mlma_loco/true/hdrr/None/5000/0.8/unsegmented_psm_area/None.loco.mlma"
+GENOS = "/hps/nobackup/birney/users/ian/somites/hmm_out/F2/hdrr/hmmlearn_true/None/5000/0.8.csv"
+PHENOS = "/hps/nobackup/birney/users/ian/somites/phens/true/unsegmented_psm_area.phen"
+BIN_LENGTH = 5000
 
-if ("p_value_REML" %in% colnames(gwas_res$results)){
-  P_COL = "p_value_REML"
-} else {
-  P_COL = "p_value_REML.1"
-}
-# Rename column in results
-if (P_COL == "p_value_REML.1"){
-  gwas_res$results = gwas_res$results %>% 
-    dplyr::rename(p_value_REML = p_value_REML.1)
-}
+# Read in hits and pull location of top hit
+hits = readr::read_tsv(HITS) %>% 
+  dplyr::rename(BIN = bp) %>% 
+  dplyr::mutate(BIN_START = (BIN * BIN_LENGTH) + 1,
+                BIN_END = ((BIN + 1) * BIN_LENGTH)) %>% 
+  # make beta direction consistent
+  dplyr::mutate(ADJ_BETA = dplyr::case_when(A1 == "B" ~ b,
+                                            A1 == "A" ~ -b))
 
-# Permutations
-perms = purrr::map(PERMS_FILES, readRDS)
+top_hit = hits %>% 
+  dplyr::slice(which.min(p)) 
+
+TARGET_CHROM = top_hit %>% 
+  dplyr::pull(Chr)
+
+TARGET_BIN = top_hit %>% 
+  dplyr::pull(BIN)
+
+genos = readr::read_csv(GENOS) %>% 
+  dplyr::filter(CHROM == TARGET_CHROM & BIN == TARGET_BIN)
+
+geno_means = readr::read_csv(GENOS) %>% 
+  dplyr::group_by(SAMPLE) %>% 
+  dplyr::summarise(MEAN_PROP_KAGA = mean(PROP_KAGA))
+
+phenos = readr::read_tsv(PHENOS,
+                         col_names = c("FID", "SAMPLE", "PHENO"))
+
+# Join
+
+df = dplyr::left_join(genos %>% 
+                        dplyr::select(SAMPLE, STATE),
+                      phenos %>% 
+                        dplyr::select(SAMPLE, PHENO),
+                      by = "SAMPLE")
+
+df_prop = dplyr::left_join(geno_means,
+                           phenos %>% 
+                             dplyr::select(SAMPLE, PHENO),
+                           by = "SAMPLE")
+  
 ```
 
-### Get significance levels
+### Plot
+
+#### Mean proportion of Kaga against phenotype
 
 ```{r}
-perm_df = purrr::map_dfr(perms, function(PERM){
-  # get correct p-value column
-  if ("p_value_REML" %in% colnames(PERM)){
-    TARGET_COL = "p_value_REML"
-  } else {
-    TARGET_COL = "p_value_REML.1"
-  }
-  OUT = tibble::tibble(MIN_P = PERM$results %>% 
-                         dplyr::select(all_of(TARGET_COL)) %>%
-                         min(., na.rm = T)
-  )
-}, .id = "SEED")
-
-# Get minimum
-SIG_LEVEL = min(perm_df$MIN_P)
-
-# Get bonferroni correction
-SIG_BONF = 0.05 / nrow(gwas_true$results)
-```
-
-
-#### Manhattans
-
-Process data
-```{r}
-out_clean = clean_gwas_res(gwas_res,
-                           bin_length = BIN_LENGTH,
-                           chr_lens = med_chr_lens)
-
-# Get palette
-PAL = eval(as.name(paste(TARGET_PHENO, "_pal", sep = "")))
-
-# Get correct column name
-
-TARGET_CHROM = TARGET_CHROMS[1]
-
-# Plot
-lapply(TARGET_CHROMS, function(TARGET_CHROM){
-  
-  out_plot = plot_man_chr(out_clean,
-                      site_filter = FILTER,
-                      phenotype = TARGET_PHENO,
-                      bin_length = BIN_LENGTH, 
-                      gwas_pal = PAL,
-                      med_chr_lens = med_chr_lens,
-                      sig_level = SIG_LEVEL,
-                      bonferroni = SIG_BONF,
-                      target_chrom = TARGET_CHROM) +
-                   labs(subtitle = paste("Covariates: ", COVARIATES, "\nChromosome: ", TARGET_CHROM, sep = ""))
-  
-  ## Write
-  OUT_FILE = file.path(PLOT_DIR, FILTER, TARGET_PHENO, COVARIATES, INVERSE_NORM, BIN_LENGTH, paste(TARGET_CHROM, ".png", sep = ""))
-  dir.create(dirname(OUT_FILE), recursive = T, showWarnings = F)
-  ggsave(OUT_FILE,
-         out_plot,
-         device = "png",
-         width = 9.6,
-         height = 6,
-         units = "in",
-         dpi = 400)
-
-})
-```
-
-Plot
-```{r}
-df = gwas_res
-
-  # Create palette
-  pal = rep_len(gwas_pal, length.out = nrow(med_chr_lens))
-  names(pal) = med_chr_lens$chr
-  
-  df = df %>% 
-    # create `COLOUR` vector
-    dplyr::mutate(COLOUR = dplyr::case_when(!is.null(sig_level) & p_value_REML < sig_level ~ gwas_pal[1],
-                                            gtools::even(CHROM) ~ gwas_pal[2],
-                                            gtools::odd(CHROM) ~ gwas_pal[3])) %>% 
-    dplyr::mutate(CHROM = factor(CHROM, levels = med_chr_lens$chr)) 
-  
-  out_plot = df %>% 
-    ggplot(aes(x = X_COORD,
-               y = -log10(p_value_REML),
-               label = BIN_START,
-               label2 = BIN_END)) + 
-    geom_point(colour = df$COLOUR,
-               size = size,
-               alpha = alpha) +
-    #scale_color_manual(values = gwas_pal) +
-    scale_x_continuous(breaks = med_chr_lens$MID_TOT, 
-                       labels = med_chr_lens$chr) +
+df_prop %>% 
+  ggplot(aes(MEAN_PROP_KAGA, PHENO)) +
+    geom_point() +
+    geom_smooth() +
     theme_bw() +
-    theme(panel.grid.major.x = element_blank(),
-          panel.grid.minor.x = element_blank()
-    ) +
-    guides(colour = "none") +
-    ggtitle(paste("Site filter: ", site_filter, "\nPhenotype: ", phenotype, "\nBin length: ",  bin_length, sep = "")) +
-    xlab("Chromosome") +
-    ylab("-log10(p-value)") + 
-    # permutations significance level
-    geom_hline(yintercept = -log10(sig_level), colour = "#60D394", linetype = "dashed") +
-    geom_text(aes(out_clean$MID_TOT[1], -log10(sig_level), label = "permutations", vjust = 1), size = 3, colour = "#60D394") + 
-    # bonferroni significance level
-    geom_hline(yintercept = -log10(bonferroni), colour = "#F06449", linetype = "dashed") +
-    geom_text(aes(out_clean$MID_TOT[1], -log10(bonferroni), label = "bonferroni", vjust = 1), size = 3, colour = "#F06449")
+  xlab("Mean proportion of Kaga reads across all bins") +
+  ylab("unsegmented PSM area")
 ```
 
 
-Read in significance levels from permutations
+#### Top hit
 
 ```{r}
-perms_df_mins = readr::read_csv(PERMS_FILE,
-                                col_types = c("ccid"))
+df %>% 
+  dplyr::mutate(STATE = factor(STATE, levels = 0:2)) %>% 
+  ggplot(aes(STATE, PHENO)) +
+    geom_boxplot() +
+    ggbeeswarm::geom_beeswarm(alpha = 0.5) +
+    theme_bw() +
+    ggtitle(paste("PSM area top hit",
+                  "\nLocus: ",
+                  TARGET_CHROM,
+                  ":", 
+                  (TARGET_BIN * BIN_LENGTH + 1),
+                  "-",
+                  ((TARGET_BIN + 1) * BIN_LENGTH),
+                  sep = "")) +
+    xlab("Genotype (0 = Hom Cab, 1 = Het, 2 = Hom Kaga)") +
+    ylab("PSM area")
+```
+
+#### All betas
+
+```{r}
+hits %>% 
+  ggplot() +
+  geom_point(aes(-log10(p), ADJ_BETA), alpha = 0.1) +
+  theme_bw() +
+  xlab(expression(-log[10](p))) +
+  ylab("beta for Kaga allele")
 ```
 
 ```{r}
-# Get palette
-lapply(TARGET_PHENOS, function(PHENO){
-  lapply(FILTERS, function(FILTER){
-    lapply(BIN_LENGTHS, function(BIN_L){
-      # Get significance level
-      SIG_LEVEL = perms_df_mins %>% 
-        dplyr::filter(TARGET_PHENO == PHENO,
-                      SITE_FILTER == FILTER,
-                      BIN_LENGTH == BIN_L) %>% 
-        dplyr::pull(MIN_P)
-      # Get palette
-      pal = eval(as.name(paste(PHENO, "pal", sep = "_")))
-      # Get target chromosome
-      TARGET_CHROM = 3
-      # Get chrom lengths and breaks
-      CHROM_END = med_chr_lens %>% 
-        dplyr::filter(chr == TARGET_CHROM) %>% 
-        dplyr::pull(end)
-      X_BREAKS = seq(from = 0, to = CHROM_END, by = 5e6)
-      # Plot
-      df = plot_dat[[PHENO]][[FILTER]][[as.character(BIN_L)]] %>%
-        # filter for target chromosome
-        dplyr::filter(CHROM == TARGET_CHROM) %>% 
-        # create `COLOUR` vector
-        dplyr::mutate(COLOUR = dplyr::case_when(p_value_REML < SIG_LEVEL ~ pal[1],
-                                                gtools::even(CHROM) ~ pal[2],
-                                                gtools::odd(CHROM) ~ pal[3])) %>% 
-        dplyr::mutate(CHROM = factor(CHROM, levels = med_chr_lens$chr)) 
-      
-      out_plot = df %>% 
-        ggplot(aes(x = BIN_START,
-                   y = -log10(p_value_REML),
-                   label = BIN_START,
-                   label2 = BIN_END)) + 
-        geom_point(colour = df$COLOUR,
-                   size = 0.5,
-                   alpha = 0.5) +
-        scale_x_continuous(breaks = X_BREAKS,
-                           labels = X_BREAKS / 1e6) +
-        theme_bw() +
-        theme(panel.grid.major.x = element_blank(),
-              panel.grid.minor.x = element_blank()
-        ) +
-        guides(colour = "none") +
-        ggtitle(paste("Site filter: ", FILTER, "\nPhenotype: ", PHENO, "\nBin length: ",  BIN_L, sep = "")) +
-        xlab("Mb") +
-        ylab("-log10(p-value)") + 
-        geom_hline(yintercept = -log10(SIG_LEVEL), colour = "#60D394", linetype = "dashed")
-      
-      out_plot
-      
-      # create output directory
-      OUT_DIR = here::here(PLOT_DIR, PHENO, FILTER, BIN_L)
-      dir.create(OUT_DIR, recursive = T, showWarnings = F)
-      
-      ggsave(file.path(OUT_DIR, paste(TARGET_CHROM, ".png", sep = "")),
-       out_plot,
-       device = "png",
-       width = 9.6,
-       height = 6,
-       units = "in",
-       dpi = 400)
-    })
-  })
-})
+# Calculate percentages
+pos_neg_perc = hits %>% 
+  dplyr::mutate(POS_NEG = dplyr::case_when(ADJ_BETA > 0 ~ "pos",
+                                           ADJ_BETA < 0 ~ "neg")) %>% 
+  dplyr::count(POS_NEG) %>% 
+  dplyr::add_count(wt = n, name = "nn") %>% 
+  dplyr::mutate(PERC = n / nn * 100)
 
-out_plot = plot_man(out_clean,
-                    site_filter = "all_sites",
-                    phenotype = TARGET_PHENO,
-                    bin_length = BIN_LENGTH, 
-                    gwas_pal = intercept_pal,
-                    med_chr_lens = med_chr_lens,
-                    sig_level = SIG_LEVEL) +
-                 ylim(0,7) + 
-                 labs(subtitle = paste("Microscope: ", MICROSCOPE, "\nn samples: ", N_SAMPLES, sep = ""))
+TITLE = "Phenotype: PSM area"
+SUBTITLE = paste("Percent positive: ",
+              pos_neg_perc %>% 
+                dplyr::filter(POS_NEG == "pos") %>% 
+                dplyr::pull(PERC),
+              "\nPercent negative: ",
+              pos_neg_perc %>% 
+                dplyr::filter(POS_NEG == "neg") %>% 
+                dplyr::pull(PERC),
+              sep = "")
 
-out_plot
+hits %>% 
+  ggplot() +
+    geom_density(aes(ADJ_BETA)) +
+    theme_bw() +
+    xlab("beta for Kaga allele") +
+    ggtitle(TITLE,
+            subtitle = SUBTITLE) 
 ```
-
 
