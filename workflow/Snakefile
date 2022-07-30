@@ -13,6 +13,7 @@ include: "rules/05_2_F2_calling.smk"
 include: "rules/06_1_GWAS_GCTA.smk"
 include: "rules/06_2_GWAS_GCTA_split_invnorm.smk"
 include: "rules/06_3_GWAS_GCTA_split_microscope.smk"
+include: "rules/06_4_GWAS_GCTA_micr-adj.smk"
 include: "rules/07_annotations.smk"
 include: "rules/08_extra.smk"
 #include: "rules/05_F2_recomb_blocks.smk"
@@ -56,6 +57,10 @@ rule all:
 #        expand(rules.merge_variants.output,
 #                ref = config["refs"]
 #        ),
+        expand(rules.convert_F0_to_fasta.output,
+                ref = config["refs"],
+                F0_sample = "Kaga"
+        ),
 ################
 ## 03_1_F1_mapping.smk
 ################
@@ -332,27 +337,38 @@ rule all:
 #                microscope = config["microscopes"]
 #        ),
 ################
+## 06_4_GWAS_GCTA_micr-adj.smk
+################
+#        expand(rules.get_manhattan_gcta_micr_adj.output,
+#                ref = "hdrr",
+#                max_reads = "None",
+#                bin_length = "5000",
+#                cov = 0.8,
+#                phenotype = "intercept",
+#        ),
+################
 ## 08_extra.smk
 ################
-        expand(rules.top_and_bottom_karyos.output,
-                ref = "hdrr",
-                max_reads = "None",
-                bin_length = "5000",
-                cov = 0.8,
-                phenotype = "intercept"
-        ),
-        expand(rules.kaga_F0_chr3.output,
-                ref = "hdrr",
-                max_reads = "None",
-                bin_length = "5000",
-                cov = 0.8,
-                phenotype = "intercept",
-                sample = "Kaga"
-        ),
-        expand(rules.F2_chr3_pheno_by_gt.output,
-                ref = "hdrr",
-                max_reads = "None",
-                bin_length = "5000",
-                cov = 0.8,
-                phenotype = "intercept",
-        ),
+#        expand(rules.top_and_bottom_karyos.output,
+#                ref = "hdrr",
+#                max_reads = "None",
+#                bin_length = "5000",
+#                cov = 0.8,
+#                phenotype = "intercept"
+#        ),
+#        expand(rules.kaga_F0_chr3.output,
+#                ref = "hdrr",
+#                max_reads = "None",
+#                bin_length = "5000",
+#                cov = 0.8,
+#                phenotype = "intercept",
+#                sample = "Kaga"
+#        ),
+#        expand(rules.F2_chr3_pheno_by_gt.output,
+#                ref = "hdrr",
+#                max_reads = "None",
+#                bin_length = "5000",
+#                cov = 0.8,
+#                phenotype = "intercept",
+#        ),
+        rules.phenotype_plots.output,

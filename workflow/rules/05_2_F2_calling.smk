@@ -159,13 +159,31 @@ rule true_hmmlearn:
     script:
         "../scripts/true_hmmlearn.py"
 
+rule create_excluded_samples_list:
+    output:
+        "config/low_cov_samples.list"
+    log:
+        os.path.join(
+            config["working_dir"],
+            "logs/create_excluded_samples_list/all.log"
+        ),
+    resources:
+        mem_mb = 100 
+    run:
+        file = open(output[0], 'w')
+        for item in config["low_cov_samples"]:
+            file.writelines(str(item)+'\t'+str(item)+'\n')
+        file.close()
+
 rule plot_true_hmmlearn:
     input:
-        rules.true_hmmlearn.output.csv,
+        input = rules.true_hmmlearn.output.csv,
+        low_cov_samples = rules.create_excluded_samples_list.output,
     output:
         prop_sites_total = "book/plots/{ref}/F1_het_min_DP/hmmlearn_true/{max_reads}/{bin_length}/{cov}/prop_sites_total.png",
         karyoplot_no_missing = "book/plots/{ref}/F1_het_min_DP/hmmlearn_true/{max_reads}/{bin_length}/{cov}/karyoplot_no_missing.png",
         karyoplot_with_missing = "book/plots/{ref}/F1_het_min_DP/hmmlearn_true/{max_reads}/{bin_length}/{cov}/karyoplot_wi_missing.png",
+        karyoplot_excl_lowcov = "book/plots/{ref}/F1_het_min_DP/hmmlearn_true/{max_reads}/{bin_length}/{cov}/karyoplot_excl_lowcov.png",
     log:
         os.path.join(
             config["working_dir"],

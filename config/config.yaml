@@ -16,6 +16,9 @@ working_dir:
     /hps/nobackup/birney/users/ian/somites
 data_store_dir:
     /nfs/research/birney/users/ian/somites
+google_drive_dir:
+    # NOTE: you need to set up this (or some other) drive with `rclone config` first
+    EBI_Google_Drive:thesis/figs/somites
 ####################
 # Config files
 ####################

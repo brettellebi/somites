@@ -129,6 +129,36 @@ rule merge_variants:
                 &> {log}
         """
 
+rule convert_F0_to_fasta:
+    input:
+        vcf = rules.merge_variants.output,
+        ref = rules.get_genome.output,
+    output:
+        os.path.join(
+            config["working_dir"], 
+            "fastas/F0/{ref}/{F0_sample}.fasta"
+        ),
+    log:
+        os.path.join(
+            config["working_dir"], 
+            "logs/convert_F0_to_fasta/{ref}/{F0_sample}.log"
+        ),
+    params:
+        sample = "{F0_sample}"
+    resources:
+        mem_mb = 10000
+    container:
+        config["bcftools_1.14"]
+    shell:
+        """
+        bcftools consensus \
+            --fasta-ref {input.ref} \
+            --output {output} \
+            --sample {params.sample} \
+            {input.vcf}
+        """
+
+
 ###############
 # Call with F2 samples as well
 ###############

@@ -1,0 +1,7 @@
+name: rclone
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - rclone=1.58.1=h519d9b9_0
+prefix: /hps/nobackup/birney/users/ian/miniconda3/envs/rclone

@@ -14,12 +14,14 @@ library(ggbeeswarm)
 
 ## Debug
 #BIN_LENGTH = as.numeric("5000")
-#IN_FILE = "/hps/nobackup/birney/users/ian/somites/hmm_out/F2/hdrr/hmmlearn_true/None/5000/C.csv"
-#COV = "C"
+#IN_FILE = "/hps/nobackup/birney/users/ian/somites/hmm_out/F2/hdrr/hmmlearn_true/None/5000/0.8.csv"
+#LOW_COV_SAMPLES = here::here("config/low_cov_samples.list")
+#COV = as.numeric("0.8")
 #MAX_READS = "None"
 
 ## True
-IN_FILE = snakemake@input[[1]]
+IN_FILE = snakemake@input[["input"]]
+LOW_COV_SAMPLES = snakemake@input[["low_cov_samples"]]
 COV = snakemake@params[["cov"]]
 MAX_READS = snakemake@params[["max_reads"]]
 BIN_LENGTH = as.numeric(snakemake@params[["bin_length"]])
@@ -28,6 +30,7 @@ BASE_COV_TOT = snakemake@output[["base_cov_total"]]
 PROP_SITES_TOT = snakemake@output[["prop_sites_total"]]
 KARYOPLOT_NOMISS = snakemake@output[["karyoplot_no_missing"]]
 KARYOPLOT_WIMISS = snakemake@output[["karyoplot_with_missing"]]
+KARYOPLOT_EXCL_LC = snakemake@output[["karyoplot_excl_lowcov"]]
 
 
 ######################
@@ -37,7 +40,7 @@ KARYOPLOT_WIMISS = snakemake@output[["karyoplot_with_missing"]]
 N_STATES = 3
 
 ######################
-# Palette
+# Palette and plotting params
 ######################
 
 pal_hom_het_2 = c("#43AA8B", "#000022", "#DE3C4B", "#FBF5F3")
@@ -61,6 +64,7 @@ recode_vec = c(`0` = "Homozygous Cab",
 
 states = 0:(N_STATES - 1)
 
+
 ######################
 # Read in data
 ######################
@@ -70,6 +74,11 @@ df = readr::read_csv(IN_FILE,
   # add key variables
   dplyr::mutate(BIN_START = (BIN * BIN_LENGTH) + 1,
                 BIN_END = ((BIN + 1) * BIN_LENGTH)) 
+
+# Get low-coverage samples
+
+low_cov_samples = readr::read_tsv(LOW_COV_SAMPLES, col_names = c("FID", "SAMPLE")) %>% 
+  dplyr::pull(SAMPLE)
 
 # Read in total medaka genome count
 
@@ -85,6 +94,11 @@ med_chr_lens = med_chr_lens %>%
   dplyr::filter(chr != "MT")
 ## Total HdrR sequence length
 total_hdrr_bases = sum(med_chr_lens$end)
+
+# Get number of samples (for setting the height of the Karyoplots)
+
+N_SAMPLES = unique(df$SAMPLE) %>% 
+  length()
 
 #######################
 # Total sites covered by each state
@@ -189,7 +203,7 @@ lane_cutoffs = cut(0:1, breaks = length(block_bounds_list), dig.lab = 7) %>%
 
 png(file=KARYOPLOT_NOMISS,
     width=7800,
-    height=23400,
+    height=round(37.6*N_SAMPLES),
     units = "px",
     res = 400)
 
@@ -288,7 +302,7 @@ block_bounds_list = df %>%
 
 png(file=KARYOPLOT_WIMISS,
     width=7800,
-    height=23400,
+    height=round(37.6*N_SAMPLES),
     units = "px",
     res = 400)
 
@@ -334,3 +348,102 @@ purrr::map(block_bounds_list, function(SAMPLE){
 
 
 dev.off()  
+
+#######################
+# Karyoplot excluding low-coverage samples
+#######################
+
+# Create custom genome 
+
+med_genome = regioneR::toGRanges(med_chr_lens)
+
+# Convert data to list of block boundaries for each LANE
+
+block_bounds_list = df %>% 
+  # filter out low-coverage samples
+  dplyr::filter(!SAMPLE %in% low_cov_samples) %>% 
+  # loop over LANE
+  split(., f = .$SAMPLE) %>% 
+  purrr::map(., function(SAMPLE){
+    # loop over CHR
+    SAMPLE %>% 
+      split(., f = .$CHROM) %>% 
+      purrr::map(., function(CHROM){
+        # Get lengths of each contiguous state
+        cont_len = rle(CHROM$STATE)
+        
+        # Get cumulative sum of those lengths
+        cum_blocks = cumsum(cont_len$lengths)
+        
+        # Get rows that correspond to block changes
+        block_bounds = CHROM[cum_blocks, ] %>% 
+          # Add end of previous block
+          dplyr::mutate(END_PREV = dplyr::lag(BIN_END)) %>% 
+          # Replace the NA in the first row with `1`
+          dplyr::mutate(END_PREV = tidyr::replace_na(END_PREV, 1)) %>% 
+          # Add colour
+          dplyr::mutate(COLOUR = dplyr::recode(STATE,
+                                               !!!pal_hom_het_2[-which(names(pal_hom_het_2) == "UNCLASSIFIED")])) 
+        
+      }) %>% 
+      dplyr::bind_rows()
+    
+  })
+
+# Extract y cutoff points for each lane
+
+lane_cutoffs = cut(0:1, breaks = length(block_bounds_list), dig.lab = 7) %>% 
+  levels(.) %>% 
+  data.frame(lower = as.numeric( sub("\\((.+),.*", "\\1", .) ),
+             upper = as.numeric( sub("[^,]*,([^]]*)\\]", "\\1", .) )) %>% 
+  dplyr::arrange(dplyr::desc(lower))
+
+# Plot karyoplot WITH NO missing blocks
+
+png(file=KARYOPLOT_EXCL_LC,
+    width=7800,
+    height=round(37.6*(N_SAMPLES - length(low_cov_samples))),
+    units = "px",
+    res = 400)
+
+# Plot ideogram
+kp = karyoploteR::plotKaryotype(med_genome, plot.type = 5)
+
+# Plot title
+karyoploteR::kpAddMainTitle(kp,
+                            paste("Emission (co)variances: ", 
+                                  COV,
+                                  "\nMax reads per bin: ",
+                                  MAX_READS,
+                                  "\nBin length: ",
+                                  BIN_LENGTH,
+                                  sep = ""),
+                            cex=4)
+
+# Add rectangles in loop
+counter = 0
+purrr::map(block_bounds_list, function(SAMPLE){
+  # Add to counter_B
+  counter <<- counter + 1
+  # Add rectangles
+  karyoploteR::kpRect(kp,
+                      chr = SAMPLE$CHROM,
+                      x0 = SAMPLE$END_PREV,
+                      x1 = SAMPLE$BIN_END,
+                      y0 = lane_cutoffs[counter, ] %>% 
+                        dplyr::pull(lower),
+                      y1 = lane_cutoffs[counter, ] %>% 
+                        dplyr::pull(upper),
+                      col = SAMPLE$COLOUR,
+                      border = NA)
+  # Add axis label
+  karyoploteR::kpAddLabels(kp, labels = unique(SAMPLE$SAMPLE),
+                           r0 = lane_cutoffs[counter, ] %>% 
+                             dplyr::pull(lower),
+                           r1 = lane_cutoffs[counter, ] %>% 
+                             dplyr::pull(upper),
+                           cex = 0.5)
+})
+
+
+dev.off()

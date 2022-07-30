@@ -1,0 +1,25 @@
+# Visualise microscope-adjusted phenotype
+
+```{r, message = F, warning = F}
+library(tidyverse)
+library(ggbeeswarm)
+```
+
+## Read in and plot
+
+```{r}
+IN = "/hps/software/users/birney/ian/repos/somites/config/DF_648_periodNORMALISED.csv"
+```
+
+```{r}
+df = readr::read_csv(IN)
+
+df %>% 
+  ggplot(aes(Microscope, intercept)) +
+  geom_boxplot() +
+  ggbeeswarm::geom_beeswarm() +
+  theme_bw()
+
+kruskal.test(df$intercept, df$Microscope)
+```
+

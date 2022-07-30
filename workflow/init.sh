@@ -13,7 +13,7 @@ module load singularity-3.7.0-gcc-9.3.0-dp5ffrp
 bsub -Is bash
 #bsub -q datamover -M 20000 -Is bash # when needing to copy raw data from FTP
 cd /hps/software/users/birney/ian/repos/somites
-conda activate snakemake_6.12.1
+conda activate snakemake_6.15.5
 # 
 snakemake \
   --jobs 5000 \
@@ -89,9 +89,9 @@ cd /hps/software/users/birney/ian/repos/somites
 module load singularity-3.7.0-gcc-9.3.0-dp5ffrp
 CONT=/hps/nobackup/birney/users/ian/containers/somites/R_4.1.0.sif
 CONT=/hps/nobackup/birney/users/ian/containers/somites/R_4.1.3.sif
-singularity shell --bind /hps/nobackup/birney/users/ian/rstudio_db:/var/lib/rstudio-server \
-                  --bind /hps/nobackup/birney/users/ian/tmp:/tmp \
-                  --bind /hps/nobackup/birney/users/ian/run:/run \
+singularity shell --bind /hps/nobackup/birney/users/ian/R_tmp/R_4.1.3/rstudio_db:/var/lib/rstudio-server \
+                  --bind /hps/nobackup/birney/users/ian/R_tmp/R_4.1.3/tmp:/tmp \
+                  --bind /hps/nobackup/birney/users/ian/R_tmp/R_4.1.3/run:/run \
                   $CONT
 # Then run rserver, setting path of config file containing library path
 rstudio-server kill-all

@@ -171,22 +171,6 @@ rule permute_covar:
     script:
         "../scripts/permute_covars.R"
 
-rule create_excluded_samples_list:
-    output:
-        "config/low_cov_samples.list"
-    log:
-        os.path.join(
-            config["working_dir"],
-            "logs/create_excluded_samples_list/all.log"
-        ),
-    resources:
-        mem_mb = 100 
-    run:
-        file = open(output[0], 'w')
-        for item in config["low_cov_samples"]:
-            file.writelines(str(item)+'\t'+str(item)+'\n')
-        file.close()
-
 def set_covars(wildcards):
     if wildcards.covars == "None":
         out = ""

@@ -57,7 +57,7 @@ pal_hom_het_2_lines = c(karyoploteR::darker(pal_hom_het_2[1], 100),
                         karyoploteR::darker(pal_hom_het_2[4]))
 names(pal_hom_het_2_lines) = c(0:2, "UNCLASSIFIED")
 
-# Extent palette for "error" states
+# Extend palette for "error" states
 
 if (N_STATES == 5){
   pal_hom_het_2 = c("#43AA8B", karyoploteR::lighter("#43AA8B"),

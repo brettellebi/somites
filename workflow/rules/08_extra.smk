@@ -31,7 +31,7 @@ rule kaga_F0_chr3:
         res = rules.run_mlma_loco_invnorm.output,
         min_p = rules.get_min_p_perms_invnorm.output,
     output:
-        fig = "book/plots/{ref}/sig_region_zoom/{max_reads}/{cov}/{phenotype}/{sample}_{bin_length}_chr3.png"
+        fig = "book/plots/{ref}/sig_region_zoom/{max_reads}/{cov}/{phenotype}/{sample}_{bin_length}_chr3.png",
     log:
         os.path.join(
             config["working_dir"],
@@ -66,4 +66,47 @@ rule F2_chr3_pheno_by_gt:
     container:
         config["R_4.1.3"]
     script:
-        "../scripts/F2_chr3_pheno_by_gt.R"        
+        "../scripts/F2_chr3_pheno_by_gt.R"
+
+#rule compile_scatters_thesis:
+#    input:
+#        standard = "/hps/nobackup/birney/users/ian/somites/hmm_out/F2/hdrr/hmmlearn/None/5000/A.csv",
+#        trans_probs = "/hps/nobackup/birney/users/ian/somites/hmm_out/F2/hdrr/hmmlearn/None/5000/B.csv",
+#        var_0.01 = "/hps/nobackup/birney/users/ian/somites/hmm_out/F2/hdrr/hmmlearn/None/5000/D.csv",
+#        var_0.33 = "/hps/nobackup/birney/users/ian/somites/hmm_out/F2/hdrr/hmmlearn/None/5000/C.csv",
+#        var_0.8 = "/hps/nobackup/birney/users/ian/somites/hmm_out/F2/hdrr/hmmlearn/None/5000/F.csv",
+#        var_1 = "/hps/nobackup/birney/users/ian/somites/hmm_out/F2/hdrr/hmmlearn/None/5000/G.csv"
+#    output:
+#        png = "book/plots/thesis/scatter_collage.png",
+#        pdf = "book/plots/thesis/scatter_collage.pdf"
+#    log:
+#        os.path.join(
+#            config["working_dir"],
+#            "logs/compile_scatters_thesis/all.log"
+#        ),
+#    resources:
+#        mem_mb = 10000
+#    container:
+#        config["R_4.1.3"]
+#    script:
+#        "../scripts/compile_scatters_thesis.R"
+
+rule phenotype_plots:
+    input:
+        f01 = "data/F0_F1_period.xlsx",
+        f2 = config["phenotypes_file"]
+    output:
+        png = "book/plots/phenotypes/phenotypes.png",
+        pdf = "book/plots/phenotypes/phenotypes.pdf"
+    log:
+        os.path.join(
+            config["working_dir"],
+            "logs/phenotype_plots/all.log"
+        ),
+    resources:
+        mem_mb = 5000
+    container:
+        config["R_4.1.3"]
+    script:
+        "../scripts/phenotype_plots.R"
+    
